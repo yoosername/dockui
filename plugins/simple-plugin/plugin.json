@@ -1,0 +1,15 @@
+{
+  "name": "Simple Plugin",
+  "key": "simple.plugin",
+  "modules": [
+      {
+        "type" : "webitem",
+        "data" : {
+          "link" : "/simple/plugin/somelink",
+          "location" : "home.quicklinks",
+          "weight" : 10,
+          "text" : "Link to simple plugin"
+        }
+      }
+  ]
+}
