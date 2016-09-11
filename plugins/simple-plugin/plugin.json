@@ -4,12 +4,31 @@
   "modules": [
       {
         "type" : "webitem",
-        "data" : {
-          "link" : "/simple/plugin/somelink",
-          "location" : "home.quicklinks",
-          "weight" : 10,
-          "text" : "Link to simple plugin"
-        }
-      }
+        "name" : "Simple plugin example weblink",
+        "key" : "example-weblink",
+        "link" : "/simple/plugin/somelink",
+        "location" : "example.webitems",
+        "weight" : 10,
+        "text" : "Link to simple plugin"
+      },
+      {
+        "type" : "webpage",
+        "name" : "Site decoration webpage",
+        "key" : "example-webpage-decorator",
+        "path" : "/decorator"
+      },
+      {
+        "type" : "webpage",
+        "name" : "Simple decorated webpage",
+        "key" : "example-webpage",
+        "path" : "/example"
+      },
+      {
+        "type" : "webfragment",
+        "name" : "Simple plugin example webfragment",
+        "key" : "example-webfragment",
+        "path" : "example.fragment",
+        "weight" : 10,
+      },
   ]
 }

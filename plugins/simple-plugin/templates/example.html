@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- The decorator meta means this page will be merged into the defined decorator -->
+    <meta name="decorator" content="example-webpage-decorator">
+    <title>Example Decorated Site</title>
+  </head>
+
+  <body>
+    <h3>Everything in the body of this page will be merged into the specified decorator</h3>
+    <p>Here is some text from plugin 1</p>
+
+    <div data-webfragment="example.fragment">
+      <!--
+        This elements outerHTML will be replaced by all defined web fragments targeting location example.fragment
+        web fragments are defined in the plugin.json - the data attribute will be removed as a result.
+        If there are no fragments for this location then it will be replaced with nothing.
+      -->
+    </div>
+
+    <div>
+      <ol>
+        <li data-webitems="example.webitems">
+          <!--
+          This entire elements outerHTML will be used as the template for rendering all the
+          weblinks targeting location example.webitems - added in order of weight
+          the data attribute will also be removed as a result
+          If there are no webitems for this location then it will be replaced with nothing
+          -->
+          <a class="bongo" href="{{webitem.link}}">{{webitem.text}}</a>
+        </li>
+      </ol>
+    </div>
+
+  </body>
+</html>
