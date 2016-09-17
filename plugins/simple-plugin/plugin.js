@@ -10,6 +10,9 @@ app.use('/decorator', express.static('templates/decorator.html'));
 // Webpage decorated by the above
 app.use('/example', express.static('templates/example.html'));
 
+// Webpage decorated by the above
+app.use('/example2', express.static('templates/example2.html'));
+
 app.listen(8080, function () {
   console.log('Example plugin app listening on port 8080!');
 });

@@ -1,15 +1,24 @@
 {
   "name": "Simple Plugin",
-  "key": "simple.plugin",
+  "key": "simple-plugin",
   "modules": [
       {
         "type" : "webitem",
         "name" : "Simple plugin example weblink",
         "key" : "example-weblink",
-        "link" : "/simple/plugin/somelink",
+        "link" : "/plugins/simple-plugin/webpages/example-webpage",
         "location" : "example.webitems",
         "weight" : 10,
-        "text" : "Link to simple plugin"
+        "text" : "Link to simple plugin webpage 1"
+      },
+      {
+        "type" : "webitem",
+        "name" : "Simple plugin example weblink 2",
+        "key" : "another-example-weblink",
+        "link" : "/plugins/simple-plugin/webpages/example-webpage-2",
+        "location" : "example.webitems",
+        "weight" : 10,
+        "text" : "Link to simple plugin webpage 2"
       },
       {
         "type" : "webpage",
@@ -24,11 +33,17 @@
         "path" : "/example"
       },
       {
+        "type" : "webpage",
+        "name" : "Simple decorated webpage 2",
+        "key" : "example-webpage-2",
+        "path" : "/example2"
+      },
+      {
         "type" : "webfragment",
         "name" : "Simple plugin example webfragment",
         "key" : "example-webfragment",
         "path" : "example.fragment",
-        "weight" : 10,
-      },
+        "weight" : 10
+      }
   ]
 }

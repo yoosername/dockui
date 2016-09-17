@@ -1,8 +1,11 @@
+var express = require('express');
+var app = express();
 var monitor = require('node-docker-monitor');
 const exec = require('child_process').exec;
 var GATEWAY;
-var pluginManager = require('./lib/plugins/PluginManager').getInstance();
+var PluginManager = require('./lib/plugins/PluginManager');
 
+// Get the gateway for this monitor container
 exec("netstat -nr | grep '^0\.0\.0\.0' | awk '{print $2}'", (error, stdout, stderr) => {
   if (error) {
     console.error(`exec error: ${error}`);
@@ -10,30 +13,64 @@ exec("netstat -nr | grep '^0\.0\.0\.0' | awk '{print $2}'", (error, stdout, stde
   }
   //console.log(`stdout: ${stdout}`);
   GATEWAY = stdout;
-  pluginManager.setGateway(GATEWAY);
+  GATEWAY = GATEWAY.replace(/\n/,'');
+  PluginManager.setGateway(GATEWAY);
 });
 
+// Start docker monitor listening for container up and down
+// and add and remove relevant plugins
 monitor({
     onContainerUp: function(container) {
-      //console.log(container);
       if( container["Ports"][0] && container["Ports"][0]["PublicPort"]){
-        pluginManager.addPlugin(container.Id, container["Ports"][0]["PublicPort"]);
+        PluginManager.addPlugin(container.Id, container["Ports"][0]["PublicPort"]);
       }
     },
-
     onContainerDown: function(container) {
-        pluginManager.removePluginByContainerId(container.Id);
+        PluginManager.removePluginsForContainer(container.Id);
     }
 });
 
-pluginManager.on("plugin:added", function(plugin){
+// Serve the plugins as a JSON endpoint
+app.get('/rest/api/1.0/plugins', function (req, res) {
+  var pluginKeys = [];
+  PluginManager.getPlugins().forEach(function(p){
+    pluginKeys.push(p.getKey());
+  });
+  res.send(JSON.stringify(pluginKeys));
+});
+
+// Serve plugin webpages under /plugins by plugin and module key
+app.get('/plugins/:pluginKey/webpages/:moduleKey', function (req, res) {
+
+  var plugin = PluginManager.getPluginByKey(req.params.pluginKey);
+
+  if(!plugin){
+    res.status(404).send("Cannot find plugin by key: " + req.params.pluginKey);
+    return;
+  }
+
+  var webpageModule = plugin.getModuleByKey(req.params.moduleKey);
+  if(!webpageModule){
+    res.status(404).send("Cannot find module "+req.params.moduleKey+" for plugin: " + req.params.pluginKey);
+    return;
+  }
+
+  res.send(webpageModule.render());
+
+});
+
+app.listen(80, function () {
+  console.log("Docker plugin monitor listening on port 80");
+});
+
+PluginManager.on("plugin:added", function(plugin){
   console.log("Loaded Plugin from container (", plugin.getContainerId(), ") with key: ", plugin.getKey());
 })
 
-pluginManager.on("plugin:removed", function(plugin){
+PluginManager.on("plugin:removed", function(plugin){
   console.log("Removed plugin from container (", plugin.getContainerId(), ") with key: ", plugin.getKey());
 })
 
-pluginManager.on("module:added", function(module){
-  console.log("Loaded plugin module (", module.getName(),") for plugin: ", module.getPluginKey());
+PluginManager.on("module:added", function(module){
+  console.log("Loaded plugin module (", module.getName(),") for plugin: ", module.getPlugin().getKey());
 })
