@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="includeResourcesFor" content="app.home">
 
     <title>Main Site Decorator</title>
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.0/css/aui.min.css" media="all">
@@ -15,199 +16,232 @@
     </style>
   </head>
 
-  <body class="aui-page-focused aui-page-size-large">
+  <body>
 
-    <header id="header" role="banner">
-        <!-- App Header goes inside #header -->
-        <nav class="aui-header aui-dropdown2-trigger-group" role="navigation" data-aui-responsive="true">
-            <div class="aui-header-primary">
-                <h1 id="logo" class="aui-header-logo aui-header-logo-aui">
-                  <a href="http://example.com/"><span class="aui-header-logo-device">Decorator Example</span></a>
-                </h1>
-                <ul class="aui-nav __skate" style="width: auto;" resolved="">
-                    <li>
-                      <a href="#dropdown2-jira3" aria-owns="dropdown2-jira3" aria-haspopup="true" class="aui-dropdown2-trigger aui-alignment-target aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" aria-controls="dropdown2-jira3" resolved="" aria-expanded="false">Menu</a>
+    <div id="page">
 
-                    <div class="aui-dropdown2 aui-style-default aui-dropdown2-in-header aui-layer aui-alignment-element aui-alignment-side-bottom aui-alignment-snap-left aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" id="dropdown2-jira3" style="top: 0px; min-width: 160px; left: 0px; z-index: auto; position: absolute; transform: translateX(427px) translateY(664px) translateZ(0px);" aria-hidden="true" resolved="" data-aui-alignment="bottom auto" data-aui-alignment-static="true">
+      <header id="header" role="banner">
+          <!-- App Header goes inside #header -->
+          <nav class="aui-header aui-dropdown2-trigger-group" role="navigation" data-aui-responsive="true">
+              <div class="aui-header-primary">
+                  <h1 id="logo" class="aui-header-logo aui-header-logo-aui">
+                    <a href="http://example.com/"><span class="aui-header-logo-device">Decorator Example</span></a>
+                  </h1>
+                  <ul class="aui-nav __skate" style="width: auto;" resolved="">
+                      <li>
+                        <a href="#dropdown2-jira3" aria-owns="dropdown2-jira3" aria-haspopup="true" class="aui-dropdown2-trigger aui-alignment-target aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" aria-controls="dropdown2-jira3" resolved="" aria-expanded="false">Menu</a>
+
+                      <div class="aui-dropdown2 aui-style-default aui-dropdown2-in-header aui-layer aui-alignment-element aui-alignment-side-bottom aui-alignment-snap-left aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" id="dropdown2-jira3" style="top: 0px; min-width: 160px; left: 0px; z-index: auto; position: absolute; transform: translateX(427px) translateY(664px) translateZ(0px);" aria-hidden="true" resolved="" data-aui-alignment="bottom auto" data-aui-alignment-static="true">
+                            <div class="aui-dropdown2-section">
+                                <ul>
+                                  <li><a href="#decoratorLink" tabindex="-1">decoratorLink</a></li>
+                                </ul>
+                            </div>
+                            <div class="aui-dropdown2-section">
+                                <ul>
+                                  <li data-webitems="example.header.webitems" tabindex="-1">
+                                    <a href="{{webitem.link}}">{{webitem.text}}</a>
+                                  </li>
+                                </ul>
+                            </div>
+                        </div></li>
+                      <!-- You can also use a split button in this location, if more than one primary action is required. -->
+                      <li style="display: none;">
+                        <a id="aui-responsive-header-dropdown-trigger-1" class="  aui-dropdown2-trigger" aria-owns="aui-responsive-header-dropdown-content-1" aria-controls="aui-responsive-header-dropdown-content-1" aria-haspopup="true" href="#" data-aui-trigger="" resolved="" aria-expanded="false">More<span class="icon aui-icon-dropdown"></span></a>
+                        <div id="aui-responsive-header-dropdown-content-1" class="aui-dropdown2 aui-style-default aui-layer" resolved="" aria-hidden="true">
                           <div class="aui-dropdown2-section">
-                              <ul>
-                                <li><a href="#decoratorLink" tabindex="-1">decoratorLink</a></li>
-                              </ul>
+                            <ul id="aui-responsive-header-dropdown-list-1"></ul>
                           </div>
-                          <div class="aui-dropdown2-section">
-                              <ul>
-                                <li data-webitems="example.webitems" tabindex="-1">
-                                  <a href="{{webitem.link}}">{{webitem.text}}</a>
-                                </li>
-                              </ul>
-                          </div>
-                      </div></li>
-                    <!-- You can also use a split button in this location, if more than one primary action is required. -->
-                    <li style="display: none;"><a id="aui-responsive-header-dropdown-trigger-1" class="  aui-dropdown2-trigger" aria-owns="aui-responsive-header-dropdown-content-1" aria-controls="aui-responsive-header-dropdown-content-1" aria-haspopup="true" href="#" data-aui-trigger="" resolved="" aria-expanded="false">More<span class="icon aui-icon-dropdown"></span></a><div id="aui-responsive-header-dropdown-content-1" class="aui-dropdown2 aui-style-default aui-layer" resolved="" aria-hidden="true"><div class="aui-dropdown2-section"><ul id="aui-responsive-header-dropdown-list-1"></ul></div></div></li><li><a class="aui-button aui-button-primary" href="http://example.com/" resolved="">Action</a></li>
-                </ul>
-            </div>
-            <div class="aui-header-secondary">
-                <ul class="aui-nav __skate" resolved="">
-                    <li>
-                        <form action="/foo" method="post" class="aui-quicksearch">
-                            <label for="quicksearchid" class="assistive">Search</label>
-                            <input id="quicksearchid" class="search" type="text" placeholder="Search..." name="quicksearchname">
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-    <!-- App Header goes inside #header -->
-    </header>
-
-    <section id="content"><!-- AUI Sidebar -->
-      <div class="aui-sidebar">
-          <div class="aui-sidebar-wrapper">
-              <div class="aui-sidebar-body">
-
-                  <!-- AUI Page Header -->
-                  <header class="aui-page-header">
-                      <div class="aui-page-header-inner">
-                          <div class="aui-page-header-main">
-                              <h1>
-                                  Decorator Sidebar
-                              </h1>
-                              <ol class="aui-nav aui-nav-breadcrumbs">
-                                  <li>
-                                      <a href="#">
-                                        <span class="aui-nav-item-label">You can contribute links here</span>
-                                      </a>
-                                  </li>
-                              </ol>
-                          </div>
-                      </div>
-                  </header>
-
-                  <!-- AUI Navigation -->
-                  <nav class="aui-navgroup aui-navgroup-vertical">
-                      <div class="aui-navgroup-inner">
-
-                          <!-- A Sidebar group will collapse into a single trigger icon when sidebar is collapsed -->
-                          <!-- The 'actions' sidebar group type will be styled differently from normal groups when sidebar is collapsed -->
-                          <div class="aui-sidebar-group aui-sidebar-group-actions">
-
-                              <!-- the AUI Nav heading will be used as the tooltip text -->
-                              <div class="aui-nav-heading" title="Actions">
-                                  <strong>Actions</strong>
-                              </div>
-
-                              <!-- If a sidebar group does not have a nav heading, then the aui-nav's title attribute will be used
-                                   for the tooltip for the group -->
-                              <ul class="aui-nav" title="Page actions">
-                                  <li>
-                                      <a class="aui-nav-item" href="#" title="Edit">Edit</a>
-                                  </li>
-                                  <li>
-                                      <a class="aui-nav-item" href="#" title="View">View</a>
-                                  </li>
-                                  <li>
-                                      <a class="aui-nav-item" href="#" title="Share">Share</a>
-                                  </li>
-                              </ul>
-                          </div>
-
-                          <!-- A "Tier One" Sidebar group will display all of its nav items, but all nav items MUST have an AUI Icon
-                               which will be used when the sidebar is collapsed -->
-                          <div class="aui-sidebar-group aui-sidebar-group-tier-one">
-
-                              <!-- in a "Tier One" Sidebar group, AUI Nav heading is ignored, and each nav item's label will be used
-                                   as the tooltip text instead -->
-                              <div class="aui-nav-heading" title="Stuff">
-                                  <strong>Simple Nav</strong>
-                              </div>
-
-                              <ul class="aui-nav">
-                                  <li class="aui-nav-selected">
-                                      <a class="aui-nav-item" href="#">
-
-                                          <!-- "Tier One" navigation items MUST have an AUI Icon before the text label -->
-                                          <span class="aui-icon aui-icon-small aui-iconfont-info"></span>
-
-
-                                          <!-- "Tier One" Nav items labels also need an extra SPAN around them with the aui-nav-item-label class -->
-                                          <span class="aui-nav-item-label">Summary</span>
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a class="aui-nav-item" href="#" title="This is a really really long title for whatever this is">
-                                          <span class="aui-icon aui-icon-small aui-iconfont-details"></span>
-                                          <span class="aui-nav-item-label">Issues</span>
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a class="aui-nav-item" href="#">
-                                          <span class="aui-icon aui-icon-small aui-iconfont-jira-completed-task"></span>
-                                          <span class="aui-nav-item-label">Road Map</span>
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a class="aui-nav-item" href="#">
-                                          <span class="aui-icon aui-icon-small aui-iconfont-time"></span>
-                                          <span class="aui-nav-item-label">Versions</span>
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a class="aui-nav-item" href="#">
-                                          <span class="aui-icon aui-icon-small aui-iconfont-devtools-submodule"></span>
-                                          <span class="aui-nav-item-label">Components</span>
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a class="aui-nav-item" href="#">
-                                          <span class="aui-icon aui-icon-small aui-iconfont-devtools-tag"></span>
-                                          <span class="aui-nav-item-label">Labels</span>
-                                      </a>
-                                  </li>
-                              </ul>
-                          </div>
-                      </div>
-                  </nav>
+                        </div>
+                      </li>
+                      <li data-webitems="example.sidebar.webitems">
+                        <a class="aui-button aui-button-primary" id="{{webitem.key}}" href="{{webitem.link}}" resolved="">{{webitem.text}}</a>
+                      </li>
+                  </ul>
               </div>
-
-              <!-- Sidebar footer contains the expand/collapse trigger, and optionally a button or a dropdown with configuration settings -->
-              <div class="aui-sidebar-footer">
-                  <a href="http://example.com" class="aui-button aui-button-subtle aui-sidebar-settings-button" title="Settings">
-                      <span class="aui-icon aui-icon-small aui-iconfont-configure"></span>
-                      <span class="aui-button-label">Settings</span>
-                  </a>
-                  <a class="aui-button aui-button-subtle aui-sidebar-toggle aui-sidebar-footer-tipsy" title="Collapse sidebar ( [ )">
-                      <span class="aui-icon aui-icon-small"></span>
-                  </a>
+              <div class="aui-header-secondary">
+                  <ul class="aui-nav __skate" resolved="">
+                      <li>
+                          <form action="/foo" method="post" class="aui-quicksearch">
+                              <label for="quicksearchid" class="assistive">Search</label>
+                              <input id="quicksearchid" class="search" type="text" placeholder="Search..." name="quicksearchname">
+                          </form>
+                      </li>
+                  </ul>
               </div>
-          </div>
-      </div><!-- end AUI Sidebar -->
+          </nav>
+
+      <!-- App Header goes inside #header -->
+      </header>
 
       <div class="aui-page-panel">
-          <div class="aui-page-panel-inner">
-              <section class="aui-page-panel-content">
+        <div class="aui-page-panel-inner">
 
-                  <header class="aui-page-header">
-                      <div class="aui-page-header-inner">
-                          <div class="aui-page-header-main">
-                              <h1>
-                                  This page has been decorated by the main site decorator
-                              </h1>
-                              <p>
-                                The links at the top have been merged from contributing plugins.<br>
-                                Any web panels have also been merged
-                              </p>
+          <section id="content">
+            <div class="aui-sidebar">
+                <div class="aui-sidebar-wrapper">
+                    <div class="aui-sidebar-body">
+
+                        <!-- AUI Page Header -->
+                        <header class="aui-page-header">
+                            <div class="aui-page-header-inner">
+                                <div class="aui-page-header-main">
+                                    <h1>
+                                        Decorator Sidebar
+                                    </h1>
+                                    <ol class="aui-nav aui-nav-breadcrumbs">
+                                        <li>
+                                            <a href="#">
+                                              <span class="aui-nav-item-label">You can contribute links here</span>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </header>
+
+                        <!-- AUI Navigation -->
+                        <nav class="aui-navgroup aui-navgroup-vertical">
+                            <div class="aui-navgroup-inner">
+
+                                <!-- A Sidebar group will collapse into a single trigger icon when sidebar is collapsed -->
+                                <!-- The 'actions' sidebar group type will be styled differently from normal groups when sidebar is collapsed -->
+                                <div class="aui-sidebar-group aui-sidebar-group-actions">
+
+                                    <!-- the AUI Nav heading will be used as the tooltip text -->
+                                    <div class="aui-nav-heading" title="Actions">
+                                        <strong>Actions</strong>
+                                    </div>
+
+                                    <!-- If a sidebar group does not have a nav heading, then the aui-nav's title attribute will be used
+                                         for the tooltip for the group -->
+                                    <ul class="aui-nav" title="Page actions">
+                                        <li>
+                                            <a class="aui-nav-item" href="#" title="Edit">Edit</a>
+                                        </li>
+                                        <li>
+                                            <a class="aui-nav-item" href="#" title="View">View</a>
+                                        </li>
+                                        <li>
+                                            <a class="aui-nav-item" href="#" title="Share">Share</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- A "Tier One" Sidebar group will display all of its nav items, but all nav items MUST have an AUI Icon
+                                     which will be used when the sidebar is collapsed -->
+                                <div class="aui-sidebar-group aui-sidebar-group-tier-one">
+
+                                    <!-- in a "Tier One" Sidebar group, AUI Nav heading is ignored, and each nav item's label will be used
+                                         as the tooltip text instead -->
+                                    <div class="aui-nav-heading" title="Stuff">
+                                        <strong>Simple Nav</strong>
+                                    </div>
+
+                                    <ul class="aui-nav">
+                                        <li class="aui-nav-selected">
+                                            <a class="aui-nav-item" href="/plugins/simple-plugin/webpages/plugin-admin">
+
+                                                <!-- "Tier One" navigation items MUST have an AUI Icon before the text label -->
+                                                <span class="aui-icon aui-icon-small aui-iconfont-info"></span>
+
+
+                                                <!-- "Tier One" Nav items labels also need an extra SPAN around them with the aui-nav-item-label class -->
+                                                <span class="aui-nav-item-label">Plugins</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="aui-nav-item" href="#" title="This is a really really long title for whatever this is">
+                                                <span class="aui-icon aui-icon-small aui-iconfont-details"></span>
+                                                <span class="aui-nav-item-label">Issues</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="aui-nav-item" href="#">
+                                                <span class="aui-icon aui-icon-small aui-iconfont-jira-completed-task"></span>
+                                                <span class="aui-nav-item-label">Road Map</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="aui-nav-item" href="#">
+                                                <span class="aui-icon aui-icon-small aui-iconfont-time"></span>
+                                                <span class="aui-nav-item-label">Versions</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="aui-nav-item" href="#">
+                                                <span class="aui-icon aui-icon-small aui-iconfont-devtools-submodule"></span>
+                                                <span class="aui-nav-item-label">Components</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="aui-nav-item" href="#">
+                                                <span class="aui-icon aui-icon-small aui-iconfont-devtools-tag"></span>
+                                                <span class="aui-nav-item-label">Labels</span>
+
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <!-- Sidebar footer contains the expand/collapse trigger, and optionally a button or a dropdown with configuration settings -->
+                    <div class="aui-sidebar-footer">
+                        <a href="http://example.com" class="aui-button aui-button-subtle aui-sidebar-settings-button" title="Settings">
+                            <span class="aui-icon aui-icon-small aui-iconfont-configure"></span>
+                            <span class="aui-button-label">Settings</span>
+                        </a>
+                        <a class="aui-button aui-button-subtle aui-sidebar-toggle aui-sidebar-footer-tipsy" title="Collapse sidebar ( [ )">
+                            <span class="aui-icon aui-icon-small"></span>
+                        </a>
+                    </div>
+                </div>
+            </div><!-- end AUI Sidebar -->
+
+            <div class="aui-page-panel">
+                <div class="aui-page-panel-inner">
+                    <section class="aui-page-panel-content">
+                      <header class="aui-page-header">
+                          <div class="aui-page-header-inner">
+                              <div class="aui-page-header-main">
+                                  <h1>
+                                      This page has been decorated by the main site decorator
+                                  </h1>
+                                  <p>
+                                    The links at the top have been merged from contributing plugins.<br>
+                                    Any web panels have also been merged
+                                  </p>
+                              </div>
                           </div>
-                      </div>
-                  </header>
+                      </header>
 
-                  <div data-content>
-                    <!-- This will be replaced by the body of a decorated page -->
-                  </div>
-              </section>
-          </div>
+                      <div data-content>
+                        <!-- This will be replaced by the body of a decorated page -->
+                      </div>
+                    </section>
+                </div>
+            </div>
+
+          </section>
+
+        </div>
       </div>
-    </section>
+
+      <footer id="footer" role="contentinfo">
+          <section class="footer-body">
+              <ul id="aui-footer-list">
+                  <li>Copyright © 2009-2016 Atlassian</li>
+                  <li><a href="https://bitbucket.org/atlassian/aui-adg/src/2ed6861e34028394894df1442eee4aa91a92aa45/LICENSE?at=master">License</a></li>
+                  <li><a href="https://bitbucket.org/atlassian/aui/src/6.0.0/changelog.md">Changelog</a></li>
+                  <li>6.0.0</li>
+              </ul>
+              <div id="footer-logo"><a href="http://www.atlassian.com">Atlassian</a></div>
+          </section>
+      </footer>
+
+    </div>
 
     <script>
       // TODO: Save the state of the sidebar open/closed to browser storage / cookie

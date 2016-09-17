@@ -1,4 +1,5 @@
 var express = require('express');
+var requestProxy = require('express-request-proxy');
 var app = express();
 var monitor = require('node-docker-monitor');
 const exec = require('child_process').exec;
@@ -32,11 +33,67 @@ monitor({
 
 // Serve the plugins as a JSON endpoint
 app.get('/rest/api/1.0/plugins', function (req, res) {
-  var pluginKeys = [];
+  var plugins = [];
   PluginManager.getPlugins().forEach(function(p){
-    pluginKeys.push(p.getKey());
+    var plugin = {
+      name : p.getName(),
+      key : p.getKey(),
+      modules : []
+    }
+    p.getModules().forEach(function(m){
+      var module = {
+        name : m.getName(),
+        key : m.getKey(),
+        type : m.getType()
+      }
+      plugin.modules.push(module);
+    })
+    plugins.push(plugin);
   });
-  res.send(JSON.stringify(pluginKeys));
+  res.send(JSON.stringify(plugins));
+});
+
+// Serve the plugins rest endpoints
+app.get('/rest/plugins/:pluginKey/:moduleKey', function (req, res) {
+
+  var gateway = PluginManager.getGateway();
+  var plugin = PluginManager.getPluginByKey(req.params.pluginKey);
+  var port = plugin.getPort();
+  var module = plugin.getModuleByKey(req.params.moduleKey);
+  var base = module.getBase();
+  var url = "http://"+gateway+":"+port+base;
+
+  console.log("rest url is: ", url);
+
+  var proxy = requestProxy({
+      cache: false,
+      url: url
+  });
+
+  return proxy(req, res);
+
+});
+
+// Proxy plugin resources directly via module lookup
+app.get('/static/:pluginKey/:moduleKey/*', function(req, res){
+
+  var gateway = PluginManager.getGateway();
+  var plugin = PluginManager.getPluginByKey(req.params.pluginKey);
+  var port = plugin.getPort();
+  var module = plugin.getModuleByKey(req.params.moduleKey);
+  var base = module.getBase();
+  var path = req.params[0];
+  console.log("extra path is: ", path);
+  var url = "http://"+gateway+":"+port+base+path;
+  console.log("attempting to proxy the following resource: ", url);
+
+  var proxy = requestProxy({
+      cache: false,
+      url: url
+  });
+
+  return proxy(req, res);
+
 });
 
 // Serve plugin webpages under /plugins by plugin and module key
