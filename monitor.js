@@ -120,6 +120,13 @@ app.listen(80, function () {
   console.log("Docker plugin monitor listening on port 80");
 });
 
+// TODO: Add a hook mechanism, such that plugins cant receive a POST for various events
+// TODO: For example when a plugin is added or removed or various other events
+// TODO: Need to add a WebHook module so that plugins can register for events
+// TODO: Add a broadcast endpoint for sending custom events to.
+// TODO: That way a plugin can broadcast a custom event and other plugins can
+// TODO: register to receive the events e.g. via POST or Websockets
+
 PluginManager.on("plugin:added", function(plugin){
   console.log("Loaded Plugin from container (", plugin.getContainerId(), ") with key: ", plugin.getKey());
 })
