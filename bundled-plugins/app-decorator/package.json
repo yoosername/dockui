@@ -1,0 +1,13 @@
+{
+  "name": "app-decorator-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node plugin.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}

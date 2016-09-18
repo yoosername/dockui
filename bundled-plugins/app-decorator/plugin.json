@@ -1,0 +1,12 @@
+{
+  "name": "App Decorator",
+  "key": "app-decorator",
+  "modules": [
+      {
+        "type" : "webpage",
+        "name" : "Main App Decoration",
+        "key" : "app-decorator-main",
+        "path" : "/decorator"
+      }
+  ]
+}

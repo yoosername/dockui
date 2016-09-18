@@ -1,0 +1,27 @@
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  decorator:
+    depends_on:
+      - web
+    build: ./bundled-plugins/app-decorator/
+    ports:
+      - "8080"
+  resources:
+    depends_on:
+      - web
+    build: ./bundled-plugins/app-resources/
+    ports:
+      - "8080"
+  demo-plugin:
+    depends_on:
+      - decorator
+      - resources
+    build: ./bundled-plugins/demo-plugin/
+    ports:
+      - "8080"
