@@ -3,21 +3,14 @@
   <head>
     <!-- The decorator meta means this page will be merged into the defined decorator -->
     <meta name="decorator" content="app-decorator-main">
-    <title>Example Decorated Site</title>
+    <title>DEMO_PLUGIN - Example Decorated WebPage</title>
   </head>
 
   <body>
     <h3>Everything in the body of this page will be merged into the specified decorator</h3>
-    <p>Here is some text from plugin 1</p>
-
-    <div data-webfragment="example.fragment">
-      <!--
-        This elements outerHTML will be replaced by all defined web fragments targeting location example.fragment
-        web fragments are defined in the plugin.json - the data attribute will be removed as a result.
-        If there are no fragments for this location then it will be replaced with nothing.
-      -->
-    </div>
-
+    <p>This is some text on the WebPage provided by demo-plugin</p>
+    <br>
+    <h4>Below are some web items from contributing plugins</h4>
     <div>
       <ol>
         <li data-webitems="example.webitems">
@@ -32,7 +25,16 @@
       </ol>
     </div>
 
-    <div id="resource-style-example">This text should be styles by a bundled resource</div>
+    <h4>Below are some web fragments from contributing plugins</h4>
+    <div data-webfragments="plugin.demo.example1.panels">
+      <!--
+        This elements outerHTML will be replaced by all defined web fragments targeting location example.fragment
+        web fragments are defined in the plugin.json - the data attribute will be removed as a result.
+        If there are no fragments for this location then it will be replaced with nothing.
+      -->
+    </div>
+
+    <div id="resource-style-example">This text has been styled by a bundled resource</div>
 
   </body>
 </html>

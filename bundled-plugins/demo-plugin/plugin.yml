@@ -1,0 +1,107 @@
+# Here yo uspecify a name, key and version of your plugin which is used
+# by the plugin service to instantiate a unique Plugin at runtime
+# plugins are linked to their docker containers so when the container goes down the plugin dies
+name: "Demo Plugin"
+key: "demo-plugin"
+
+# Modules do the work for the plugin. See the various types for explanation of what they do
+modules:
+
+  # Webitems are links that you can insert in various places in the webapp
+  # Locations are defined within the templates themselves
+    - type : "webitem"
+      name: "Example header link"
+      key: "example-header-weblink"
+      link: "/plugins/demo-plugin/webpages/example-webpage"
+      location: "example.header.webitems"
+      weight: 10
+      text: "Link to simple plugin webpage 1"
+
+    - type : "webitem"
+      name: "Example header link 2"
+      key: "example-header-weblink-2"
+      link: "/plugins/demo-plugin/webpages/example-webpage-2"
+      location: "example.header.webitems"
+      weight: 10
+      text: "Link to simple plugin webpage 2"
+
+    - type : "webitem"
+      name: "Simple plugin example weblink"
+      key: "example-weblink"
+      link: "/plugins/demo-plugin/webpages/example-webpage"
+      location: "example.webitems"
+      weight: 10
+      text: "Link to simple plugin webpage 1"
+
+    - type : "webitem"
+      name: "Simple plugin example weblink 2"
+      key: "another-example-weblink"
+      link: "/plugins/demo-plugin/webpages/example-webpage-2"
+      location: "example.webitems"
+      weight: 10
+      text: "Link to simple plugin webpage 2"
+
+    - type : "webitem"
+      name: "Example action button in decorator nav header"
+      key: "app-nav-action-button-weblink"
+      link: "#"
+      location: "app.nav.action.webitems"
+      weight: 10
+      text: "Click Me"
+
+  # Webfragments are html partials which will be injected into the specified location
+  # for example to show a widget on an existing page ( like AUI dialog2 hidden dialog html )
+  # the path is to the served html template, and the fragment is a CSS selector for a single element to
+  # use as the actual fragment for this module
+    - type : "webfragment"
+      name : "Simple plugin example webfragment"
+      key : "example-webfragment"
+      path : "/fragments"
+      fragment : "#demo-dialog"
+      location: "app.main.footer"
+      weight : 10
+
+  # Webpages are entire html pages which can optionally be decorated by a specific decorator
+  # and additionally specify resourcesFor meta to have static resources injected from contributing plugins
+    - type : "webpage"
+      name : "Simple decorated webpage"
+      key : "example-webpage"
+      path : "/example"
+
+    - type : "webpage"
+      name : "Simple decorated webpage 2"
+      key : "example-webpage-2"
+      path : "/example2"
+
+    - type : "webpage"
+      name : "Plugins Admin"
+      key : "plugin-admin"
+      path : "/plugins"
+
+  # Rest modules define a single endpoint that is simply proxied by the main api gateway
+    - type : "rest"
+      name : "example rest endpoint"
+      key : "example-rest"
+      path : "/tasks"
+
+  # Web resources define static resources that you can contribute to existing webpages
+  # by giving a context. The context is used by webpages via the resourcesFor Meta tag
+    - type : "webresources"
+      name : "Simple plugin example webresources"
+      key : "example-webresources"
+      base : "/resources/"
+      resources :
+        - type: "js"
+          path : "example.javascript.js"
+        - type: "css"
+          path : "example.style.css"
+      context : "app.home"
+
+    - type : "webresources"
+      name : "Plugin admin webresources"
+      key : "plugin-admin-webresources"
+      base : "/resources/"
+      resources :
+        - type: "js"
+          path : "plugins.javascript.js"
+      context : "plugins.list"

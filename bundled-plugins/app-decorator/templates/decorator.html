@@ -20,6 +20,8 @@
 
     <div id="page">
 
+      <div data-webfragments="app.main.header"></div>
+
       <header id="header" role="banner">
           <!-- App Header goes inside #header -->
           <nav class="aui-header aui-dropdown2-trigger-group" role="navigation" data-aui-responsive="true">
@@ -30,31 +32,23 @@
                   <ul class="aui-nav __skate" style="width: auto;" resolved="">
                       <li>
                         <a href="#dropdown2-jira3" aria-owns="dropdown2-jira3" aria-haspopup="true" class="aui-dropdown2-trigger aui-alignment-target aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" aria-controls="dropdown2-jira3" resolved="" aria-expanded="false">Menu</a>
-
-                      <div class="aui-dropdown2 aui-style-default aui-dropdown2-in-header aui-layer aui-alignment-element aui-alignment-side-bottom aui-alignment-snap-left aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" id="dropdown2-jira3" style="top: 0px; min-width: 160px; left: 0px; z-index: auto; position: absolute; transform: translateX(427px) translateY(664px) translateZ(0px);" aria-hidden="true" resolved="" data-aui-alignment="bottom auto" data-aui-alignment-static="true">
-                            <div class="aui-dropdown2-section">
-                                <ul>
-                                  <li><a href="#decoratorLink" tabindex="-1">decoratorLink</a></li>
-                                </ul>
-                            </div>
-                            <div class="aui-dropdown2-section">
-                                <ul>
-                                  <li data-webitems="example.header.webitems" tabindex="-1">
-                                    <a href="{{webitem.link}}">{{webitem.text}}</a>
-                                  </li>
-                                </ul>
-                            </div>
-                        </div></li>
-                      <!-- You can also use a split button in this location, if more than one primary action is required. -->
-                      <li style="display: none;">
-                        <a id="aui-responsive-header-dropdown-trigger-1" class="  aui-dropdown2-trigger" aria-owns="aui-responsive-header-dropdown-content-1" aria-controls="aui-responsive-header-dropdown-content-1" aria-haspopup="true" href="#" data-aui-trigger="" resolved="" aria-expanded="false">More<span class="icon aui-icon-dropdown"></span></a>
-                        <div id="aui-responsive-header-dropdown-content-1" class="aui-dropdown2 aui-style-default aui-layer" resolved="" aria-hidden="true">
-                          <div class="aui-dropdown2-section">
-                            <ul id="aui-responsive-header-dropdown-list-1"></ul>
+                        <div class="aui-dropdown2 aui-style-default aui-dropdown2-in-header aui-layer aui-alignment-element aui-alignment-side-bottom aui-alignment-snap-left aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" id="dropdown2-jira3" style="top: 0px; min-width: 160px; left: 0px; z-index: auto; position: absolute; transform: translateX(427px) translateY(664px) translateZ(0px);" aria-hidden="true" resolved="" data-aui-alignment="bottom auto" data-aui-alignment-static="true">
+                              <div class="aui-dropdown2-section">
+                                  <ul>
+                                    <li><a href="#decoratorLink" tabindex="-1">decoratorLink</a></li>
+                                  </ul>
+                              </div>
+                              <div class="aui-dropdown2-section">
+                                  <ul>
+                                    <li data-webitems="example.header.webitems" tabindex="-1">
+                                      <a href="{{webitem.link}}">{{webitem.text}}</a>
+                                    </li>
+                                  </ul>
+                              </div>
                           </div>
-                        </div>
                       </li>
-                      <li data-webitems="example.sidebar.webitems">
+                      <!-- You can also use a split button in this location, if more than one primary action is required. -->
+                      <li data-webitems="app.nav.action.webitems">
                         <a class="aui-button aui-button-primary" id="{{webitem.key}}" href="{{webitem.link}}" resolved="">{{webitem.text}}</a>
                       </li>
                   </ul>
@@ -229,17 +223,7 @@
         </div>
       </div>
 
-      <footer id="footer" role="contentinfo">
-          <section class="footer-body">
-              <ul id="aui-footer-list">
-                  <li>Copyright © 2009-2016 Atlassian</li>
-                  <li><a href="https://bitbucket.org/atlassian/aui-adg/src/2ed6861e34028394894df1442eee4aa91a92aa45/LICENSE?at=master">License</a></li>
-                  <li><a href="https://bitbucket.org/atlassian/aui/src/6.0.0/changelog.md">Changelog</a></li>
-                  <li>6.0.0</li>
-              </ul>
-              <div id="footer-logo"><a href="http://www.atlassian.com">Atlassian</a></div>
-          </section>
-      </footer>
+      <div data-webfragments="app.main.footer"></div>
 
     </div>
 
@@ -247,6 +231,7 @@
       // TODO: Save the state of the sidebar open/closed to browser storage / cookie
       // TODO: Then keep ot that way, so when you switch between pages it doesnt ook odd
     </script>
+    <script src="/s/almond.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="//aui-cdn.atlassian.com/aui-adg/6.0.0/js/aui.min.js"></script>
     <script src="//aui-cdn.atlassian.com/aui-adg/6.0.0/js/aui-experimental.min.js"></script>

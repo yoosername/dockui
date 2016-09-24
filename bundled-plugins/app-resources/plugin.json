@@ -8,7 +8,7 @@
         "key" : "example-webresources",
         "base" : "/resources/",
         "resources" : [
-          {"type": "js", "path" : "lib/almond.js"}
+          
         ],
         "context" : "app.home"
       }

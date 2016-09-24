@@ -14,7 +14,7 @@
       {
         "type" : "webitem",
         "name" : "Example header link 2",
-        "key" : "example-header-weblink",
+        "key" : "example-header-weblink-2",
         "link" : "/plugins/demo-plugin/webpages/example-webpage-2",
         "location" : "example.header.webitems",
         "weight" : 10,
@@ -48,6 +48,14 @@
         "text" : "Click me"
       },
       {
+        "type" : "webfragment",
+        "name" : "Simple plugin example webfragment",
+        "key" : "example-webfragment",
+        "path" : "/fragments",
+        "fragment" : "#example1",
+        "weight" : 10
+      },
+      {
         "type" : "webpage",
         "name" : "Simple decorated webpage",
         "key" : "example-webpage",
@@ -64,13 +72,6 @@
         "name" : "Plugins Admin",
         "key" : "plugin-admin",
         "path" : "/plugins"
-      },
-      {
-        "type" : "webfragment",
-        "name" : "Simple plugin example webfragment",
-        "key" : "example-webfragment",
-        "path" : "example.fragment",
-        "weight" : 10
       },
       {
         "type" : "rest",
