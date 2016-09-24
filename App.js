@@ -71,25 +71,26 @@ PluginService.on("module:added", function(module){
 // Start the docker service listening for container up and down events
 MessageService.start()
 .then(function(){
+  console.log("Rabbitmq ready and listening on port 5672");
+
   return DockerService.startMonitor(
     function(container) {
-      console.log("gets here");
+
       var network = container.Name;
+      var bridged = (network && network == "bridge") ? true : false;
+      var port;
       var proceed = true;
+
+      // Dont process any of the ignored services, e.g. this one and rabbitMQ
       IGNORE_SERVICES.forEach(function(regex){
         if( regex.test(network) ){
           proceed = false;
-          console.log("DONT PROCEED");
+          console.log("Skipping service: ", network, " because its in the IGNORE list");
         }
       })
 
-      if(!proceed){
-        console.log("ignoring service: ", network);
-        return;
-      }
-
-      var bridged = (network && network == "bridge") ? true : false;
-      var port;
+      // Check if the container is using bridged mode or a custom network
+      // If Bridged use gateway and host port, if overlay then use service name and private port
       if(bridged){
         port = (container["Ports"][0] && container["Ports"][0]["PublicPort"]) ? container["Ports"][0]["PublicPort"] : DEFAULT_PLUGIN_PORT;
         PluginService.addPlugin(container.Id, port, DockerService.getGateway());
@@ -97,8 +98,10 @@ MessageService.start()
         port = (container["Ports"][0] && container["Ports"][0]["PrivatePort"]) ? container["Ports"][0]["PrivatePort"] : DEFAULT_PLUGIN_PORT;
         PluginService.addPlugin(container.Id, port, network);
       }
+
     },
     function(container) {
+      // When container is removed remove all of its modules and the associated Plugin
         PluginService.removePluginsForContainer(container.Id);
     }
   );
@@ -109,5 +112,5 @@ MessageService.start()
 })
 // Catch any rogue errors.
 .catch(function(error){
-  console.log("Error initialising the system: ", error);
+  console.log("Error initialising the plugin system: ", error);
 })

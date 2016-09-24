@@ -17,8 +17,10 @@
     "express": "^4.14.0",
     "express-request-proxy": "^2.0.0",
     "js-yaml": "^3.6.1",
+    "net": "^1.0.2",
     "node-docker-monitor": "^1.0.10",
     "requestretry": "^1.12.0",
-    "socket.io": "^1.4.8"
+    "socket.io": "^1.4.8",
+    "wait-for-port": "0.0.2"
   }
 }

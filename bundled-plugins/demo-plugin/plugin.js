@@ -2,23 +2,6 @@ var express = require('express');
 var app = express();
 var amqplib = require('amqplib');
 
-// var connection = amqp.createConnection({ host: 'rabbitmq' });
-//
-// // Wait for connection to become established.
-// connection.on('ready', function () {
-//   // Use the default 'amq.topic' exchange
-//   connection.queue('plugins.demo-plugin', function (q) {
-//       // Catch all messages
-//       q.bind('#');
-//
-//       // Receive messages
-//       q.subscribe(function (message) {
-//         // Print messages to stdout
-//         console.log("DEMO PLUGIN RECIEVED MSG:", message);
-//       });
-//   });
-// });
-
 // Plugin descriptor
 //app.use('/plugin.json', express.static('plugin.json'));
 app.use('/plugin.yml', express.static('plugin.yml'));
