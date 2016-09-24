@@ -1,0 +1,42 @@
+version: '2'
+services:
+  rabbitmq:
+    image: rabbitmq
+    networks:
+      app:
+        aliases:
+          - rabbitmq
+  app:
+    depends_on:
+      - rabbitmq
+    image: portal/app
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - app
+  decorator:
+    depends_on:
+      - web
+    image: portal/decorator
+    networks:
+      - app
+  resources:
+    depends_on:
+      - web
+    image: portal/resources
+    networks:
+      - app
+  demo-plugin:
+    depends_on:
+      - decorator
+      - resources
+    build: ./bundled-plugins/demo-plugin/
+    ports:
+      - "8080"
+    networks:
+      - app
+
+networks:
+  app:
