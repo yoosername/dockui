@@ -3,7 +3,7 @@ services:
   rabbitmq:
     image: rabbitmq
     networks:
-      app:
+      default:
         aliases:
           - rabbitmq
   app:
@@ -14,29 +14,19 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - app
+    environment:
+      DEV_MODE: "true"
   decorator:
     depends_on:
-      - web
-    image: portal/decorator
-    networks:
       - app
+    image: portal/decorator
   resources:
     depends_on:
-      - web
+      - app
     image: portal/resources
-    networks:
-      - app
-  demo-plugin:
-    depends_on:
-      - decorator
-      - resources
-    build: ./bundled-plugins/demo-plugin/
-    ports:
-      - "8080"
-    networks:
-      - app
+
 
 networks:
-  app:
+  default:
+    external:
+      name: framework

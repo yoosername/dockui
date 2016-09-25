@@ -7,6 +7,12 @@
         "name" : "Main App Decoration",
         "key" : "app-decorator-main",
         "path" : "/decorator"
+      },
+      {
+        "type" : "webpage",
+        "name" : "App Home Decoration",
+        "key" : "app-decorator-home",
+        "path" : "/home"
       }
   ]
 }

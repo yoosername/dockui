@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- The decorator meta means this page will be merged into the defined decorator -->
+    <meta name="decorator" content="app-decorator-home">
+    <title>Tour plugin</title>
+  </head>
+
+  <body>
+    <header class="aui-page-header">
+            <div class="aui-page-header-inner">
+                <div class="aui-page-header-main intro-header">
+                    <h1 id="demo-header">Docker UI Compose framework demo</h1>
+                    <p class="subtitle">
+                      Docker UI Compose is a framework for stitching together
+                      a complete web experience from seperate UI microservices
+                    </p>
+                    <a id="tour-start" class="aui-button aui-button-primary" href="#" onClick="tour.start">Take the tour</a>
+                </div>
+            </div>
+        </header>
+        <div class="aui-page-panel">
+            <div class="aui-page-panel-inner">
+                <section class="aui-page-panel-content">
+                    <div class="aui-group docs-intro">
+
+                      <ul id="hexGrid">
+                        <li class="hex">
+                            <a class="hexIn" href="#">
+                                <img src="/static/tour-plugin/example-webresources/images/documentation.png" alt="" />
+                                <h1>This is a title</h1>
+                                <p>Some sample text about the article this hexagon leads to</p>
+                            </a>
+                        </li>
+                        <li class="hex">
+                            <a class="hexIn" href="#">
+                                <img src="/static/tour-plugin/example-webresources/images/archive.png" alt="" />
+                                <h1>This is a title</h1>
+                                <p>Some sample text about the article this hexagon leads to</p>
+                            </a>
+                        </li>
+                        <li class="hex">
+                            <a class="hexIn" href="#">
+                                <img src="/static/tour-plugin/example-webresources/images/documentation.png" alt="" />
+                                <h1>This is a title</h1>
+                                <p>Some sample text about the article this hexagon leads to</p>
+                            </a>
+                        </li>
+                        <li class="hex">
+                            <a class="hexIn" href="#">
+                                <img src="/static/tour-plugin/example-webresources/images/archive.png" alt="" />
+                                <h1>This is a title</h1>
+                                <p>Some sample text about the article this hexagon leads to</p>
+                            </a>
+                        </li>
+                        <li class="hex">
+                            <a class="hexIn" href="#">
+                                <img src="/static/tour-plugin/example-webresources/images/documentation.png" alt="" />
+                                <h1>This is a title</h1>
+                                <p>Some sample text about the article this hexagon leads to</p>
+                            </a>
+                        </li>
+                      </ul>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div data-webfragments="demo.footer"></div>
+        <script src="/static/tour-plugin/example-webresources/libs/shepherd/js/tether.js"></script>
+        <script src="/static/tour-plugin/example-webresources/libs/shepherd/js/shepherd.min.js"></script>
+
+        <script>
+        var tour = new Shepherd.Tour({
+          defaults: {
+            classes: 'shepherd-theme-arrows'
+          }
+        });
+
+        tour.addStep('weblinks', {
+          title: 'Weblinks',
+          text: 'First things first, this is an example of a weblink, which has been added by a plugin',
+          attachTo: '#app-nav-action-button-weblink bottom',
+          advanceOn: '.docs-link click'
+        });
+
+        </script>
+  </body>
+</html>

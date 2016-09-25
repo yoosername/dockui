@@ -1,8 +1,8 @@
 # Here yo uspecify a name, key and version of your plugin which is used
 # by the plugin service to instantiate a unique Plugin at runtime
 # plugins are linked to their docker containers so when the container goes down the plugin dies
-name: "Demo Plugin"
-key: "demo-plugin"
+name: "Tour Plugin"
+key: "tour-plugin"
 
 # Modules do the work for the plugin. See the various types for explanation of what they do
 modules:
@@ -58,7 +58,7 @@ modules:
       key : "example-webfragment"
       path : "/fragments"
       fragment : "#demo-dialog"
-      location: "app.main.footer"
+      location: "demo.footer"
       weight : 10
 
   # Webpages are entire html pages which can optionally be decorated by a specific decorator
@@ -95,6 +95,15 @@ modules:
           path : "example.javascript.js"
         - type: "css"
           path : "example.style.css"
+      context : "app.home"
+
+    - type : "webresources"
+      name : "hexgon styles"
+      key : "example-hex-styles"
+      base : "/resources/"
+      resources :
+        - type: "css"
+          path : "hexagons.css"
       context : "app.home"
 
     - type : "webresources"

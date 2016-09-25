@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="includeResourcesFor" content="app.home">
+
+    <title>Main Site Decorator</title>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.0/css/aui.min.css" media="all">
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.0/css/aui-experimental.min.css" media="all">
+    <link rel="stylesheet" href="/static/tour-plugin/example-webresources/libs/shepherd/css/shepherd-theme-arrows.css" media="all">
+  </head>
+
+  <body>
+
+    <div id="page">
+
+      <div data-webfragments="app.home.header"></div>
+
+      <header id="header" role="banner">
+          <!-- App Header goes inside #header -->
+          <nav class="aui-header aui-dropdown2-trigger-group" role="navigation" data-aui-responsive="true">
+              <div class="aui-header-primary">
+                  <h1 id="logo" class="aui-header-logo aui-header-logo-aui">
+                    <a href="#"><span class="aui-header-logo-device">Home</span></a>
+                  </h1>
+                  <ul class="aui-nav __skate" style="width: auto;" resolved="">
+                      <li>
+                        <a href="#dropdown2-jira3" aria-owns="dropdown2-jira3" aria-haspopup="true" class="aui-dropdown2-trigger aui-alignment-target aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" aria-controls="dropdown2-jira3" resolved="" aria-expanded="false">Menu</a>
+                        <div class="aui-dropdown2 aui-style-default aui-dropdown2-in-header aui-layer aui-alignment-element aui-alignment-side-bottom aui-alignment-snap-left aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" id="dropdown2-jira3" style="top: 0px; min-width: 160px; left: 0px; z-index: auto; position: absolute; transform: translateX(427px) translateY(664px) translateZ(0px);" aria-hidden="true" resolved="" data-aui-alignment="bottom auto" data-aui-alignment-static="true">
+                              <div class="aui-dropdown2-section">
+                                  <ul>
+                                    <li data-webitems="example.header.webitems" tabindex="-1">
+                                      <a href="{{webitem.link}}">{{webitem.text}}</a>
+                                    </li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </li>
+                      <!-- You can also use a split button in this location, if more than one primary action is required. -->
+                      <li data-webitems="app.nav.action.webitems">
+                        <a class="aui-button aui-button-primary" id="{{webitem.key}}" href="{{webitem.link}}" resolved="">{{webitem.text}}</a>
+                      </li>
+                  </ul>
+              </div>
+              <div class="aui-header-secondary">
+                  <ul class="aui-nav __skate" resolved="">
+                      <li>
+                          <form action="/foo" method="post" class="aui-quicksearch">
+                              <label for="quicksearchid" class="assistive">Search</label>
+                              <input id="quicksearchid" class="search" type="text" placeholder="Search..." name="quicksearchname">
+                          </form>
+                      </li>
+                  </ul>
+              </div>
+          </nav>
+
+      <!-- App Header goes inside #header -->
+      </header>
+
+      <section id="content" role="main">
+
+        <div data-content>
+          <!-- This will be replaced by the body of a decorated page -->
+        </div>
+
+      </section>
+
+      <div data-webfragments="app.home.footer"></div>
+
+    </div>
+
+    <script src="/s/almond.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/6.0.0/js/aui.min.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/6.0.0/js/aui-experimental.min.js"></script>
+  </body>
+</html>

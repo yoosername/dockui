@@ -85,18 +85,21 @@ MessageService.start()
       IGNORE_SERVICES.forEach(function(regex){
         if( regex.test(network) ){
           proceed = false;
-          console.log("Skipping service: ", network, " because its in the IGNORE list");
         }
       })
 
-      // Check if the container is using bridged mode or a custom network
-      // If Bridged use gateway and host port, if overlay then use service name and private port
-      if(bridged){
-        port = (container["Ports"][0] && container["Ports"][0]["PublicPort"]) ? container["Ports"][0]["PublicPort"] : DEFAULT_PLUGIN_PORT;
-        PluginService.addPlugin(container.Id, port, DockerService.getGateway());
+      if( proceed ){
+        // Check if the container is using bridged mode or a custom network
+        // If Bridged use gateway and host port, if overlay then use service name and private port
+        if(bridged){
+          port = (container["Ports"][0] && container["Ports"][0]["PublicPort"]) ? container["Ports"][0]["PublicPort"] : DEFAULT_PLUGIN_PORT;
+          PluginService.addPlugin(container.Id, port, DockerService.getGateway());
+        }else{
+          port = (container["Ports"][0] && container["Ports"][0]["PrivatePort"]) ? container["Ports"][0]["PrivatePort"] : DEFAULT_PLUGIN_PORT;
+          PluginService.addPlugin(container.Id, port, network);
+        }
       }else{
-        port = (container["Ports"][0] && container["Ports"][0]["PrivatePort"]) ? container["Ports"][0]["PrivatePort"] : DEFAULT_PLUGIN_PORT;
-        PluginService.addPlugin(container.Id, port, network);
+        console.log("Skipping service: ", network, " because its in the IGNORE list");
       }
 
     },
