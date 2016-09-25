@@ -2,7 +2,7 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(["tether"], factory);
+    define("shepherd",["tether"], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('tether'));
   } else {

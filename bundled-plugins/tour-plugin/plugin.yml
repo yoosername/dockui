@@ -12,7 +12,7 @@ modules:
     - type : "webitem"
       name: "Example header link"
       key: "example-header-weblink"
-      link: "/plugins/demo-plugin/webpages/example-webpage"
+      link: "/plugins/tour-plugin/webpages/example-webpage"
       location: "example.header.webitems"
       weight: 10
       text: "Link to simple plugin webpage 1"
@@ -20,7 +20,7 @@ modules:
     - type : "webitem"
       name: "Example header link 2"
       key: "example-header-weblink-2"
-      link: "/plugins/demo-plugin/webpages/example-webpage-2"
+      link: "/plugins/tour-plugin/webpages/example-webpage-2"
       location: "example.header.webitems"
       weight: 10
       text: "Link to simple plugin webpage 2"
@@ -28,7 +28,7 @@ modules:
     - type : "webitem"
       name: "Simple plugin example weblink"
       key: "example-weblink"
-      link: "/plugins/demo-plugin/webpages/example-webpage"
+      link: "/plugins/tour-plugin/webpages/example-webpage"
       location: "example.webitems"
       weight: 10
       text: "Link to simple plugin webpage 1"
@@ -36,7 +36,7 @@ modules:
     - type : "webitem"
       name: "Simple plugin example weblink 2"
       key: "another-example-weblink"
-      link: "/plugins/demo-plugin/webpages/example-webpage-2"
+      link: "/plugins/tour-plugin/webpages/example-webpage-2"
       location: "example.webitems"
       weight: 10
       text: "Link to simple plugin webpage 2"
@@ -47,7 +47,7 @@ modules:
       link: "#"
       location: "app.nav.action.webitems"
       weight: 10
-      text: "Click Me"
+      text: "Action"
 
   # Webfragments are html partials which will be injected into the specified location
   # for example to show a widget on an existing page ( like AUI dialog2 hidden dialog html )

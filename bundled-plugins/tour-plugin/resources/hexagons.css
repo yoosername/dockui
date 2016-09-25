@@ -68,7 +68,7 @@ body {
 .hex h1 {
     bottom: 50%;
     padding-top:50%;
-    font-size: 1.5em;
+    font-size: 1.0em;
     z-index: 1;
     -webkit-transform:translateY(-100%) translatez(-1px);
         -ms-transform:translateY(-100%) translatez(-1px);
@@ -229,8 +229,8 @@ body {
         clear: left;
     }
 }
-@media (max-width: 400px) {
+@media (max-width: 200px) {
     #hexGrid {
-        font-size: 13px;
+        font-size: 10px;
     }
 }
