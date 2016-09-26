@@ -6,6 +6,11 @@ html,
 body {
   height: 100%;
 }
+
+.aui-header-logo a span{
+  font-size: 24px;
+}
+
 #page {
   min-height: 100%;
   position: relative;

@@ -22,15 +22,15 @@
           <nav class="aui-header aui-dropdown2-trigger-group" role="navigation" data-aui-responsive="true">
               <div class="aui-header-primary">
                   <h1 id="logo" class="aui-header-logo aui-header-logo-aui">
-                    <a href="#"><span class="aui-header-logo-device">Home</span></a>
+                    <a href="/"><span>App</span></a>
                   </h1>
                   <ul class="aui-nav __skate" style="width: auto;" resolved="">
                       <li>
-                        <a href="#dropdown2-jira3" aria-owns="dropdown2-jira3" aria-haspopup="true" class="aui-dropdown2-trigger aui-alignment-target aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" aria-controls="dropdown2-jira3" resolved="" aria-expanded="false">Menu</a>
+                        <a href="#dropdown2-jira3" aria-owns="dropdown2-jira3" aria-haspopup="true" class="aui-dropdown2-trigger aui-alignment-target aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" aria-controls="dropdown2-jira3" resolved="" aria-expanded="false">Quick links</a>
                         <div class="aui-dropdown2 aui-style-default aui-dropdown2-in-header aui-layer aui-alignment-element aui-alignment-side-bottom aui-alignment-snap-left aui-alignment-abutted aui-alignment-abutted-left aui-alignment-element-attached-top aui-alignment-element-attached-left aui-alignment-target-attached-bottom aui-alignment-target-attached-left" id="dropdown2-jira3" style="top: 0px; min-width: 160px; left: 0px; z-index: auto; position: absolute; transform: translateX(427px) translateY(664px) translateZ(0px);" aria-hidden="true" resolved="" data-aui-alignment="bottom auto" data-aui-alignment-static="true">
                               <div class="aui-dropdown2-section">
                                   <ul>
-                                    <li data-webitems="example.header.webitems" tabindex="-1">
+                                    <li data-webitems="app.home.header.primary.dropdown.webitems" tabindex="-1">
                                       <a href="{{webitem.link}}">{{webitem.text}}</a>
                                     </li>
                                   </ul>
@@ -38,7 +38,7 @@
                           </div>
                       </li>
                       <!-- You can also use a split button in this location, if more than one primary action is required. -->
-                      <li data-webitems="app.nav.action.webitems">
+                      <li data-webitems="app.home.header.primary.webitems">
                         <a class="aui-button aui-button-primary" id="{{webitem.key}}" href="{{webitem.link}}" resolved="">{{webitem.text}}</a>
                       </li>
                   </ul>
@@ -51,6 +51,18 @@
                               <input id="quicksearchid" class="search" type="text" placeholder="Search..." name="quicksearchname">
                           </form>
                       </li>
+                      <li><a href="#dropdown2-header8" aria-owns="dropdown2-header8" aria-haspopup="true" class="aui-dropdown2-trigger-arrowless aui-dropdown2-trigger" aria-controls="dropdown2-header8" resolved="" aria-expanded="false"><span class="aui-icon aui-icon-small aui-iconfont-configure">Admin</span></a>
+                      <div class="aui-dropdown2 aui-style-default aui-dropdown2-in-header aui-layer" id="dropdown2-header8" style="display: none; top: 40px; min-width: 160px; left: 1213px; " aria-hidden="true" resolved="">
+                          <div class="aui-dropdown2-section">
+                            <div class="aui-dropdown2-heading">
+                                <strong>Admin</strong>
+                            </div>
+                            <ul>
+                                <li><a href="/admin/plugins">Manage Plugins</a></li>
+                            </ul>
+                          </div>
+                      </div>
+                    </li>
                   </ul>
               </div>
           </nav>

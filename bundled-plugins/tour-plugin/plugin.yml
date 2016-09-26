@@ -9,50 +9,34 @@ modules:
 
   # Routes are a way to rewrite more readable urls for a given webpage or resource
     - type : "route"
-      name: "Demo route as home"
-      key: "demo-as-main-route"
-      route: "/"
-      path: "/plugins/tour-plugin/webpages/example-webpage"
+      name: "Tour route"
+      key: "tour-route"
+      route: "/tour"
+      path: "/plugins/tour-plugin/webpages/tour"
 
   # Webitems are links that you can insert in various places in the webapp
   # Locations are defined within the templates themselves
     - type : "webitem"
-      name: "Example header link"
-      key: "example-header-weblink"
-      link: "/plugins/tour-plugin/webpages/example-webpage"
-      location: "example.header.webitems"
+      name: "Documentation link"
+      key: "documentation-link"
+      link: "/plugins/docs-plugin/webpages/docs"
+      location: "app.home.header.primary.dropdown.webitems"
       weight: 10
-      text: "Link to simple plugin webpage 1"
+      text: "Documentation"
 
     - type : "webitem"
-      name: "Example header link 2"
-      key: "example-header-weblink-2"
-      link: "/plugins/tour-plugin/webpages/example-webpage-2"
-      location: "example.header.webitems"
+      name: "Tutorial link"
+      key: "tutorial-link"
+      link: "/plugins/tutorial-plugin/webpages/tutorial"
+      location: "app.home.header.primary.dropdown.webitems"
       weight: 10
-      text: "Link to simple plugin webpage 2"
+      text: "5 Min Tutorial"
 
     - type : "webitem"
-      name: "Simple plugin example weblink"
-      key: "example-weblink"
-      link: "/plugins/tour-plugin/webpages/example-webpage"
-      location: "example.webitems"
-      weight: 10
-      text: "Link to simple plugin webpage 1"
-
-    - type : "webitem"
-      name: "Simple plugin example weblink 2"
-      key: "another-example-weblink"
-      link: "/plugins/tour-plugin/webpages/example-webpage-2"
-      location: "example.webitems"
-      weight: 10
-      text: "Link to simple plugin webpage 2"
-
-    - type : "webitem"
-      name: "Example action button in decorator nav header"
-      key: "app-nav-action-button-weblink"
+      name: "Action Button"
+      key: "action-button"
       link: "#"
-      location: "app.nav.action.webitems"
+      location: "app.home.header.primary.webitems"
       weight: 10
       text: "Action"
 
@@ -71,19 +55,14 @@ modules:
   # Webpages are entire html pages which can optionally be decorated by a specific decorator
   # and additionally specify resourcesFor meta to have static resources injected from contributing plugins
     - type : "webpage"
-      name : "Simple decorated webpage"
-      key : "example-webpage"
-      path : "/example"
+      name : "App tour homepage"
+      key : "tour"
+      path : "/tour"
 
     - type : "webpage"
-      name : "Simple decorated webpage 2"
-      key : "example-webpage-2"
-      path : "/example2"
-
-    - type : "webpage"
-      name : "Plugins Admin"
+      name : "Manage Plugins"
       key : "plugin-admin"
-      path : "/plugins"
+      path : "/admin/plugins"
 
   # Rest modules define a single endpoint that is simply proxied by the main api gateway
     - type : "rest"
@@ -94,24 +73,15 @@ modules:
   # Web resources define static resources that you can contribute to existing webpages
   # by giving a context. The context is used by webpages via the resourcesFor Meta tag
     - type : "webresources"
-      name : "Simple plugin example webresources"
-      key : "example-webresources"
+      name : "App tour webresources"
+      key : "tour-resources"
       base : "/resources/"
       resources :
         - type: "js"
-          path : "example.javascript.js"
+          path : "tour.javascript.js"
         - type: "css"
-          path : "example.style.css"
-      context : "app.home"
-
-    - type : "webresources"
-      name : "hexgon styles"
-      key : "example-hex-styles"
-      base : "/resources/"
-      resources :
-        - type: "css"
-          path : "hexagons.css"
-      context : "app.home"
+          path : "tour.style.css"
+      context : "plugin.tour"
 
     - type : "webresources"
       name : "Plugin admin webresources"

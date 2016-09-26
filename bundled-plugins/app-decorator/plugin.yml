@@ -1,0 +1,29 @@
+# Here you specify a name, key and version of your plugin which is used
+# by the plugin service to instantiate a unique Plugin at runtime
+# plugins are linked to their docker containers so when the container goes down the plugin dies
+name: "App Decorator"
+key: "app-decorator"
+
+# Modules do the work for the plugin. See the various types for explanation of what they do
+modules:
+
+  # Webpages are entire html pages which can optionally be decorated by a specific decorator
+  # and additionally specify resourcesFor meta to have static resources injected from contributing plugins
+    - type : "webpage"
+      name : "Home Decorator"
+      key : "app-home-decorator"
+      path : "/home"
+
+  # Web resources define static resources that you can contribute to existing webpages
+  # by giving a context. The context is used by webpages via the resourcesFor Meta tag
+
+    - type : "webresources"
+      name : "App home webresources"
+      key : "app-home-resources"
+      base : "/resources/"
+      resources :
+        - type: "js"
+          path : "app.home.decorator.js"
+        - type: "css"
+          path : "app.home.decorator.css"
+      context : "app.home"

@@ -2,8 +2,9 @@
 <html lang="en">
   <head>
     <!-- The decorator meta means this page will be merged into the defined decorator -->
-    <meta name="decorator" content="app-decorator-home">
-    <link rel="stylesheet" href="/static/tour-plugin/example-webresources/libs/shepherd/css/shepherd-theme-dark.css" media="all">
+    <meta name="decorator" content="app-home-decorator">
+    <meta name="includeResourcesFor" content="plugin.tour">
+    <link rel="stylesheet" href="/static/tour-plugin/tour-resources/libs/shepherd/css/shepherd-theme-dark.css" media="all">
     <title>Tour plugin</title>
   </head>
 
@@ -27,7 +28,7 @@
                       <div class="aui-item">
                           <div class="item-wrapper">
                               <a href="/aui/latest/" class="centered">
-                                  <img src="/static/tour-plugin/example-webresources/images/documentation.png" class="introblob">
+                                  <img src="/static/tour-plugin/tour-resources/images/documentation.png" class="introblob">
                               </a>
                               <h2>Documentation</h2>
                               <p>Check out the documentation to learn more about creating plugins and the various UI modules.</p>
@@ -40,7 +41,7 @@
                       <div class="aui-item">
                           <div class="item-wrapper">
                               <a id="getting-started" href="/aui/getting-started.html" class="centered">
-                                  <img src="/static/tour-plugin/example-webresources/images/archive.png" class="introblob">
+                                  <img src="/static/tour-plugin/tour-resources/images/archive.png" class="introblob">
                               </a>
                               <h2>Tutorials</h2>
                               <p>Follow the quick start tutorial below to get up and running in less than 5 minutes.</p>
@@ -56,8 +57,8 @@
         </div>
 
         <div data-webfragments="demo.footer"></div>
-        <script src="/static/tour-plugin/example-webresources/libs/shepherd/js/tether.js"></script>
-        <script src="/static/tour-plugin/example-webresources/libs/shepherd/js/shepherd.js"></script>
+        <script src="/static/tour-plugin/tour-resources/libs/shepherd/js/tether.js"></script>
+        <script src="/static/tour-plugin/tour-resources/libs/shepherd/js/shepherd.js"></script>
 
         <script>
         define("tour", ["shepherd", "exports"], function(Shepherd, x){
@@ -71,7 +72,7 @@
           tour.addStep('weblinks', {
             title: 'Weblinks',
             text: 'First things first, this is an example of a weblink, which has been added by a plugin',
-            attachTo: '#app-nav-action-button-weblink bottom',
+            attachTo: '#action-button bottom',
             advanceOn: '.docs-link click'
           });
 

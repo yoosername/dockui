@@ -10,10 +10,7 @@ app.use('/plugin.yml', express.static('plugin.yml'));
 app.use('/plugins', express.static('templates/plugins.html'));
 
 // Webpage decorated by the above
-app.use('/example', express.static('templates/example.html'));
-
-// Webpage decorated by the above
-app.use('/example2', express.static('templates/example2.html'));
+app.use('/tour', express.static('templates/tour.html'));
 
 // Webfragments
 app.use('/fragments', express.static('templates/fragments.html'));

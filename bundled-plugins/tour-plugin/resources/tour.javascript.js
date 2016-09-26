@@ -1,10 +1,10 @@
 define(
-  "example/resource/bundle",
+  "tour/action/dialog",
   [],
   function(){
 
     // Hides the dialog when close button in dialog is clicked
-    $("#app-nav-action-button-weblink").click(function(e){
+    $("#action-button").click(function(e){
       e.preventDefault();
       AJS.dialog2("#demo-dialog").show();
     })
@@ -17,4 +17,4 @@ define(
 
 })
 
-require("example/resource/bundle");
+require("tour/action/dialog");
