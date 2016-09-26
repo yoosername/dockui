@@ -1,0 +1,13 @@
+version: '2'
+services:
+  docs-plugin:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    volumes:
+      - .:/usr/src/app
+
+networks:
+  default:
+    external:
+      name: framework

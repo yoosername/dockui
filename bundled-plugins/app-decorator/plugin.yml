@@ -7,6 +7,14 @@ key: "app-decorator"
 # Modules do the work for the plugin. See the various types for explanation of what they do
 modules:
 
+    - type : "webitem"
+      name: "Action Button"
+      key: "action-button"
+      link: "#"
+      location: "app.home.header.primary.webitems"
+      weight: 10
+      text: "Action"
+
   # Webpages are entire html pages which can optionally be decorated by a specific decorator
   # and additionally specify resourcesFor meta to have static resources injected from contributing plugins
     - type : "webpage"
