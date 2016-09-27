@@ -11,7 +11,8 @@ modules:
     - type : "route"
       name: "Admin route"
       key: "admin-route"
-      route: "/admin/*"
+      routes:
+        - "/admin/*"
       path: "/plugins/admin-plugin/webpages/$1"
 
   # Webitems are links that you can insert in various places in the webapp

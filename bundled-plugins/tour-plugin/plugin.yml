@@ -11,7 +11,9 @@ modules:
     - type : "route"
       name: "Tour route"
       key: "tour-route"
-      route: "/tour"
+      routes:
+        - "/"
+        - "/tour"
       path: "/plugins/tour-plugin/webpages/tour"
 
   # Webitems are links that you can insert in various places in the webapp

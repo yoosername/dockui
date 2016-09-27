@@ -244,7 +244,6 @@ var Step = (function (_Evented) {
         }
       };
 
-      // TODO: this should also bind/unbind on show/hide
       document.body.addEventListener(event, handler);
       this.on('destroy', function () {
         return document.body.removeEventListener(event, handler);

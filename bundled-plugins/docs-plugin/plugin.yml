@@ -11,7 +11,8 @@ modules:
     - type : "route"
       name: "Docs route"
       key: "docs-route"
-      route: "/docs"
+      routes:
+        - "/docs"
       path: "/plugins/docs-plugin/webpages/docs"
 
   # Webitems are links that you can insert in various places in the webapp

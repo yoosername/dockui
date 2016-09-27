@@ -7,8 +7,8 @@ const IGNORE_SERVICES = [/rabbitmq/, /web/];
 const DEFAULT_PLUGIN_PORT = 8080;
 
 // TODO: Add some kind of Global Messaging service.
-// TODO: Give plugins a module type for declaring a messageListener.
-// TODO: those services can then receive messages at some local endpoint.
+// : Give plugins a module type for declaring a messageListener.
+// : those services can then receive messages at some local endpoint.
 
 // TODO: New Plugin lifecycle methods
 /**
@@ -45,11 +45,11 @@ run a task. Run the task and then broadcast the result.
 
 **/
 // TODO: Add a hook mechanism, such that plugins cant receive a POST for various events
-// TODO: For example when a plugin is added or removed or various other events
-// TODO: Need to add a WebHook module so that plugins can register for events
-// TODO: Add a broadcast endpoint for sending custom events to.
-// TODO: That way a plugin can broadcast a custom event and other plugins can
-// TODO: register to receive the events e.g. via POST or Websockets
+// : For example when a plugin is added or removed or various other events
+// : Need to add a WebHook module so that plugins can register for events
+// : Add a broadcast endpoint for sending custom events to.
+// : That way a plugin can broadcast a custom event and other plugins can
+// : register to receive the events e.g. via POST or Websockets
 
 
 
