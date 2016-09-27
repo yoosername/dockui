@@ -6,6 +6,7 @@ var app = express();
 app.use('/plugin.yml', express.static('plugin.yml'));
 
 // Webpage decorated by the above
+app.use('/admin', express.static('templates/admin.html'));
 app.use('/plugin', express.static('templates/plugin.html'));
 
 // Serve static files

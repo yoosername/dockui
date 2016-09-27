@@ -27,6 +27,11 @@ modules:
   # Webpages are entire html pages which can optionally be decorated by a specific decorator
   # and additionally specify resourcesFor meta to have static resources injected from contributing plugins
     - type : "webpage"
+      name : "Admin Decorator"
+      key : "admin-decorator"
+      path : "/admin"
+
+    - type : "webpage"
       name : "Plugin admin page"
       key : "plugins"
       path : "/plugin"
