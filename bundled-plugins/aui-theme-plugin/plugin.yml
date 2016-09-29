@@ -1,8 +1,8 @@
 # Here you specify a name, key and version of your plugin which is used
 # by the plugin service to instantiate a unique Plugin at runtime
 # plugins are linked to their docker containers so when the container goes down the plugin dies
-name: "App Decorator"
-key: "app-decorator"
+name: "AUI Theme"
+key: "aui-theme-plugin"
 
 # Modules do the work for the plugin. See the various types for explanation of what they do
 modules:

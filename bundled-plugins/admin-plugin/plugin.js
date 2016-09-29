@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+// TODO: Add ability to disable and enable discovered plugins
+
 // Plugin descriptor
 //app.use('/plugin.json', express.static('plugin.json'));
 app.use('/plugin.yml', express.static('plugin.yml'));

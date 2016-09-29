@@ -68,12 +68,3 @@ modules:
         - type: "css"
           path : "tour.style.css"
       context : "plugin.tour"
-
-    - type : "webresources"
-      name : "Plugin admin webresources"
-      key : "plugin-admin-webresources"
-      base : "/resources/"
-      resources :
-        - type: "js"
-          path : "plugins.javascript.js"
-      context : "plugins.list"

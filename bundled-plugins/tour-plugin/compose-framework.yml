@@ -16,14 +16,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       DEV_MODE: "true"
-  decorator:
+  aui-theme-plugin:
     depends_on:
       - app
-    image: portal/decorator
-  resources:
-    depends_on:
-      - app
-    image: portal/resources
+    image: portal/aui-theme-plugin
 
 
 networks:
