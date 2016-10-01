@@ -11,11 +11,7 @@ modules:
 
   # Auth provider provide capabilities to authenticate the user session
   # As providers are chained, Weight represents where in the order this will fire
-    - type : "authprovider"
-      name: "Admin Auth Provider"
-      key: "admin-auth-provider"
-      path: "/authenticate"
-      weight: 10
+
 
   # Routes are a way to rewrite more readable urls for a given webpage or resource
     - type : "route"
