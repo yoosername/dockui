@@ -1,11 +1,11 @@
 version: '2'
 services:
-  admin-plugin:
+  tour-plugin:
     build:
       context: .
       dockerfile: Dockerfile-dev
     volumes:
-      - .:/usr/src/app
+      - ..:/usr/src/app
 
 networks:
   default:

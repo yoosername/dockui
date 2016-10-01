@@ -1,0 +1,11 @@
+FROM alpine
+
+RUN apk add --update nodejs
+
+VOLUME ["/usr/src/app/"]
+WORKDIR /usr/src/app
+RUN npm install
+RUN npm install nodemon -g
+
+EXPOSE 8080
+CMD [ "nodemon", "-e", "js,css,html", "npm", "run", "dev" ]

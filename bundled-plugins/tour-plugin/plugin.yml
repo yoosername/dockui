@@ -45,11 +45,6 @@ modules:
       key : "tour"
       path : "/tour"
 
-    - type : "webpage"
-      name : "Manage Plugins"
-      key : "plugin-admin"
-      path : "/admin/plugins"
-
   # Rest modules define a single endpoint that is simply proxied by the main api gateway
     - type : "rest"
       name : "example rest endpoint"

@@ -18,6 +18,13 @@ modules:
   # Webitems are links that you can insert in various places in the webapp
   # Locations are defined within the templates themselves
 
+    - type : "webitem"
+      name: "Manage Plugins Link"
+      key: "manage-plugins-link"
+      link: "/admin/plugin"
+      location: "app.home.header.secondary.admin.webitems"
+      weight: 10
+      text: "Manage Plugins"
   # Webfragments are html partials which will be injected into the specified location
   # for example to show a widget on an existing page ( like AUI dialog2 hidden dialog html )
   # the path is to the served html template, and the fragment is a CSS selector for a single element to
@@ -27,13 +34,8 @@ modules:
   # Webpages are entire html pages which can optionally be decorated by a specific decorator
   # and additionally specify resourcesFor meta to have static resources injected from contributing plugins
     - type : "webpage"
-      name : "Admin Decorator"
-      key : "admin-decorator"
-      path : "/admin"
-
-    - type : "webpage"
       name : "Plugin admin page"
-      key : "plugins"
+      key : "plugin"
       path : "/plugin"
 
   # Rest modules define a single endpoint that is simply proxied by the main api gateway

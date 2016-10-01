@@ -6,21 +6,16 @@ services:
       default:
         aliases:
           - rabbitmq
-  app:
+  dockui-proxy:
     depends_on:
       - rabbitmq
-    image: portal/app
+    image: dockui/proxy
     ports:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       DEV_MODE: "true"
-  aui-theme-plugin:
-    depends_on:
-      - app
-    image: portal/aui-theme-plugin
-
 
 networks:
   default:
