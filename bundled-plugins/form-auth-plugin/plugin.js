@@ -1,4 +1,5 @@
 var express = require('express');
+var path = require('path');
 var app = express();
 
 // TODO: Add ability to disable and enable discovered plugins
