@@ -17,10 +17,12 @@ modules:
 
   # Webpages are entire html pages which can optionally be decorated by a specific decorator
   # and additionally specify resourcesFor meta to have static resources injected from contributing plugins
+  # If its a decorator then we can add the optional field decorator: true
     - type : "webpage"
       name : "Home Decorator"
       key : "app-home-decorator"
       path : "/home"
+      decorator: true
 
   # Web resources define static resources that you can contribute to existing webpages
   # by giving a context. The context is used by webpages via the resourcesFor Meta tag
