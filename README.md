@@ -18,21 +18,40 @@ You should be able to add and remove functionality simply by starting / stopping
 
 Build and start the UI proxy first, then start any plugins independently. On a Dev machine just run them in seperate tabs.
 
-# Build
+# Prereqs
+* docker
+* docker-compose
+
+# Build Framework example
 ```bash
+git clone https://github.com/yoosername/dockui
 docker build --tag dockui/proxy .
 ```
 
-# Run Framework
+# Run Framework example
 ```bash
 cd bin
 ./startframework.sh
 ```
 
-# Run Plugins in seperate tabs ( or build them and create a docker-compose file representing the site )
+# Run Plugin example ( dev mode )
+do this is seperate tabs so you can see whats going on
+
 ```bash
 cd bundled-plugins/aui-theme-plugin/bin
 ./startplugin.sh
+```
+
+# Build Plugin example
+```bash
+cd bundled-plugins/aui-theme-plugin/bin
+docker build --tag dockui/aui-theme-plugin .
+```
+
+# Run whole site example
+Simply build a docker-compose file containing all of the services making up your site and run it like this:
+```bash
+docker-compose up -d .
 ```
 
 # TODO
