@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Rebuild it
-docker-compose -f compose-plugin.yml build
+
+BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+pushd $BIN_DIR/..
 
 # Run it in dev mode
-exec docker-compose -f compose-plugin.yml up
+exec docker-compose up --build

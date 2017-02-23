@@ -15,6 +15,14 @@ modules:
       weight: 10
       text: "Action"
 
+    - type : "webitem"
+      name: "Site Branding Banner Title"
+      key: "branding-header-title"
+      link: "/"
+      location: "app.home.branding.title"
+      weight: 10
+      text: "Dock UI"
+
   # Webpages are entire html pages which can optionally be decorated by a specific decorator
   # and additionally specify resourcesFor meta to have static resources injected from contributing plugins
   # If its a decorator then we can add the optional field decorator: true

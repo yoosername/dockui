@@ -3,9 +3,9 @@ services:
   aui-theme-plugin:
     build:
       context: .
-      dockerfile: Dockerfile-dev
+      dockerfile: Dockerfile
     volumes:
-      - ..:/usr/src/app
+      - .:/usr/src/app
 
 networks:
   default:

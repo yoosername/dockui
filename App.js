@@ -111,7 +111,7 @@ MessageService.start()
 })
 // Then start the WebService listening on port 80 on the host
 .then(function(){
-  WebService.start(80)
+  WebService.start(8080)
 })
 // Catch any rogue errors.
 .catch(function(error){

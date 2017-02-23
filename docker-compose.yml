@@ -9,10 +9,13 @@ services:
   dockui-proxy:
     depends_on:
       - rabbitmq
-    image: dockui/proxy
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "80:8080"
     volumes:
+      - .:/usr/src/app
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       DEV_MODE: "true"

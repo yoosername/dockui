@@ -2,16 +2,16 @@ FROM alpine
 
 RUN apk add --update nodejs
 
-# Create app directory
 RUN mkdir -p /usr/src/app
+
+VOLUME ["/usr/src/app/"]
 WORKDIR /usr/src/app
 
-# Install app dependencies
-COPY package.json /usr/src/app/
-RUN npm install
-
-# Bundle app source
 COPY . /usr/src/app
 
+RUN npm install
+RUN npm install nodemon -g
+
 EXPOSE 8080
-CMD [ "npm", "start" ]
+
+CMD [ "nodemon", "-e", "js,css,html", "App.js" ]

@@ -30,21 +30,20 @@ docker build --tag dockui/proxy .
 
 # Run Framework example
 ```bash
-cd bin
-./startframework.sh
+start.sh
 ```
 
 # Run Plugin example ( dev mode )
 do this is seperate tabs so you can see whats going on
 
 ```bash
-cd bundled-plugins/aui-theme-plugin/bin
-./startplugin.sh
+cd bundled-plugins/aui-theme-plugin
+./start.sh
 ```
 
 # Build Plugin example
 ```bash
-cd bundled-plugins/aui-theme-plugin/bin
+cd bundled-plugins/aui-theme-plugin
 docker build --tag dockui/aui-theme-plugin .
 ```
 

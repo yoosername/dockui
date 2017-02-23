@@ -5,19 +5,19 @@
     <meta name="decorator" content="app-home-decorator">
     <meta name="includeResourcesFor" content="plugin.tour">
     <link rel="stylesheet" href="/static/tour-plugin/tour-resources/libs/shepherd/css/shepherd-theme-dark.css" media="all">
-    <title>Tour plugin</title>
+    <title>Dock UI Demo</title>
   </head>
 
   <body>
     <header class="aui-page-header">
             <div class="aui-page-header-inner">
                 <div class="aui-page-header-main intro-header">
-                    <h1 id="demo-header">Docker UI Compose framework demo</h1>
+                    <h1 id="demo-header">Dock UI Demo</h1>
                     <p class="subtitle">
-                      Docker UI Compose is a framework for stitching together
+                      Docker UI is a framework for stitching together
                       a complete web experience from seperate UI microservices
                     </p>
-                    <a id="tour-start" class="aui-button aui-button-primary" href="#">Take the tour</a>
+                    <a id="tour-start" class="aui-button aui-button-primary" href="#">Tour</a>
                 </div>
             </div>
         </header>
@@ -28,12 +28,12 @@
                       <div class="aui-item">
                           <div class="item-wrapper">
                               <a href="/aui/latest/" class="centered">
-                                  <img src="/static/tour-plugin/tour-resources/images/documentation.png" class="introblob">
+                                  <img src="/static/tour-plugin/tour-resources/images/docker-logo.svg" class="introblob">
                               </a>
                               <h2>Documentation</h2>
                               <p>Check out the documentation to learn more about creating plugins and the various UI modules.</p>
                               <ul class="guides-list">
-                                  <li><p><a href="#docs">Latest user guide <span class="aui-lozenge aui-lozenge-success aui-lozenge-subtle">1.0.0</span></a></p></li>
+                                  <li><p><a href="/docs">Latest user guide <span class="aui-lozenge aui-lozenge-success aui-lozenge-subtle">1.0.0</span></a></p></li>
                               </ul>
                           </div>
 
@@ -46,7 +46,7 @@
                               <h2>Tutorials</h2>
                               <p>Follow the quick start tutorial below to get up and running in less than 5 minutes.</p>
                               <ul class="guides-list">
-                                  <li><p><a href="#5mintut">5 Minute Tutorial</a></p></li>
+                                  <li><p><a href="/tutorial">5 Minute Tutorial</a></p></li>
                               </ul>
                               <p></p>
                           </div>
@@ -101,7 +101,7 @@
 
         });
 
-        $("#tour-start").click(function(e){
+        require("jquery")("#tour-start").click(function(e){
           e.preventDefault();
           require("tour").tour.start();
         })
