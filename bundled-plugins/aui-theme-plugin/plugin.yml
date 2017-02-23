@@ -40,6 +40,10 @@ modules:
       key : "app-home-resources"
       base : "/resources/"
       resources :
+        - type: "css"
+          path : "/libs/aui/6.0.0/aui.min.css"
+        - type: "css"
+          path : "/libs/aui/6.0.0/aui-experimental.min.css"
         - type: "js"
           path : "app.home.decorator.js"
         - type: "css"
