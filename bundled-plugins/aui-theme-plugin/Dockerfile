@@ -9,9 +9,9 @@ WORKDIR /usr/src/app
 
 COPY . /usr/src/app
 
-RUN npm install
 RUN npm install nodemon -g
+RUN npm install
 
 EXPOSE 8080
 
-CMD [ "nodemon", "-e", "js,css,html", "App.js" ]
+CMD [ "node", "Plugin.js" ]

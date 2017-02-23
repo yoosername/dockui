@@ -1,11 +1,13 @@
 version: '2'
 services:
+
   rabbitmq:
     image: rabbitmq
     networks:
       default:
         aliases:
           - rabbitmq
+
   dockui-proxy:
     depends_on:
       - rabbitmq
@@ -17,8 +19,69 @@ services:
     volumes:
       - .:/usr/src/app
       - /var/run/docker.sock:/var/run/docker.sock
+    command: nodemon -e js,css,html --ignore "bundled-plugins" App.js
     environment:
       DEV_MODE: "true"
+
+  aui-theme-plugin:
+    depends_on:
+      - dockui-proxy
+    build:
+      context: ./bundled-plugins/aui-theme-plugin
+      dockerfile: Dockerfile
+    volumes:
+      - ./bundled-plugins/aui-theme-plugin:/usr/src/app
+    command: nodemon -e js,css,html Plugin.js
+
+  tour-plugin:
+    depends_on:
+      - dockui-proxy
+    build:
+      context: ./bundled-plugins/tour-plugin
+      dockerfile: Dockerfile
+    volumes:
+      - ./bundled-plugins/tour-plugin:/usr/src/app
+    command: nodemon -e js,css,html Plugin.js
+
+  docs-plugin:
+    depends_on:
+      - dockui-proxy
+    build:
+      context: ./bundled-plugins/docs-plugin
+      dockerfile: Dockerfile
+    volumes:
+      - ./bundled-plugins/docs-plugin:/usr/src/app
+    command: nodemon -e js,css,html Plugin.js
+
+  tutorial-plugin:
+    depends_on:
+      - dockui-proxy
+    build:
+      context: ./bundled-plugins/tutorial-plugin
+      dockerfile: Dockerfile
+    volumes:
+      - ./bundled-plugins/tutorial-plugin:/usr/src/app
+    command: nodemon -e js,css,html Plugin.js
+
+  form-auth-plugin:
+    depends_on:
+      - dockui-proxy
+    build:
+      context: ./bundled-plugins/form-auth-plugin
+      dockerfile: Dockerfile
+    volumes:
+      - ./bundled-plugins/form-auth-plugin:/usr/src/app
+    command: nodemon -e js,css,html Plugin.js
+
+  admin-plugin:
+    depends_on:
+      - dockui-proxy
+    build:
+      context: ./bundled-plugins/admin-plugin
+      dockerfile: Dockerfile
+    volumes:
+      - ./bundled-plugins/admin-plugin:/usr/src/app
+    command: nodemon -e js,css,html Plugin.js
 
 networks:
   default:

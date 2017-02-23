@@ -3,7 +3,7 @@ const DockerService = require('./lib/docker/DockerService');
 const PluginService = require('./lib/plugin/PluginService');
 const WebService = require('./lib/web/WebService');
 
-const IGNORE_SERVICES = [/rabbitmq/, /dockui/];
+const IGNORE_SERVICES = [/rabbitmq/, /dockui-proxy/];
 const DEFAULT_PLUGIN_PORT = 8080;
 
 // TODO: Add some kind of Global Messaging service.

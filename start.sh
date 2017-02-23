@@ -2,7 +2,7 @@
 
 NETWORK_NAME=framework
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-pushd $BIN_DIR/..
+pushd $BIN_DIR
 
 if docker network ls -f name=$NETWORK_NAME | sed -n '1!p' ; then
     echo "$NETWORK_NAME network exists, proceeding"
