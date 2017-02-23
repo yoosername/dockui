@@ -41,9 +41,9 @@ modules:
       base : "/resources/"
       resources :
         - type: "css"
-          path : "/libs/aui/6.0.0/aui.min.css"
-        - type: "css"
-          path : "/libs/aui/6.0.0/aui-experimental.min.css"
+          path : "libs/aui/6.0.0/aui.min.css"
+        - type: "js"
+          path : "libs/aui/6.0.0/aui.min.js"
         - type: "js"
           path : "app.home.decorator.js"
         - type: "css"
