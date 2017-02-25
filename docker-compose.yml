@@ -8,7 +8,7 @@ services:
         aliases:
           - rabbitmq
 
-  dockui-proxy:
+  dockui:
     depends_on:
       - rabbitmq
     build:
@@ -24,9 +24,9 @@ services:
     environment:
       DEV_MODE: "true"
 
-  aui-theme-plugin:
+  dockui-plugin-aui-theme:
     depends_on:
-      - dockui-proxy
+      - dockui
     build:
       context: ./bundled-plugins/aui-theme-plugin
       dockerfile: Dockerfile
@@ -35,9 +35,9 @@ services:
       - /usr/src/app/node_modules
     command: nodemon -e js,css,html,yml,json Plugin.js
 
-  tour-plugin:
+  dockui-plugin-tour:
     depends_on:
-      - dockui-proxy
+      - dockui
     build:
       context: ./bundled-plugins/tour-plugin
       dockerfile: Dockerfile
@@ -46,9 +46,9 @@ services:
       - /usr/src/app/node_modules
     command: nodemon -e js,css,html,yml,json Plugin.js
 
-  docs-plugin:
+  dockui-plugin-docs:
     depends_on:
-      - dockui-proxy
+      - dockui
     build:
       context: ./bundled-plugins/docs-plugin
       dockerfile: Dockerfile
@@ -57,9 +57,9 @@ services:
       - /usr/src/app/node_modules
     command: nodemon -e js,css,html,yml,json Plugin.js
 
-  tutorial-plugin:
+  dockui-plugin-tutorial:
     depends_on:
-      - dockui-proxy
+      - dockui
     build:
       context: ./bundled-plugins/tutorial-plugin
       dockerfile: Dockerfile
@@ -68,9 +68,9 @@ services:
       - /usr/src/app/node_modules
     command: nodemon -e js,css,html,yml,json Plugin.js
 
-  form-auth-plugin:
+  dockui-plugin-form-auth:
     depends_on:
-      - dockui-proxy
+      - dockui
     build:
       context: ./bundled-plugins/form-auth-plugin
       dockerfile: Dockerfile
@@ -79,9 +79,9 @@ services:
       - /usr/src/app/node_modules
     command: nodemon -e js,css,html,yml,json Plugin.js
 
-  admin-plugin:
+  dockui-plugin-admin:
     depends_on:
-      - dockui-proxy
+      - dockui
     build:
       context: ./bundled-plugins/admin-plugin
       dockerfile: Dockerfile

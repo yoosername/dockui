@@ -45,10 +45,14 @@ modules:
       name : "Plugin admin page"
       key : "plugin"
       path : "/plugin"
-      auth:
-        user: "admin"
+      #auth:
+      #  user: "admin"
 
   # Rest modules define a single endpoint that is simply proxied by the main api gateway
+    - type : "rest"
+      name : "plugin management api"
+      key : "plugin-manage-api"
+      base : "/rest/api/1.0/plugins"
 
   # Web resources define static resources that you can contribute to existing webpages
   # by giving a context. The context is used by webpages via the resourcesFor Meta tag
