@@ -14,9 +14,10 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 app.use('/plugin.yml', express.static('plugin.yml'));
 
 // Plugin status - dockui uses it to determine wether to reload plugins etc
+var status = {uptime: + new Date()};
 app.get('/status', function(req, res){
   // Only thing required is return 200 and an uptime datetime
-  res.json({uptime: + new Date()})
+  res.json(status);
 });
 
 // Webpage decorated by the above

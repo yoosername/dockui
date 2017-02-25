@@ -12,9 +12,10 @@ app.use('/admin', express.static('templates/admin.html'));
 app.use('/plugin', express.static('templates/plugin.html'));
 
 // Plugin status - dockui uses it to determine wether to reload plugins etc
+var status = {uptime: + new Date()};
 app.get('/status', function(req, res){
   // Only thing required is return 200 and an uptime datetime
-  res.json({uptime: + new Date()})
+  res.json(status)
 });
 
 // Serve static files

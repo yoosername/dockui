@@ -20,7 +20,7 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
-    command: nodemon -e js,css,html --ignore "bundled-plugins" App.js
+    command: nodemon -e js,css,html,yml,json --ignore "bundled-plugins" App.js
     environment:
       DEV_MODE: "true"
 
@@ -33,7 +33,7 @@ services:
     volumes:
       - ./bundled-plugins/aui-theme-plugin:/usr/src/app
       - /usr/src/app/node_modules
-    command: nodemon -e js,css,html Plugin.js
+    command: nodemon -e js,css,html,yml,json Plugin.js
 
   tour-plugin:
     depends_on:
@@ -44,7 +44,7 @@ services:
     volumes:
       - ./bundled-plugins/tour-plugin:/usr/src/app
       - /usr/src/app/node_modules
-    command: nodemon -e js,css,html Plugin.js
+    command: nodemon -e js,css,html,yml,json Plugin.js
 
   docs-plugin:
     depends_on:
@@ -55,7 +55,7 @@ services:
     volumes:
       - ./bundled-plugins/docs-plugin:/usr/src/app
       - /usr/src/app/node_modules
-    command: nodemon -e js,css,html Plugin.js
+    command: nodemon -e js,css,html,yml,json Plugin.js
 
   tutorial-plugin:
     depends_on:
@@ -66,7 +66,7 @@ services:
     volumes:
       - ./bundled-plugins/tutorial-plugin:/usr/src/app
       - /usr/src/app/node_modules
-    command: nodemon -e js,css,html Plugin.js
+    command: nodemon -e js,css,html,yml,json Plugin.js
 
   form-auth-plugin:
     depends_on:
@@ -77,7 +77,7 @@ services:
     volumes:
       - ./bundled-plugins/form-auth-plugin:/usr/src/app
       - /usr/src/app/node_modules
-    command: nodemon -e js,css,html Plugin.js
+    command: nodemon -e js,css,html,yml,json Plugin.js
 
   admin-plugin:
     depends_on:
@@ -88,7 +88,7 @@ services:
     volumes:
       - ./bundled-plugins/admin-plugin:/usr/src/app
       - /usr/src/app/node_modules
-    command: nodemon -e js,css,html Plugin.js
+    command: nodemon -e js,css,html,yml,json Plugin.js
 
 networks:
   default:
