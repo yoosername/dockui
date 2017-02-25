@@ -4,7 +4,6 @@ RUN apk add --update nodejs
 
 RUN mkdir -p /usr/src/app
 
-VOLUME ["/usr/src/app/"]
 WORKDIR /usr/src/app
 
 COPY . /usr/src/app
