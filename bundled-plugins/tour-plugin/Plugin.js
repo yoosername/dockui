@@ -22,6 +22,12 @@ app.get('/tasks', function (request, response) {
     response.json({tasks: "test"});
 });
 
+// Plugin status - dockui uses it to determine wether to reload plugins etc
+app.get('/status', function(req, res){
+  // Only thing required is return 200 and an uptime datetime
+  res.json({uptime: + new Date()})
+});
+
 app.listen(8080, function () {
   console.log('Demo plugin listening on port 8080!');
 });

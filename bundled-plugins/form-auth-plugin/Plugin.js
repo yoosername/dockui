@@ -9,9 +9,15 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
-// Plugin descriptor
+// Plugin  descriptor
 //app.use('/plugin.json', express.static('plugin.json'));
 app.use('/plugin.yml', express.static('plugin.yml'));
+
+// Plugin status - dockui uses it to determine wether to reload plugins etc
+app.get('/status', function(req, res){
+  // Only thing required is return 200 and an uptime datetime
+  res.json({uptime: + new Date()})
+});
 
 // Webpage decorated by the above
 app.all('/login*', function(req, res){

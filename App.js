@@ -105,7 +105,7 @@ MessageService.start()
     },
     function(container) {
       // When container is removed remove all of its modules and the associated Plugin
-        PluginService.removePluginsForContainer(container.Id);
+      PluginService.removePluginsForContainer(container.Id);
     }
   );
 })
