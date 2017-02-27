@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var MessageService = require("./lib/messaging/MessageService");
 
 // TODO: Add ability to disable and enable discovered plugins
 
@@ -13,9 +14,21 @@ app.use('/plugin', express.static('templates/plugin.html'));
 
 // Serve a JSON endpoint for PluginManager Orchestration
 // TODO : use Message queue to submit plugin stop / start etc
-app.get('/rest/api/1.0/plugins', function (req, res) {
+app.get('/rest/api/1.0/plugins/:id/:action', function (req, res) {
+
+  var pluginId = req.params.id;
+  var action = req.params.action;
+  console.log("requested ", action, "for plugin ", pluginId);
+
+  MessageService.sendMessage(JSON.stringify({
+    "type" : "pluginLifecycleHook",
+    "action" : action,
+    "plugin" : pluginId
+  }));
+
   res.send(JSON.stringify({
-    "something" : "or nothing"
+    "plugin" : pluginId,
+    "action" : action
   }));
 });
 
@@ -32,3 +45,9 @@ app.use('/resources', express.static(__dirname + '/resources'));
 app.listen(8080, function () {
   console.log('Admin plugin listening on port 8080!');
 });
+
+MessageService.sendMessage(JSON.stringify({
+  type : "pluginLifecycle",
+  status : "started"
+}));
+MessageService.start();

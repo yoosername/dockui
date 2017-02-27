@@ -69,7 +69,7 @@ PluginService.on("module:added", function(module){
 
 
 // Start the docker service listening for container up and down events
-MessageService.start()
+MessageService.startReceiving()
 .then(function(){
   console.log("Rabbitmq ready and listening on port 5672");
 
