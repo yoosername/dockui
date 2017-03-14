@@ -21,7 +21,8 @@ modules:
         - "/admin/*"
       path: "/plugins/admin-plugin/webpages/$1"
       auth:
-        user: "admin"
+        scopes:
+          - GLOBAL_ADMIN
 
   # Webitems are links that you can insert in various places in the webapp
   # Locations are defined within the templates themselves
@@ -45,6 +46,9 @@ modules:
       name : "Plugin admin page"
       key : "plugin"
       path : "/plugin"
+      auth:
+        scopes:
+          - PLUGIN_ADMIN
       #auth:
       #  user: "admin"
 
