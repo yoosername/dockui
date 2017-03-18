@@ -14,7 +14,7 @@ modules:
     - type : "authprovider"
       name: "Form Auth Provider"
       key: "form-auth-provider"
-      path: "/authenticate"
+      url: "/authenticate"
       weight: "10"
 
   # Routes are a way to rewrite more readable urls for a given webpage or resource

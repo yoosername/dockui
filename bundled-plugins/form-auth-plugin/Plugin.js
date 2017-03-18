@@ -3,6 +3,8 @@ var bodyParser = require("body-parser");
 var path = require('path');
 var app = express();
 
+const EXTERNAL_RELATIVE_LOGIN_URL = "/login";
+
 // TODO: Add ability to disable and enable discovered plugins
 
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -18,6 +20,13 @@ var status = {uptime: + new Date()};
 app.get('/status', function(req, res){
   // Only thing required is return 200 and an uptime datetime
   res.json(status);
+});
+
+// Parses simple request with headers and tries to authenticate the user.
+// Must return 200+JWT, 301+url, 401, 501
+app.get('/authenticate', function(req, res){
+  // Only thing required is return 200 and an uptime datetime
+  res.redirect(EXTERNAL_RELATIVE_LOGIN_URL);
 });
 
 // Webpage decorated by the above
