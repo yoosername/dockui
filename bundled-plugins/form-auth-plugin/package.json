@@ -9,7 +9,11 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "express": "^4.14.0"
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
+    "njwt": "^0.4.0",
+    "secure-random": "^1.1.1"
   },
   "devDependencies": {
     "nodemon": "^1.10.2"
