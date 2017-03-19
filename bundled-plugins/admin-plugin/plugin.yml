@@ -22,7 +22,7 @@ modules:
       path: "/plugins/admin-plugin/webpages/$1"
       auth:
         scopes:
-          - GLOBAL_ADMIN
+          - PLUGIN_ADMIN
 
   # Webitems are links that you can insert in various places in the webapp
   # Locations are defined within the templates themselves
@@ -49,8 +49,6 @@ modules:
       auth:
         scopes:
           - PLUGIN_ADMIN
-      #auth:
-      #  user: "admin"
 
   # Rest modules define a single endpoint that is simply proxied by the main api gateway
     - type : "rest"
