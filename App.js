@@ -6,6 +6,11 @@ const WebService = require('./lib/web/WebService');
 const IGNORE_SERVICES = [/_rabbitmq_/, /_dockui_/];
 const DEFAULT_PLUGIN_PORT = 8080;
 
+// Some interesting output on startup :-)
+var sys = require('sys');
+var asciimo = require('asciimo').Figlet;
+var colors = require('colors'); // add colors for fun
+
 // TODO: Add some kind of Global Messaging service.
 // : Give plugins a module type for declaring a messageListener.
 // : those services can then receive messages at some local endpoint.
@@ -111,7 +116,24 @@ MessageService.startReceiving()
 })
 // Then start the WebService listening on port 80 on the host
 .then(function(){
-  WebService.start(8080)
+
+  WebService.start(8080, function(){
+    // print out some nice message
+    var font = 'Doom';
+    var text = "||   DockUI Started   ||";
+
+    asciimo.write(text, font, function(art){
+      //sys.puts(art.magenta);
+      console.log("");
+      console.log("");
+      console.log(art.green);
+      console.log("Service started successfully at: http://localhost/".green);
+      console.log("");
+    });
+
+  });
+
+
 })
 // Catch any rogue errors.
 .catch(function(error){

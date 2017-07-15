@@ -12,4 +12,4 @@ else
 fi
 
 # Run it in dev mode
-exec docker-compose up --build --force-recreate
+exec docker-compose up --build --force-recreate | cat
