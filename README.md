@@ -20,7 +20,7 @@ All new docker containers are detected via the events subsystem.
 A Docker container is considered to be a Plugin if it exposes a valid Plugin descriptor ( e.g. plugin.yml ) from the root of the detected host:port via HTTP at the root context.
 
 ## Plugin Descriptor
-The plugin descriptor can be either a """plugin.json""" or """plugin.yml""". It describes the various module types which the plugin is making available to the system for example:
+The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the plugin is making available to the overall application for example:
 
 ```yml
 # Here you specify a name, key and version of your plugin which is used
@@ -109,7 +109,11 @@ modules:
 ### Usage
 You should be able to add and remove functionality simply by starting / stopping docker containers.
 
-So a minimal webapp may be a single webpage and decorator, some resources a couple of routes and some rest endpoints. That can be split into 1 or more plugins via multiple Docker containers depending on the need for chopping and changing components.
+So a minimal viable webapp could be a single webpage without decoration, some resources, a single route and a single rest endpoint all served from a single Docker container. 
+
+However things get more interesting if you  provide a site decorator, an app landing page, a base route and some predefined injection points. Then start to extend it via feature specific plugin containers.
+
+The following quick start demonstates the use of plugins to build up a usable UI using all the different module types.
 
 # Quick start
 ```bash
