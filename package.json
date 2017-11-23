@@ -1,41 +1,27 @@
 {
   "name": "dockui",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "plug and play web apps using docker containers",
+  "author": "https://github.com/yoosername",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yoosername/dockui.git"
+  },
+  "keywords": [
+    "docker",
+    "composition",
+    "plugin",
+    "webapp",
+    "ui"
+  ],
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "start": "node App.js"
+    "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "amqp": "^0.2.6",
-    "amqplib": "^0.4.2",
-    "asciimo": "^0.3.1",
-    "body-parser": "^1.15.2",
-    "cheerio": "^0.22.0",
-    "child-process-promise": "^2.2.1",
-    "colors": "^1.1.2",
-    "dependency-graph": "^0.5.0",
-    "events": "^1.1.1",
-    "express": "^4.14.0",
-    "express-request-proxy": "^2.0.0",
-    "express-urlrewrite": "^1.2.0",
-    "js-yaml": "^3.6.1",
-    "keymirror": "^0.1.1",
-    "net": "^1.0.2",
-    "njwt": "^0.4.0",
-    "node-docker-monitor": "^1.0.10",
-    "path-to-regexp": "^1.5.3",
-    "rabbit.js": "^0.4.4",
-    "request": "^2.75.0",
-    "requestretry": "^1.12.0",
-    "secure-random": "^1.1.1",
-    "socket.io": "^1.4.8",
-    "sys": "0.0.1",
-    "type-is": "^1.6.13",
-    "underscore": "^1.8.3",
-    "uuid": "^3.0.1",
-    "wait-for-port": "0.0.2"
+  },
+  "template": {
+    "forceLanguage": "en"
   }
 }

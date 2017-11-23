@@ -1,26 +1,34 @@
 # DOCKUI
-Experiment using Docker micro-services to build a composite web UI.
 
-The idea is to create a central web service which only handles the following:
+> Compose a web app by feature using Docker micro-services
 
-* Monitoring attached docker containers
-* Registering / unregistering plugins based on presence of plugin descriptor
-* Web / Api gateway and routing traffic to plugins
+## Usage
 
-All additional functionality is provided by plugins.
+```bash
+dockui init
+dockui add-demo-plugins
+dockui start --environment dev
+```
 
-# Features
-## Docker containers
-All new docker containers are detected via the events subsystem.
+This will
 
-* If using host network then the proxy gateway and public port are checked for a plugin descriptor.
-* If using overlay network then plugin descriptor is searched for by service name and private port.
+* Start a new dockui config file in the current folder
+* create a new overlay network for the microservices
+* build the demo plugins into the plugins folder from templates
+* start the api gateway and all the plugin containers in dev mode
 
-## Plugins
-A Docker container is considered to be a Plugin if it exposes a valid Plugin descriptor ( e.g. plugin.yml ) from the root of the detected host:port via HTTP at the root context.
+You should now be able to visit https://localhost:8080/dockui to see the demo app.
 
-## Plugin Descriptor
-The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the plugin is making available to the overall application for example:
+The demo app is a fully functionig webapp which includes all of the plugin types of dockui and acts as a tutorial for using it.
+
+# Hot Reload
+All microservices are detected detected by monitoring the Docker events subsystem.
+
+* If a new container is detected then a plugin descriptor is searched for by service name and private port via HTTP GET request at the root context for plugin.yml or plugin.json.
+* If the container is removed and / or readded the descriptor is reloaded
+
+## Plugin Modules
+The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the microservice is contributing to the overall application for example:
 
 ```yml
 # Here you specify a name, key and version of your plugin which is used
@@ -106,50 +114,3 @@ modules:
       context : "example.resources.context"
 
 ```
-### Usage
-You should be able to add and remove functionality simply by starting / stopping docker containers.
-
-So a minimal viable webapp could be a single webpage without decoration, some resources, a single route and a single rest endpoint all served from a single Docker container. 
-
-However things get more interesting if you  provide a site decorator, an app landing page, a base route and some predefined injection points. Then start to extend it via feature specific plugin containers.
-
-The following quick start demonstates the use of plugins to build up a usable UI using all the different module types.
-
-# Quick start
-```bash
-git clone https://github.com/yoosername/dockui
-cd dockui && ./start.sh
-```
-
-# Development
-Build and start the UI proxy first, then start any plugins independently. On a Dev machine just run them in separate tabs.
-
-## Prereqs
-* docker
-* docker-compose
-
-## Build Framework example
-```bash
-git clone https://github.com/yoosername/dockui && cd dockui
-docker build --tag dockui/proxy .
-```
-
-## Build Plugin example
-```bash
-git clone https://github.com/yoosername/dockui && cd dockui
-cd bundled-plugins/aui-theme-plugin
-docker build --tag dockui/aui-theme-plugin .
-```
-
-## Run individual Plugin example ( dev mode )
-tip: do this is separate tabs so you can see whats going on
-
-```bash
-git clone https://github.com/yoosername/dockui && cd dockui
-cd bundled-plugins/aui-theme-plugin
-./start.sh
-```
-
-# TODO
-* Implement some form of caching
-* Figure out how to write tests
