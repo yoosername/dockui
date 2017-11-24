@@ -1,0 +1,3 @@
+const CONTAINER_START_EVENT_ID = "container:start";
+
+module.exports.CONTAINER_START_EVENT_ID = CONTAINER_START_EVENT_ID;

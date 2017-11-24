@@ -24,6 +24,7 @@
     "generate-docs": "node ./node_modules/documentation/bin/documentation.js readme index.js --section=API && mocha src/**/*spec.js --reporter=markdown > ./src/tests.md"
   },
   "dependencies": {
+    "dockerode": "^2.5.3",
     "events": "^1.1.1",
     "util": "^0.10.3"
   },
