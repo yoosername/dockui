@@ -33,6 +33,7 @@ function DockerService(client, events) {
     this._client = client;
     this._events = events;
     this._cache = {};
+    this._started = false;
     
 }
 
@@ -57,15 +58,21 @@ DockerService.prototype.start = function(){
   // Use the client to retrieve the current list of containers
   // If they are not already in the cache then emit events
   // Then start listening
-  this._client.listRunningContainers((err, containers) => {
-    if(err){
-      console.warn(LISTING_RUNNING_CONTAINERS_ERROR);
-    }
+  if(!this._started){
 
-    containers.forEach((container) => {
-      this._events.emit(CONTAINER_START_EVENT_ID, container);
+    this._client.listRunningContainers((err, containers) => {
+      if(err){
+        return console.warn(LISTING_RUNNING_CONTAINERS_ERROR);
+      }
+
+      containers.forEach((container) => {
+        this._events.emit(CONTAINER_START_EVENT_ID, container);
+      });
     });
-  });
+
+    this._started = true;
+
+  }
 
 };
 

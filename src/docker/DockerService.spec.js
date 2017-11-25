@@ -38,10 +38,10 @@ describe('DockerService', function() {
     it(`should trigger ${CONTAINER_START_EVENT_ID} event for all containers detected on start`, function(done) {
         var emitter = new EventEmitter();
         var mockDockerClient = new DockerClient();
-        var expectedPayload = mockDockerClient.container;
+        var expectedContainerArray = mockDockerClient.containers;
 
         emitter.on(CONTAINER_START_EVENT_ID, function(payload){
-            expect(payload).to.eql(expectedPayload);
+            expect(payload).to.eql(expectedContainerArray[0]);
             done();
         });
 
@@ -61,6 +61,23 @@ describe('DockerService', function() {
         mockDockerClient.setIsDockerRunning(true);
 
         expect(ds.isDockerRunning()).to.equal(true);
+    });
+
+    it('should not fire initial container events on subsequent starts', function() {
+        var emitter = new EventEmitter();
+        var count = 0;
+        emitter.on(CONTAINER_START_EVENT_ID, function(){
+            count++;
+        });
+        var EXPECTED_COUNT = 5;
+        var mockDockerClient = new DockerClient(EXPECTED_COUNT);
+        var ds = new DockerService(mockDockerClient,emitter);
+        ds.start();
+        expect(count).to.equal(EXPECTED_COUNT);
+        ds.start();
+        expect(count).to.equal(EXPECTED_COUNT);
+        ds.start();
+        expect(count).to.equal(EXPECTED_COUNT);
     });
 
 });

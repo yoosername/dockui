@@ -1,23 +1,62 @@
 const {DOCKER_NOT_RUNNING_ERROR} = require("../constants/errors");
 const DockerClient = require("./DockerClient");
-const SINGLE_CONTAINER_EXAMPLE = {
-  "Id": "81cde361ec7b069cc1ee32a4660176306a2b1d3a3eb52f96f17380f10e75d2e2",
-  "Image": "m4all-next:15-0511-1104",
-  "Names": ["/m4all-next"],
-  "Command": "/bin/sh -c '/bin/bash -c 'cd /home; mkdir data; node main/app.js''",
-  "Created": 1431402173,
-  "HostConfig": { NetworkMode: 'default' },
-  "Labels": { my_label: 'label_value' },
-  "Ports": [
-    {
-      "IP": "172.17.42.1",
-      "PrivatePort": 3000,
-      "PublicPort": 3002,
-      "Type": "tcp"
+
+/**
+ * ContainerGenerator
+ * @description generates random container objects as an array for testing
+ * @private
+ */
+function ContainerGenerator(count){
+  "use strict";
+
+  var containers = [];
+  var NAMES = ["red", "blue", "green", "purple", "yellow","pink","black"];
+
+  function generateId(length) {
+    var ret = "";
+    while (ret.length < length) {
+      ret += Math.random().toString(16).substring(2);
     }
-  ],
-  "Status": "Up About an hour"
-};
+    return ret.substring(0,length);
+  }
+
+  function generateName() {
+    return NAMES[Math.floor(Math.random() * NAMES.length)] + "-" + generateId(4);
+  }
+
+  function generateVer() {
+    return Math.floor(Math.random() * 100);
+  }
+  
+  for(var i = 0; i < count; i++){
+    var name = generateName();
+    var ver  = generateVer();
+
+    containers.push(
+      {
+        "Id": generateId(64),
+        "Image": `${name}:${ver}`,
+        "Names": [`${name}`],
+        "Command": "/bin/sh -c '/bin/bash -c 'cd /app; node app.js''",
+        "Created": new Date(),
+        "HostConfig": { NetworkMode: 'default' },
+        "Labels": { label_key: 'label_value' },
+        "Ports": [
+          {
+            "IP": "172.17.42.1",
+            "PrivatePort": 8080,
+            "PublicPort": 80,
+            "Type": "tcp"
+          }
+        ],
+        "Status": "Up About an hour"
+      }
+    );
+  }
+
+  return containers;
+
+}
 
 /**
  * dockui mock native Docker client abstraction
@@ -25,17 +64,19 @@ const SINGLE_CONTAINER_EXAMPLE = {
  * @private
  * @constructor
  */
-function MockDockerClient() {
+function MockDockerClient(num) {
     "use strict";
   
     if (!(this instanceof MockDockerClient)) {
-      return new MockDockerClient();
+      return new MockDockerClient(num);
     }
 
     DockerClient.call(this);
 
+    num = (num) ? num : 5;
+
     this._isDockerRunning = true;
-    this.container = SINGLE_CONTAINER_EXAMPLE;
+    this.containers = ContainerGenerator(num);
     
 }
 
@@ -75,7 +116,7 @@ MockDockerClient.prototype.listRunningContainers = function(callback){
     throw new Error(DOCKER_NOT_RUNNING_ERROR);
   }
 
-  return callback(null, [SINGLE_CONTAINER_EXAMPLE]);
+  return callback(null, this.containers);
 
 };
 
