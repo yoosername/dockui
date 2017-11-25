@@ -1,3 +1,5 @@
 const CONTAINER_START_EVENT_ID = "container:start";
+const CONTAINER_STOP_EVENT_ID = "container:stop";
 
 module.exports.CONTAINER_START_EVENT_ID = CONTAINER_START_EVENT_ID;
+module.exports.CONTAINER_STOP_EVENT_ID = CONTAINER_STOP_EVENT_ID;

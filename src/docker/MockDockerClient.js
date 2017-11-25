@@ -1,16 +1,21 @@
+const { EventEmitter } = require("events");
+
 const {DOCKER_NOT_RUNNING_ERROR} = require("../constants/errors");
+const {CONTAINER_START_EVENT_ID,CONTAINER_STOP_EVENT_ID} = require("../constants/events");
 const DockerClient = require("./DockerClient");
 
+const NAMES = ["red", "blue", "green", "purple", "yellow","pink","black"];
+
 /**
- * ContainerGenerator
- * @description generates random container objects as an array for testing
+ * SingleContainerGenerator
+ * @description generates a random container objects
  * @private
  */
-function ContainerGenerator(count){
+function SingleContainerGenerator(){
   "use strict";
 
-  var containers = [];
-  var NAMES = ["red", "blue", "green", "purple", "yellow","pink","black"];
+  var name = generateName();
+  var ver  = generateVer();
 
   function generateId(length) {
     var ret = "";
@@ -27,31 +32,41 @@ function ContainerGenerator(count){
   function generateVer() {
     return Math.floor(Math.random() * 100);
   }
-  
-  for(var i = 0; i < count; i++){
-    var name = generateName();
-    var ver  = generateVer();
 
-    containers.push(
+  return {
+    "Id": generateId(64),
+    "Image": `${name}:${ver}`,
+    "Names": [`${name}`],
+    "Command": "/bin/sh -c '/bin/bash -c 'cd /app; node app.js''",
+    "Created": new Date(),
+    "HostConfig": { NetworkMode: 'default' },
+    "Labels": { label_key: 'label_value' },
+    "Ports": [
       {
-        "Id": generateId(64),
-        "Image": `${name}:${ver}`,
-        "Names": [`${name}`],
-        "Command": "/bin/sh -c '/bin/bash -c 'cd /app; node app.js''",
-        "Created": new Date(),
-        "HostConfig": { NetworkMode: 'default' },
-        "Labels": { label_key: 'label_value' },
-        "Ports": [
-          {
-            "IP": "172.17.42.1",
-            "PrivatePort": 8080,
-            "PublicPort": 80,
-            "Type": "tcp"
-          }
-        ],
-        "Status": "Up About an hour"
+        "IP": "172.17.42.1",
+        "PrivatePort": 8080,
+        "PublicPort": 80,
+        "Type": "tcp"
       }
-    );
+    ],
+    "Status": "Up About an hour"
+  };
+  
+}
+
+/**
+ * ContainerGenerator
+ * @description returns array of random container objects 
+ * @param count how many containers to return
+ * @private
+ */
+function ContainerGenerator(count){
+  "use strict";
+
+  var containers = [];
+
+  for(var i = 0; i < count; i++){
+    containers.push(SingleContainerGenerator());
   }
 
   return containers;
@@ -76,6 +91,7 @@ function MockDockerClient(num) {
     num = (num) ? num : 5;
 
     this._isDockerRunning = true;
+    this._events = new EventEmitter();
     this.containers = ContainerGenerator(num);
     
 }
@@ -96,6 +112,7 @@ MockDockerClient.prototype.isDockerRunning = function(){
 /**
  * MockDockerClient.setIsDockerRunning
  * @description switch Docker on and off
+ * @param bool Boolean flag
  * @private
  */
 MockDockerClient.prototype.setIsDockerRunning = function(bool){
@@ -105,8 +122,72 @@ MockDockerClient.prototype.setIsDockerRunning = function(bool){
 };
 
 /**
+ * MockDockerClient.generateNewContainer
+ * @description generate a new container object for later use
+ * @private
+ */
+MockDockerClient.prototype.generateNewContainer = function(){
+  "use strict";
+
+  return SingleContainerGenerator();
+};
+
+/**
+ * MockDockerClient.addRunningContainer
+ * @description mock detection of a single container start on the host
+ * @param container the Docker container to add
+ * @private
+ */
+MockDockerClient.prototype.addRunningContainer = function(container){
+  "use strict";
+
+  if(!this.isDockerRunning()){
+    throw new Error(DOCKER_NOT_RUNNING_ERROR);
+  }
+
+  container = (container) ? container : SingleContainerGenerator();
+  this.containers.push(container);
+  this._events.emit(CONTAINER_START_EVENT_ID, container);
+  return container;
+};
+
+/**
+ * MockDockerClient.stopContainer
+ * @description mock detection of a single container stopped on the host
+ * @param container the Docker container to stop
+ * @private
+ */
+MockDockerClient.prototype.stopContainer = function(container){
+  "use strict";
+
+  if(!this.isDockerRunning()){
+    throw new Error(DOCKER_NOT_RUNNING_ERROR);
+  }
+
+  container = (container) ? container : SingleContainerGenerator();
+  this.containers = this.containers.filter((c) => {
+    return ( c.Id !== container.Id );
+  });
+  this._events.emit(CONTAINER_STOP_EVENT_ID, container);
+  return container;
+};
+
+/**
+ * MockDockerClient.getEvents
+ * @description return eventemitter emitting mock events from docker events subsystem
+ * @param callback this Function will be called with the arguments (Error, EventEmitter)
+ * @private
+ */
+MockDockerClient.prototype.getEvents = function(callback){
+  "use strict";
+
+  callback(null, this._events);
+};
+
+/**
  * MockDockerClient.listRunningContainers
  * @description mock detecting the current list of running Docker containers
+ * @param callback this Function will be called with the arguments (Error, Array<Container>)
  * @private
  */
 MockDockerClient.prototype.listRunningContainers = function(callback){
@@ -117,7 +198,6 @@ MockDockerClient.prototype.listRunningContainers = function(callback){
   }
 
   return callback(null, this.containers);
-
 };
 
 module.exports = MockDockerClient;

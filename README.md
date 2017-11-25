@@ -12,22 +12,24 @@ dockui start --environment dev
 
 This will
 
-* Start a new dockui config file in the current folder
-* create a new overlay network for the microservices
-* build the demo plugins into the plugins folder from templates
-* start the api gateway and all the plugin containers in dev mode
+-   Start a new dockui config file in the current folder
+-   create a new overlay network for the microservices
+-   build the demo plugins into the plugins folder from templates
+-   start the api gateway and all the plugin containers in dev mode
 
-You should now be able to visit https://localhost:8080/dockui to see the demo app.
+You should now be able to visit <https://localhost:8080/dockui> to see the demo app.
 
 The demo app is a fully functionig webapp which includes all of the plugin types of dockui and acts as a tutorial for using it.
 
-# Hot Reload
+## Hot Reload
+
 All microservices are detected detected by monitoring the Docker events subsystem.
 
-* If a new container is detected then a plugin descriptor is searched for by service name and private port via HTTP GET request at the root context for plugin.yml or plugin.json.
-* If the container is removed and / or readded the descriptor is reloaded
+-   If a new container is detected then a plugin descriptor is searched for by service name and private port via HTTP GET request at the root context for plugin.yml or plugin.json.
+-   If the container is removed and / or readded the descriptor is reloaded
 
 ## Plugin Modules
+
 The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the microservice is contributing to the overall application for example:
 
 ```yml
@@ -112,5 +114,6 @@ modules:
         - type: "css"
           path : "example.style.css"
       context : "example.resources.context"
-
 ```
+
+## API

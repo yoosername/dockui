@@ -6,14 +6,17 @@ const {
   LISTING_RUNNING_CONTAINERS_ERROR
 } = require("../constants/errors");
 const {
-  CONTAINER_START_EVENT_ID
+  CONTAINER_START_EVENT_ID,
+  CONTAINER_STOP_EVENT_ID
 } = require("../constants/events");
 
 /**
- * DockerService
+ * @name DockerService
  * @description provides abstraction to Docker subsystem
  * @public
  * @constructor
+ * @param client DockerClient instance
+ * @param events EventEmitter instance
  */
 function DockerService(client, events) {
     "use strict";
@@ -32,18 +35,18 @@ function DockerService(client, events) {
 
     this._client = client;
     this._events = events;
-    this._cache = {};
     this._started = false;
-    
 }
 
 /**
  * DockerService.isDockerRunning
  * @description returns true if client reports Docker is running
  * @public
+ * @returns Boolean
  */
 DockerService.prototype.isDockerRunning = function(){
-  "use strict"; 
+  "use strict";
+
   return this._client.isDockerRunning();
 };
 
@@ -55,9 +58,8 @@ DockerService.prototype.isDockerRunning = function(){
 DockerService.prototype.start = function(){
   "use strict"; 
 
-  // Use the client to retrieve the current list of containers
-  // If they are not already in the cache then emit events
-  // Then start listening
+  // Do once: Use the client to retrieve the current list of running containers
+  // Do once: Start listening
   if(!this._started){
 
     this._client.listRunningContainers((err, containers) => {
@@ -68,6 +70,22 @@ DockerService.prototype.start = function(){
       containers.forEach((container) => {
         this._events.emit(CONTAINER_START_EVENT_ID, container);
       });
+    });
+
+    // Start listening for events from the client
+    this._client.getEvents((err, events) =>{
+      if(err){
+        return console.warn("Error getting client events");
+      }
+
+      events
+      .on(CONTAINER_START_EVENT_ID, (container) => {
+        this._events.emit(CONTAINER_START_EVENT_ID, container);
+      })
+      .on(CONTAINER_STOP_EVENT_ID, (container) => {
+        this._events.emit(CONTAINER_STOP_EVENT_ID, container);
+      });
+      
     });
 
     this._started = true;
