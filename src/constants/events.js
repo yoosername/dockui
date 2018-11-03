@@ -1,5 +1,7 @@
 const CONTAINER_START_EVENT_ID = "container:start";
 const CONTAINER_STOP_EVENT_ID = "container:stop";
+const PLUGIN_DETECTED_EVENT_ID = "plugin:detected";
 
 module.exports.CONTAINER_START_EVENT_ID = CONTAINER_START_EVENT_ID;
 module.exports.CONTAINER_STOP_EVENT_ID = CONTAINER_STOP_EVENT_ID;
+module.exports.PLUGIN_DETECTED_EVENT_ID = PLUGIN_DETECTED_EVENT_ID;

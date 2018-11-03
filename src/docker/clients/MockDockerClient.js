@@ -1,7 +1,7 @@
 const { EventEmitter } = require("events");
 
-const {DOCKER_NOT_RUNNING_ERROR} = require("../constants/errors");
-const {CONTAINER_START_EVENT_ID,CONTAINER_STOP_EVENT_ID} = require("../constants/events");
+const {DOCKER_NOT_RUNNING_ERROR} = require("../../constants/errors");
+const {CONTAINER_START_EVENT_ID,CONTAINER_STOP_EVENT_ID} = require("../../constants/events");
 const DockerClient = require("./DockerClient");
 
 const NAMES = ["red", "blue", "green", "purple", "yellow","pink","black"];
@@ -133,12 +133,12 @@ MockDockerClient.prototype.generateNewContainer = function(){
 };
 
 /**
- * MockDockerClient.addRunningContainer
+ * MockDockerClient.startContainer
  * @description mock detection of a single container start on the host
  * @param container the Docker container to add
  * @private
  */
-MockDockerClient.prototype.addRunningContainer = function(container){
+MockDockerClient.prototype.startContainer = function(container){
   "use strict";
 
   if(!this.isDockerRunning()){

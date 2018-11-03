@@ -1,0 +1,75 @@
+# Here you specify a name, key and version of your plugin which is used
+# by the plugin service to register a unique Plugin at runtime
+# plugins are linked to running docker containers so when the container is stopped the plugin is removed
+name: "Plugin Name"
+key: "example-plugin-key"
+version: 1.0
+
+# Modules describe the features of the plugin. See the various types for explanation of what they do
+modules:
+
+  # Routes are a way to use more readable urls for a given webpage or resource
+    - type : "route"
+      name: "Example route"
+      key: "example-route"
+      routes:
+        - "/example/*"
+      path: "/plugins/example-plugin-key/webpages/$1"
+      auth:
+        scopes:
+          - PLUGIN_ADMIN
+
+  # Webitems are links that you can insert in various places in the webapp
+  # Locations are defined within the html templates themselves
+    - type : "webitem"
+      name: "Example Webitem"
+      key: "example-webitem"
+      link: "/example/relative/url"
+      location: "example.home.header.links"
+      weight: 10
+      text: "Example Webitem"
+
+  # Webfragments are html partials which will be injected into the specified location
+  # for example to show a component on an existing web page
+  # the path is to the served html template, and the fragment is a CSS selector for a single element to
+  # isolate from said template and use as the actual fragment for this module
+    - type : "webfragment"
+      name : "Example fragment"
+      key : "example-fragment"
+      path : "/fragments/example.html"
+      fragment : "#example-fragment-selector"
+      location: "example.home.footer"
+      weight : 10
+
+  # Webpages are entire served html pages
+  #   - Within the HTML you can define a decorator meta tag to cause the page to be decorated before serving
+  #       - The decorator can be provided by this plugin or any other plugin
+  #   - Within the HTML you can define a resourcesFor meta tag to have static resources injected
+  #       - Static resources can be provided by this plugin or another plugin
+    - type : "webpage"
+      name : "Example Webpage"
+      key : "example-webpage"
+      path : "/pages/example.html"
+      auth:
+        scopes:
+          - APPLICATION_USER
+
+  # REST modules define a single base URL to directly proxy requests to from the main api gateway
+    - type : "rest"
+      name : "example rest"
+      key : "example-rest-endpoint"
+      version : "1.0"
+      base : "/rest/example"
+
+  # Web resources define static resources that you can contribute to existing webpages
+  # by giving a context. The context is used by webpages via the resourcesFor Meta tag
+    - type : "webresource"
+      name : "Example webresource"
+      key : "example-webresource"
+      base : "/static"
+      resources :
+        - type: "js"
+          path : "example.javascript.js"
+        - type: "css"
+          path : "example.style.css"
+      context : "example.resources.context"

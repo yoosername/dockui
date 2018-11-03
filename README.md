@@ -1,34 +1,42 @@
 # DOCKUI
 
-> Compose a web app by feature using Docker micro-services
+> Compose a web app by features using Docker Container based micro-services
 
 ## Usage
+To start a dockui App start a runner like this:
 
+### Quick Start
+#### Run dockui gateway
 ```bash
-dockui init
-dockui add-demo-plugins
-dockui start --environment dev
+docker run -d dockui-gateway -d -p 8000:8080 dockui/gateway:latest
 ```
-
-This will
-
--   Start a new dockui config file in the current folder
--   create a new overlay network for the microservices
--   build the demo plugins into the plugins folder from templates
--   start the api gateway and all the plugin containers in dev mode
-
 You should now be able to visit <https://localhost:8080/dockui> to see the demo app.
 
-The demo app is a fully functionig webapp which includes all of the plugin types of dockui and acts as a tutorial for using it.
+#### Set your DOCKUI_PLUGIN_API_KEY for plugins to use
+```bash
+export DOCKUI_PLUGIN_API_KEY=$(docker exec dockui-gateway cat /dockui-plugin-api-key)
+```
+
+#### Add some plugins using the DOCKUI_PLUGIN_API_KEY
+```bash
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-decorator
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webpage
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webfragment
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webitem
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-rest
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-resource
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-auth
+```
 
 ## Hot Reload
+All plugins are just containers and so are detected by monitoring the Docker events subsystem.
 
-All microservices are detected detected by monitoring the Docker events subsystem.
+- If a new container is detected then a plugin descriptor is searched for by service name and private port via HTTP GET request at the root context for plugin.yml or plugin.json.
+- If the plugin uses the correct API_KEY then plugin descriptor is parsed
+- It it is a valid config then modules are loaded and available to the gateway
+- If the container is removed and / or readded the descriptor and modules are reloaded
 
--   If a new container is detected then a plugin descriptor is searched for by service name and private port via HTTP GET request at the root context for plugin.yml or plugin.json.
--   If the container is removed and / or readded the descriptor is reloaded
-
-## Plugin Modules
+## Plugin Descriptor and Modules
 
 The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the microservice is contributing to the overall application for example:
 
@@ -49,6 +57,15 @@ modules:
       name: "Auth Provider"
       key: "example-auth-provider"
       url: "/authenticate"
+      weight: "10"
+
+  # Scope provider provides capabilities to check if the current authenticated user
+  # has the required scope
+  # As providers are chained, weight represents where in the order this will fire
+    - type : "scopeprovider"
+      name: "Scope Provider"
+      key: "example-scope-provider"
+      url: "/check-scope"
       weight: "10"
 
   # Routes are a way to rewrite more readable urls for a given webpage or resource

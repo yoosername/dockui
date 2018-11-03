@@ -1,5 +1,7 @@
 const EventEmitter = require("events");
-const DockerClient = require("./DockerClient");
+const DockerClient = require("./clients/DockerClient");
+const {DOCKER_NOT_RUNNING_ERROR} = require("../constants/errors");
+
 const {
   MISSING_CLIENT_ERROR, 
   MISSING_EMITTER_ERROR,
@@ -21,7 +23,7 @@ const {
 function DockerService(client, events) {
     "use strict";
 
-    if(!client || !(client instanceof DockerClient)){
+    if(!client || !(DockerClient.prototype.isPrototypeOf(client))){
       throw new Error(MISSING_CLIENT_ERROR);
     }
 
@@ -35,7 +37,9 @@ function DockerService(client, events) {
 
     this._client = client;
     this._events = events;
-    this._started = false;
+    this._running = false;
+    this._initialised = false;
+    this._cache = [];
 }
 
 /**
@@ -50,6 +54,16 @@ DockerService.prototype.isDockerRunning = function(){
   return this._client.isDockerRunning();
 };
 
+DockerService.prototype.handleEvent = function(type, container){
+  "use strict";
+
+  if(this._running){
+    this._cache.push(container);
+    this._events.emit(type, container);
+  }
+  
+};
+
 /**
  * DockerService.start
  * @description starts listening for container events
@@ -58,40 +72,69 @@ DockerService.prototype.isDockerRunning = function(){
 DockerService.prototype.start = function(){
   "use strict"; 
 
-  // Do once: Use the client to retrieve the current list of running containers
-  // Do once: Start listening
-  if(!this._started){
+  // If we are not already running then fetch list of running containers
+  // compare with the list we know about and send events for the difference
+  if(!this._running){
+
+    if(!this.isDockerRunning()){
+      throw new Error(DOCKER_NOT_RUNNING_ERROR);
+    }
 
     this._client.listRunningContainers((err, containers) => {
+
       if(err){
         return console.warn(LISTING_RUNNING_CONTAINERS_ERROR);
       }
 
+      this._running = true;
+
       containers.forEach((container) => {
-        this._events.emit(CONTAINER_START_EVENT_ID, container);
+
+        if( ! this._cache.includes(container) ){
+          this.handleEvent(CONTAINER_START_EVENT_ID, container);
+        }
+        
       });
+
     });
-
-    // Start listening for events from the client
-    this._client.getEvents((err, events) =>{
-      if(err){
-        return console.warn("Error getting client events");
-      }
-
-      events
-      .on(CONTAINER_START_EVENT_ID, (container) => {
-        this._events.emit(CONTAINER_START_EVENT_ID, container);
-      })
-      .on(CONTAINER_STOP_EVENT_ID, (container) => {
-        this._events.emit(CONTAINER_STOP_EVENT_ID, container);
-      });
-      
-    });
-
-    this._started = true;
 
   }
 
+  // Add event handler once on init
+  if( !this._initialised ){
+
+    // Start listening for events from the client
+    this._client.getEvents((err, events) =>{
+
+      if(err){
+        return console.warn("Error getting Docker client events");
+      }
+
+      events
+        .on(CONTAINER_START_EVENT_ID, (container) => {
+          this.handleEvent(CONTAINER_START_EVENT_ID, container);
+        })
+        .on(CONTAINER_STOP_EVENT_ID, (container) => {
+          this.handleEvent(CONTAINER_STOP_EVENT_ID, container);
+        });
+      
+    });
+
+    this._initialised = true;
+
+  }
+
+};
+
+/**
+ * DockerService.start
+ * @description stops listening for and emitting container events
+ * @public
+ */
+DockerService.prototype.stop = function(){
+  "use strict"; 
+
+  this._running = false;
 };
 
 module.exports = DockerService;

@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const DockerService = require("./DockerService");
-const DockerClient = require("./MockDockerClient");
+const DockerClient = require("./clients/MockDockerClient");
 const EventEmitter = require("events");
 const {
     MISSING_CLIENT_ERROR, 
@@ -21,18 +21,18 @@ describe('DockerService', function() {
         expect(DockerService).to.be.a('function');
     });
 
+    it('should be called with an instance of DockerClient and an instance of EventEmitter or throw an error', function() {
+        expect(function(){DockerService();}).to.throw(Error, MISSING_CLIENT_ERROR);
+        expect(function(){DockerService(new DockerClient());}).to.throw(Error, MISSING_EMITTER_ERROR);
+        expect(function(){DockerService(new DockerClient(), new EventEmitter());}).to.not.throw();
+    });
+
     it('should be able to be used with or without the new operator', function() {
         var withNewOperator = new DockerService(new DockerClient(), new EventEmitter());
         expect(withNewOperator).to.be.an.instanceOf(DockerService);
 
         var withoutNewOperator = new DockerService(new DockerClient(), new EventEmitter());
         expect(withoutNewOperator).to.be.an.instanceOf(DockerService);
-    });
-
-    it('should be called with an instance of DockerClient and an instance of EventEmitter or throw an error', function() {
-        expect(function(){DockerService();}).to.throw(Error, MISSING_CLIENT_ERROR);
-        expect(function(){DockerService(new DockerClient());}).to.throw(Error, MISSING_EMITTER_ERROR);
-        expect(function(){DockerService(new DockerClient(), new EventEmitter());}).to.not.throw();
     });
 
     it(`should trigger ${CONTAINER_START_EVENT_ID} event for all containers detected on start`, function(done) {
@@ -61,6 +61,8 @@ describe('DockerService', function() {
         mockDockerClient.setIsDockerRunning(true);
 
         expect(ds.isDockerRunning()).to.equal(true);
+        expect(function(){ds.start();}).to.not.throw;
+        
     });
 
     it(`should not fire ${CONTAINER_START_EVENT_ID} for existing containers on subsequent starts`, function() {
@@ -80,7 +82,7 @@ describe('DockerService', function() {
         expect(count).to.equal(EXPECTED_COUNT);
     });
 
-    it(`should fire ${CONTAINER_START_EVENT_ID} when client detects new container`, function(done) {
+    it(`should fire ${CONTAINER_START_EVENT_ID} when client detects started container`, function(done) {
         var emitter = new EventEmitter();
         var EXPECTED_COUNT = 5;
         var mockDockerClient = new DockerClient(EXPECTED_COUNT);
@@ -103,7 +105,7 @@ describe('DockerService', function() {
             done();
         });
 
-        mockDockerClient.addRunningContainer(container);
+        mockDockerClient.startContainer(container);
 
     });
 
@@ -127,7 +129,7 @@ describe('DockerService', function() {
 
         var container = mockDockerClient.generateNewContainer();
 
-        emitter.on(CONTAINER_START_EVENT_ID, function(c){
+        emitter.on(CONTAINER_START_EVENT_ID, function(){
             expect(count).to.equal(EXPECTED_COUNT + 1);
         });
 
@@ -137,8 +139,53 @@ describe('DockerService', function() {
             done();
         });
 
-        mockDockerClient.addRunningContainer(container);
+        mockDockerClient.startContainer(container);
         mockDockerClient.stopContainer(container);
+
+    });
+
+    it(`should stop firing events when stop() is called but refire only the difference when restarted again`, function() {
+        var emitter = new EventEmitter();
+        var START_COUNT = 5;
+        var mockDockerClient = new DockerClient(START_COUNT);
+        var ds = new DockerService(mockDockerClient,emitter);
+        var count = 0;
+
+        emitter.on(CONTAINER_START_EVENT_ID, function(){
+            count++;
+        });
+
+        var NEW_CONTAINER_BATCH_1 = [
+            mockDockerClient.generateNewContainer(),
+            mockDockerClient.generateNewContainer(),
+            mockDockerClient.generateNewContainer()
+        ];
+
+        var NEW_CONTAINER_BATCH_2 = [
+            mockDockerClient.generateNewContainer(),
+            mockDockerClient.generateNewContainer(),
+            mockDockerClient.generateNewContainer()
+        ];
+
+        ds.start();
+
+        NEW_CONTAINER_BATCH_1.forEach((container) =>{
+            mockDockerClient.startContainer(container);
+        });
+
+        expect(count).to.equal(START_COUNT + NEW_CONTAINER_BATCH_1.length);
+
+        ds.stop();
+
+        NEW_CONTAINER_BATCH_2.forEach((container) =>{
+            mockDockerClient.startContainer(container);
+        });
+
+        expect(count).to.equal(START_COUNT + NEW_CONTAINER_BATCH_1.length);
+
+        ds.start();
+
+        expect(count).to.equal(START_COUNT + NEW_CONTAINER_BATCH_1.length + NEW_CONTAINER_BATCH_2.length);
 
     });
 
