@@ -1,54 +1,65 @@
 # DOCKUI
 
-> Compose a web app by features using Docker Container based micro-services
+> Compose a single web app from loosely coupled Docker based micro apps
 
-## Usage
-To start a dockui App start a runner like this:
+## Quick Start
+To start a dockui App first start a new gateway like this:
 
-### Quick Start
-#### Run dockui gateway
+### Run dockui gateway
 ```bash
 docker run -d dockui-gateway -d -p 8000:8080 dockui/gateway:latest
 ```
-You should now be able to visit <https://localhost:8080/dockui> to see the demo app.
 
-#### Set your DOCKUI_PLUGIN_API_KEY for plugins to use
+A gateway is a bit dull without some plugins to add features so lets add some.
+
+### Store a DOCKUI_PLUGIN_API_KEY for plugins to use later
 ```bash
 export DOCKUI_PLUGIN_API_KEY=$(docker exec dockui-gateway cat /dockui-plugin-api-key)
 ```
 
-#### Add some plugins using the DOCKUI_PLUGIN_API_KEY
+### Add some plugins using the DOCKUI_PLUGIN_API_KEY
 ```bash
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-decorator
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webpage
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-authprovider
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-scopeprovider
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-route
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webpage-decorator
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webpage-decorated
 docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webfragment
 docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webitem
 docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-rest
 docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-resource
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-auth
 ```
+
+You should now be able to visit <https://localhost:8080/dockui> to see the above demo app. You probably wouldn't
+split up an app like this, but the demo plugins are done this way to show how everything is combined seamlessly.
 
 ## Hot Reload
 All plugins are just containers and so are detected by monitoring the Docker events subsystem.
 
 - If a new container is detected then a plugin descriptor is searched for by service name and private port via HTTP GET request at the root context for plugin.yml or plugin.json.
-- If the plugin uses the correct API_KEY then plugin descriptor is parsed
-- It it is a valid config then modules are loaded and available to the gateway
+- If the plugin uses the correct API_KEY then plugin descriptor is parsed for modules
+- It it is a valid descriptor and has valid modules then modules are loaded and available on the gateway
 - If the container is removed and / or readded the descriptor and modules are reloaded
 
 ## Plugin Descriptor and Modules
 
-The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the microservice is contributing to the overall application for example:
+The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the microapp is contributing to the overall application for example:
 
 ```yml
-# Here you specify a name, key and version of your plugin which is used
+# Here you specify a name, key and version of your Plugin(micro-app) which is used
 # by the plugin service to instantiate a unique Plugin at runtime
 # plugins are linked to their docker containers so when the container goes down the plugin is removed
+# name: Human readable Name for this Plugin
+# key: Unique key for this Plugin
+# version: Version of this Plugin
+# descriptor-version: Version of the Descriptor this Plugin is targeting.
 name: "Plugin Name"
 key: "example-plugin-key"
 version: 1.0
+descriptor-version: 1.0
 
-# Modules do the work for the plugin. See the various types for explanation of what they do
+# Modules are the main components of the plugin. A plugin can provide zero or more modules to the system.
+# See the various types for explanation of what they do
 modules:
 
   # Auth provider provide capabilities to authenticate the user session
@@ -76,6 +87,7 @@ modules:
         - "/example/*"
       path: "/plugins/example-plugin-key/webpages/$1"
       auth:
+        required: true
         scopes:
           - PLUGIN_ADMIN
 
@@ -110,6 +122,7 @@ modules:
       key : "example-webpage"
       path : "/example"
       auth:
+        required: true
         scopes:
           - APPLICATION_USER
 
@@ -134,3 +147,4 @@ modules:
 ```
 
 ## API
+## How to create a Plugin
