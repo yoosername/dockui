@@ -57,10 +57,21 @@ name: "Plugin Name"
 key: "example-plugin-key"
 version: 1.0
 descriptor-version: 1.0
+icon: '/static/icon.png'
 
 # Modules are the main components of the plugin. A plugin can provide zero or more modules to the system.
 # See the various types for explanation of what they do
 modules:
+
+  # Lifecycle hooks provide the ability to sycronously act on various parts of the plugin
+  # system. For example determine if a plugin should be installed or not. Or asynconrously
+  # participate, for example to register an audit log listener for all events.
+    - type : "lifecyclehook"
+      name: "Lifecycle Hook"
+      key: "example-lifecycle-hook"
+      type: "async"
+      url: "/lifecycle"
+      weight: "10"
 
   # Auth provider provide capabilities to authenticate the user session
   # As providers are chained, weight represents where in the order this will fire

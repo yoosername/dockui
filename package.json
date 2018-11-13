@@ -17,7 +17,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "cli" : "node ./src/cli/cli.js",
+    "cli": "node ./src/cli/cli.js",
     "test": "./node_modules/mocha/bin/mocha src/**/*spec.js --reporter spec",
     "jshint": "./node_modules/jshint/bin/jshint src/**/*.js",
     "coverage": "nyc ./node_modules/mocha/bin/mocha src/**/*spec.js --reporter spec",

@@ -12,7 +12,7 @@ const YAML = require('js-yaml');
  */
 function PluginService(events) {
     "use strict";
-  
+
     if (!(this instanceof PluginService)) {
       return new PluginService(events);
     }
@@ -24,7 +24,7 @@ function PluginService(events) {
     this._events = events;
     this._running = false;
     this._initialised = false;
-    
+
 }
 
 /**
@@ -33,7 +33,7 @@ function PluginService(events) {
  * @public
  */
 PluginService.prototype.start = function(){
-  "use strict"; 
+  "use strict";
 
   if( this._initialised === false ){
 
@@ -59,7 +59,7 @@ PluginService.prototype.start = function(){
  * @public
  */
 PluginService.prototype.stop = function(){
-  "use strict"; 
+  "use strict";
   this._running = false;
 };
 
@@ -69,15 +69,15 @@ PluginService.prototype.stop = function(){
  * @public
  */
 PluginService.prototype.handleContainerStartEvent = function(callback){
-  "use strict"; 
-  
+  "use strict";
+
   if( ! this._running ){
     console.warn(PLUGIN_SERVICE_NOT_RUNNING_ERROR);
     return;
   }
 
   request
-  .get('http://localhost/dockui/register')
+  .get('http://localhost/dockui-plugin.yaml')
   .end((err, res) => {
 
     if(err) console.log(err);
@@ -94,7 +94,7 @@ PluginService.prototype.handleContainerStartEvent = function(callback){
  * @public
  */
 PluginService.prototype.loadYamlConfig = function(yaml){
-  "use strict"; 
+  "use strict";
 
   // var config = {};
   // try {
@@ -112,7 +112,7 @@ PluginService.prototype.loadYamlConfig = function(yaml){
  * @public
  */
 PluginService.prototype.handleContainerStopEvent = function(){
-  "use strict"; 
+  "use strict";
 
   if( ! this._running ){
     console.warn(PLUGIN_SERVICE_NOT_RUNNING_ERROR);
@@ -127,7 +127,7 @@ PluginService.prototype.handleContainerStopEvent = function(){
  * @public
  */
 PluginService.prototype.registerPlugin = function(config){
-  "use strict"; 
+  "use strict";
 
   // emit detected plugin
   this._events.emit(PLUGIN_DETECTED_EVENT_ID, config);

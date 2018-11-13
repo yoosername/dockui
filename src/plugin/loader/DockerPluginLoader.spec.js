@@ -15,13 +15,13 @@ const { MISSING_EMITTER_ERROR } = require("../constants/errors");
 const { PLUGIN_DETECTED_EVENT_ID } = require("../constants/events");
 
 var EXAMPLE_PLUGIN_CONFIG_YAML_PATH = "/src/plugin/sample_plugin_config.yml";
-var EXAMPLE_PLUGIN_CONFIG_JSON;
+var EXAMPLE_PLUGIN_CONFIG_YAML;
 const yaml = require('js-yaml');
 const fs = require("fs");
 
 // Preload the example plugin yaml config
 try {
-    EXAMPLE_PLUGIN_CONFIG_JSON = yaml.safeLoad(fs.readFileSync(process.cwd() + EXAMPLE_PLUGIN_CONFIG_YAML_PATH, 'utf8'));
+    EXAMPLE_PLUGIN_CONFIG_YAML = yaml.safeLoad(fs.readFileSync(process.cwd() + EXAMPLE_PLUGIN_CONFIG_YAML_PATH, 'utf8'));
 } catch (e) {
     console.log(e);
 }
@@ -32,8 +32,8 @@ describe('PluginService', function() {
 
     beforeEach(function(){
         nock(/.*/)
-            .get('/dockui/register')
-            .reply(200, EXAMPLE_PLUGIN_CONFIG_JSON)
+            .get('/dockui-plugin.yaml')
+            .reply(200, EXAMPLE_PLUGIN_CONFIG_YAML)
             .persist();
     });
 
@@ -61,7 +61,7 @@ describe('PluginService', function() {
     });
 
     // TODO: PluginService is responsible for:
-    //      discovering plugins, 
+    //      discovering plugins,
     //      reading config,
     //      checking modules are ok,
     //      keeping internal state of all plugins and modules, module specific config and state of plugin and modules
@@ -105,7 +105,7 @@ describe('PluginService', function() {
         var events = new EventEmitter();
 
         events.on(PLUGIN_DETECTED_EVENT_ID, function(config){
-            expect(config).to.eql(EXAMPLE_PLUGIN_CONFIG_JSON);
+            expect(config).to.eql(EXAMPLE_PLUGIN_CONFIG_YAML);
             done();
         });
 
@@ -130,7 +130,7 @@ describe('PluginService', function() {
 
         events.on(PLUGIN_DETECTED_EVENT_ID, function(){
             expect(spy.callCount).to.equal(1);
-            expect(spy.args[0]).to.eql([EXAMPLE_PLUGIN_CONFIG_JSON]);
+            expect(spy.args[0]).to.eql([EXAMPLE_PLUGIN_CONFIG_YAML]);
             done();
         });
 
@@ -138,6 +138,9 @@ describe('PluginService', function() {
         dockerService.start();
 
     });
+
+    // TODO Tests
+    // TODO: Plugins should send requires sending valid JWT token with requests.
     // TODO: If receives invalid or not found registration config from container POST request should warn about error
 
     // TODO: should listen for plugin registration EVENT and check for key
