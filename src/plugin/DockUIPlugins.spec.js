@@ -4,28 +4,85 @@ const sinon = require("sinon");
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
+const  {
+  MissingStoreDuringSetupError,
+  MissingEventServiceDuringSetupError,
+  MissingPluginServiceDuringSetupError,
+  MissingWebServiceDuringSetupError
+} = require("../constants/errors");
+
+var {DockUIPlugins, DockUIPluginsBuilder} = require('./DockUIPlugins');
+var mockStore = null;
+var mockPluginService = null;
+var mockEventService = null;
+var mockWebService = null;
+
 describe('DockUIPlugins', function() {
     "use strict";
 
     beforeEach(function(){
-        //
+      mockStore = { get: function () {}, set: function () {} };
+      mockPluginService = { 
+        start: function () {}, 
+        shutdown: function () {},
+        scanForNewPlugins: function () {},
+        stopScanningForNewPlugins: function(){},
+        getPlugins: function(){},
+        getPlugin: function(){},
+        enablePlugin: function(){},
+        disablePlugin: function(){},
+        getPluginModules: function(){},
+        getPluginModule: function(){},
+        enableModule: function(){},
+        disableModule: function(){}
+      };
+      mockEventService = { on: function () {}, trigger: function () {} };
+      mockWebService = { start: function () {}, shutdown: function () {} };
     });
 
     it('should be defined and loadable', function() {
-      var DockUIPlugins = require('./DockUIPlugins');
       expect(DockUIPlugins).to.not.be.undefined;
     });
 
     it('should be a function', function() {
-      var {DockUIPlugins} = require('./DockUIPlugins');
       expect(DockUIPlugins).to.be.a('function');
     });
 
     it('Should return a DockUIPlugins.Builder if one isnt passed as arg', function() {
-      var {DockUIPlugins, DockUIPluginsBuilder} = require('./DockUIPlugins');
       var builder = new DockUIPlugins();
-
       expect(builder).to.be.instanceof(DockUIPluginsBuilder);
+    });
+
+    it('should start pluginService.start method when start() called', function() {
+      var pluginService = sinon.mock(mockPluginService);
+      pluginService.expects("start").once();
+      
+      var dockUIPlugins = new DockUIPluginsBuilder()
+        .withStore(mockStore)
+        .withEventService(mockEventService)
+        .withPluginService(mockPluginService)
+        .withWebService(mockWebService)
+        .build();
+
+      dockUIPlugins.start();
+      pluginService.verify();
+
+    });
+
+    it('should call pluginService.stop method when stop() called', function() {
+      var webService = sinon.mock(mockWebService);
+      webService.expects("shutdown").once();
+      
+      var dockUIPlugins = new DockUIPluginsBuilder()
+        .withStore(mockStore)
+        .withEventService(mockEventService)
+        .withPluginService(mockPluginService)
+        .withWebService(mockWebService)
+        .build();
+
+      dockUIPlugins.shutdown();
+      webService.verify();
+
     });
 
 });
@@ -34,85 +91,61 @@ describe('DockUIPluginsBuilder', function() {
   "use strict";
 
   it('should be able to set the Store', function() {
-    var DockUIPluginsBuilder = require('./DockUIPlugins').DockUIPluginsBuilder;
-    var NoOpStore = require("../store/NoOpStore");
-    new DockUIPluginsBuilder().withStore(new NoOpStore());
+    new DockUIPluginsBuilder().withStore(mockStore);
   });
 
   it('should be able to set the EventService', function() {
-    var DockUIPluginsBuilder = require('./DockUIPlugins').DockUIPluginsBuilder;
-    var emitter = require("events");
-    new DockUIPluginsBuilder().withEventService(emitter);
+    new DockUIPluginsBuilder().withEventService(mockEventService);
   });
 
   it('should be able to set the PluginService', function() {
-    var DockUIPluginsBuilder = require('./DockUIPlugins').DockUIPluginsBuilder;
-    var NoOpPluginService = require("./service/PluginService");
-    new DockUIPluginsBuilder().withPluginService(new NoOpPluginService());
+    new DockUIPluginsBuilder().withPluginService(mockPluginService);
   });
 
   it('should be able to set the WebService', function() {
-    var DockUIPluginsBuilder = require('./DockUIPlugins').DockUIPluginsBuilder;
-    var NoOpWebService = require("../web/NoOpWebService");
-    new DockUIPluginsBuilder().withWebService(new NoOpWebService());
+    new DockUIPluginsBuilder().withWebService(mockWebService);
   });
 
   it('should return a DockUIPlugins instance when build is called', function() {
-    var DockUIPlugins = require('./DockUIPlugins').DockUIPlugins;
-    var DockUIPluginsBuilder = require('./DockUIPlugins').DockUIPluginsBuilder;
-    var NoOpStore = require("../store/NoOpStore");
-    var emitter = require("events");
-    var NoOpPluginService = require("./service/PluginService");
-    var NoOpWebService = require("../web/NoOpWebService");
     const dockuiPluginsInstance = new DockUIPluginsBuilder()
-      .withStore(new NoOpStore())
-      .withEventService(emitter)
-      .withPluginService(new NoOpPluginService())
-      .withWebService(new NoOpWebService())
+      .withStore(mockStore)
+      .withEventService(mockEventService)
+      .withPluginService(mockPluginService)
+      .withWebService(mockWebService)
       .build();
     expect(dockuiPluginsInstance).to.be.an.instanceOf(DockUIPlugins);  
   });
 
   it('should validate when build is called', function() {
-    var DockUIPluginsBuilder = require('./DockUIPlugins').DockUIPluginsBuilder;
-    var MissingStoreDuringSetupError = require('./DockUIPlugins').MissingStoreDuringSetupError;
-    var MissingEventServiceDuringSetupError = require('./DockUIPlugins').MissingEventServiceDuringSetupError;
-    var MissingPluginServiceDuringSetupError = require('./DockUIPlugins').MissingPluginServiceDuringSetupError;
-    var MissingWebServiceDuringSetupError = require('./DockUIPlugins').MissingWebServiceDuringSetupError;
-    var NoOpStore = require("../store/NoOpStore");
-    var NoOpPluginService = require("./service/PluginService");
-    var emitter = require("events");
-    var NoOpWebService = require("../web/NoOpWebService");
-
     expect(function(){
       new DockUIPluginsBuilder()
-        .withEventService(emitter)
-        .withPluginService(new NoOpPluginService())
-        .withWebService(new NoOpWebService())
+        .withEventService(mockEventService)
+        .withPluginService(mockPluginService)
+        .withWebService(mockWebService)
         .build();
     }).to.throw(MissingStoreDuringSetupError);  
 
     expect(function(){
       new DockUIPluginsBuilder()
-        .withStore(new NoOpStore())
-        .withPluginService(new NoOpPluginService())
-        .withWebService(new NoOpWebService())
+        .withStore(mockStore)
+        .withPluginService(mockPluginService)
+        .withWebService(mockWebService)
         .build();
     }).to.throw(MissingEventServiceDuringSetupError);  
 
     expect(function(){
       new DockUIPluginsBuilder()
-        .withStore(new NoOpStore())
-        .withEventService(emitter)
-        .withWebService(new NoOpWebService())
+        .withStore(mockStore)
+        .withEventService(mockEventService)
+        .withWebService(mockWebService)
         .build();
     }).to.throw(MissingPluginServiceDuringSetupError);  
 
     expect(function(){
       new DockUIPluginsBuilder()
-        .withStore(new NoOpStore())
-        .withEventService(emitter)
-        .withPluginService(new NoOpPluginService())
+        .withStore(mockStore)
+        .withEventService(mockEventService)
+        .withPluginService(mockPluginService)
         .build();
     }).to.throw(MissingWebServiceDuringSetupError);  
 

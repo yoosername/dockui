@@ -1,6 +1,6 @@
 /**
- * Store
- * NoOp Store implementation
+ * @class Store
+ * @description NoOp Store implementation
  */
 class Store{
 

@@ -10,6 +10,12 @@ class NoOpWebService{
     console.log("\n\n[WebService] : Started");
   }
 
+  // Start the web server
+  shutdown(){
+    "use strict";
+    console.log("\n\n[WebService] : Stopping");
+  }
+
 }
 
 module.exports = NoOpWebService;
