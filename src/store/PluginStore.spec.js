@@ -4,11 +4,9 @@ const sinon = require("sinon");
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
+var PluginStore = require('./PluginStore');
 
-
-var Store = require('./Store');
-
-describe('Store', function() {
+describe('PluginStore', function() {
     "use strict";
 
     beforeEach(function(){
@@ -16,11 +14,11 @@ describe('Store', function() {
     });
 
     it('should be defined and loadable', function() {
-      expect(Store).to.not.be.undefined;
+      expect(PluginStore).to.not.be.undefined;
     });
 
     it('should be a function', function() {
-      expect(Store).to.be.a('function');
+      expect(PluginStore).to.be.a('function');
     });
 
     // Tests get

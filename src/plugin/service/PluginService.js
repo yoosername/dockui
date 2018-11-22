@@ -1,7 +1,8 @@
 const  {
+  PLUGIN_SERVICE_STARTING_EVENT,
   PLUGIN_SERVICE_STARTED_EVENT,
+  PLUGIN_SERVICE_SHUTTING_DOWN_EVENT,
   PLUGIN_SERVICE_SHUTDOWN_EVENT,
-  PLUGIN_LOADED_EVENT,
   PLUGIN_ENABLED_EVENT,
   PLUGIN_DISABLED_EVENT,
   PLUGIN_MODULE_ENABLED_EVENT,
@@ -12,36 +13,51 @@ const  {
   PluginServiceValidationError
 } = require("../../constants/errors");
 
+const  {
+  validateShapes
+} = require("../../util/validate");
+
 /**
  * @class PluginService
- * @description Default PluginService is NoOp. Here for ref
- * @public
- * @constructor
+ * @description Use plugin loaders to detect and load plugins and
+ *              a LifecycleStrategy to enable and disable plugins based on custom rules
  */
 class PluginService{
 
   constructor(
-    loaders,
-    store,
-    strategy,
-    events
+    pluginLoaders,
+    pluginStore,
+    lifecycleEventsStrategy,
+    eventService
   ){
+    
     this._running = false;
-    this.loaders = loaders;
-    this.store = store;
-    this.strategy = strategy;
-    this.events = events;
-    this.validateArguments();
-  }
+    var lifecycleEventsStrategyInst = lifecycleEventsStrategy;
 
-  validateArguments(){
-    if(
-      !this.loaders||
-      !this.store||
-      !this.strategy||
-      !this.events){
-      throw new PluginServiceValidationError();
+    try{
+
+      // if lifecycleEventStrategy is a function then create the instance now
+      if(typeof lifecycleEventsStrategyInst==="function"){
+        lifecycleEventsStrategyInst = new lifecycleEventsStrategyInst(this, eventService, pluginStore);
+      }
+
+      // Validate our args using ducktyping utils. (figure out better way to do this later)
+      validateShapes([
+        {"shape":"PluginLoader","object":pluginLoaders[0]}, 
+        {"shape":"PluginStore","object":pluginStore}, 
+        {"shape":"LifecycleEventsStrategy","object":lifecycleEventsStrategyInst}, 
+        {"shape":"EventService","object":eventService}
+      ]);
+
+    }catch(e){
+      throw new PluginServiceValidationError(e);
     }
+
+    this.pluginLoaders = pluginLoaders;
+    this.pluginStore = pluginStore;
+    this.eventService = eventService;
+    this.lifecycleEventsStrategy = lifecycleEventsStrategyInst;
+    
   }
 
   /**
@@ -55,15 +71,12 @@ class PluginService{
     // If we are not already started
     if( this._running !== true ){
 
-      // Hook up listener to enable plugins when they are loaded
-      this.events.on(PLUGIN_LOADED_EVENT, payload => {
-        this.store.getEnabledPlugins().forEach(plugin => {
-          if( plugin.getKey() === payload.plugin.getKey() ){
-            payload.plugin.enable();
-            console.log("[PluginService] Plugin ("+payload.plugin.getKey()+") has been detected and was enabled on last run - so attempting to reenable");
-          }
-        });
-      });
+
+      // Notify listeners that we are starting up
+      this.eventService.trigger(PLUGIN_SERVICE_STARTING_EVENT);
+
+      // setup PluginEventLifecycleStrategy to handle events
+      this.lifecycleEventsStrategy.setup();
 
       // Kick off scanning for new plugins
       this.scanForNewPlugins();
@@ -72,7 +85,7 @@ class PluginService{
       this._running = true; 
 
       // Notify listeners that we have started
-      this.events.trigger(PLUGIN_SERVICE_STARTED_EVENT);
+      this.eventService.trigger(PLUGIN_SERVICE_STARTED_EVENT);
 
     }
 
@@ -85,12 +98,26 @@ class PluginService{
    */
   shutdown(){
     "use strict";
-    // Tell Loaders to stop loading plugins
-    this.stopScanningForNewPlugins();
-    // Flag that we are not running
-    this._running = false;
-    // Notify listeners that we have started
-    this.events.trigger(PLUGIN_SERVICE_SHUTDOWN_EVENT);
+
+    // If we are not already shutdown
+    if( this._running == true ){
+
+      // Notify listeners that we are shutting down
+      this.eventService.trigger(PLUGIN_SERVICE_SHUTTING_DOWN_EVENT);
+
+      // Tell Loaders to stop loading plugins
+      this.stopScanningForNewPlugins();
+
+      // Teardown event handlers
+      this.lifecycleEventsStrategy.teardown();
+
+      // Flag that we are not running
+      this._running = false;
+
+      // Notify listeners that we have shutdown successfully
+      this.eventService.trigger(PLUGIN_SERVICE_SHUTDOWN_EVENT);
+
+    }
   }
 
   /**
@@ -100,10 +127,8 @@ class PluginService{
    */
   scanForNewPlugins(){
     "use strict";
-    this.loaders.forEach(loader => {
-      try{
-        loader.scanForNewPlugins();
-      }catch(error){}
+    this.pluginLoaders.forEach(pluginLoader => {
+        pluginLoader.scanForNewPlugins();
     });
   }
 
@@ -114,10 +139,8 @@ class PluginService{
    */
   stopScanningForNewPlugins(){
     "use strict";
-    this.loaders.forEach(loader => {
-      try{
-        loader.stopScanningForNewPlugins();
-      }catch(error){}
+    this.pluginLoaders.forEach(pluginLoader => {
+        pluginLoader.stopScanningForNewPlugins();
     });
   }
 
@@ -130,10 +153,8 @@ class PluginService{
   getPlugins(filter){
     "use strict";
     var allPlugins = [];
-    this.loaders.forEach(loader => {
-      try{
-        allPlugins.push(loader.getPlugins(filter));
-      }catch(error){}
+    this.pluginLoaders.forEach(pluginLoader => {
+        allPlugins.push(pluginLoader.getPlugins(filter));
     });
     return allPlugins;
   }
@@ -165,8 +186,8 @@ class PluginService{
     "use strict";
     var plugin = this.getPlugin(pluginKey);
     if( plugin !== null){
-      this.store.enablePlugin(pluginKey);
-      this.events.trigger(PLUGIN_ENABLED_EVENT, {
+      this.pluginStore.enablePlugin(pluginKey);
+      this.eventService.trigger(PLUGIN_ENABLED_EVENT, {
         "plugin" : plugin
       });
     }else{
@@ -184,8 +205,8 @@ class PluginService{
     "use strict";
     var plugin = this.getPlugin(pluginKey);
     if( plugin !== null){
-      this.store.disablePlugin(pluginKey);
-      this.events.trigger(PLUGIN_DISABLED_EVENT, {
+      this.pluginStore.disablePlugin(pluginKey);
+      this.eventService.trigger(PLUGIN_DISABLED_EVENT, {
         "plugin" : plugin
       });
     }else{
@@ -246,8 +267,8 @@ class PluginService{
     "use strict";
     var module = this.getPluginModule(pluginKey, moduleKey);
     if( module !== null){
-      this.store.enablePluginModule(pluginKey,moduleKey);
-      this.events.trigger(PLUGIN_MODULE_ENABLED_EVENT, {
+      this.pluginStore.enablePluginModule(pluginKey,moduleKey);
+      this.eventService.trigger(PLUGIN_MODULE_ENABLED_EVENT, {
         "module" : module
       });
     }else{
@@ -266,8 +287,8 @@ class PluginService{
     "use strict";
     var module = this.getPluginModule(pluginKey, moduleKey);
     if( module !== null){
-      this.store.disablePluginModule(pluginKey,moduleKey);
-      this.events.trigger(PLUGIN_MODULE_DISABLED_EVENT, {
+      this.pluginStore.disablePluginModule(pluginKey,moduleKey);
+      this.eventService.trigger(PLUGIN_MODULE_DISABLED_EVENT, {
         "module" : module
       });
     }else{

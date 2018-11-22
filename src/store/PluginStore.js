@@ -1,8 +1,8 @@
 /**
- * @class Store
- * @description NoOp Store implementation
+ * @class PluginStore
+ * @description Simple Store for persisting Plugin/Module state
  */
-class Store{
+class PluginStore{
 
     set(key, val){
         console.warn("Youve used the default NoOp Store implementation - this should be extended by child classes");
@@ -12,6 +12,10 @@ class Store{
         console.warn("Youve used the default NoOp Store implementation - this should be extended by child classes");
     }
 
+    // implement this
+    // "set","get","enablePlugin","disablePlugin",
+    //         "enablePluginModule","disablePluginModule"
+
 }
 
-module.exports = Store;
+module.exports = PluginStore;

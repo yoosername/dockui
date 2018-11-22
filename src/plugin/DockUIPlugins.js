@@ -5,9 +5,12 @@ const  {
     MissingWebServiceDuringSetupError
 } = require("../constants/errors");
 
-const PLUGINSERVICE_START_COMPLETE_EVENT = "PLUGINSERVICE_START_COMPLETE_EVENT";
-const PLUGINSERVICE_SHUTDOWN_COMPLETE_EVENT = "PLUGINSERVICE_SHUTDOWN_COMPLETE_EVENT";
-const WEBSERVICE_SHUTDOWN_COMPLETE_EVENT = "WEBSERVICE_SHUTDOWN_COMPLETE_EVENT";
+const  {
+    PLUGIN_SERVICE_STARTED_EVENT,
+    WEB_SERVICE_SHUTDOWN_EVENT,
+    PLUGIN_SERVICE_SHUTDOWN_EVENT
+} = require("../constants/events");
+
 /**
  * @class DockUIPlugins
  * @description Wrapper around Plugin services for easier usage
@@ -22,7 +25,7 @@ class DockUIPlugins{
             return new DockUIPluginsBuilder();
         }
 
-        this.store = builder.store;
+        this.pluginStore = builder.pluginStore;
         this.eventService = builder.eventService;
         this.pluginService = builder.pluginService;
         this.webService = builder.webService;
@@ -35,7 +38,7 @@ class DockUIPlugins{
      */
     start(){
         this.pluginService.start();
-        this.eventService.on(PLUGINSERVICE_START_COMPLETE_EVENT, () => {
+        this.eventService.on(PLUGIN_SERVICE_STARTED_EVENT, () => {
             console.log("[DockUIPlugins] Plugin system has started, starting Web Service");
             this.webService.start();
         });
@@ -48,11 +51,11 @@ class DockUIPlugins{
      */
     shutdown(){
         this.webService.shutdown();
-        this.eventService.on(WEBSERVICE_SHUTDOWN_COMPLETE_EVENT, () => {
+        this.eventService.on(WEB_SERVICE_SHUTDOWN_EVENT, () => {
             console.log("[DockUIPlugins] Web system has shutdown successfully");
             this.pluginService.shutdown();
         });
-        this.eventService.on(PLUGINSERVICE_SHUTDOWN_COMPLETE_EVENT, () => {
+        this.eventService.on(PLUGIN_SERVICE_SHUTDOWN_EVENT, () => {
             console.log("[DockUIPlugins] Plugin system has shutdown successfully");
         });
     }
@@ -67,7 +70,7 @@ class DockUIPlugins{
 class DockUIPluginsBuilder{
 
     constructor(){
-        this.store = null;
+        this.pluginStore = null;
         this.eventService = null;
         this.pluginService=  null;
         this.webService = null;
@@ -75,10 +78,10 @@ class DockUIPluginsBuilder{
 
     /**
      * @method withStore 
-     * @argument store the Store to use
+     * @argument pluginStore the PluginStore to use
      */
-    withStore(store){
-        this.store = store;
+    withStore(pluginStore){
+        this.pluginStore = pluginStore;
         return this;
     }
 
@@ -124,7 +127,7 @@ class DockUIPluginsBuilder{
      * @description Validate builder options
      */
     validate(){
-        if(!this.store){
+        if(!this.pluginStore){
             throw new MissingStoreDuringSetupError();
         }
         if(!this.eventService){

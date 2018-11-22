@@ -14,32 +14,35 @@
  }
 
  Plugin.prototype.getKey = function(){
-   return this.pluginKey
- }
+   return this.pluginKey;
+ };
 
  Plugin.prototype.enable = function(){
    this.pluginLoader.enable(this);
- }
+ };
 
  Plugin.prototype.disable = function(){
    this.pluginLoader.disable(this);
- }
+ };
 
  Plugin.prototype.getModules = function(filter){
    if(filter && this.modules.length > 0){
      return this.modules.filter(filter);
    }
    return this.modules;
- }
+ };
 
  Plugin.prototype.getModuleByKey = function(key){
    return this.modules[key];
- }
+ };
 
  Plugin.prototype.enableModuleByKey = function(key){
-   this.modules[key].enable();
- }
+   this.getModuleByKey(key).enable();
+ };
 
  Plugin.prototype.disableModuleByKey = function(key){
-   this.modules[key].disable();
- }
+  this.getModuleByKey(key).disable();
+ };
+
+
+ module.exports = Plugin;

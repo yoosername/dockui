@@ -5,13 +5,12 @@ const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
 const  {
+  PLUGIN_SERVICE_STARTING_EVENT,
   PLUGIN_SERVICE_STARTED_EVENT,
+  PLUGIN_SERVICE_SHUTTING_DOWN_EVENT,
   PLUGIN_SERVICE_SHUTDOWN_EVENT,
-  PLUGIN_LOADED_EVENT,
   PLUGIN_ENABLED_EVENT,
-  PLUGIN_DISABLED_EVENT,
-  PLUGIN_MODULE_ENABLED_EVENT,
-  PLUGIN_MODULE_DISABLED_EVENT
+  PLUGIN_DISABLED_EVENT
 } = require("../../constants/events");
 
 const  {
@@ -19,25 +18,27 @@ const  {
 } = require("../../constants/errors");
 
 var PluginService = require('./PluginService');
+var mockLoader = null;
 var mockLoaders = null;
-var mockStore = null;
-var mockPluginEnableStrategy = null;
+var mockPluginStore = null;
+var mockLifecycleEventsStrategy = null;
 var mockEventService = null;
 
 describe('PluginService', function() {
     "use strict";
 
     beforeEach(function(){
+      mockLoader = { 
+        scanForNewPlugins: function () {},
+        stopScanningForNewPlugins: function () {},
+        getPlugins: function(){}
+      };
       mockLoaders = [
-        { 
-          scanForNewPlugins: function () {},
-          stopScanningForNewPlugins: function () {},
-          getPlugins: function(){},
-          getPlugin: function (){},
-          getPluginModules: function (){}
-        }
+        Object.assign({},mockLoader),
+        Object.assign({},mockLoader),
+        Object.assign({},mockLoader)
       ];
-      mockStore = { 
+      mockPluginStore = { 
         get: function () {}, 
         set: function () {},
         enablePlugin: function(){},
@@ -45,8 +46,16 @@ describe('PluginService', function() {
         enablePluginModule: function(){},
         disablePluginModule: function(){}
       };
-      mockPluginEnableStrategy = {apply: function () {}};
-      mockEventService = { on: function () {}, trigger: function () {} };
+      mockLifecycleEventsStrategy = {
+        setup: function () {},
+        teardown: function () {}
+      };
+      mockEventService = { 
+        on: function () {}, 
+        trigger: function () {}, 
+        addListener: function(){},
+        removeListener: function () {} 
+      };
     });
 
     it('should be defined and loadable', function() {
@@ -59,70 +68,83 @@ describe('PluginService', function() {
 
     it('should validate arguments and throw if wrong', function() {
       expect(()=>{
-        new PluginService(mockLoaders, mockStore, mockEventService);
+        new PluginService(null, null, null, null);
+      }).to.throw(PluginServiceValidationError);
+      expect(()=>{
+        new PluginService();
+      }).to.throw(PluginServiceValidationError);
+      expect(()=>{
+        new PluginService(mockLoaders, mockPluginStore, mockEventService);
       }).to.throw(PluginServiceValidationError);
       expect(()=>{
         new PluginService(mockLoaders, mockEventService);
       }).to.throw(PluginServiceValidationError);
       expect(()=>{
-        new PluginService(mockStore);
+        new PluginService(mockPluginStore);
       }).to.throw(PluginServiceValidationError);
       expect(()=>{
-        new PluginService(mockLoaders, mockStore, mockPluginEnableStrategy, mockEventService);
+        new PluginService(mockLoaders, mockPluginStore, mockLifecycleEventsStrategy, mockEventService);
       }).to.not.throw();
     });
 
     it('should run scanForNewPlugins and set _running to true on start', function() {
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
-      var mockService = sinon.mock(pluginService);
-      mockService.expects("scanForNewPlugins").once();
+      sinon.spy(pluginService, "scanForNewPlugins");
       
       expect(pluginService._running).to.equal(false);
       pluginService.start();
       expect(pluginService._running).to.equal(true);
+      expect(pluginService.scanForNewPlugins.calledOnce).to.equal(true);
 
-      mockService.verify();
+      pluginService.scanForNewPlugins.restore();
     });
 
     it('should cause loaders to run scanForNewPlugins on start', function() {
-      var pluginLoader = sinon.mock(mockLoaders[0]);
-      pluginLoader.expects("scanForNewPlugins").once();
+      var loader1 = mockLoaders[0];
+      sinon.spy(loader1,"scanForNewPlugins");
+
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       pluginService.start();
-      pluginLoader.verify();
+
+      expect(loader1.scanForNewPlugins.calledOnce).to.equal(true);
+      loader1.scanForNewPlugins.restore();
     });
 
-    it('should add event listener on start for for plugin load events', function() {
-      var events = sinon.mock(mockEventService);
-      events.expects("on").once().calledWith(PLUGIN_LOADED_EVENT);
+    it('should trigger setup on lifecycleEventsStrategy during start', function() {
+      var strategySpy = sinon.spy(mockLifecycleEventsStrategy,"setup");
+      
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
+
       pluginService.start();
-      events.verify();
+      expect(strategySpy).to.have.been.calledOnce;
+      strategySpy.restore();
     });
 
     it('should trigger events on start / shutdown', function() {
       var events = sinon.mock(mockEventService);
+      events.expects("trigger").once().calledWith(PLUGIN_SERVICE_STARTING_EVENT);
       events.expects("trigger").once().calledWith(PLUGIN_SERVICE_STARTED_EVENT);
+      events.expects("trigger").once().calledWith(PLUGIN_SERVICE_SHUTTING_DOWN_EVENT);
       events.expects("trigger").once().calledWith(PLUGIN_SERVICE_SHUTDOWN_EVENT);
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       pluginService.start();
@@ -133,8 +155,8 @@ describe('PluginService', function() {
     it('should run stopScanningForNewPlugins and set _running to false on shutdown', function() {
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       var mockService = sinon.mock(pluginService);
@@ -149,16 +171,18 @@ describe('PluginService', function() {
     });
 
     it('should cause loaders to run stopScanningForNewPlugins on shutdown', function() {
-      var pluginLoader = sinon.mock(mockLoaders[0]);
-      pluginLoader.expects("stopScanningForNewPlugins").once();
+      var loader1Spy = sinon.spy(mockLoaders[0],"stopScanningForNewPlugins");
+
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
+      pluginService.start();
       pluginService.shutdown();
-      pluginLoader.verify();
+      expect(loader1Spy).to.have.been.calledOnce;
+      loader1Spy.restore();
     });
 
     it('should call loaders scanForNewPlugins on scanForNewPlugins', function() {
@@ -166,8 +190,8 @@ describe('PluginService', function() {
       pluginLoader.expects("scanForNewPlugins").once();
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       pluginService.scanForNewPlugins();
@@ -179,8 +203,8 @@ describe('PluginService', function() {
       pluginLoader.expects("stopScanningForNewPlugins").once();
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       pluginService.stopScanningForNewPlugins();
@@ -192,8 +216,8 @@ describe('PluginService', function() {
       pluginLoader.expects("getPlugins").once();
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       pluginService.getPlugins();
@@ -205,8 +229,8 @@ describe('PluginService', function() {
       pluginLoader.expects("getPlugins").once();
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       pluginService.getPlugin();
@@ -214,7 +238,7 @@ describe('PluginService', function() {
     });
 
     it('should call enablePlugin and disablePlugin in store during enable/disable', function() { 
-      var store = sinon.mock(mockStore);
+      var store = sinon.mock(mockPluginStore);
       store.expects("enablePlugin").once();
       store.expects("disablePlugin").once();
       var events = sinon.mock(mockEventService);
@@ -223,8 +247,8 @@ describe('PluginService', function() {
 
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       pluginService.enablePlugin();
@@ -236,8 +260,8 @@ describe('PluginService', function() {
     it('should call loaders getPluginModules on getPluginModules', function() {
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       var stub = sinon.stub().withArgs("plugin").returns({
@@ -252,8 +276,8 @@ describe('PluginService', function() {
     it('should call getPluginModules on getPluginModule', function() {
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
       var stub = sinon.stub().withArgs("plugin").returns({
@@ -270,17 +294,13 @@ describe('PluginService', function() {
     });
 
     it('should call enablePluginModule and disablePluginModule in store during enable/disable', function() { 
-      var store = sinon.mock(mockStore);
-      store.expects("enablePluginModule").once();
-      store.expects("disablePluginModule").once();
-      var events = sinon.mock(mockEventService);
-      events.expects("trigger").once().withArgs(PLUGIN_MODULE_ENABLED_EVENT);
-      events.expects("trigger").once().withArgs(PLUGIN_MODULE_DISABLED_EVENT);
+      var enableModuleSpy = sinon.spy(mockPluginStore, "enablePluginModule");
+      var disableModuleSpy = sinon.spy(mockPluginStore, "disablePluginModule");
 
       var pluginService = new PluginService(
         mockLoaders, 
-        mockStore, 
-        mockPluginEnableStrategy, 
+        mockPluginStore, 
+        mockLifecycleEventsStrategy, 
         mockEventService
       );
 
@@ -295,8 +315,11 @@ describe('PluginService', function() {
       pluginService.getPlugin = stub;
       pluginService.enablePluginModule("doesntmatter", "thisone");
       pluginService.disablePluginModule("doesntmatter", "thisone");
-      store.verify();
-      events.verify();
+
+      expect(enableModuleSpy).to.have.been.calledOnce;
+      expect(disableModuleSpy).to.have.been.calledOnce;
+      enableModuleSpy.restore();
+      disableModuleSpy.restore();
     });
 
 });
