@@ -6,35 +6,53 @@
 
 To start a dockui App first start a new gateway like this:
 
-### Run dockui gateway
-
+### Run Dockui using CLI
 ```bash
-docker run -d dockui-gateway -d -p 8000:8080 dockui/gateway:latest
+npm install -g @dockui/dockui
+dockui start
+```
+### Run Dockui in container
+```bash
+docker run -t dockui -d -p 8000:8080 dockui/dockui start
 ```
 
-A gateway is a bit dull without some plugins to add features so lets add some.
+This will run the framework without any plugins yet. So doesn do much yet.
+Both of these methods have stored an API_KEY in ~/.dockui/api_key. Plugins
+will need this key to successfully join and participate in the framework.
 
-### Store a DOCKUI_PLUGIN_API_KEY for plugins to use later
-
+### Get API Key for use in plugins
+#### Host
 ```bash
-export DOCKUI_PLUGIN_API_KEY=$(docker exec dockui-gateway cat /dockui-plugin-api-key)
+cat ~/.dockui/api_key
+```
+#### Container
+```bash
+docker exec dockui cat ~/.dockui/api_key
 ```
 
-### Add some plugins using the DOCKUI_PLUGIN_API_KEY
-
+### Create a barebones plugin
 ```bash
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-authprovider
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-scopeprovider
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-route
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webpage-decorator
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webpage-decorated
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webfragment
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-webitem
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-rest
-docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui-decorator dockui/demo-resource
+dockui plugin create demo-welcome-page
+cd demo-welcome-page
+# Make some changes to the index.html file
+# See those changes updated at http://localhost:8080/
 ```
 
-You should now be able to visit <https://localhost:8080/dockui> to see the above demo app. You probably wouldn't
+### Add some existing plugins manually using the API_KEY
+
+```bash
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-authprovider
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-scopeprovider
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-route
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-webpage-decorator
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-webpage-decorated
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-webfragment
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-webitem
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-rest
+docker run -d -e API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-resource
+```
+
+You should now be able to visit <https://localhost:8080> to see the above demo app. You probably wouldn't
 split up an app like this, but the demo plugins are done this way to show how everything is combined seamlessly.
 
 ## Hot Reload
