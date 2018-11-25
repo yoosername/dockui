@@ -17,7 +17,16 @@ const  {
   PluginServiceValidationError
 } = require("../../constants/errors");
 
+const  {
+  MockLoader,
+  MockLoaders,
+  MockPluginStore,
+  MockLifecycleEventsStrategy,
+  MockEventService
+} = require("../../util/mocks");
+
 var PluginService = require('./PluginService');
+
 var mockLoader = null;
 var mockLoaders = null;
 var mockPluginStore = null;
@@ -28,34 +37,11 @@ describe('PluginService', function() {
     "use strict";
 
     beforeEach(function(){
-      mockLoader = { 
-        scanForNewPlugins: function () {},
-        stopScanningForNewPlugins: function () {},
-        getPlugins: function(){}
-      };
-      mockLoaders = [
-        Object.assign({},mockLoader),
-        Object.assign({},mockLoader),
-        Object.assign({},mockLoader)
-      ];
-      mockPluginStore = { 
-        get: function () {}, 
-        set: function () {},
-        enablePlugin: function(){},
-        disablePlugin: function(){},
-        enablePluginModule: function(){},
-        disablePluginModule: function(){}
-      };
-      mockLifecycleEventsStrategy = {
-        setup: function () {},
-        teardown: function () {}
-      };
-      mockEventService = { 
-        on: function () {}, 
-        trigger: function () {}, 
-        addListener: function(){},
-        removeListener: function () {} 
-      };
+      mockLoader = new MockLoader();
+      mockLoaders = new MockLoaders(mockLoader);
+      mockPluginStore = new MockPluginStore();
+      mockLifecycleEventsStrategy = new MockLifecycleEventsStrategy();
+      mockEventService = new MockEventService();
     });
 
     it('should be defined and loadable', function() {

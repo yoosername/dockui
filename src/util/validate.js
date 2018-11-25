@@ -13,14 +13,26 @@ const Shapes = Object.freeze(
             "getPluginModules","getPluginModule","enablePluginModule","disablePluginModule"
         ], 
         "PluginLoader":[
-            "scanForNewPlugins","stopScanningForNewPlugins","getPlugins"
+            "scanForNewPlugins","stopScanningForNewPlugins","getPlugins",
+            "enablePlugin","disablePlugin","getPluginModules","enablePluginModule",
+            "disablePluginModule"
         ],
         "Plugin":[
-            "getKey","enable","disable","getModules","getModuleByKey",
-            "enableModuleByKey","disableModuleByKey"
+            "getKey","getPluginLoader","getPluginDescriptor","getEventService",
+            "getPluginModuleLoaders","enable","disable","registerPluginModules"
+        ],
+        "PluginDescriptor":[
+            "getName","getPluginKey","getVersion","getVersion","getIcon",
+            "getModules"
+        ],
+        "PluginModuleDescriptor":[
+            "getType","getKey","getData"
+        ],
+        "PluginModuleLoader":[
+            "canLoadModuleDescriptor","loadModuleFromDescriptor"
         ],
         "PluginModule":[
-            "getKey","enable","disable"
+            "getKey","getType","enable","disable"
         ],
         "LifecycleEventsStrategy":[
             "setup","teardown"

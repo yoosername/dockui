@@ -1,48 +1,127 @@
+const  {
+  validateShapes
+} = require("../../util/validate");
+
+
 /**
- * Represents a single plugin.
- * @constructor
- * @param {PluginLoader} loader - The loader which loaded this plugin.
- * @param {string} key - The unique key.
- * @param {Array} modules - The plugins modules.
- * @param {EventService} events - The Event service.
+ * @class Plugin
+ * @description Represents a single plugin.
+ * @argument {PluginLoader} pluginLoader - The loader which loaded us.
+ * @argument {string} pluginKey - The unique key.
+ * @argument {Array} pluginModules - The plugins loaded modules.
+ * @argument {EventService} eventService - The Event service.
  */
- function Plugin(pluginLoader, pluginKey, modules, eventsService){
-   this.pluginLoader = pluginLoader;
-   this.pluginKey = pluginKey;
-   this.modules = modules;
-   this.events = eventsService;
- }
+class Plugin{
 
- Plugin.prototype.getKey = function(){
-   return this.pluginKey;
- };
+  constructor(
+    pluginKey,
+    pluginDescriptor,
+    pluginLoader, 
+    pluginModuleLoaders,
+    eventService
+  ){
+    
+    // Validate our args using ducktyping utils. (figure out better way to do this later)
+    validateShapes([
+      {"shape":"PluginLoader","object":pluginLoader},
+      {"shape":"PluginModuleLoader","object":pluginModuleLoaders[0]},
+      {"shape":"PluginDescriptor","object":pluginDescriptor},
+      {"shape":"EventService","object":eventService}
+    ]);
 
- Plugin.prototype.enable = function(){
-   this.pluginLoader.enable(this);
- };
+    this.pluginLoader = pluginLoader; 
+    this.pluginKey = pluginKey; 
+    this.pluginDescriptor = pluginDescriptor;
+    this.pluginModuleLoaders = pluginModuleLoaders;
+    this.eventsService = eventService;
 
- Plugin.prototype.disable = function(){
-   this.pluginLoader.disable(this);
- };
+    this.modules = [];
+    this.registerPluginModules();
 
- Plugin.prototype.getModules = function(filter){
-   if(filter && this.modules.length > 0){
-     return this.modules.filter(filter);
-   }
-   return this.modules;
- };
+  }
 
- Plugin.prototype.getModuleByKey = function(key){
-   return this.modules[key];
- };
+  /**
+   * @method getKey
+   * @description return the unique key of this Plugin
+   */
+  getKey(){
+    return this.pluginKey;
+  }
 
- Plugin.prototype.enableModuleByKey = function(key){
-   this.getModuleByKey(key).enable();
- };
+  /**
+   * @method getPluginLoader
+   * @description return the loader which loaded this Plugin
+   */
+  getPluginLoader(){
+    return this.pluginLoader;
+  }
 
- Plugin.prototype.disableModuleByKey = function(key){
-  this.getModuleByKey(key).disable();
- };
+  /**
+   * @method getPluginDescriptor
+   * @description return the Plugin Descriptor this Plugin was parsed from
+   */
+  getPluginDescriptor(){
+    return this.pluginDescriptor;
+  }
 
+  /**
+   * @method getEventService
+   * @description return event service
+   */
+  getEventService(){
+    return this.eventService;
+  }
 
- module.exports = Plugin;
+  /**
+   * @method getPluginModuleLoaders
+   * @description return PluginModule loaders which are available for parsing Module Descriptors
+   */
+  getPluginModuleLoaders(){
+    return this.pluginModuleLoaders;
+  }
+
+  /**
+   * @method enable
+   * @description delegate enabling and disabling to our loader
+   */
+  enable(){
+    this.pluginLoader.enablePlugin(this);
+  }
+
+  /**
+   * @method disable
+   * @description delegate enabling and disabling to our loader
+   */
+  disable(){
+    this.pluginLoader.disablePlugin(this);
+  }
+
+  /**
+   * @method registerPluginModules
+   * @description Try to parse the pluginDescriptor and load 
+   * all the modules in it using any of the passed in ModuleLoaders
+   * Unloadable modules are created anyway but automatically disabled
+   */
+  registerPluginModules(){
+
+    this.pluginDescriptor.modules.forEach(moduleDescriptor =>{
+      var module = null;
+      this.pluginModuleLoaders.forEach(moduleLoader =>{
+        try{
+          if(moduleLoader.canLoadModuleDescriptor(moduleDescriptor)){
+            module = moduleLoader.loadModuleFromDescriptor(moduleDescriptor);
+          }
+        }catch(e){
+          // Not bothered
+        }
+      });
+      if(!module){
+        module = new UnloadableModule();
+      }
+    });
+
+  }
+
+}
+
+module.exports = Plugin;
