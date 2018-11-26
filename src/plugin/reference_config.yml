@@ -7,11 +7,11 @@
 # descriptor-version: Version of the Plugin Descriptor this Plugin is targeting.
 # Icon: A local url pointing to an Icon for use with this Plugin
 name: "DockUI Demo Plugin"
-key: "dockui.demo.unique-plugin-key"
+key: "dockui-demo-unique-plugin-key"
 description: "This is a demo Plugin showing of the various features of the DockUI framework"
 version: 1.0.0
 descriptor-version: 1.0.0
-icon: '/static/icon.png'
+icon: '/static/dockui-logo.png'
 
 # Modules describe the features of the plugin. See the various types for explanation of what they do
 modules:
@@ -20,7 +20,7 @@ modules:
   # using the below a call to /example?demo would be translated to
   # "/plugins/example-plugin-key/modules/example-webpage?demo"
     - type : "route"
-      name: "Example route"
+      name: "Example Route"
       key: "example-route"
       routes:
         - "/example*"
@@ -28,7 +28,8 @@ modules:
 
   # Auth providers provide capabilities to verify the identify of a logged in user
   # or present some auth challenge to the user.
-  # As providers are chained, weight represents where in the order this will fire
+  # Providers are chained (weight represents order this will be called)
+  # Providers can authenticate a user, send error, send redirect or pass to next provider
   # Providers are sent a JSON with:
   # {
   #   url: "String of url that was requested",
@@ -37,37 +38,45 @@ modules:
   # They should respond with json containing:
   # {
   #   authenticated: true||false,
-  #   action: "next"||"allow"||"deny:<http_code>"||"redirect:<url>",
+  #   action: "pass"||"allow"||"deny:<http_code>"||"redirect:<url>",
   #   user: {
   #     id: <uniqueId>
-  #   }
+  #   },
+  #   setHeaders: [
+  #     { name: "customAuthCookie", value: "customAuthVal" }
+  #   ]
   # }
-    - type : "authprovider"
-      name: "Auth Provider"
-      key: "example.auth.provider"
-      identityUrl: "/test_identity"
-      identityCookie: DOCKUI_DEMO_SESSIONID
-      weight: "10"
+    - type : "authenticationprovider"
+      name: "Authentication Provider"
+      key: "example-authentication-provider"
+      authenticateUrl: "/authenticate"
+      weight: 1
 
-  # Scope providers provide capabilities to check if current user has the required SCOPES if any
-  # As providers are chained, weight represents where in the order this will fire
-  # Scope providers are initially sent the following json:
-  #  user: {
-  #     id: <uniqueId>
-  #  }
-  # and are expected to decorate the user with scopes in response e.g.
-  # user: {
-  #     id: <uniqueId>,
-  #     scopes: [
-  #       GUEST_USER,
+  # Authorization providers provide capabilities to check if principle (user,app) has required Roles
+  # Providers are chained (weight represents order this will be called)
+  # All Providers will be called in order. Result can be cached
+  # Authorization providers are sent the following json:
+  # principle: {
+  #     id: <uuid>,
+  #     type: "user"||"app"  
+  # }
+  # and are expected to decorate the principle with roles in response e.g.
+  # principle: {
+  #     id: <uuid>,
+  #     type: "user"||"app",
+  #     roles: [
+  #       EVERYONE,
   #       GLOBAL_ADMIN,
   #     ]
   # }
-    - type : "scopeprovider"
-      name: "Scope Provider"
-      key: "example-scope-provider"
-      scopeLookupUrl: "/get_scopes"
-      weight: "10"
+    - type : "authorizationprovider"
+      name: "Example Authorization Provider"
+      key: "example-authorization-provider"
+      scopeLookupUrl: "/roles"
+      weight: 5
+      cache:
+        - policy: keep
+          ttl: 6000ms
 
   # Webitems are links that you can insert in various places in the webapp
   # Locations are defined within the html templates themselves
@@ -92,8 +101,8 @@ modules:
       cache:
         - policy: keep
           ttl: *
-      scopes:
-        - "GUEST_USER"
+      roles:
+        - "EVERYONE"
       weight : 10
 
   # Webpages are entire served html pages
@@ -107,23 +116,24 @@ modules:
       path : "/pages/example.html"
       cache:
         - policy: refresh
-      scopes:
-        - "GUEST_USER"
+      roles:
+        - "UNAUTHENTICATED"
+        - "EVERYONE"
 
   # REST modules define a single base URL to directly proxy requests to from the main api gateway
     - type : "rest"
-      name : "example rest"
-      key : "example-rest-endpoint"
+      name : "Example Rest API"
+      key : "example-rest-api-endpoint"
       version : "1.0"
-      base : "/rest/example"
+      base : "/rest/api/1.0/"
       cache:
         - policy: keep
-        - ttl: 6000ms
-      scopes:
-        - "GUEST_USER"
+          ttl: 6000ms
+      roles:
+        - "EVERYONE"
 
-  # Web resources define static resources that you can contribute to existing webpages
-  # by giving a context. The context is used by webpages via the resourcesFor Meta tag
+  # Web resources define static resources that you can inject into any webpage
+  # that provides a 'resourcesFor' context location meta tag.
     - type : "webresource"
       name : "Example webresource"
       key : "example-webresource"
@@ -137,11 +147,12 @@ modules:
       cache:
         - policy: keep
         - ttl: 6000ms
-      scopes:
-        - "GUEST_USER"
+      roles:
+        - "UNAUTHENTICATED"
+        - "EVERYONE"
 
   # Lifecycle hooks provide the ability to asynconrously participate in framework events
     - type : "lifecyclehook"
       name: "Lifecycle Hook"
       key: "example-lifecycle-hook"
-      url: "/lifecycle"
+      url: "/hook"
