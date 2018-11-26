@@ -17,31 +17,56 @@ icon: '/static/icon.png'
 modules:
 
   # Routes are a way to use more readable urls for a given webpage or resource
+  # using the below a call to /example?demo would be translated to
+  # "/plugins/example-plugin-key/modules/example-webpage?demo"
     - type : "route"
       name: "Example route"
       key: "example-route"
       routes:
-        - "/example/*"
-      path: "/plugins/example-plugin-key/webpages/$1"
-      scopes:
-        - "PLUGIN_ADMIN"
-        - "GLOBAL_ADMIN"
+        - "/example*"
+      path: "/plugins/example-plugin-key/modules/example-webpage$1"
 
   # Auth providers provide capabilities to verify the identify of a logged in user
   # or present some auth challenge to the user.
   # As providers are chained, weight represents where in the order this will fire
+  # Providers are sent a JSON with:
+  # {
+  #   url: "String of url that was requested",
+  #   headers: [All Headers]
+  # }
+  # They should respond with json containing:
+  # {
+  #   authenticated: true||false,
+  #   action: "next"||"allow"||"deny:<http_code>"||"redirect:<url>",
+  #   user: {
+  #     id: <uniqueId>
+  #   }
+  # }
     - type : "authprovider"
       name: "Auth Provider"
-      key: "example-auth-provider"
-      url: "/authenticate"
+      key: "example.auth.provider"
+      identityUrl: "/test_identity"
+      identityCookie: DOCKUI_DEMO_SESSIONID
       weight: "10"
 
   # Scope providers provide capabilities to check if current user has the required SCOPES if any
   # As providers are chained, weight represents where in the order this will fire
+  # Scope providers are initially sent the following json:
+  #  user: {
+  #     id: <uniqueId>
+  #  }
+  # and are expected to decorate the user with scopes in response e.g.
+  # user: {
+  #     id: <uniqueId>,
+  #     scopes: [
+  #       GUEST_USER,
+  #       GLOBAL_ADMIN,
+  #     ]
+  # }
     - type : "scopeprovider"
       name: "Scope Provider"
       key: "example-scope-provider"
-      url: "/check-scope"
+      scopeLookupUrl: "/get_scopes"
       weight: "10"
 
   # Webitems are links that you can insert in various places in the webapp
