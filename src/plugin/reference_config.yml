@@ -1,9 +1,17 @@
-# Here you specify a name, key and version of your plugin which is used
-# by the plugin service to register a unique Plugin at runtime
-# plugins are linked to running docker containers so when the container is stopped the plugin is removed
-name: "Plugin Name"
-key: "example-plugin-key"
-version: 1.0
+# Here you specify a name, key and version of your plugin(micro-app) which is used
+# by the PluginService to instantiate a unique versioned Plugin at runtime
+# plugins have following states (loaded,failed,enabled,disabled)
+# name: Human readable Name for this Plugin
+# key: Unique key for this Plugin
+# version: Version of this Plugin
+# descriptor-version: Version of the Plugin Descriptor this Plugin is targeting.
+# Icon: A local url pointing to an Icon for use with this Plugin
+name: "DockUI Demo Plugin"
+key: "dockui.demo.unique-plugin-key"
+description: "This is a demo Plugin showing of the various features of the DockUI framework"
+version: 1.0.0
+descriptor-version: 1.0.0
+icon: '/static/icon.png'
 
 # Modules describe the features of the plugin. See the various types for explanation of what they do
 modules:
@@ -15,9 +23,26 @@ modules:
       routes:
         - "/example/*"
       path: "/plugins/example-plugin-key/webpages/$1"
-      auth:
-        scopes:
-          - PLUGIN_ADMIN
+      scopes:
+        - "PLUGIN_ADMIN"
+        - "GLOBAL_ADMIN"
+
+  # Auth providers provide capabilities to verify the identify of a logged in user
+  # or present some auth challenge to the user.
+  # As providers are chained, weight represents where in the order this will fire
+    - type : "authprovider"
+      name: "Auth Provider"
+      key: "example-auth-provider"
+      url: "/authenticate"
+      weight: "10"
+
+  # Scope providers provide capabilities to check if current user has the required SCOPES if any
+  # As providers are chained, weight represents where in the order this will fire
+    - type : "scopeprovider"
+      name: "Scope Provider"
+      key: "example-scope-provider"
+      url: "/check-scope"
+      weight: "10"
 
   # Webitems are links that you can insert in various places in the webapp
   # Locations are defined within the html templates themselves
@@ -39,6 +64,11 @@ modules:
       path : "/fragments/example.html"
       fragment : "#example-fragment-selector"
       location: "example.home.footer"
+      cache:
+        - policy: keep
+          ttl: *
+      scopes:
+        - "GUEST_USER"
       weight : 10
 
   # Webpages are entire served html pages
@@ -50,9 +80,10 @@ modules:
       name : "Example Webpage"
       key : "example-webpage"
       path : "/pages/example.html"
-      auth:
-        scopes:
-          - APPLICATION_USER
+      cache:
+        - policy: refresh
+      scopes:
+        - "GUEST_USER"
 
   # REST modules define a single base URL to directly proxy requests to from the main api gateway
     - type : "rest"
@@ -60,6 +91,11 @@ modules:
       key : "example-rest-endpoint"
       version : "1.0"
       base : "/rest/example"
+      cache:
+        - policy: keep
+        - ttl: 6000ms
+      scopes:
+        - "GUEST_USER"
 
   # Web resources define static resources that you can contribute to existing webpages
   # by giving a context. The context is used by webpages via the resourcesFor Meta tag
@@ -73,3 +109,14 @@ modules:
         - type: "css"
           path : "example.style.css"
       context : "example.resources.context"
+      cache:
+        - policy: keep
+        - ttl: 6000ms
+      scopes:
+        - "GUEST_USER"
+
+  # Lifecycle hooks provide the ability to asynconrously participate in framework events
+    - type : "lifecyclehook"
+      name: "Lifecycle Hook"
+      key: "example-lifecycle-hook"
+      url: "/lifecycle"
