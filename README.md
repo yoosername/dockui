@@ -96,7 +96,7 @@ split up an app like this, but the demo plugins are done this way to show how ev
 
 The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the microapp is contributing to the overall application.
 
-See Reference here: [Descriptor Reference](src/plugin/reference_config.md)
+See Reference here: [Descriptor Reference](src/plugin/reference_config.yml)
 
 ## API
 
