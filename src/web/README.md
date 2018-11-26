@@ -15,12 +15,12 @@
     * [CacheService] Cache (respond) - Ability to cache a resource for speedy subsequent retrieval ( policy set by modules )
     * [RequestHandlerService] - Actual request processors like webpage, rest, resource etc
   * On Response Object
-    * Decorator (detection) - find out if page needs to be wrapped & add decorator to the res object
-    * Resource (stripper) - remove inline css and js from decorator and page & add to res
-    * Fragment Injector - fetch and inject fragment pages to required injection points
-    * Decorator (Recombine) - merge decorator and page into single page
-    * Resource (Injector) - Readd inline resouces, plus any resources added by modules
-    * Cache (remember) - update CacheService if this module asked to be cached.
+    * [DecoratorService] (detection) - find out if page needs to be wrapped & add decorator to the res object
+    * [ResourceService] (stripper) - remove inline css and js from decorator and page & add to res
+    * [FragmentService] - fetch and inject fragment pages to required injection points
+    * [DecoratorService] (Recombine) - merge decorator and page into single page
+    * [ResourceService] (Injector) - Readd inline resouces, plus any resources added by modules
+    * [CacheService] - update CacheService if this module asked to be cached.
 
 ## Request / Response Flow and extension points
 ### Request
@@ -43,4 +43,24 @@
                                               all general middleware applied here|--------->|
                                                                                             |
                                                 actually handle the main body of the request|------->
+```
+
+### Response
+
+```yaml
+            [cache][add-resources][decorate][fragments][strip-resources][decorator-detect]
+   o           |           |           |         |             |                 |
+  (_) <--------|           |           |         |             |                 |
+               |           |           |         |             |                 |
+ cache cachable|<----------|           |         |             |                 |
+                           |           |         |             |                 |
+    add resources into page|<----------|         |             |                 |
+                                       |         |             |                 |
+               wrap page with decorator|<--------|             |                 |
+                                                 |             |                 |
+                             inject any fragments|<------------|                 |
+                                                               |                 |
+                                    remove all inline resources|<----------------|
+                                                                                 |
+                                              does this page need to be decorated|<---------
 ```
