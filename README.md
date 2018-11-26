@@ -17,7 +17,7 @@ dockui start
 docker run -t dockui -d -p 8000:8080 dockui/dockui start
 ```
 
-> Both of these will achieve the same goal of starting the framework (without any plugins) and stored a {UUID} in ~/.dockui/plugin_api_key. Plugins will need this key to successfully join and participate in this framework instance.
+> Both of these will achieve the same goal of starting the framework (without any plugins) and storing a {UUID} in ~/.dockui/plugin_api_key. Plugins will need this key to successfully join and participate in this framework instance.
 
 ### (2) Store the API Key for later use by plugins
 
