@@ -2,16 +2,34 @@
 # by the PluginService to instantiate a unique versioned Plugin at runtime
 # plugins have following states (loaded,failed,enabled,disabled)
 # name: Human readable Name for this Plugin
+# url: Remote location of this Descriptor
+#      - Only used if not yet known. I.e. because you manually installed the plugin from its descriptor file
+#      - if loaded from Docker events this would already be known thus not used.
 # key: Unique key for this Plugin
-# version: Version of this Plugin
-# descriptor-version: Version of the Plugin Descriptor this Plugin is targeting.
-# Icon: A local url pointing to an Icon for use with this Plugin
+# version: version of this Plugin
+# descriptor-version: version of the Plugin Descriptor this Plugin is targeting.
+# icon: A local url pointing to an Icon for use with this Plugin
+# lifecycle:
+#     installed: This is called syncronously with security context
+#      - endpoint should reply with 200 OK or install will fail.
+#      - Security context payload contains
+        # {
+        #   "key": "key-from-your-descriptor",
+        #   "uuid": "unique-identifier-of-your-plugin",
+        #   "secret": "a-secret-used-for-jwt-signing-etc",
+        #   "url": "http://url.of.the.calling.framework.instance"
+        # }
 name: "DockUI Demo Plugin"
+url: "https://dockui.demo/plugin"
 key: "dockui-demo-unique-plugin-key"
 description: "This is a demo Plugin showing of the various features of the DockUI framework"
 version: 1.0.0
 descriptor-version: 1.0.0
 icon: '/static/dockui-logo.png'
+lifecycle: 
+  installed: "/installed"
+authentication:
+   - type: "jwt"
 
 # Modules describe the features of the plugin. See the various types for explanation of what they do
 modules:
@@ -75,8 +93,8 @@ modules:
       scopeLookupUrl: "/roles"
       weight: 5
       cache:
-        - policy: keep
-          ttl: 6000ms
+        policy: keep
+        ttl: 6000ms
 
   # Webitems are links that you can insert in various places in the webapp
   # Locations are defined within the html templates themselves
@@ -85,6 +103,7 @@ modules:
       key: "example-webitem"
       link: "/example/relative/url"
       location: "example.home.header.links"
+      tooltip: "This is a Tooltip"
       weight: 10
       text: "Example Webitem"
 
@@ -99,8 +118,8 @@ modules:
       fragment : "#example-fragment-selector"
       location: "example.home.footer"
       cache:
-        - policy: keep
-          ttl: *
+        policy: keep
+        ttl: *
       roles:
         - "EVERYONE"
       weight : 10
@@ -115,7 +134,7 @@ modules:
       key : "example-webpage"
       path : "/pages/example.html"
       cache:
-        - policy: refresh
+        policy: refresh
       roles:
         - "UNAUTHENTICATED"
         - "EVERYONE"
@@ -127,8 +146,8 @@ modules:
       version : "1.0"
       base : "/rest/api/1.0/"
       cache:
-        - policy: keep
-          ttl: 6000ms
+        policy: keep
+        ttl: 6000ms
       roles:
         - "EVERYONE"
 
@@ -145,14 +164,18 @@ modules:
           path : "example.style.css"
       context : "example.resources.context"
       cache:
-        - policy: keep
-        - ttl: 6000ms
+        policy: keep
+        ttl: 6000ms
       roles:
         - "UNAUTHENTICATED"
         - "EVERYONE"
 
-  # Lifecycle hooks provide the ability to asynconrously participate in framework events
-    - type : "lifecyclehook"
-      name: "Lifecycle Hook"
-      key: "example-lifecycle-hook"
+  # webhooks provide the ability to asynconrously participate in framework events remotely
+  # events: list of events that should be POST'd to this endpoint
+  # url: endpoint to receive the event payload
+    - type : "webhook"
+      name: "Webhook"
+      events: 
+        - "plugin:enabled"
+      key: "example-webhook"
       url: "/hook"

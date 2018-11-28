@@ -4,92 +4,51 @@
 
 ## Quick Start
 
-To start a Dockui App follow these instructions:
+Follow one of these guides below to start a Dockui App and install a plugin which will demo most of the features:
 
-### (1) Install and Start framework
-#### Using CLI
+### Quick Start (CLI)
+
 ```bash
+mkdir ~/dockui-demo && cd ~/dockui-demo
 npm install -g @dockui/dockui
+dockui init
 dockui start
-```
-#### Using Docker Container
-```bash
-docker run -t dockui -d -p 8000:8080 dockui/dockui start
-```
-
-> Both of these will achieve the same goal of starting the framework (without any plugins) and storing a {UUID} in ~/.dockui/plugin_api_key. Plugins will need this key to successfully join and participate in this framework instance.
-
-### (2) Store the API Key for later use by plugins
-
-#### From the Host
-```bash
-export DOCKUI_PLUGIN_API_KEY=$(cat ~/.dockui/plugin_api_key)
-```
-#### From a Container
-```bash
-export DOCKUI_PLUGIN_API_KEY=$(docker exec dockui cat ~/.dockui/plugin_api_key)
+dockui plugin install https://github/yoosername/dockui-plugin-nodejs-demo -y
+cd dockui-plugin-nodejs-demo
+# Edit ./static/index.html in your favorite editor and see immediate results @ http://localhost:8000/
 ```
 
-### (3) Create a barebones plugin
-#### From the Host
+### Quick Start (Manually using Docker)
+
 ```bash
-dockui plugin create --template nodejs --api-key ${DOCKUI_PLUGIN_API_KEY} demo-app
-```
-#### From a Container
-```bash
-docker run -fg -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} \
+mkdir ~/dockui-demo && cd ~/dockui-demo
+docker run -t dockui-demo -d -p 8000:8080 dockui/dockui start
+git clone https://github/yoosername/dockui-plugin-nodejs-demo
+cd dockui-plugin-nodejs-demo
+docker build --tag dockui-plugin-nodejs-demo .
+docker run -fg \
        -v $(pwd):/plugin -w /plugin\
-       dockui/dockui plugin create \
-       --template nodejs \
-       --api-key ${DOCKUI_PLUGIN_API_KEY} demo-app
+       dockui-plugin-nodejs-demo\
+       npm run startdev
+# Edit ./static/index.html in your favorite editor and see immediate results @ http://localhost:8000/
 ```
-
-### (4) Start the App in Dev Mode
-
-#### From the Host
-
-```bash
-cd demo-app
-dockui plugin start --dev
-```
-
-#### From a Container
-
-```bash
-cd demo-app
-docker run -fg --privileged \
-       -v $(pwd):/demo-app -w /demo-app\
-       dockui/dockui \
-       plugin start --dev
-```
-
-### (5) Make changes and see realtime updates
-
-Visit http://localhost:8080/
-
-Then in your favorite Editor try:
-
-* Uncommenting some of the Example Modules in ./static/plugin.yml and hitting save
-* Make changes to the example homepage.html and hit save.
-
 
 ## Manually add Framework + Plugin Apps using the generated API_KEY
 
 ```bash
-docker run -t dockui-demo-framework -d -p 8000:8080 dockui/dockui start
-export DOCKUI_PLUGIN_API_KEY=$(docker exec dockui-demo-framework cat ~/.dockui/plugin_api_key)
-docker run -t dockui-demo-authprovider -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-authprovider
-docker run -t dockui-demo-scopeprovider -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-scopeprovider
-docker run -t dockui-demo-route -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-route
-docker run -t dockui-demo-webpage-decorator -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-webpage-decorator
-docker run -t dockui-demo-webpage-decorated -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-webpage-decorated
-docker run -t dockui-demo-webfragment -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-webfragment
-docker run -t dockui-demo-webitem -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-webitem
-docker run -t dockui-demo-rest -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-rest
-docker run -t dockui-demo-resource -d -e DOCKUI_PLUGIN_API_KEY=${DOCKUI_PLUGIN_API_KEY} dockui/demo-resource
+docker run --tag dockui-demo-framework -d -p 8000:8080 dockui/dockui start
+docker run --tag dockui-demo-authprovider -d dockui/demo-authprovider
+docker run --tag dockui-demo-scopeprovider -d dockui/demo-scopeprovider
+docker run --tag dockui-demo-route -d dockui/demo-route
+docker run --tag dockui-demo-webpage-decorator -d dockui/demo-webpage-decorator
+docker run --tag dockui-demo-webpage-decorated -d dockui/demo-webpage-decorated
+docker run --tag dockui-demo-webfragment -d dockui/demo-webfragment
+docker run --tag dockui-demo-webitem -d dockui/demo-webitem
+docker run --tag dockui-demo-rest -d dockui/demo-rest
+docker run --tag dockui-demo-resource -d dockui/demo-resource
 ```
 
-You should now be able to visit <https://localhost:8080> to see the above manually configured demo app. You probably wouldn't
+You should now be able to visit <https://localhost:8000> to see the above manually configured demo app. You probably wouldn't
 split up an app like this, but the demo plugins are done this way to show how everything is combined seamlessly.
 
 ## Plugin Descriptor and Modules
