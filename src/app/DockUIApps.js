@@ -25,9 +25,9 @@ class DockUIApps{
             return new DockUIAppsBuilder();
         }
 
-        this.AppStore = builder.AppStore;
+        this.appStore = builder.appStore;
         this.eventService = builder.eventService;
-        this.AppService = builder.AppService;
+        this.appService = builder.appService;
         this.webService = builder.webService;
     }
 
@@ -37,7 +37,7 @@ class DockUIApps{
      * @public
      */
     start(){
-        this.AppService.start();
+        this.appService.start();
         this.eventService.on(APP_SERVICE_STARTED_EVENT, () => {
             console.log("[DockUIApps] Framework has started, starting Web Service");
             this.webService.start();
@@ -53,7 +53,7 @@ class DockUIApps{
         this.webService.shutdown();
         this.eventService.on(WEB_SERVICE_SHUTDOWN_EVENT, () => {
             console.log("[DockUIApps] Web system has shutdown successfully");
-            this.AppService.shutdown();
+            this.appService.shutdown();
         });
         this.eventService.on(APP_SERVICE_SHUTDOWN_EVENT, () => {
             console.log("[DockUIApps] Framework has shutdown successfully");
@@ -70,9 +70,9 @@ class DockUIApps{
 class DockUIAppsBuilder{
 
     constructor(){
-        this.AppStore = null;
+        this.appStore = null;
         this.eventService = null;
-        this.AppService=  null;
+        this.appService=  null;
         this.webService = null;
     }
 
@@ -81,7 +81,7 @@ class DockUIAppsBuilder{
      * @argument AppStore the AppStore to use
      */
     withStore(AppStore){
-        this.AppStore = AppStore;
+        this.appStore = AppStore;
         return this;
     }
 
@@ -99,7 +99,7 @@ class DockUIAppsBuilder{
      * @argument AppService the AppService to use
      */
     withAppService(AppService){
-        this.AppService = AppService;
+        this.appService = AppService;
         return this;
     }
 
@@ -127,13 +127,13 @@ class DockUIAppsBuilder{
      * @description Validate builder options
      */
     validate(){
-        if(!this.AppStore){
+        if(!this.appStore){
             throw new MissingStoreDuringSetupError();
         }
         if(!this.eventService){
             throw new MissingEventServiceDuringSetupError();
         }
-        if(!this.AppService){
+        if(!this.appService){
             throw new MissingAppServiceDuringSetupError();
         }
         if(!this.webService){
