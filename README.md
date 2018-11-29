@@ -1,21 +1,32 @@
 # DOCKUI (draft)
 
-> Compose a single web app from loosely coupled Docker based micro apps
+> Compose a single web experience from loosely coupled Docker based Apps
 
 ## Quick Start
 
-Follow one of these guides below to start a Dockui App and install a plugin which will demo most of the features:
+Follow one of these guides below to start a Dockui Framework instance and then install an App which will demo most of the features:
 
 ### Quick Start (CLI)
+
+#### From Scratch
 
 ```bash
 mkdir ~/dockui-demo && cd ~/dockui-demo
 npm install -g @dockui/dockui
 dockui init
 dockui start
-dockui plugin install https://github/yoosername/dockui-plugin-nodejs-demo -y
-cd dockui-plugin-nodejs-demo
-# Edit ./static/index.html in your favorite editor and see immediate results @ http://localhost:8000/
+dockui app install https://github/yoosername/dockui-app-nodejs-demo -y
+cd dockui-app-nodejs-demo
+# Edit ./static/index.html in your favorite editor and see immediate results @ https://localhost:8000/
+```
+
+#### Existing
+
+```bash
+cd ~/dockui-demo
+dockui install
+dockui start
+# installs all apps listed in dockui.yml and then starts the framework container and all app containers
 ```
 
 ### Quick Start (Manually using Docker)
@@ -23,17 +34,17 @@ cd dockui-plugin-nodejs-demo
 ```bash
 mkdir ~/dockui-demo && cd ~/dockui-demo
 docker run -t dockui-demo -d -p 8000:8080 dockui/dockui start
-git clone https://github/yoosername/dockui-plugin-nodejs-demo
-cd dockui-plugin-nodejs-demo
-docker build --tag dockui-plugin-nodejs-demo .
+git clone https://github/yoosername/dockui-app-nodejs-demo
+cd dockui-app-nodejs-demo
+docker build --tag dockui-app-nodejs-demo .
 docker run -fg \
-       -v $(pwd):/plugin -w /plugin\
-       dockui-plugin-nodejs-demo\
+       -v $(pwd):/app -w /app\
+       dockui-app-nodejs-demo\
        npm run startdev
 # Edit ./static/index.html in your favorite editor and see immediate results @ http://localhost:8000/
 ```
 
-## Manually add Framework + Plugin Apps using the generated API_KEY
+## Manually add Framework + Apps using the generated API_KEY
 
 ```bash
 docker run --tag dockui-demo-framework -d -p 8000:8080 dockui/dockui start
@@ -48,14 +59,14 @@ docker run --tag dockui-demo-rest -d dockui/demo-rest
 docker run --tag dockui-demo-resource -d dockui/demo-resource
 ```
 
-You should now be able to visit <https://localhost:8000> to see the above manually configured demo app. You probably wouldn't
-split up an app like this, but the demo plugins are done this way to show how everything is combined seamlessly.
+You should now be able to visit <https://localhost:8000/> to see the above manually configured demo app. You probably wouldn't
+split up your Apps like this, but the demo Apps are built this way to show how everything is combined seamlessly.
 
-## Plugin Descriptor and Modules
+## App Descriptor and Modules
 
-The plugin descriptor can be either a **plugin.json** or **plugin.yml**. It describes the various module types which the microapp is contributing to the overall application.
+The App Descriptor can be either in JSON or YAML format. It describes information about the App and what it provides to give the installer a clue, lifecyle callbacks for the framework and App to setup secure communication and a list of the various Module types which the App is contributing to the overall Application.
 
-See Reference here: [Descriptor Reference](src/plugin/reference_config.yml)
+See Reference here: [Descriptor Reference](src/app/dockui.app.yml)
 
 ## API
 

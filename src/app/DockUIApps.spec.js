@@ -7,32 +7,32 @@ chai.use(sinonChai);
 const  {
   MissingStoreDuringSetupError,
   MissingEventServiceDuringSetupError,
-  MissingPluginServiceDuringSetupError,
+  MissingAppServiceDuringSetupError,
   MissingWebServiceDuringSetupError
 } = require("../constants/errors");
 
-var {DockUIPlugins, DockUIPluginsBuilder} = require('./DockUIPlugins');
+var {DockUIApps, DockUIAppsBuilder} = require('./DockUIApps');
 var mockStore = null;
-var mockPluginService = null;
+var mockAppService = null;
 var mockEventService = null;
 var mockWebService = null;
 
-describe('DockUIPlugins', function() {
+describe('DockUIApps', function() {
     "use strict";
 
     beforeEach(function(){
       mockStore = { get: function () {}, set: function () {} };
-      mockPluginService = { 
+      mockAppService = { 
         start: function () {}, 
         shutdown: function () {},
-        scanForNewPlugins: function () {},
-        stopScanningForNewPlugins: function(){},
-        getPlugins: function(){},
-        getPlugin: function(){},
-        enablePlugin: function(){},
-        disablePlugin: function(){},
-        getPluginModules: function(){},
-        getPluginModule: function(){},
+        scanForNewApps: function () {},
+        stopScanningForNewApps: function(){},
+        getApps: function(){},
+        getApp: function(){},
+        enableApp: function(){},
+        disableApp: function(){},
+        getAppModules: function(){},
+        getAppModule: function(){},
         enableModule: function(){},
         disableModule: function(){}
       };
@@ -41,111 +41,111 @@ describe('DockUIPlugins', function() {
     });
 
     it('should be defined and loadable', function() {
-      expect(DockUIPlugins).to.not.be.undefined;
+      expect(DockUIApps).to.not.be.undefined;
     });
 
     it('should be a function', function() {
-      expect(DockUIPlugins).to.be.a('function');
+      expect(DockUIApps).to.be.a('function');
     });
 
-    it('Should return a DockUIPlugins.Builder if one isnt passed as arg', function() {
-      var builder = new DockUIPlugins();
-      expect(builder).to.be.instanceof(DockUIPluginsBuilder);
+    it('Should return a DockUIApps.Builder if one isnt passed as arg', function() {
+      var builder = new DockUIApps();
+      expect(builder).to.be.instanceof(DockUIAppsBuilder);
     });
 
-    it('should start pluginService.start method when start() called', function() {
-      var pluginService = sinon.mock(mockPluginService);
-      pluginService.expects("start").once();
+    it('should start AppService.start method when start() called', function() {
+      var AppService = sinon.mock(mockAppService);
+      AppService.expects("start").once();
       
-      var dockUIPlugins = new DockUIPluginsBuilder()
+      var dockUIApps = new DockUIAppsBuilder()
         .withStore(mockStore)
         .withEventService(mockEventService)
-        .withPluginService(mockPluginService)
+        .withAppService(mockAppService)
         .withWebService(mockWebService)
         .build();
 
-      dockUIPlugins.start();
-      pluginService.verify();
+      dockUIApps.start();
+      AppService.verify();
 
     });
 
-    it('should call pluginService.stop method when stop() called', function() {
+    it('should call AppService.stop method when stop() called', function() {
       var webService = sinon.mock(mockWebService);
       webService.expects("shutdown").once();
       
-      var dockUIPlugins = new DockUIPluginsBuilder()
+      var dockUIApps = new DockUIAppsBuilder()
         .withStore(mockStore)
         .withEventService(mockEventService)
-        .withPluginService(mockPluginService)
+        .withAppService(mockAppService)
         .withWebService(mockWebService)
         .build();
 
-      dockUIPlugins.shutdown();
+      dockUIApps.shutdown();
       webService.verify();
 
     });
 
 });
 
-describe('DockUIPluginsBuilder', function() {
+describe('DockUIAppsBuilder', function() {
   "use strict";
 
   it('should be able to set the Store', function() {
-    new DockUIPluginsBuilder().withStore(mockStore);
+    new DockUIAppsBuilder().withStore(mockStore);
   });
 
   it('should be able to set the EventService', function() {
-    new DockUIPluginsBuilder().withEventService(mockEventService);
+    new DockUIAppsBuilder().withEventService(mockEventService);
   });
 
-  it('should be able to set the PluginService', function() {
-    new DockUIPluginsBuilder().withPluginService(mockPluginService);
+  it('should be able to set the AppService', function() {
+    new DockUIAppsBuilder().withAppService(mockAppService);
   });
 
   it('should be able to set the WebService', function() {
-    new DockUIPluginsBuilder().withWebService(mockWebService);
+    new DockUIAppsBuilder().withWebService(mockWebService);
   });
 
-  it('should return a DockUIPlugins instance when build is called', function() {
-    const dockuiPluginsInstance = new DockUIPluginsBuilder()
+  it('should return a DockUIApps instance when build is called', function() {
+    const dockuiAppsInstance = new DockUIAppsBuilder()
       .withStore(mockStore)
       .withEventService(mockEventService)
-      .withPluginService(mockPluginService)
+      .withAppService(mockAppService)
       .withWebService(mockWebService)
       .build();
-    expect(dockuiPluginsInstance).to.be.an.instanceOf(DockUIPlugins);  
+    expect(dockuiAppsInstance).to.be.an.instanceOf(DockUIApps);  
   });
 
   it('should validate when build is called', function() {
     expect(function(){
-      new DockUIPluginsBuilder()
+      new DockUIAppsBuilder()
         .withEventService(mockEventService)
-        .withPluginService(mockPluginService)
+        .withAppService(mockAppService)
         .withWebService(mockWebService)
         .build();
     }).to.throw(MissingStoreDuringSetupError);  
 
     expect(function(){
-      new DockUIPluginsBuilder()
+      new DockUIAppsBuilder()
         .withStore(mockStore)
-        .withPluginService(mockPluginService)
+        .withAppService(mockAppService)
         .withWebService(mockWebService)
         .build();
     }).to.throw(MissingEventServiceDuringSetupError);  
 
     expect(function(){
-      new DockUIPluginsBuilder()
+      new DockUIAppsBuilder()
         .withStore(mockStore)
         .withEventService(mockEventService)
         .withWebService(mockWebService)
         .build();
-    }).to.throw(MissingPluginServiceDuringSetupError);  
+    }).to.throw(MissingAppServiceDuringSetupError);  
 
     expect(function(){
-      new DockUIPluginsBuilder()
+      new DockUIAppsBuilder()
         .withStore(mockStore)
         .withEventService(mockEventService)
-        .withPluginService(mockPluginService)
+        .withAppService(mockAppService)
         .build();
     }).to.throw(MissingWebServiceDuringSetupError);  
 

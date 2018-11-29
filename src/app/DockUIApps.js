@@ -1,62 +1,62 @@
 const  {
     MissingStoreDuringSetupError,
     MissingEventServiceDuringSetupError,
-    MissingPluginServiceDuringSetupError,
+    MissingAppServiceDuringSetupError,
     MissingWebServiceDuringSetupError
 } = require("../constants/errors");
 
 const  {
-    PLUGIN_SERVICE_STARTED_EVENT,
+    APP_SERVICE_STARTED_EVENT,
     WEB_SERVICE_SHUTDOWN_EVENT,
-    PLUGIN_SERVICE_SHUTDOWN_EVENT
+    APP_SERVICE_SHUTDOWN_EVENT
 } = require("../constants/events");
 
 /**
- * @class DockUIPlugins
- * @description Wrapper around Plugin services for easier usage
- * @constructor {DockUIPluginsBuilder} builder
+ * @class DockUIApps
+ * @description Wrapper around App services for easier usage
+ * @constructor {DockUIAppsBuilder} builder
  * @method start - Starts framework
  * @throws DockuiFrameworkError
  */
-class DockUIPlugins{
+class DockUIApps{
 
     constructor(builder){
         if(!builder){
-            return new DockUIPluginsBuilder();
+            return new DockUIAppsBuilder();
         }
 
-        this.pluginStore = builder.pluginStore;
+        this.AppStore = builder.AppStore;
         this.eventService = builder.eventService;
-        this.pluginService = builder.pluginService;
+        this.AppService = builder.AppService;
         this.webService = builder.webService;
     }
 
     /**
      * @method start
-     * @description initialize plugin service
+     * @description initialize App service
      * @public
      */
     start(){
-        this.pluginService.start();
-        this.eventService.on(PLUGIN_SERVICE_STARTED_EVENT, () => {
-            console.log("[DockUIPlugins] Plugin system has started, starting Web Service");
+        this.AppService.start();
+        this.eventService.on(APP_SERVICE_STARTED_EVENT, () => {
+            console.log("[DockUIApps] Framework has started, starting Web Service");
             this.webService.start();
         });
     }
 
     /**
      * @method shutdown
-     * @description shutdown plugin service
+     * @description shutdown App service
      * @public
      */
     shutdown(){
         this.webService.shutdown();
         this.eventService.on(WEB_SERVICE_SHUTDOWN_EVENT, () => {
-            console.log("[DockUIPlugins] Web system has shutdown successfully");
-            this.pluginService.shutdown();
+            console.log("[DockUIApps] Web system has shutdown successfully");
+            this.AppService.shutdown();
         });
-        this.eventService.on(PLUGIN_SERVICE_SHUTDOWN_EVENT, () => {
-            console.log("[DockUIPlugins] Plugin system has shutdown successfully");
+        this.eventService.on(APP_SERVICE_SHUTDOWN_EVENT, () => {
+            console.log("[DockUIApps] Framework has shutdown successfully");
         });
     }
 
@@ -64,24 +64,24 @@ class DockUIPlugins{
 
 
 /**
- * @class DockUIPluginsBuilder
- * @description Builder that generates a DockUIPlugins instance
+ * @class DockUIAppsBuilder
+ * @description Builder that generates a DockUIApps instance
  */
-class DockUIPluginsBuilder{
+class DockUIAppsBuilder{
 
     constructor(){
-        this.pluginStore = null;
+        this.AppStore = null;
         this.eventService = null;
-        this.pluginService=  null;
+        this.AppService=  null;
         this.webService = null;
     }
 
     /**
      * @method withStore 
-     * @argument pluginStore the PluginStore to use
+     * @argument AppStore the AppStore to use
      */
-    withStore(pluginStore){
-        this.pluginStore = pluginStore;
+    withStore(AppStore){
+        this.AppStore = AppStore;
         return this;
     }
 
@@ -95,11 +95,11 @@ class DockUIPluginsBuilder{
     }
 
     /**
-     * @method withPluginService 
-     * @argument pluginService the PluginService to use
+     * @method withAppService 
+     * @argument AppService the AppService to use
      */
-    withPluginService(pluginService){
-        this.pluginService = pluginService;
+    withAppService(AppService){
+        this.AppService = AppService;
         return this;
     }
 
@@ -114,12 +114,12 @@ class DockUIPluginsBuilder{
 
     /**
      * @method build
-     * @description Validate options and return a new DockUIPlugins instance
+     * @description Validate options and return a new DockUIApps instance
      */
     build(){
         this.validate();
-        const dockUIPlugins = new DockUIPlugins(this);
-        return dockUIPlugins;
+        const dockUIApps = new DockUIApps(this);
+        return dockUIApps;
     }
 
     /**
@@ -127,14 +127,14 @@ class DockUIPluginsBuilder{
      * @description Validate builder options
      */
     validate(){
-        if(!this.pluginStore){
+        if(!this.AppStore){
             throw new MissingStoreDuringSetupError();
         }
         if(!this.eventService){
             throw new MissingEventServiceDuringSetupError();
         }
-        if(!this.pluginService){
-            throw new MissingPluginServiceDuringSetupError();
+        if(!this.AppService){
+            throw new MissingAppServiceDuringSetupError();
         }
         if(!this.webService){
             throw new MissingWebServiceDuringSetupError();
@@ -144,10 +144,10 @@ class DockUIPluginsBuilder{
 }
 
 module.exports = {
-    "DockUIPlugins" : DockUIPlugins,
-    "DockUIPluginsBuilder" : DockUIPluginsBuilder,
+    "DockUIApps" : DockUIApps,
+    "DockUIAppsBuilder" : DockUIAppsBuilder,
     "MissingStoreDuringSetupError" : MissingStoreDuringSetupError,
     "MissingEventServiceDuringSetupError" : MissingEventServiceDuringSetupError,
-    "MissingPluginServiceDuringSetupError" : MissingPluginServiceDuringSetupError,
+    "MissingAppServiceDuringSetupError" : MissingAppServiceDuringSetupError,
     "MissingWebServiceDuringSetupError" : MissingWebServiceDuringSetupError
 };

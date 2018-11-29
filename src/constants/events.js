@@ -1,25 +1,25 @@
 /**
- * @description Plugin service events
+ * @description App service events
  */
-const PLUGIN_SERVICE_STARTING_EVENT = "plugin:service:starting";
-const PLUGIN_SERVICE_STARTED_EVENT = "plugin:service:started";
-const PLUGIN_SERVICE_SHUTTING_DOWN_EVENT = "plugin:service:shuttingdown";
-const PLUGIN_SERVICE_SHUTDOWN_EVENT = "plugin:service:shutdown";
+const APP_SERVICE_STARTING_EVENT = "app:service:starting";
+const APP_SERVICE_STARTED_EVENT = "app:service:started";
+const APP_SERVICE_SHUTTING_DOWN_EVENT = "app:service:shuttingdown";
+const APP_SERVICE_SHUTDOWN_EVENT = "app:service:shutdown";
 
 /**
- * @description Plugin lifecycle events
+ * @description App lifecycle events
  */
-const PLUGIN_LOAD_STARTED_EVENT = "plugin:load:started";
-const PLUGIN_LOAD_COMPLETE_EVENT = "plugin:load:complete";
-const PLUGIN_LOAD_FAILED_EVENT = "plugin:load:failed"; 
-const PLUGIN_ENABLED_EVENT = "plugin:enabled";
-const PLUGIN_DISABLED_EVENT = "plugin:disabled";
+const APP_LOAD_STARTED_EVENT = "app:load:started";
+const APP_LOAD_COMPLETE_EVENT = "app:load:complete";
+const APP_LOAD_FAILED_EVENT = "app:load:failed"; 
+const APP_ENABLED_EVENT = "app:enabled";
+const APP_DISABLED_EVENT = "app:disabled";
 
 /**
- * @description Plugin Module lifecycle events
+ * @description App Module lifecycle events
  */
-const PLUGIN_MODULE_ENABLED_EVENT = "module:enabled";
-const PLUGIN_MODULE_DISABLED_EVENT = "module:disabled";
+const APP_MODULE_ENABLED_EVENT = "module:enabled";
+const APP_MODULE_DISABLED_EVENT = "module:disabled";
 
 /**
  * @description Web service events
@@ -31,17 +31,17 @@ const WEB_SERVICE_SHUTDOWN_EVENT = "web:service:shutdown";
 
 
 module.exports = {
-    PLUGIN_SERVICE_STARTING_EVENT,
-    PLUGIN_SERVICE_STARTED_EVENT,
-    PLUGIN_SERVICE_SHUTTING_DOWN_EVENT,
-    PLUGIN_SERVICE_SHUTDOWN_EVENT,
-    PLUGIN_LOAD_STARTED_EVENT,
-    PLUGIN_LOAD_COMPLETE_EVENT,
-    PLUGIN_LOAD_FAILED_EVENT,
-    PLUGIN_ENABLED_EVENT,
-    PLUGIN_DISABLED_EVENT,
-    PLUGIN_MODULE_ENABLED_EVENT,
-    PLUGIN_MODULE_DISABLED_EVENT,
+    APP_SERVICE_STARTING_EVENT,
+    APP_SERVICE_STARTED_EVENT,
+    APP_SERVICE_SHUTTING_DOWN_EVENT,
+    APP_SERVICE_SHUTDOWN_EVENT,
+    APP_LOAD_STARTED_EVENT,
+    APP_LOAD_COMPLETE_EVENT,
+    APP_LOAD_FAILED_EVENT,
+    APP_ENABLED_EVENT,
+    APP_DISABLED_EVENT,
+    APP_MODULE_ENABLED_EVENT,
+    APP_MODULE_DISABLED_EVENT,
     WEB_SERVICE_STARTING_EVENT,
     WEB_SERVICE_STARTED_EVENT,
     WEB_SERVICE_SHUTTING_DOWN_EVENT,

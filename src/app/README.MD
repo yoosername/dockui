@@ -1,62 +1,62 @@
-# DockUI Plugin API
+# DockUI App API
 
-## DockUIPlugins
+## DockUIApps
 
-  > Wrapper to simplify initialisation of Plugin system
+  > Wrapper to simplify initialisation of App system
 
 ```javascript
 /**
- * DockUIPlugins
- * Wrapper around Plugin services for easier usage
- * @constructor {DockUIPlugins.Builder} builder
- * @static DockUIPlugins.Builder
+ * DockUIApps
+ * Wrapper around App services for easier usage
+ * @constructor {DockUIApps.Builder} builder
+ * @static DockUIApps.Builder
  * @method start - Starts framework
  * @throws DockuiFrameworkError
  */
 
  /**
- * DockUIPlugins.Builder
+ * DockUIApps.Builder
  * @method withStore
  * @method withEventService
- * @method withPluginService
+ * @method withAppService
  * @method withWebService
- * @method build - Returns new DockUIPlugins
+ * @method build - Returns new DockUIApps
  */
 ```
 
-## PluginService
+## AppService
 
-  > PluginService handles the loading of local or remote Plugin descriptors and enabling disabling plugins and respective modules
+  > AppService handles the loading of local or remote App descriptors and enabling disabling Apps and respective modules
 
-  PluginService Uses PluginLoaders to
+  AppService Uses AppLoaders to
      - load (detect/parse/validate/authenticate)
      - unload (remove/ignore/invalidate)
      - enable (make active)
      - disable (make inactive)
-     plugins from different sources
-  Uses PluginEventLifecycleStrategy to tie Plugin Events to
-  Actions and PluginStore to save state
+     Apps from different sources
+  Uses AppEventLifecycleStrategy to tie App Events to
+  Actions and AppStore to save state
 
 ```javascript  
   Arguments
-    PluginLoader[],
-    PluginStore,
-    PluginEventLifecycleStrategy,
+    AppLoader[],
+    AppStore,
+    AppEventLifecycleStrategy,
     EventsService
   Properties
     loaders,store,strategy,events
   Methods
-    scanForNewPlugins // Use loaders to scan for new Plugins
-    enablePlugin      // Actually enable a plugin (+store state)
-    disablePlugin     // Disable plugin (+store state)
+    scanForNewApps // Use loaders to scan for new Apps
+    enableApp      // Actually enable a App (+store state)
+    disableApp     // Disable App (+store state)
 ```
 
 
-## PluginLoader
+## AppLoader
 
-  > Responsible for loading Plugins (Generating a Plugin object by parsing a plugin descriptor) from some location
+  > Responsible for loading Apps (Generating a App object by parsing a App descriptor) from some location
   (e.g. db, File or Remote Docker container)
-  @Throws PluginLoadError, PluginDescriptorParseError
+  @Throws AppLoadError, AppDescriptorParseError
 
 ```javascript  
   Arguments
@@ -64,19 +64,19 @@
     EventsService
   Properties
     loaders,
-    allPlugins,
-    failedPlugins,
-    ignoredPlugins,
+    allApps,
+    failedApps,
+    ignoredApps,
     events
   Methods
-    scanForNewPlugins
-    enablePlugin
-    disablePlugin
-    ignorePlugin
+    scanForNewApps
+    enableApp
+    disableApp
+    ignoreApp
 ```
 
-## Plugin
-  >Represents related set of Modules being provided to the system under a common Parent know as a Plugin.
+## App
+  >Represents related set of Modules being provided to the system under a common Parent know as a App.
 
 ```javascript  
   Arguments
@@ -154,31 +154,31 @@
   Methods
 ```
 
-## PluginStore
-  Represents a Place to store information about the state of plugins such as whether they are
+## AppStore
+  Represents a Place to store information about the state of Apps such as whether they are
   Installed or enabled, disabled etc.
 
 ```javascript  
   Arguments
   Properties
   Methods
-    set(key, val) - throws PluginStoreSaveException
-    get(key) - throws PluginStoreUnknownKeyException
+    set(key, val) - throws AppStoreSaveException
+    get(key) - throws AppStoreUnknownKeyException
 ```
 
-## PluginEventLifecycleStrategy
- > Represents a strategy used by PluginService to determine
- if a Plugin should be enabled or disabled when a given event
+## AppEventLifecycleStrategy
+ > Represents a strategy used by AppService to determine
+ if a App should be enabled or disabled when a given event
  is detected. Responsible for setting up listeners against the
- EventService and triggering the PluginService to act.
+ EventService and triggering the AppService to act.
 
  ```javascript  
    Arguments
-    PluginService, EventService
+    AppService, EventService
  ```
 
-## PluginEvent
->  Model of Single Event in the PluginSystem.
+## AppEvent
+>  Model of Single Event in the AppSystem.
 
 ```javascript  
   Arguments
@@ -188,8 +188,8 @@
 
 ## Errors
 ### DockuiFrameworkError
-### PluginLoadError
-### PluginDescriptorParseError
+### AppLoadError
+### AppDescriptorParseError
 ### ModuleDescriptorParseError
-### PluginStoreSaveException
-### PluginStoreUnknownKeyException
+### AppStoreSaveException
+### AppStoreUnknownKeyException

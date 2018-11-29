@@ -5,27 +5,27 @@ const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
 const LifecycleEventsStrategy = require("./LifecycleEventsStrategy");
-var mockPluginService = null;
-var mockPluginStore = null;
+var mockAppService = null;
+var mockAppStore = null;
 var mockEventService = null;
 
 describe('LifecycleEventsStrategy', function() {
     "use strict";
 
     beforeEach(function(){
-        mockPluginService = { 
+        mockAppService = { 
             "start": function () {},
             "shutdown": function () {},
-            "scanForNewPlugins": function () {},
-            "stopScanningForNewPlugins": function () {},
-            "getPlugins": function () {},
-            "getPlugin": function () {},
-            "enablePlugin": function () {},
-            "disablePlugin": function () {},
-            "getPluginModules": function () {},
-            "getPluginModule": function () {},
-            "enablePluginModule": function () {},
-            "disablePluginModule": function () {}
+            "scanForNewApps": function () {},
+            "stopScanningForNewApps": function () {},
+            "getApps": function () {},
+            "getApp": function () {},
+            "enableApp": function () {},
+            "disableApp": function () {},
+            "getAppModules": function () {},
+            "getAppModule": function () {},
+            "enableAppModule": function () {},
+            "disableAppModule": function () {}
         };
         mockEventService = { 
             on: function () {}, 
@@ -33,13 +33,13 @@ describe('LifecycleEventsStrategy', function() {
             addListener: function(){},
             removeListener: function () {} 
         };
-        mockPluginStore = { 
+        mockAppStore = { 
             get: function () {}, 
             set: function () {},
-            enablePlugin: function(){},
-            disablePlugin: function(){},
-            enablePluginModule: function(){},
-            disablePluginModule: function(){}
+            enableApp: function(){},
+            disableApp: function(){},
+            enableAppModule: function(){},
+            disableAppModule: function(){}
         };
     });
 
@@ -74,9 +74,9 @@ describe('LifecycleEventsStrategy', function() {
         }).to.throw();
         expect(function(){
             new LifecycleEventsStrategy(
-                mockPluginService,
+                mockAppService,
                 mockEventService,
-                mockPluginStore
+                mockAppStore
             );
         }).to.not.throw();
     });
@@ -85,9 +85,9 @@ describe('LifecycleEventsStrategy', function() {
         var eventsSpy = sinon.spy(mockEventService,"on");
         
         var lifecycleEventsStrategy = new LifecycleEventsStrategy(
-            mockPluginService,
+            mockAppService,
             mockEventService,
-            mockPluginStore
+            mockAppStore
         );
         lifecycleEventsStrategy.setup();
         lifecycleEventsStrategy.teardown();

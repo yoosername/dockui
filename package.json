@@ -10,7 +10,7 @@
   "keywords": [
     "docker",
     "composition",
-    "plugin",
+    "app",
     "webapp",
     "ui"
   ],
@@ -19,7 +19,7 @@
   "scripts": {
     "cli": "node ./src/cli/cli.js",
     "test": "./node_modules/mocha/bin/mocha 'src/**/*spec.js' --reporter spec",
-    "test-dev": "nodemon -x npm test",
+    "test-dev": "npx nodemon -x npm test",
     "jshint": "./node_modules/jshint/bin/jshint src/**/*.js",
     "coverage": "nyc ./node_modules/mocha/bin/mocha 'src/**/*spec.js' --reporter spec",
     "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",

@@ -1,14 +1,14 @@
 const MockLoader = function(){
     "use strict";
     return { 
-        scanForNewPlugins: function () {},
-        stopScanningForNewPlugins: function () {},
-        getPlugins: function(){},
-        enablePlugin: function(){},
-        disablePlugin: function(){},
-        getPluginModules: function(){},
-        enablePluginModule: function(){},
-        disablePluginModule: function(){}
+        scanForNewApps: function () {},
+        stopScanningForNewApps: function () {},
+        getApps: function(){},
+        enableApp: function(){},
+        disableApp: function(){},
+        getAppModules: function(){},
+        enableAppModule: function(){},
+        disableAppModule: function(){}
     };
 };
 const MockLoaders = function(loader){
@@ -19,15 +19,15 @@ const MockLoaders = function(loader){
         Object.assign({},(loader)?loader:new MockLoader())
     ];
 };
-const MockPluginStore = function(){ 
+const MockAppStore = function(){ 
     "use strict";
     return {
         get: function () {}, 
         set: function () {},
-        enablePlugin: function(){},
-        disablePlugin: function(){},
-        enablePluginModule: function(){},
-        disablePluginModule: function(){}
+        enableApp: function(){},
+        disableApp: function(){},
+        enableAppModule: function(){},
+        disableAppModule: function(){}
     };
 };
 const MockLifecycleEventsStrategy = function(){
@@ -46,20 +46,20 @@ const MockEventService = function(){
         removeListener: function () {} 
     };
 };
-const MockPlugin = function(){
+const MockApp = function(){
     "use strict";
     return {
         getKey: function () {},
-        getPluginLoader: function () {},
-        getPluginDescriptor: function () {},
+        getAppLoader: function () {},
+        getAppDescriptor: function () {},
         getEventService: function () {},
-        getPluginModuleLoaders: function () {}, 
+        getAppModuleLoaders: function () {}, 
         enable: function () {}, 
         disable: function () {}, 
-        registerPluginModules: function () {}
+        registerAppModules: function () {}
     };
 };
-const MockPluginModule = function(){
+const MockAppModule = function(){
     "use strict";
     return {
         getKey: function () {}, 
@@ -68,7 +68,7 @@ const MockPluginModule = function(){
         disable: function () {}
     };
 };
-const MockPluginDescriptor = function(){
+const MockAppDescriptor = function(){
     "use strict";
     return {
         getName: function () {}, 
@@ -79,7 +79,7 @@ const MockPluginDescriptor = function(){
         getModules: function () {}
     };
 };
-const MockPluginModuleDescriptor = function(){
+const MockAppModuleDescriptor = function(){
     "use strict";
     return {
         getType: function () {},
@@ -91,11 +91,11 @@ const MockPluginModuleDescriptor = function(){
 module.exports = {
     MockLoader,
     MockLoaders,
-    MockPluginStore,
+    MockAppStore,
     MockLifecycleEventsStrategy,
     MockEventService,
-    MockPlugin,
-    MockPluginModule,
-    MockPluginDescriptor,
-    MockPluginModuleDescriptor
+    MockApp,
+    MockAppModule,
+    MockAppDescriptor,
+    MockAppModuleDescriptor
 };

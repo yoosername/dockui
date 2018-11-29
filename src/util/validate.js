@@ -7,39 +7,39 @@ const Shapes = Object.freeze(
         "EventService":[
             "on","trigger","addListener","removeListener"
         ], 
-        "PluginService":[
-            "start","shutdown","scanForNewPlugins","stopScanningForNewPlugins",
-            "getPlugins","getPlugin","enablePlugin","disablePlugin",
-            "getPluginModules","getPluginModule","enablePluginModule","disablePluginModule"
+        "AppService":[
+            "start","shutdown","scanForNewApps","stopScanningForNewApps",
+            "getApps","getApp","enableApp","disableApp",
+            "getAppModules","getAppModule","enableAppModule","disableAppModule"
         ], 
-        "PluginLoader":[
-            "scanForNewPlugins","stopScanningForNewPlugins","getPlugins",
-            "enablePlugin","disablePlugin","getPluginModules","enablePluginModule",
-            "disablePluginModule"
+        "AppLoader":[
+            "scanForNewApps","stopScanningForNewApps","getApps",
+            "enableApp","disableApp","getAppModules","enableAppModule",
+            "disableAppModule"
         ],
-        "Plugin":[
-            "getKey","getPluginLoader","getPluginDescriptor","getEventService",
-            "getPluginModuleLoaders","enable","disable","registerPluginModules"
+        "App":[
+            "getKey","getAppLoader","getAppDescriptor","getEventService",
+            "getAppModuleLoaders","enable","disable","registerAppModules"
         ],
-        "PluginDescriptor":[
-            "getName","getPluginKey","getVersion","getVersion","getIcon",
+        "AppDescriptor":[
+            "getName","getAppKey","getVersion","getVersion","getIcon",
             "getModules"
         ],
-        "PluginModuleDescriptor":[
+        "AppModuleDescriptor":[
             "getType","getKey","getData"
         ],
-        "PluginModuleLoader":[
+        "AppModuleLoader":[
             "canLoadModuleDescriptor","loadModuleFromDescriptor"
         ],
-        "PluginModule":[
+        "AppModule":[
             "getKey","getType","enable","disable"
         ],
         "LifecycleEventsStrategy":[
             "setup","teardown"
         ], 
-        "PluginStore":[
-            "set","get","enablePlugin","disablePlugin",
-            "enablePluginModule","disablePluginModule"
+        "AppStore":[
+            "set","get","enableApp","disableApp",
+            "enableAppModule","disableAppModule"
         ],
         "WebService":[
             "start","stop"
