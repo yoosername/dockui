@@ -1,66 +1,22 @@
 # WebService
 
-> The WebService provides a wrapper around common web functionality and sets up several extension points for plugin modules
+> The WebService provides a wrapper around common web functionality and sets up several extension points for plugin modules implemented as request middleware.
 
-## Functionality
+## Pseudo FLOW
 
-* Starting / Stopping webserver
-* Setting up global route handler at '/'.
-* (Each delegates to a specific handler Service)
-  * On Request Object
-    * [RouterService] URL rewrite(s) - e.g. from pretty urls like /status to /plugin/{key}/module/{key}/statusPage.html
-    * [AuthorisationService] Scope detection - find out if a request requires scopes and/or a logged in user
-    * [AuthenticationService] login/logout and identify a logged in user
-    * [AuthorisationService] Scope enforcer - check if identified user has required scopes (could be anon)
-    * [CacheService] Cache (respond) - Ability to cache a resource for speedy subsequent retrieval ( policy set by modules )
-    * [RequestHandlerService] - Actual request processors like webpage, rest, resource etc
-  * On Response Object
-    * [DecoratorService] (detection) - find out if page needs to be wrapped & add decorator to the res object
-    * [ResourceService] (stripper) - remove inline css and js from decorator and page & add to res
-    * [FragmentService] - fetch and inject fragment pages to required injection points
-    * [DecoratorService] (Recombine) - merge decorator and page into single page
-    * [ResourceService] (Injector) - Readd inline resouces, plus any resources added by modules
-    * [CacheService] - update CacheService if this module asked to be cached.
-
-## Request / Response Flow and extension points
-### Request
-
-```yaml
-         [url-rewrite][scope-detector][authentication][authorization][cache][middleware][handler]
-   o           |            |                |               |          |        |          |
-  (_) -------->|            |                |               |          |        |          |
-               |            |                |               |          |        |          |
-  unpretty urls|----------->|                |               |          |        |          |
-                            |                |               |          |        |          |
-  detect & add scopes to req|--------------->|               |          |        |          |
-                                             |               |          |        |          |
-                      log user in if required|-------------->|          |        |          |
-                                                             |          |        |          |
-                              does user have required scopes?|--------->|        |          |
-                                                                        |        |          |
-                                  return cached resource if there is one|------->|          |
-                                                                                 |          |
-                                              all general middleware applied here|--------->|
-                                                                                            |
-                                                actually handle the main body of the request|------->
-```
-
-### Response
-
-```yaml
-            [cache][add-resources][decorate][fragments][strip-resources][decorator-detect]
-   o           |           |           |         |             |                 |
-  (_) <--------|           |           |         |             |                 |
-               |           |           |         |             |                 |
- cache cachable|<----------|           |         |             |                 |
-                           |           |         |             |                 |
-    add resources into page|<----------|         |             |                 |
-                                       |         |             |                 |
-               wrap page with decorator|<--------|             |                 |
-                                                 |             |                 |
-                             inject any fragments|<------------|                 |
-                                                               |                 |
-                                    remove all inline resources|<----------------|
-                                                                                 |
-                                              does this page need to be decorated|<---------
+```javascript
+[middleware] if using short url then look it up and redirect to real url
+[middleware] decorate req with plugin and module of the thing being requested
+[middleware] if module requiresRoles then check user logged in. If not then log user in
+[middleware] if module requires Roles and user Logged in then check user has roles. If not deny
+[middleware] If module is cachable and cache not empty retrieve from cache.
+[middleware] Fetch API or WebPage using url in Module and add result to Req
+[middleware] if webPage parse it for [decorator,webFragments,webItems,resources] - add to Req
+[middleware] if webPage strip out resources from template
+[middleware] if webPage fetch all fragments from cache or remote url and add to req
+[middleware] if webPage fetch decorator webPage from cache or remote and add to req
+[middleware] if webPage fetch all resources from cache or remote and add to Req.
+[middleware] if webPage (once all parts retrived using fullfilled Promise) recombine the page
+[middleware] if module is cachable then cache the API or webPage here
+[handler] handle the request immediately by returning the built response.
 ```
