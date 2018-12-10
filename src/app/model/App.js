@@ -81,6 +81,17 @@ class App{
   }
 
   /**
+   * @method getAppModules
+   * @description return all loaded AppModules for this App
+   */
+  getAppModules(filter){
+    return [].concat.apply([], this.getAppModules().map(
+        loader=>loader.getModules(filter)
+      )
+    );
+  }
+
+  /**
    * @method enable
    * @description delegate enabling and disabling to our loader
    */

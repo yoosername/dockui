@@ -22,7 +22,7 @@ describe('App', function() {
     });
 
     // Test getKey
-    // Test getModules(filter)
+    // Test getAppModules(filter)
     // Test getModule(moduleKey)
     // Test enable()
     // Test disable()
