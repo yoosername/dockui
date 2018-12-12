@@ -74,7 +74,6 @@ describe('LifecycleEventsStrategy', function() {
         }).to.throw();
         expect(function(){
             new LifecycleEventsStrategy(
-                mockAppService,
                 mockEventService,
                 mockAppStore
             );
@@ -85,7 +84,6 @@ describe('LifecycleEventsStrategy', function() {
         var eventsSpy = sinon.spy(mockEventService,"on");
         
         var lifecycleEventsStrategy = new LifecycleEventsStrategy(
-            mockAppService,
             mockEventService,
             mockAppStore
         );

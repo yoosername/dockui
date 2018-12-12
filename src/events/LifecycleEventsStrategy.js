@@ -14,7 +14,7 @@ const  {
  */
 function logLoadStarted(payload){
   "use strict";
-  console.log("[AppService] App ("+payload.app.getKey()+") is being loaded...");
+  console.log("[LifecycleEventsStrategy] App ("+payload.app.getKey()+") is being loaded...");
 }
 
 /**
@@ -26,7 +26,7 @@ function enableAppImmediatelyOnLoad(payload){
   this.appStore.getEnabledApps().forEach(AppKey => {
     if( AppKey === payload.app.getKey() ){
       payload.app.enable();
-      console.log("[AppService] App ("+payload.app.getKey()+") has been loaded and is not listed as disabled so reenabling");
+      console.log("[LifecycleEventsStrategy] App ("+payload.app.getKey()+") has been loaded and is not listed as disabled so reenabling");
     }
   });
 }
@@ -38,7 +38,7 @@ function enableAppImmediatelyOnLoad(payload){
 function logLoadFailed(payload){
   "use strict";
   var error = (payload.error) ? payload.error : "";
-  console.log("[AppService] App ("+payload.app.getKey()+") failed to load: ", error);
+  console.log("[LifecycleEventsStrategy] App ("+payload.app.getKey()+") failed to load: ", error);
 }
 
 /**
@@ -47,15 +47,13 @@ function logLoadFailed(payload){
  */
 class LifecycleEventsStrategy{
 
-  constructor(appService, eventService, appStore){
+  constructor(eventService, appStore){
 
     validateShapes([
-      {"shape":"AppService","object":appService}, 
       {"shape":"EventService","object":eventService}, 
       {"shape":"AppStore","object":appStore}
     ]);
-
-    this.appsService = appService;
+    
     this.eventService = eventService;
     this.appStore = appStore;
   }

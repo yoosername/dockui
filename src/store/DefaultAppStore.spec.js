@@ -4,9 +4,9 @@ const sinon = require("sinon");
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-var PluginStore = require('./PluginStore');
+var DefaultAppStore = require('./DefaultAppStore');
 
-describe('PluginStore', function() {
+describe('DefaultAppStore', function() {
     "use strict";
 
     beforeEach(function(){
@@ -14,11 +14,11 @@ describe('PluginStore', function() {
     });
 
     it('should be defined and loadable', function() {
-      expect(PluginStore).to.not.be.undefined;
+      expect(DefaultAppStore).to.not.be.undefined;
     });
 
     it('should be a function', function() {
-      expect(PluginStore).to.be.a('function');
+      expect(DefaultAppStore).to.be.a('function');
     });
 
     // Tests get

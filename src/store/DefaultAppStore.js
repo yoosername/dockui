@@ -1,8 +1,8 @@
 /**
- * @class PluginStore
- * @description Simple Store for persisting Plugin/Module state
+ * @class DefaultAppStore
+ * @description Simple Store for persisting App/AppModule state
  */
-class PluginStore{
+class DefaultAppStore{
 
     set(key, val){
         console.warn("Youve used the default NoOp Store implementation - this should be extended by child classes");
@@ -18,4 +18,4 @@ class PluginStore{
 
 }
 
-module.exports = PluginStore;
+module.exports = DefaultAppStore;
