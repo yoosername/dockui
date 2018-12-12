@@ -26,10 +26,10 @@ new DockUIApps.Builder()
 
 ## Required Services
 
-* [AppStore](../store/README.md) (Persisting the state)
-* [EventService](../events/README.md) (Messaging and system Events)
-* [LifeCycleEventStrategy](../events/README.md) (Rules tying Lifecycle Events to Actions at runtime)
-* [AppLoader](../app/loader/README.md) (Handle Discovery, Parsing Descriptors and Loading AppModules by delegating to one or more AppModuleLoaders)
-* [AppModuleLoader](../app/loader/README.md) (Handle Parsing specific Module Descriptor and initialising the module. )
-* [AppService](../app/service/README.md) (Handle Loading Apps via delegation to one or more AppLoaders and Enabling, Disabling / storing state using provided store)
-* [WebService](../web/README.md) (Web Server and associated Middleware etc)
+* [AppStore](../store/) (Persisting the state)
+* [EventService](../events/) (Messaging and system Events)
+* [LifeCycleEventStrategy](../events/) (Rules tying Lifecycle Events to Actions at runtime)
+* [AppLoader](../app/loader/) (Handle Discovery, Parsing Descriptors and Loading AppModules by delegating to one or more AppModuleLoaders)
+* [AppModuleLoader](../app/loader/) (Handle Parsing specific Module Descriptor and initialising the module. )
+* [AppService](../app/service/) (Handle Loading Apps via delegation to one or more AppLoaders and Enabling, Disabling / storing state using provided store)
+* [WebService](../web/) (Web Server and associated Middleware etc)
