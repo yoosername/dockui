@@ -29,11 +29,11 @@ Hook called when the given App is enabled by the system. gives us a chance to no
 
 Hook called when the given App is disabled by the system. gives us a chance to notify the App, or perform some housekeeping.
 
-### getAppModules(app, module)
+### getAppModules(app, filter)
 
 Convenience method for retrieving all of the modules in a given App. Does the same thing as
 
-```getApps(app).getAppModules(module);```
+```getApps(app).getAppModules(filter);```
 
 ### enableAppModule
 
