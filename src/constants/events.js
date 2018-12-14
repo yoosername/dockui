@@ -18,6 +18,9 @@ const APP_DISABLED_EVENT = "app:disabled";
 /**
  * @description App Module lifecycle events
  */
+const APP_MODULE_LOAD_STARTED_EVENT = "module:load:started";
+const APP_MODULE_LOAD_COMPLETE_EVENT = "module:load:complete";
+const APP_MODULE_LOAD_FAILED_EVENT = "module:load:failed"; 
 const APP_MODULE_ENABLED_EVENT = "module:enabled";
 const APP_MODULE_DISABLED_EVENT = "module:disabled";
 
@@ -38,6 +41,9 @@ module.exports = {
     APP_LOAD_STARTED_EVENT,
     APP_LOAD_COMPLETE_EVENT,
     APP_LOAD_FAILED_EVENT,
+    APP_MODULE_LOAD_STARTED_EVENT,
+    APP_MODULE_LOAD_COMPLETE_EVENT,
+    APP_MODULE_LOAD_FAILED_EVENT,
     APP_ENABLED_EVENT,
     APP_DISABLED_EVENT,
     APP_MODULE_ENABLED_EVENT,

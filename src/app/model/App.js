@@ -1,4 +1,10 @@
 const  {
+  APP_MODULE_LOAD_STARTED_EVENT,
+  APP_MODULE_LOAD_COMPLETE_EVENT,
+  APP_MODULE_LOAD_FAILED_EVENT
+} = require("../../constants/events");
+
+const  {
   validateShapes
 } = require("../../util/validate");
 
@@ -117,10 +123,18 @@ class App{
 
     this.appDescriptor.modules.forEach(moduleDescriptor =>{
       var module = null;
+      var loaded = false;
+
+      this.eventService.trigger(APP_MODULE_LOAD_STARTED_EVENT, {
+        "app" : this,
+        "descriptor" : moduleDescriptor
+      });
+
       this.appModuleLoaders.forEach(moduleLoader =>{
         try{
-          if(moduleLoader.canLoadModuleDescriptor(moduleDescriptor)){
+          if(moduleLoader.canLoadModuleDescriptor(moduleDescriptor) && !loaded){
             module = moduleLoader.loadModuleFromDescriptor(moduleDescriptor);
+            loaded = true;
           }
         }catch(e){
           // Not bothered
@@ -128,6 +142,19 @@ class App{
       });
       if(!module){
         // Load an unloadable Module here maybe?
+      }
+      if(module){
+        this.modules.push(module);
+        this.eventService.trigger(APP_MODULE_LOAD_COMPLETE_EVENT, {
+          "app" : this,
+          "descriptor" : moduleDescriptor,
+          "module" : module
+        });
+      }else{
+        this.eventService.trigger(APP_MODULE_LOAD_FAILED_EVENT, {
+          "app" : this,
+          "descriptor" : moduleDescriptor
+        });
       }
     });
 
