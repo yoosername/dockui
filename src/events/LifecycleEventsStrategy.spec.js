@@ -22,10 +22,10 @@ describe('LifecycleEventsStrategy', function() {
             "getApp": function () {},
             "enableApp": function () {},
             "disableApp": function () {},
-            "getAppModules": function () {},
-            "getAppModule": function () {},
-            "enableAppModule": function () {},
-            "disableAppModule": function () {}
+            "getModules": function () {},
+            "getModule": function () {},
+            "enableModule": function () {},
+            "disableModule": function () {}
         };
         mockEventService = { 
             on: function () {}, 
@@ -38,8 +38,8 @@ describe('LifecycleEventsStrategy', function() {
             set: function () {},
             enableApp: function(){},
             disableApp: function(){},
-            enableAppModule: function(){},
-            disableAppModule: function(){}
+            enableModule: function(){},
+            disableModule: function(){}
         };
     });
 

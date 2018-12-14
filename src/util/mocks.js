@@ -1,22 +1,23 @@
-const MockLoader = function(){
+const MockAppLoader = function(){
     "use strict";
     return { 
         scanForNewApps: function () {},
         stopScanningForNewApps: function () {},
         getApps: function(){},
+        getApp: function(){},
         enableApp: function(){},
         disableApp: function(){},
-        getAppModules: function(){},
-        enableAppModule: function(){},
-        disableAppModule: function(){}
+        getModules: function(){},
+        enableModule: function(){},
+        disableModule: function(){}
     };
 };
-const MockLoaders = function(loader){
+const MockAppLoaders = function(loader){
     "use strict";
     return [
-        Object.assign({},(loader)?loader:new MockLoader()),
-        Object.assign({},(loader)?loader:new MockLoader()),
-        Object.assign({},(loader)?loader:new MockLoader())
+        Object.assign({},(loader)?loader:new MockAppLoader()),
+        Object.assign({},(loader)?loader:new MockAppLoader()),
+        Object.assign({},(loader)?loader:new MockAppLoader())
     ];
 };
 const MockAppStore = function(){ 
@@ -26,8 +27,8 @@ const MockAppStore = function(){
         set: function () {},
         enableApp: function(){},
         disableApp: function(){},
-        enableAppModule: function(){},
-        disableAppModule: function(){}
+        enableModule: function(){},
+        disableModule: function(){}
     };
 };
 const MockLifecycleEventsStrategy = function(){
@@ -53,13 +54,13 @@ const MockApp = function(){
         getAppLoader: function () {},
         getAppDescriptor: function () {},
         getEventService: function () {},
-        getAppModuleLoaders: function () {}, 
+        getModuleLoaders: function () {}, 
         enable: function () {}, 
         disable: function () {}, 
-        registerAppModules: function () {}
+        registerModules: function () {}
     };
 };
-const MockAppModule = function(){
+const MockModule = function(){
     "use strict";
     return {
         getKey: function () {}, 
@@ -79,7 +80,7 @@ const MockAppDescriptor = function(){
         getModules: function () {}
     };
 };
-const MockAppModuleDescriptor = function(){
+const MockModuleDescriptor = function(){
     "use strict";
     return {
         getType: function () {},
@@ -89,13 +90,13 @@ const MockAppModuleDescriptor = function(){
 };
 
 module.exports = {
-    MockLoader,
-    MockLoaders,
+    MockAppLoader,
+    MockAppLoaders,
     MockAppStore,
     MockLifecycleEventsStrategy,
     MockEventService,
     MockApp,
-    MockAppModule,
+    MockModule,
     MockAppDescriptor,
-    MockAppModuleDescriptor
+    MockModuleDescriptor
 };

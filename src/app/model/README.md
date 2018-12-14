@@ -1,19 +1,19 @@
-# App and AppModule definitions
+# App and Module definitions
 
-For detailed information on App and AppModule configuration see: [Descriptor Reference](../../../src/app/dockui.app.yml)
+For detailed information on App and Module configuration see: [Descriptor Reference](../../../src/app/dockui.app.yml)
 
 ## App
 
-> An App is something which defines and provides one or more AppModules to influence the overall system.
+> An App is something which defines and provides one or more features to the overall system in the form of Modules.
 
 * Apps can be Loaded, Unloaded, Enabled and Disabled.
-* Apps provide AppModules via an AppDescriptor
+* Apps provide Modules via an AppDescriptor
 
-## AppModule
+## Module
 
-> An AppModule defines a single piece of functionality that is being provided by an App. 
+> A Module defines a single feature that is being provided by an App.
 
-### Example AppModules
+### Example Modules
 
 * WebItem ( e.g. add an item to a dropdown menu on an existing WebPage )
 * WebPage ( e.g. add a whole new web page )

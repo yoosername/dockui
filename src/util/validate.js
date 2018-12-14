@@ -10,28 +10,28 @@ const Shapes = Object.freeze(
         "AppService":[
             "start","shutdown","scanForNewApps","stopScanningForNewApps",
             "getApps","getApp","enableApp","disableApp",
-            "getAppModules","getAppModule","enableAppModule","disableAppModule"
+            "getModules","getModule","enableModule","disableModule"
         ], 
         "AppLoader":[
-            "scanForNewApps","stopScanningForNewApps","getApps",
-            "enableApp","disableApp","getAppModules","enableAppModule",
-            "disableAppModule"
+            "scanForNewApps","stopScanningForNewApps","getApps","getApp",
+            "enableApp","disableApp","getModules","enableModule",
+            "disableModule"
         ],
         "App":[
             "getKey","getAppLoader","getAppDescriptor","getEventService",
-            "getAppModuleLoaders","enable","disable","registerAppModules"
+            "getModuleLoaders","enable","disable","registerModules"
         ],
         "AppDescriptor":[
             "getName","getAppKey","getVersion","getVersion","getIcon",
             "getModules"
         ],
-        "AppModuleDescriptor":[
+        "ModuleDescriptor":[
             "getType","getKey","getData"
         ],
-        "AppModuleLoader":[
+        "ModuleLoader":[
             "canLoadModuleDescriptor","loadModuleFromDescriptor"
         ],
-        "AppModule":[
+        "Module":[
             "getKey","getType","enable","disable"
         ],
         "LifecycleEventsStrategy":[
@@ -39,7 +39,7 @@ const Shapes = Object.freeze(
         ], 
         "AppStore":[
             "set","get","enableApp","disableApp",
-            "enableAppModule","disableAppModule"
+            "enableModule","disableModule"
         ],
         "WebService":[
             "start","stop"

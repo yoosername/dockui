@@ -1,10 +1,10 @@
 /**
  * @description App service events
  */
-const APP_SERVICE_STARTING_EVENT = "app:service:starting";
-const APP_SERVICE_STARTED_EVENT = "app:service:started";
-const APP_SERVICE_SHUTTING_DOWN_EVENT = "app:service:shuttingdown";
-const APP_SERVICE_SHUTDOWN_EVENT = "app:service:shutdown";
+const APPSERVICE_STARTING_EVENT = "service:starting";
+const APPSERVICE_STARTED_EVENT = "service:started";
+const APPSERVICE_SHUTTING_DOWN_EVENT = "service:shuttingdown";
+const APPSERVICE_SHUTDOWN_EVENT = "service:shutdown";
 
 /**
  * @description App lifecycle events
@@ -16,40 +16,40 @@ const APP_ENABLED_EVENT = "app:enabled";
 const APP_DISABLED_EVENT = "app:disabled";
 
 /**
- * @description App Module lifecycle events
+ * @description Module lifecycle events
  */
-const APP_MODULE_LOAD_STARTED_EVENT = "module:load:started";
-const APP_MODULE_LOAD_COMPLETE_EVENT = "module:load:complete";
-const APP_MODULE_LOAD_FAILED_EVENT = "module:load:failed"; 
-const APP_MODULE_ENABLED_EVENT = "module:enabled";
-const APP_MODULE_DISABLED_EVENT = "module:disabled";
+const MODULE_LOAD_STARTED_EVENT = "module:load:started";
+const MODULE_LOAD_COMPLETE_EVENT = "module:load:complete";
+const MODULE_LOAD_FAILED_EVENT = "module:load:failed"; 
+const MODULE_ENABLED_EVENT = "module:enabled";
+const MODULE_DISABLED_EVENT = "module:disabled";
 
 /**
  * @description Web service events
  */
-const WEB_SERVICE_STARTING_EVENT = "web:service:starting";
-const WEB_SERVICE_STARTED_EVENT = "web:service:started";
-const WEB_SERVICE_SHUTTING_DOWN_EVENT = "web:service:shuttingdown";
-const WEB_SERVICE_SHUTDOWN_EVENT = "web:service:shutdown";
+const WEBSERVICE_STARTING_EVENT = "web:starting";
+const WEBSERVICE_STARTED_EVENT = "web:started";
+const WEBSERVICE_SHUTTING_DOWN_EVENT = "web:shuttingdown";
+const WEBSERVICE_SHUTDOWN_EVENT = "web:shutdown";
 
 
 module.exports = {
-    APP_SERVICE_STARTING_EVENT,
-    APP_SERVICE_STARTED_EVENT,
-    APP_SERVICE_SHUTTING_DOWN_EVENT,
-    APP_SERVICE_SHUTDOWN_EVENT,
+    APPSERVICE_STARTING_EVENT,
+    APPSERVICE_STARTED_EVENT,
+    APPSERVICE_SHUTTING_DOWN_EVENT,
+    APPSERVICE_SHUTDOWN_EVENT,
     APP_LOAD_STARTED_EVENT,
     APP_LOAD_COMPLETE_EVENT,
     APP_LOAD_FAILED_EVENT,
-    APP_MODULE_LOAD_STARTED_EVENT,
-    APP_MODULE_LOAD_COMPLETE_EVENT,
-    APP_MODULE_LOAD_FAILED_EVENT,
     APP_ENABLED_EVENT,
     APP_DISABLED_EVENT,
-    APP_MODULE_ENABLED_EVENT,
-    APP_MODULE_DISABLED_EVENT,
-    WEB_SERVICE_STARTING_EVENT,
-    WEB_SERVICE_STARTED_EVENT,
-    WEB_SERVICE_SHUTTING_DOWN_EVENT,
-    WEB_SERVICE_SHUTDOWN_EVENT
+    MODULE_LOAD_STARTED_EVENT,
+    MODULE_LOAD_COMPLETE_EVENT,
+    MODULE_LOAD_FAILED_EVENT,
+    MODULE_ENABLED_EVENT,
+    MODULE_DISABLED_EVENT,
+    WEBSERVICE_STARTING_EVENT,
+    WEBSERVICE_STARTED_EVENT,
+    WEBSERVICE_SHUTTING_DOWN_EVENT,
+    WEBSERVICE_SHUTDOWN_EVENT
 };

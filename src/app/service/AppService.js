@@ -5,8 +5,8 @@ const  {
   APP_SERVICE_SHUTDOWN_EVENT,
   APP_ENABLED_EVENT,
   APP_DISABLED_EVENT,
-  APP_MODULE_ENABLED_EVENT,
-  APP_MODULE_DISABLED_EVENT
+  MODULE_ENABLED_EVENT,
+  MODULE_DISABLED_EVENT
 } = require("../../constants/events");
 
 const  {
@@ -215,13 +215,13 @@ class AppService{
   }
 
   /**
-   * getAppModules(AppKey)
+   * getModules(AppKey)
    * @description Return a single App(s) module(s)
    * @argument {int} appKey
    * @argument {Function} filter
    * @public
    */
-  getAppModules(appKey, filter){
+  getModules(appKey, filter){
     "use strict";
     var modules = [];
     var app = this.getApp(appKey);
@@ -237,17 +237,17 @@ class AppService{
   }
 
     /**
-   * getAppModules(appKey)
+   * getModules(appKey)
    * @description Return a single App(s) module(s)
    * @argument {int} appKey
    * @argument {int} moduleKey
    * @public
    */
-  getAppModule(appKey, moduleKey){
+  getModule(appKey, moduleKey){
     "use strict";
     var module = null;
     try{
-      module = this.getAppModules(appKey, module => {
+      module = this.getModules(appKey, module => {
         return (module.getKey() === moduleKey);
       })[0];
     }catch(e){
@@ -257,18 +257,18 @@ class AppService{
   }
 
   /**
-   * enableAppModule
+   * enableModule
    * @description Enable a single App(s) module
    * @argument {int} appKey
    * @argument {int} moduleKey
    * @public
    */
-  enableAppModule(appKey, moduleKey){
+  enableModule(appKey, moduleKey){
     "use strict";
-    var module = this.getAppModule(appKey, moduleKey);
+    var module = this.getModule(appKey, moduleKey);
     if( module !== null){
-      this.appStore.enableAppModule(appKey,moduleKey);
-      this.eventService.trigger(APP_MODULE_ENABLED_EVENT, {
+      this.appStore.enableModule(appKey,moduleKey);
+      this.eventService.trigger(MODULE_ENABLED_EVENT, {
         "module" : module
       });
     }else{
@@ -277,18 +277,18 @@ class AppService{
   }
 
   /**
-   * disableAppModule
+   * disableModule
    * @description Disable a single App(s) module
    * @argument {int} appKey
    * @argument {int} moduleKey
    * @public
    */
-  disableAppModule(appKey, moduleKey){
+  disableModule(appKey, moduleKey){
     "use strict";
-    var module = this.getAppModule(appKey, moduleKey);
+    var module = this.getModule(appKey, moduleKey);
     if( module !== null){
-      this.appStore.disableAppModule(appKey,moduleKey);
-      this.eventService.trigger(APP_MODULE_DISABLED_EVENT, {
+      this.appStore.disableModule(appKey,moduleKey);
+      this.eventService.trigger(MODULE_DISABLED_EVENT, {
         "module" : module
       });
     }else{

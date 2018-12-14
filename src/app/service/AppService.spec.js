@@ -18,8 +18,8 @@ const  {
 } = require("../../constants/errors");
 
 const  {
-  MockLoader,
-  MockLoaders,
+  MockAppLoader,
+  MockAppLoaders,
   MockAppStore,
   MockLifecycleEventsStrategy,
   MockEventService
@@ -27,8 +27,8 @@ const  {
 
 var AppService = require('./appService');
 
-var mockLoader = null;
-var mockLoaders = null;
+var mockAppLoader = null;
+var mockAppLoaders = null;
 var mockAppStore = null;
 var mockLifecycleEventsStrategy = null;
 var mockEventService = null;
@@ -37,8 +37,8 @@ describe('AppService', function() {
     "use strict";
 
     beforeEach(function(){
-      mockLoader = new MockLoader();
-      mockLoaders = new MockLoaders(mockLoader);
+      mockAppLoader = new MockAppLoader();
+      mockAppLoaders = new MockAppLoaders(mockAppLoader);
       mockAppStore = new MockAppStore();
       mockLifecycleEventsStrategy = new MockLifecycleEventsStrategy();
       mockEventService = new MockEventService();
@@ -60,22 +60,22 @@ describe('AppService', function() {
         new AppService();
       }).to.throw(appServiceValidationError);
       expect(()=>{
-        new AppService(mockLoaders, mockAppStore, mockEventService);
+        new AppService(mockAppLoaders, mockAppStore, mockEventService);
       }).to.throw(appServiceValidationError);
       expect(()=>{
-        new AppService(mockLoaders, mockEventService);
+        new AppService(mockAppLoaders, mockEventService);
       }).to.throw(appServiceValidationError);
       expect(()=>{
         new AppService(mockAppStore);
       }).to.throw(appServiceValidationError);
       expect(()=>{
-        new AppService(mockLoaders, mockAppStore, mockLifecycleEventsStrategy, mockEventService);
+        new AppService(mockAppLoaders, mockAppStore, mockLifecycleEventsStrategy, mockEventService);
       }).to.not.throw();
     });
 
     it('should run scanForNewApps and set _running to true on start', function() {
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -91,11 +91,11 @@ describe('AppService', function() {
     });
 
     it('should cause loaders to run scanForNewApps on start', function() {
-      var loader1 = mockLoaders[0];
+      var loader1 = mockAppLoaders[0];
       sinon.spy(loader1,"scanForNewApps");
 
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -110,7 +110,7 @@ describe('AppService', function() {
       var strategySpy = sinon.spy(mockLifecycleEventsStrategy,"setup");
       
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -128,7 +128,7 @@ describe('AppService', function() {
       events.expects("trigger").once().calledWith(APP_SERVICE_SHUTTING_DOWN_EVENT);
       events.expects("trigger").once().calledWith(APP_SERVICE_SHUTDOWN_EVENT);
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -140,7 +140,7 @@ describe('AppService', function() {
 
     it('should run stopScanningForNewApps and set _running to false on shutdown', function() {
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -157,10 +157,10 @@ describe('AppService', function() {
     });
 
     it('should cause loaders to run stopScanningForNewApps on shutdown', function() {
-      var loader1Spy = sinon.spy(mockLoaders[0],"stopScanningForNewApps");
+      var loader1Spy = sinon.spy(mockAppLoaders[0],"stopScanningForNewApps");
 
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -172,10 +172,10 @@ describe('AppService', function() {
     });
 
     it('should call loaders scanForNewApps on scanForNewApps', function() {
-      var AppLoader = sinon.mock(mockLoaders[0]);
+      var AppLoader = sinon.mock(mockAppLoaders[0]);
       AppLoader.expects("scanForNewApps").once();
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -185,10 +185,10 @@ describe('AppService', function() {
     });
 
     it('should call loaders stopScanningForNewApps on stopScanningForNewApps', function() {
-      var AppLoader = sinon.mock(mockLoaders[0]);
+      var AppLoader = sinon.mock(mockAppLoaders[0]);
       AppLoader.expects("stopScanningForNewApps").once();
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -198,10 +198,10 @@ describe('AppService', function() {
     });
 
     it('should call loaders getApps on getApps', function() {
-      var AppLoader = sinon.mock(mockLoaders[0]);
+      var AppLoader = sinon.mock(mockAppLoaders[0]);
       AppLoader.expects("getApps").once();
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -211,10 +211,10 @@ describe('AppService', function() {
     });
 
     it('should call loaders getApps on getApp', function() {
-      var AppLoader = sinon.mock(mockLoaders[0]);
+      var AppLoader = sinon.mock(mockAppLoaders[0]);
       AppLoader.expects("getApps").once();
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -232,7 +232,7 @@ describe('AppService', function() {
       events.expects("trigger").once().withArgs(APP_DISABLED_EVENT);
 
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -243,9 +243,9 @@ describe('AppService', function() {
       events.verify();
     });
 
-    it('should call loaders getAppModules on getAppModules', function() {
+    it('should call loaders getModules on getModules', function() {
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -254,14 +254,14 @@ describe('AppService', function() {
         getModules: function(){ return [{},{}]}
       });
       appService.getApp = stub;
-      var modules = appService.getAppModules();
+      var modules = appService.getModules();
       expect(modules.length).to.equal(2);
       
     });
 
-    it('should call getAppModules on getAppModule', function() {
+    it('should call getModules on getModule', function() {
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -274,17 +274,17 @@ describe('AppService', function() {
         }]}
       });
       appService.getApp = stub;
-      var module = appService.getAppModule("doesntmatter", "thisone");
+      var module = appService.getModule("doesntmatter", "thisone");
       expect(module.getKey()).to.equal("thisone");
       
     });
 
-    it('should call enableAppModule and disableAppModule in store during enable/disable', function() { 
-      var enableModuleSpy = sinon.spy(mockAppStore, "enableAppModule");
-      var disableModuleSpy = sinon.spy(mockAppStore, "disableAppModule");
+    it('should call enableModule and disableModule in store during enable/disable', function() { 
+      var enableModuleSpy = sinon.spy(mockAppStore, "enableModule");
+      var disableModuleSpy = sinon.spy(mockAppStore, "disableModule");
 
       var appService = new AppService(
-        mockLoaders, 
+        mockAppLoaders, 
         mockAppStore, 
         mockLifecycleEventsStrategy, 
         mockEventService
@@ -299,8 +299,8 @@ describe('AppService', function() {
       });
 
       appService.getApp = stub;
-      appService.enableAppModule("doesntmatter", "thisone");
-      appService.disableAppModule("doesntmatter", "thisone");
+      appService.enableModule("doesntmatter", "thisone");
+      appService.disableModule("doesntmatter", "thisone");
 
       expect(enableModuleSpy).to.have.been.calledOnce;
       expect(disableModuleSpy).to.have.been.calledOnce;

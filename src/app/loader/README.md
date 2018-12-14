@@ -1,44 +1,62 @@
 # AppLoader
 
-> An AppLoader is used by the AppService to load Apps from a specific place (e.g. DB, Docker, Public Microservice Url).
+> An AppLoader is used by the AppService to load Apps from a specific place (e.g. Config, DB, Docker, Public Microservice Url, Github, AWS Lambda).
 
 * There can be many Loaders called by the AppService.
 * AppLoaders should be designed to operate against a single type of App
 
 ## API
 
-### scanForNewApps
+### scanForNewApps()
 
 Start looking for new Apps and load them when discovered. Maintain an internal Map. Use Events to share Loaded / Unloaded events.
 
 Doesnt overwrite state of already loaded Apps.
 
-### stopScanningForNewApps
+### stopScanningForNewApps()
 
 Stop looking for new Apps but dont unload existing ones.
 
-### getApps
+### getApps(filter)
 
 Return a list of all the Apps that have been loaded by this loader.
 
-### enableApp
+### getApp(key)
 
-Hook called when the given App is enabled by the system. gives us a chance to notify the App, or perform some housekeeping.
+Convenience method for getApps with a filter. Does the same thing as
+
+```getApps(app => app.getKey() === key);```
+
+### enableApp(key)
+
+Convenience method for enabling an App loaded by this Loader. Does the same thing as
+
+```getApps(app => app.getKey() === key).enable();```
 
 ### disableApp
 
-Hook called when the given App is disabled by the system. gives us a chance to notify the App, or perform some housekeeping.
+Convenience method for disabling an App loaded by this Loader. Does the same thing as
 
-### getAppModules(app, filter)
+```getApps(app => app.getKey() === key).disable();```
+
+### getModules(key, filter)
 
 Convenience method for retrieving all of the modules in a given App. Does the same thing as
 
-```getApps(app).getAppModules(filter);```
+```getApps(app => app.getKey() === key).getModules(filter);```
 
-### enableAppModule
+### enableModule(appKey, moduleKey)
 
-Hook called when the given Module is enabled by the system. gives us a chance to notify the App / Module, or perform some housekeeping.
+Convenience method for enabling a Module. Does the same thing as
 
-### disableAppModule
+```javascript
+   getModules(appKey, module => module.getKey() === moduleKey).enable();
+```
 
-Hook called when the given Module is disabled by the system. gives us a chance to notify the App / Module, or perform some housekeeping.
+### disableModule
+
+Convenience method for disabling a Module. Does the same thing as
+
+```javascript
+   getModules(appKey, module => module.getKey() === moduleKey).disable();
+```
