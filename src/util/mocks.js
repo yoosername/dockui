@@ -83,9 +83,9 @@ const MockAppDescriptor = function(){
 const MockModuleDescriptor = function(){
     "use strict";
     return {
-        getType: function () {},
-        getKey: function () {}, 
-        getData: function () {}
+        type:  "mockModuleType",
+        key: "mockModuleKey",
+        name: "mockModuleName"
     };
 };
 

@@ -11,39 +11,52 @@ const  {
  * @class Module
  * @description Represents a single Module loaded from a Module Descriptor.
  * @argument {App} app - The App which loaded this module.
- * @argument {App} moduleDescriptor - The raw module descriptor used to load this module
- * @argument {string} moduleKey - The unique key.
- * * @argument {string} moduleKey - The unique key.
+ * @argument {App} descriptor - The module descriptor used to load the module
  */
 class Module{
 
   constructor(
     app,
-    moduleDescriptor,
-    moduleKey,
-    moduleType
+    descriptor
   ){
     
     // Validate our args using ducktyping utils. (figure out better way to do this later)
     validateShapes([
       {"shape":"App","object":app},
-      {"shape":"ModuleDescriptor","object":moduleDescriptor}
+      {"shape":"ModuleDescriptor","object":descriptor}
     ]);
 
     this.app = app; 
     this.eventService = app.getEventService();
-    this.moduleDescriptor = moduleDescriptor; 
-    this.moduleKey = moduleKey;
-    this.moduleType = moduleType;
+    this.descriptor = descriptor; 
+    this.key = descriptor.key;
+    this.name = descriptor.name;
+    this.type = descriptor.type;
+
+    if(descriptor.cache){
+      this.cache = descriptor.cache;
+    }
+
+    if(descriptor.roles){
+      this.roles = descriptor.roles;
+    }
 
   }
- 
+
   /**
    * @method getKey
    * @description The key of this Module
    */
   getKey(){
-    return this.moduleKey;
+    return this.key;
+  }
+
+  /**
+   * @method getName
+   * @description The Human readable name of this Module
+   */
+  getName(){
+    return this.name;
   }
 
   /**
@@ -51,7 +64,32 @@ class Module{
    * @description The type of this Module
    */
   getType(){
-    return this.moduleType;
+    return this.type;
+  }
+
+  /**
+   * @method requiredRoles
+   * @description Return the roles are required to use this module
+   *              or Null if no Roles required.
+   */
+  getRequiredRoles(){
+    return (
+      this.roles &&
+      this.roles.length &&
+      this.roles.length >= 0 
+    ) ? this.roles : null;
+  }
+
+  /**
+   * @method isCacheEnabled
+   * @description If Caching is supported and enabled by this module
+   */
+  isCacheEnabled(){
+    return (
+      this.cache &&
+      this.cache.policy &&
+      this.cache.policy === "enabled"
+    ) ? true : false;
   }
 
   /**

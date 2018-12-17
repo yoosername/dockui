@@ -44,24 +44,20 @@ describe('Module', function() {
         new Module(mockApp,mockApp,"");
       }).to.throw();
       expect(function(){
-        new Module(mockApp,mockModuleDescriptor,"","");
+        new Module(mockApp,mockModuleDescriptor);
       }).to.not.throw();
     });
 
     it('should respond with correct Key', function() {
-      var MODULE_KEY = "testModule";
-      var MODULE_TYPE = "testModuleType";
-      var module = new Module(mockApp,mockModuleDescriptor,MODULE_KEY,MODULE_TYPE);
+      var MODULE_KEY = "mockModuleKey";
+      var module = new Module(mockApp,mockModuleDescriptor);
       expect(module.getKey() === MODULE_KEY).to.equal(true);
     });
 
     it('should respond with correct Type', function() {
-      var MODULE_TYPE = "testModuleType";
-      var descStub = sinon.stub(mockModuleDescriptor,"getType");
-      descStub.returns(MODULE_TYPE);
-      var module = new Module(mockApp,mockModuleDescriptor,"test",MODULE_TYPE);
+      var MODULE_TYPE = "mockModuleType";
+      var module = new Module(mockApp,mockModuleDescriptor);
       expect(module.getType() === MODULE_TYPE).to.equal(true);
-      descStub.restore();
     });
 
 

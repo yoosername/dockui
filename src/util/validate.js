@@ -26,7 +26,7 @@ const Shapes = Object.freeze(
             "getModules"
         ],
         "ModuleDescriptor":[
-            "getType","getKey","getData"
+            "type","key","name"
         ],
         "ModuleLoader":[
             "canLoadModuleDescriptor","loadModuleFromDescriptor"
