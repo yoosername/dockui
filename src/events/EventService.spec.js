@@ -1,4 +1,5 @@
 const expect = require('chai').expect;
+
 const EventService = require("./EventService");
 
 describe('EventService', function() {

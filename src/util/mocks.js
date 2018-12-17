@@ -1,15 +1,27 @@
+const MockAppService = function(){
+    "use strict";
+    return { 
+        "start": function () {},
+        "shutdown": function () {},
+        "scanForNewApps": function () {},
+        "stopScanningForNewApps": function () {},
+        "getApps": function () {},
+        "getApp": function () {},
+        "enableApp": function () {},
+        "disableApp": function () {},
+        "getModules": function () {},
+        "getModule": function () {},
+        "enableModule": function () {},
+        "disableModule": function () {}
+    };
+};
 const MockAppLoader = function(){
     "use strict";
     return { 
         scanForNewApps: function () {},
         stopScanningForNewApps: function () {},
         getApps: function(){},
-        getApp: function(){},
-        enableApp: function(){},
-        disableApp: function(){},
-        getModules: function(){},
-        enableModule: function(){},
-        disableModule: function(){}
+        getApp: function(){}
     };
 };
 const MockAppLoaders = function(loader){
@@ -25,10 +37,7 @@ const MockAppStore = function(){
     return {
         get: function () {}, 
         set: function () {},
-        enableApp: function(){},
-        disableApp: function(){},
-        enableModule: function(){},
-        disableModule: function(){}
+        delete: function () {}
     };
 };
 const MockLifecycleEventsStrategy = function(){
@@ -90,6 +99,7 @@ const MockModuleDescriptor = function(){
 };
 
 module.exports = {
+    MockAppService,
     MockAppLoader,
     MockAppLoaders,
     MockAppStore,

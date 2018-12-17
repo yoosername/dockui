@@ -5,6 +5,13 @@ const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
 const LifecycleEventsStrategy = require("./LifecycleEventsStrategy");
+
+const  {
+    MockAppService,
+    MockAppStore,
+    MockEventService
+  } = require("../../util/mocks");
+
 var mockAppService = null;
 var mockAppStore = null;
 var mockEventService = null;
@@ -13,34 +20,9 @@ describe('LifecycleEventsStrategy', function() {
     "use strict";
 
     beforeEach(function(){
-        mockAppService = { 
-            "start": function () {},
-            "shutdown": function () {},
-            "scanForNewApps": function () {},
-            "stopScanningForNewApps": function () {},
-            "getApps": function () {},
-            "getApp": function () {},
-            "enableApp": function () {},
-            "disableApp": function () {},
-            "getModules": function () {},
-            "getModule": function () {},
-            "enableModule": function () {},
-            "disableModule": function () {}
-        };
-        mockEventService = { 
-            on: function () {}, 
-            trigger: function () {}, 
-            addListener: function(){},
-            removeListener: function () {} 
-        };
-        mockAppStore = { 
-            get: function () {}, 
-            set: function () {},
-            enableApp: function(){},
-            disableApp: function(){},
-            enableModule: function(){},
-            disableModule: function(){}
-        };
+        mockAppService = new MockAppService();
+        mockAppStore = new MockAppStore();
+        mockEventService = new MockEventService();
     });
 
     it('should be defined and loadable', function() {
@@ -80,20 +62,20 @@ describe('LifecycleEventsStrategy', function() {
         }).to.not.throw();
     });
 
-    it('should attach and detach 3 events listeners on setup and teardown', function() {
-        var eventsSpy = sinon.spy(mockEventService,"on");
+    it('should detach the same number of event listeners as have been added during teardown', function() {
+        var addSpy = sinon.spy(mockEventService,"addListener");
+        var removeSpy = sinon.spy(mockEventService,"removeListener");
         
         var lifecycleEventsStrategy = new LifecycleEventsStrategy(
             mockEventService,
             mockAppStore
         );
         lifecycleEventsStrategy.setup();
+        var addedCount = addSpy.callCount;
         lifecycleEventsStrategy.teardown();
         
-        expect(eventsSpy).to.be.calledThrice;
+        expect(removeSpy).to.be.called.callCount(addedCount);
     });
-    // Test that when we setup then teardown
-    // 3 listeners are added, then 3 removed
 
 
 });

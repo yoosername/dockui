@@ -13,9 +13,7 @@ const Shapes = Object.freeze(
             "getModules","getModule","enableModule","disableModule"
         ], 
         "AppLoader":[
-            "scanForNewApps","stopScanningForNewApps","getApps","getApp",
-            "enableApp","disableApp","getModules","enableModule",
-            "disableModule"
+            "scanForNewApps","stopScanningForNewApps","getApps","getApp"
         ],
         "App":[
             "getKey","getAppLoader","getAppDescriptor","getEventService",
@@ -38,8 +36,7 @@ const Shapes = Object.freeze(
             "setup","teardown"
         ], 
         "AppStore":[
-            "set","get","enableApp","disableApp",
-            "enableModule","disableModule"
+            "set","get","delete"
         ],
         "WebService":[
             "start","stop"

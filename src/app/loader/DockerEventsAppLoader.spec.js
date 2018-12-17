@@ -30,11 +30,5 @@ describe('DockerEventsAppLoader', function() {
 // "getApps",
 //   using 2 correct Descriptors should return 2 Apps with correct info
 //   using 1 correct and 1 incorrect Descriptors should return 1 App with correct info
-// "enableApp" - noop
-// "disableApp" - noop
-// "getAppModules(app,filter)"
-//   should call getApps and then the correct App's getAppModules method using correct filter
-// "enableAppModule" - noop
-// "disableAppModule" - noop
 
 });

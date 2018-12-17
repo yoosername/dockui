@@ -1,21 +1,31 @@
 const EventEmitter = require('events');
-const util = require("util");
 
 /**
- * Generic dockui global events service
- * @description provides an event backbone for the rest of the components of the app to communicate across
- * @public
- * @constructor
+ * @class EventService
+ * @description Simple native events service
  */
-function EventsService() {
-    "use strict";
-  
-    if (!(this instanceof EventsService)) {
-      return new EventsService();
-    }
-    
-  }
+class EventsService {
 
-util.inherits(EventsService, EventEmitter);
+    constructor(){
+      this.emitter = new EventEmitter();
+    }
+
+    on(event, fn){
+      this.addEventListener(event, fn);
+    }
+
+    addEventListener(event, fn){
+      this.emitter.addListener(event, fn);
+    }
+
+    removeEventListener(event, fn){
+      this.emitter.removeListener(event, fn);
+    }
+
+    emit(event, payload){
+      this.emitter.emit(event, payload);
+    }
+
+}
 
 module.exports = EventsService;

@@ -8,9 +8,7 @@ const  {
   APP_SERVICE_STARTING_EVENT,
   APP_SERVICE_STARTED_EVENT,
   APP_SERVICE_SHUTTING_DOWN_EVENT,
-  APP_SERVICE_SHUTDOWN_EVENT,
-  APP_ENABLED_EVENT,
-  APP_DISABLED_EVENT
+  APP_SERVICE_SHUTDOWN_EVENT
 } = require("../../constants/events");
 
 const  {
@@ -223,26 +221,6 @@ describe('AppService', function() {
       AppLoader.verify();
     });
 
-    it('should call enableApp and disableApp in store during enable/disable', function() { 
-      var store = sinon.mock(mockAppStore);
-      store.expects("enableApp").once();
-      store.expects("disableApp").once();
-      var events = sinon.mock(mockEventService);
-      events.expects("trigger").once().withArgs(APP_ENABLED_EVENT);
-      events.expects("trigger").once().withArgs(APP_DISABLED_EVENT);
-
-      var appService = new AppService(
-        mockAppLoaders, 
-        mockAppStore, 
-        mockLifecycleEventsStrategy, 
-        mockEventService
-      );
-      appService.enableApp();
-      appService.disableApp();
-      store.verify();
-      events.verify();
-    });
-
     it('should call loaders getModules on getModules', function() {
       var appService = new AppService(
         mockAppLoaders, 
@@ -279,33 +257,5 @@ describe('AppService', function() {
       
     });
 
-    it('should call enableModule and disableModule in store during enable/disable', function() { 
-      var enableModuleSpy = sinon.spy(mockAppStore, "enableModule");
-      var disableModuleSpy = sinon.spy(mockAppStore, "disableModule");
-
-      var appService = new AppService(
-        mockAppLoaders, 
-        mockAppStore, 
-        mockLifecycleEventsStrategy, 
-        mockEventService
-      );
-
-      var stub = sinon.stub().withArgs("App").returns({
-        getModules: function(){ return [{
-          getKey: function(){return "thisone"}
-        },{
-          getKey: function(){return "notthisone"}
-        }]}
-      });
-
-      appService.getApp = stub;
-      appService.enableModule("doesntmatter", "thisone");
-      appService.disableModule("doesntmatter", "thisone");
-
-      expect(enableModuleSpy).to.have.been.calledOnce;
-      expect(disableModuleSpy).to.have.been.calledOnce;
-      enableModuleSpy.restore();
-      disableModuleSpy.restore();
-    });
-
+    
 });
