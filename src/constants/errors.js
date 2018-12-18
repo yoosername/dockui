@@ -5,6 +5,7 @@ class MissingAppServiceDuringSetupError extends Error{}
 class MissingWebServiceDuringSetupError extends Error{}
 class AppServiceValidationError extends Error{}
 class LifecycleEventsStrategyValidationError extends Error{}
+class MalformedModuleDescriptorError extends Error{}
 class DockerNotRunningError extends Error{}
 class DockerProblemListingContainersError extends Error{}
 
@@ -16,6 +17,7 @@ module.exports = {
     MissingWebServiceDuringSetupError,
     AppServiceValidationError,
     LifecycleEventsStrategyValidationError,
+    MalformedModuleDescriptorError,
     DockerNotRunningError,
     DockerProblemListingContainersError
 };

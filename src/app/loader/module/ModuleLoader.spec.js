@@ -35,22 +35,4 @@ describe('ModuleLoader', function() {
         logSpy.restore();
     });
 
-    it('should return from the cache the same as you put into it', function() {
-        const loader = new ModuleLoader();
-        const descriptor = {
-            type: "fakeDescriptor",
-            url: "/some/url",
-            name: "name",
-            key: "key"
-        };
-        const state = {
-            loaded: true,
-            descriptor: descriptor,
-            module: {}
-        };
-        loader.setCache(descriptor, state);
-        var cachedState = loader.getCache(descriptor);
-        expect(cachedState).to.eql(state);
-    });
-
 });
