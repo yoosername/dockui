@@ -5,7 +5,7 @@ const  {
 const Shapes = Object.freeze(
     {
         "EventService":[
-            "on","trigger","addListener","removeListener"
+            "on","emit","addListener","removeListener"
         ], 
         "AppService":[
             "start","shutdown","scanForNewApps","stopScanningForNewApps",

@@ -51,7 +51,7 @@ const MockEventService = function(){
     "use strict";
     return {
         on: function () {}, 
-        trigger: function () {}, 
+        emit: function () {}, 
         addListener: function(){},
         removeListener: function () {} 
     };

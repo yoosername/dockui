@@ -12,6 +12,9 @@ const APPSERVICE_SHUTDOWN_EVENT = "service:shutdown";
 const APP_LOAD_STARTED_EVENT = "app:load:started";
 const APP_LOAD_COMPLETE_EVENT = "app:load:complete";
 const APP_LOAD_FAILED_EVENT = "app:load:failed"; 
+const APP_UNLOAD_STARTED_EVENT = "app:unload:started";
+const APP_UNLOAD_COMPLETE_EVENT = "app:unload:complete";
+const APP_UNLOAD_FAILED_EVENT = "app:unload:failed"; 
 const APP_ENABLED_EVENT = "app:enabled";
 const APP_DISABLED_EVENT = "app:disabled";
 
@@ -41,6 +44,9 @@ module.exports = {
     APP_LOAD_STARTED_EVENT,
     APP_LOAD_COMPLETE_EVENT,
     APP_LOAD_FAILED_EVENT,
+    APP_UNLOAD_STARTED_EVENT,
+    APP_UNLOAD_COMPLETE_EVENT,
+    APP_UNLOAD_FAILED_EVENT,
     APP_ENABLED_EVENT,
     APP_DISABLED_EVENT,
     MODULE_LOAD_STARTED_EVENT,

@@ -73,7 +73,7 @@ class AppService{
 
 
       // Notify listeners that we are starting up
-      this.eventService.trigger(APP_SERVICE_STARTING_EVENT);
+      this.eventService.emit(APP_SERVICE_STARTING_EVENT);
 
       // setup AppEventLifecycleStrategy to handle events
       this.lifecycleEventsStrategy.setup();
@@ -85,7 +85,7 @@ class AppService{
       this._running = true; 
 
       // Notify listeners that we have started
-      this.eventService.trigger(APP_SERVICE_STARTED_EVENT);
+      this.eventService.emit(APP_SERVICE_STARTED_EVENT);
 
     }
 
@@ -100,10 +100,10 @@ class AppService{
     "use strict";
 
     // If we are not already shutdown
-    if( this._running == true ){
+    if( this._running === true ){
 
       // Notify listeners that we are shutting down
-      this.eventService.trigger(APP_SERVICE_SHUTTING_DOWN_EVENT);
+      this.eventService.emit(APP_SERVICE_SHUTTING_DOWN_EVENT);
 
       // Tell Loaders to stop loading Apps
       this.stopScanningForNewApps();
@@ -115,7 +115,7 @@ class AppService{
       this._running = false;
 
       // Notify listeners that we have shutdown successfully
-      this.eventService.trigger(APP_SERVICE_SHUTDOWN_EVENT);
+      this.eventService.emit(APP_SERVICE_SHUTDOWN_EVENT);
 
     }
   }
@@ -187,7 +187,7 @@ class AppService{
     var app = this.getApp(appKey);
     if( app !== null){
       this.appStore.enableApp(appKey);
-      this.eventService.trigger(APP_ENABLED_EVENT, {
+      this.eventService.emit(APP_ENABLED_EVENT, {
         "App" : app
       });
     }else{
@@ -206,7 +206,7 @@ class AppService{
     var app = this.getApp(appKey);
     if( app !== null){
       this.appStore.disableApp(appKey);
-      this.eventService.trigger(APP_DISABLED_EVENT, {
+      this.eventService.emit(APP_DISABLED_EVENT, {
         "App" : app
       });
     }else{
@@ -268,7 +268,7 @@ class AppService{
     var module = this.getModule(appKey, moduleKey);
     if( module !== null){
       this.appStore.enableModule(appKey,moduleKey);
-      this.eventService.trigger(MODULE_ENABLED_EVENT, {
+      this.eventService.emit(MODULE_ENABLED_EVENT, {
         "module" : module
       });
     }else{
@@ -288,7 +288,7 @@ class AppService{
     var module = this.getModule(appKey, moduleKey);
     if( module !== null){
       this.appStore.disableModule(appKey,moduleKey);
-      this.eventService.trigger(MODULE_DISABLED_EVENT, {
+      this.eventService.emit(MODULE_DISABLED_EVENT, {
         "module" : module
       });
     }else{

@@ -5,6 +5,8 @@ class MissingAppServiceDuringSetupError extends Error{}
 class MissingWebServiceDuringSetupError extends Error{}
 class AppServiceValidationError extends Error{}
 class LifecycleEventsStrategyValidationError extends Error{}
+class DockerNotRunningError extends Error{}
+class DockerProblemListingContainersError extends Error{}
 
 module.exports = {
     ShapeValidationError,
@@ -13,5 +15,7 @@ module.exports = {
     MissingAppServiceDuringSetupError,
     MissingWebServiceDuringSetupError,
     AppServiceValidationError,
-    LifecycleEventsStrategyValidationError
+    LifecycleEventsStrategyValidationError,
+    DockerNotRunningError,
+    DockerProblemListingContainersError
 };

@@ -34,7 +34,7 @@ describe('AppStore', function() {
     });
 
     it('should log a warning if you dont extend the default behaviour', function() {
-      var logSpy = sinon.spy(console,"warn");
+      var logSpy = sinon.stub(console,"warn");
       const store = new AppStore(mockEventService);
       expect(store.get).to.be.a('function');
       expect(store.set).to.be.a('function');

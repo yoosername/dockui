@@ -119,12 +119,12 @@ describe('AppService', function() {
       strategySpy.restore();
     });
 
-    it('should trigger events on start / shutdown', function() {
+    it('should emit events on start / shutdown', function() {
       var events = sinon.mock(mockEventService);
-      events.expects("trigger").once().calledWith(APP_SERVICE_STARTING_EVENT);
-      events.expects("trigger").once().calledWith(APP_SERVICE_STARTED_EVENT);
-      events.expects("trigger").once().calledWith(APP_SERVICE_SHUTTING_DOWN_EVENT);
-      events.expects("trigger").once().calledWith(APP_SERVICE_SHUTDOWN_EVENT);
+      events.expects("emit").once().calledWith(APP_SERVICE_STARTING_EVENT);
+      events.expects("emit").once().calledWith(APP_SERVICE_STARTED_EVENT);
+      events.expects("emit").once().calledWith(APP_SERVICE_SHUTTING_DOWN_EVENT);
+      events.expects("emit").once().calledWith(APP_SERVICE_SHUTDOWN_EVENT);
       var appService = new AppService(
         mockAppLoaders, 
         mockAppStore, 

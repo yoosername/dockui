@@ -1,56 +1,162 @@
 const AppLoader = require("./AppLoader");
+
 const  {
-    validateShapes
-} = require("../../util/validate");
+  APP_UNLOAD_STARTING_EVENT,
+  APP_UNLOAD_COMPLETE_EVENT,
+  APP_UNLOAD_FAILED_EVENT,
+} = require("../../constants/events");
+
+const Docker = require('dockerode');
+const fs = require('fs');
+const DOCKER_SOCKET = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
+const {DockerProblemListingContainersError} = require("../../constants/errors");
   
   
   /**
    * @class DockerEventsAppLoader
    * @description Load Apps from App descriptors detected via Docker events subsystem
-   * @argument {Object} dockerClient - The client used to interact with Docker
    * @argument {Array} appModuleLoaders - The loaders to use for loading Modules.
    * @argument {EventService} eventService - The Event service.
    */
   class DockerEventsAppLoader extends AppLoader{
   
     constructor(
-      dockerClient,
       appModuleLoaders,
       eventService
     ){
 
-      super(dockerClient,appModuleLoaders,eventService);
+      super(appModuleLoaders,eventService);
 
-      // Validate our args using ducktyping utils. (figure out better way to do this later)
-      validateShapes([
-        {"shape":"DockerClient","object":dockerClient}
-      ]);
-  
-      this.dockerClient = dockerClient;
-  
+      if(this.isDockerRunning()){
+        this.client = new Docker({ socketPath: DOCKER_SOCKET });
+      }else{
+        this.client = null;
+        this.disabled = true;
+      }
+
+      this.initialised = false;
+      this.scanning = false;
+      this.container_cache = {};
+
     }
   
+    /** 
+     * @method isDockerRunning
+     * @description returns true if detects Docker via the socket
+     * @public
+     */
+    isDockerRunning(){
+      "use strict";
+
+      return fs.statSync(DOCKER_SOCKET);
+    }
+
     /**
      * @method scanForNewApps
-     * @description Starting checking some location for new Apps 
-     *              and attempt to load them when found
-     *              Loading them involves fetching AppDescriptor
-     *              and creating a new App passing it in. The App will
-     *              attempt to Load its own Modules and use Events for lifecycle.
+     * @description Starting listening to Docker events for containers
+     *              and any we dont yet know about when found attempt to load
+     *              a descriptor. If there is one create App and enable
+     *              all of the apps modules then
+     *              Send App Load started Event
+     *              
      */
     scanForNewApps(){
-      // Look in some location
-      // When App detected
-      // Try to load its descriptor
-      // If successfully loaded try to create a App using the descriptor
+      
+      if(!this.disabled && !this.scanning){
+
+        this.client.listRunningContainers({all: true}, (err, containers) => {
+
+          if(err){
+            return console.warn(DockerProblemListingContainersError);
+          }
+
+          this.scanning = true;
+
+          containers.forEach((container) => {
+
+            if( ! this.container_cache.includes(container) ){
+              this.handleContainerStart(container);
+            }
+            
+          });
+
+        });
+
+      }
+
+      // The first time we run - hook up some event listeners for container events
+      if( !this.disabled && !this.initialised ){
+
+        // Start listening for events from the client
+        this._client.getEvents((err, events) =>{
+
+          if(err){
+            return console.warn("Error getting Docker client events");
+          }
+
+          this.initialised = true;
+
+          events
+            .on("start", (container) => {
+              this.handleContainerStart(container);
+            })
+            .on("stop", (container) => {
+              this.handleContainerStop(container);
+            });
+          
+        });
+
+      }
+
     }
+
+    /**
+     * @method handleContainerStart
+     * @argument {object} container - the container that was started
+     * @description Handle what happens when a Container is started
+     */
+    handleContainerStart(container){
+      if( !this.disabled && this.scanning ){
+        // Try to load descriptor
+        // If there is one then
+        // Send App Load starting Event
+        // Try to create App() using the parsed JSON Descriptor
+        // If fail send App load failed event
+        // Add the App to our Cache.
+        // enable all of this Apps modules.
+        // Send App Load Complete Event
+      }
+    }
+
+    /**
+     * @method handleContainerStop
+     * @argument {object} container - the container that was stopped
+     * @description Handle what happens when a Container is stopped
+     */
+    handleContainerStop(container){
+      if( !this.disabled && this.scanning ){
+        const app = this.container_cache[container.Id];
+        if(app){
+          this.eventService.emit(APP_UNLOAD_STARTING_EVENT, app);
+          try{
+            app.getAppModules().forEach(module=>{
+              module.disable();
+            });
+          }catch(e){
+            return this.eventService.emit(APP_UNLOAD_FAILED_EVENT, e);
+          }
+          this.eventService.emit(APP_UNLOAD_COMPLETE_EVENT, app);
+        }
+      }
+    }
+    
   
     /**
      * @method stopScanningForNewApps
-     * @description Stop checking for new Apps until scan is called again.
+     * @description Stop checking for new Apps until scannig is enabled again.
      */
     stopScanningForNewApps(){
-      // Implement this
+      this.scanning = false;
     }
   
   }
