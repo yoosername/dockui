@@ -1,7 +1,9 @@
 const  {
-  APP_MODULE_LOAD_STARTED_EVENT,
-  APP_MODULE_LOAD_COMPLETE_EVENT,
-  APP_MODULE_LOAD_FAILED_EVENT
+  MODULE_LOAD_STARTED_EVENT,
+  MODULE_LOAD_COMPLETE_EVENT,
+  MODULE_LOAD_FAILED_EVENT,
+  APP_ENABLED_EVENT,
+  APP_DISABLED_EVENT
 } = require("../../constants/events");
 
 const  {
@@ -20,29 +22,31 @@ const  {
 class App{
 
   constructor(
-    appKey,
-    appDescriptor,
-    appLoader, 
-    appModuleLoaders,
+    key,
+    descriptor,
+    loader, 
+    moduleLoaders,
     eventService
   ){
     
     // Validate our args using ducktyping utils. (figure out better way to do this later)
     validateShapes([
-      {"shape":"AppLoader","object":appLoader},
-      {"shape":"AppModuleLoader","object":appModuleLoaders[0]},
-      {"shape":"AppDescriptor","object":appDescriptor},
+      {"shape":"AppLoader","object":loader},
+      {"shape":"AppModuleLoader","object":moduleLoaders[0]},
+      {"shape":"AppDescriptor","object":descriptor},
       {"shape":"EventService","object":eventService}
     ]);
 
-    this.AppLoader = appLoader; 
-    this.AppKey = appKey; 
-    this.AppDescriptor = appDescriptor;
-    this.AppModuleLoaders = appModuleLoaders;
+    this.loader = loader; 
+    this.key = key; 
+    this.descriptor = descriptor;
+    this.moduleLoaders = moduleLoaders;
     this.eventsService = eventService;
 
     this.modules = [];
-    this.registerAppModules();
+    this.loadModules();
+
+    this.enabled = false;
 
   }
 
@@ -51,23 +55,23 @@ class App{
    * @description return the unique key of this App
    */
   getKey(){
-    return this.appKey;
+    return this.key;
   }
 
   /**
-   * @method getAppLoader
+   * @method getLoader
    * @description return the loader which loaded this App
    */
-  getAppLoader(){
-    return this.appLoader;
+  getLoader(){
+    return this.loader;
   }
 
   /**
-   * @method getAppDescriptor
+   * @method getDescriptor
    * @description return the App Descriptor this App was parsed from
    */
-  getAppDescriptor(){
-    return this.appDescriptor;
+  getDescriptor(){
+    return this.descriptor;
   }
 
   /**
@@ -79,53 +83,48 @@ class App{
   }
 
   /**
-   * @method getAppModuleLoaders
-   * @description return AppModule loaders which are available for parsing Module Descriptors
+   * @method getModuleLoaders
+   * @description return Module loaders which are available for parsing Module Descriptors
    */
-  getAppModuleLoaders(){
-    return this.appModuleLoaders;
-  }
-
-  /**
-   * @method getAppModules
-   * @description return all loaded AppModules for this App
-   */
-  getAppModules(filter){
-    return [].concat.apply([], this.getAppModules().map(
-        loader=>loader.getModules(filter)
-      )
-    );
+  getModuleLoaders(){
+    return this.moduleLoaders;
   }
 
   /**
    * @method enable
-   * @description delegate enabling and disabling to our loader
+   * @description Toggle enabled flag and notify event listeners
    */
   enable(){
-    this.appLoader.enableApp(this);
+    this.enabled = true;
+    this.eventService.trigger(APP_ENABLED_EVENT, {
+      "app" : this
+    });
   }
 
   /**
    * @method disable
-   * @description delegate enabling and disabling to our loader
+   * @description Toggle enabled flag and notify event listeners
    */
   disable(){
-    this.appLoader.disableApp(this);
+    this.enabled = false;
+    this.eventService.trigger(APP_DISABLED_EVENT, {
+      "app" : this
+    });
   }
 
   /**
-   * @method registerAppModules
-   * @description Try to parse the AppDescriptor and load 
+   * @method loadModules
+   * @description Try to parse the AppDescriptor.modules and load 
    * all the modules in it using any of the passed in ModuleLoaders
-   * Unloadable modules are created anyway but automatically disabled
+   * Unloadable modules are loaded anyway but automatically disabled
    */
-  registerAppModules(){
+  loadModules(){
 
     this.appDescriptor.modules.forEach(moduleDescriptor =>{
       var module = null;
       var loaded = false;
 
-      this.eventService.trigger(APP_MODULE_LOAD_STARTED_EVENT, {
+      this.eventService.trigger(MODULE_LOAD_STARTED_EVENT, {
         "app" : this,
         "descriptor" : moduleDescriptor
       });
@@ -137,21 +136,21 @@ class App{
             loaded = true;
           }
         }catch(e){
-          // Not bothered
+          // Perhaps create a special auto disabled UnloadableModule with error set
         }
       });
       if(!module){
-        // Load an unloadable Module here maybe?
+        // Perhaps create a special auto disabled UnloadableModule with unkown error
       }
       if(module){
         this.modules.push(module);
-        this.eventService.trigger(APP_MODULE_LOAD_COMPLETE_EVENT, {
+        this.eventService.trigger(MODULE_LOAD_COMPLETE_EVENT, {
           "app" : this,
           "descriptor" : moduleDescriptor,
           "module" : module
         });
       }else{
-        this.eventService.trigger(APP_MODULE_LOAD_FAILED_EVENT, {
+        this.eventService.trigger(MODULE_LOAD_FAILED_EVENT, {
           "app" : this,
           "descriptor" : moduleDescriptor
         });

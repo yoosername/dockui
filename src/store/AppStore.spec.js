@@ -41,6 +41,7 @@ describe('AppStore', function() {
       expect(store.delete).to.be.a('function');
       store.get();
       expect(logSpy).to.be.called.callCount(1);
+      logSpy.restore();
     });
 
 });

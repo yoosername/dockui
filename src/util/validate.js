@@ -16,18 +16,20 @@ const Shapes = Object.freeze(
             "scanForNewApps","stopScanningForNewApps","getApps","getApp"
         ],
         "App":[
-            "getKey","getAppLoader","getAppDescriptor","getEventService",
-            "getModuleLoaders","enable","disable","registerModules"
+            "getKey","getLoader","getDescriptor","getEventService",
+            "getModuleLoaders","enable","disable","loadModules"
         ],
         "AppDescriptor":[
-            "getName","getAppKey","getVersion","getVersion","getIcon",
+            "getName","getKey","getUrl","getDescription","getVersion",
+            "getDescriptorVersion","getIcon","getLifecycle","getAuthentication",
             "getModules"
         ],
         "ModuleDescriptor":[
             "type","key","name"
         ],
         "ModuleLoader":[
-            "canLoadModuleDescriptor","loadModuleFromDescriptor"
+            "canLoadModuleDescriptor","loadModuleFromDescriptor",
+            "getCache","setCache"
         ],
         "Module":[
             "getKey","getType","enable","disable"

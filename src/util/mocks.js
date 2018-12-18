@@ -60,13 +60,22 @@ const MockApp = function(){
     "use strict";
     return {
         getKey: function () {},
-        getAppLoader: function () {},
-        getAppDescriptor: function () {},
+        getLoader: function () {},
+        getDescriptor: function () {},
         getEventService: function () {},
         getModuleLoaders: function () {}, 
         enable: function () {}, 
         disable: function () {}, 
-        registerModules: function () {}
+        loadModules: function () {}
+    };
+};
+const MockModuleLoader = function(){
+    "use strict";
+    return {
+        canLoadModuleDescriptor: function () {}, 
+        loadModuleFromDescriptor: function () {},
+        getCache: function () {}, 
+        setCache: function () {},
     };
 };
 const MockModule = function(){
@@ -83,9 +92,13 @@ const MockAppDescriptor = function(){
     return {
         getName: function () {}, 
         getKey: function () {}, 
+        getUrl: function () {}, 
+        getDescription: function () {}, 
         getVersion: function () {}, 
         getDescriptorVersion: function () {}, 
-        getIcon: function () {}, 
+        getIcon: function () {},
+        getLifecycle: function () {},
+        getAuthentication: function () {},
         getModules: function () {}
     };
 };
@@ -106,6 +119,7 @@ module.exports = {
     MockLifecycleEventsStrategy,
     MockEventService,
     MockApp,
+    MockModuleLoader,
     MockModule,
     MockAppDescriptor,
     MockModuleDescriptor
