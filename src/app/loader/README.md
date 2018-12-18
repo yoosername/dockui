@@ -26,37 +26,3 @@ Return a list of all the Apps that have been loaded by this loader.
 Convenience method for getApps with a filter. Does the same thing as
 
 ```getApps(app => app.getKey() === key);```
-
-### enableApp(key)
-
-Convenience method for enabling an App loaded by this Loader. Does the same thing as
-
-```getApps(app => app.getKey() === key).enable();```
-
-### disableApp
-
-Convenience method for disabling an App loaded by this Loader. Does the same thing as
-
-```getApps(app => app.getKey() === key).disable();```
-
-### getModules(key, filter)
-
-Convenience method for retrieving all of the modules in a given App. Does the same thing as
-
-```getApps(app => app.getKey() === key).getModules(filter);```
-
-### enableModule(appKey, moduleKey)
-
-Convenience method for enabling a Module. Does the same thing as
-
-```javascript
-   getModules(appKey, module => module.getKey() === moduleKey).enable();
-```
-
-### disableModule
-
-Convenience method for disabling a Module. Does the same thing as
-
-```javascript
-   getModules(appKey, module => module.getKey() === moduleKey).disable();
-```
