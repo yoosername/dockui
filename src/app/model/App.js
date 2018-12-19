@@ -10,13 +10,17 @@ const  {
   validateShapes
 } = require("../../util/validate");
 
+const SecurityContext = require("./security/SecurityContext");
+
 
 /**
  * @class App
  * @description Represents a single App.
- * @argument {AppLoader} appLoader - The loader which loaded us.
- * @argument {string} appKey - The unique key.
- * @argument {Array} appModules - The Apps loaded modules.
+ * @argument {string} key - A universally unique key for this App.
+ * @argument {AppDescriptor} descriptor - The AppDescriptor built from the Apps descriptor file.
+ * @argument {AppLoader} loader - The AppLoader which loaded this App.
+ * @argument {Array} moduleLoaders - An array of ModuleLoaders to use to load any declared app modules
+ * @argument {AppStore} appStore - The store to use for persistence.
  * @argument {EventService} eventService - The Event service.
  */
 class App{
@@ -26,28 +30,54 @@ class App{
     descriptor,
     loader, 
     moduleLoaders,
+    appStore,
     eventService
   ){
     
     // Validate our args using ducktyping utils. (figure out better way to do this later)
     validateShapes([
+      {"shape":"AppDescriptor","object":descriptor},
       {"shape":"AppLoader","object":loader},
       {"shape":"AppModuleLoader","object":moduleLoaders[0]},
-      {"shape":"AppDescriptor","object":descriptor},
+      {"shape":"AppStore","object":appStore},
       {"shape":"EventService","object":eventService}
     ]);
 
-    this.loader = loader; 
     this.key = key; 
     this.descriptor = descriptor;
+    this.loader = loader; 
     this.moduleLoaders = moduleLoaders;
+    this.appStore = appStore;
     this.eventsService = eventService;
 
     this.modules = [];
-    this.loadModules();
+    
+    this.initialize();
 
+  }
+
+  /**
+   * @method initialize
+   * @description Initialize the app
+   */
+  initialize(){
+    // Set app to disabled initially
     this.enabled = false;
-
+    // Try to create a new security context
+    // The Context will check store for existing one if loaded before and
+    // reuse it
+    const securityContext = new SecurityContext(this.appStore,this.descriptor);
+    // If there is one try to perform a handshake with the APP
+    // Need to do some async await shinanigans here
+    const handshakeComplete = securityContext.handshake();
+    if(handshakeComplete){
+      // If handshake was successful then try to load this Apps modules.
+      this.loadModules();
+    }else{
+      // Couldnt setup Security with App. Throw error here for App loader
+      // to handle.
+    }
+    
   }
 
   /**
@@ -91,6 +121,14 @@ class App{
   }
 
   /**
+   * @method getModules
+   * @description return all the modules that have been loaded
+   */
+  getModules(){
+    return this.modules;
+  }
+
+  /**
    * @method enable
    * @description Toggle enabled flag and notify event listeners
    */
@@ -131,16 +169,19 @@ class App{
 
       this.appModuleLoaders.forEach(moduleLoader =>{
         try{
-          if(moduleLoader.canLoadModuleDescriptor(moduleDescriptor) && !loaded){
+          if(!loaded && moduleLoader.canLoadModuleDescriptor(moduleDescriptor)){
             module = moduleLoader.loadModuleFromDescriptor(moduleDescriptor);
-            loaded = true;
+            if(module){
+              loaded = true;
+            } 
           }
         }catch(e){
-          // Perhaps create a special auto disabled UnloadableModule with error set
+          // Do nothing as another loader might handle it
         }
       });
       if(!module){
-        // Perhaps create a special auto disabled UnloadableModule with unkown error
+        // Here we could create a special UnloadableModule 
+        // that is automatically disabled - that contains its own error
       }
       if(module){
         this.modules.push(module);

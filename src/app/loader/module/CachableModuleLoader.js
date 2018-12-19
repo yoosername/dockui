@@ -43,12 +43,12 @@ class CachableModuleLoader extends ModuleLoader{
     }
 
     /**
-     * @method canLoadModuleDescriptor
+     * @method canLoadModuleFromCache
      * @description Returns true if entry in cache as being loadable
      *              Returns False if entry in cache as not being loadable
      *              Returns null if no entry - means another loader should handle it
      */
-    canLoadModuleDescriptor(descriptor){
+    canLoadModuleFromCache(descriptor){
         const cached = this.getCache(descriptor);
         if(cached && cached.state && cached.state.loadable){
             if(cached.state.loadable === true){
@@ -60,10 +60,10 @@ class CachableModuleLoader extends ModuleLoader{
     }
   
     /**
-     * @method loadModuleFromDescriptor
+     * @method loadModuleFromCache
      * @description Return the Module saved in the cache
      */
-    loadModuleFromDescriptor(descriptor){
+    loadModuleFromCache(descriptor){
         const cached = this.getCache(descriptor);
         if(cached && cached.state && cached.state.module){
             return cached.state.module;

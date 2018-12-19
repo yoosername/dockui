@@ -1,20 +1,58 @@
+const CachableModuleLoader = require("./CachableModuleLoader");
+const AuthorisationProviderModuleDescriptor = require("../../model/descriptor/AuthorisationProviderModuleDescriptor");
+const AuthorisationProviderModule = require("../../model/AuthorisationProviderModule");
+
 /**
  * @class AuthorisationProviderModuleLoader
- * @description Create a AuthorisationProvider from a descriptor
+ * @description Create a AuthorisationProviderModule from a descriptor
  */
-class AuthorisationProviderModuleLoader{
+class AuthorisationProviderModuleLoader extends CachableModuleLoader{
 
-  constructor(){}
+  constructor(){
+    super();
+  }
 
   /**
    * @method canLoadModuleDescriptor
    * @description Return true if this descriptor can be parsed and is 
-   *              required format to produce this type of Module
+   *              the required format to produce this type of Module
    */
   canLoadModuleDescriptor(descriptor){
-    // Parse config
-    // Check and validate values
-    // If can process to create a Module then return true;
+
+    // Have we previously responded with a true
+    const cachedResponse = this.canLoadModuleFromCache(descriptor);
+    if( cachedResponse === true ){
+      return true; 
+    }else if ( cachedResponse === false){
+      return false;
+    }
+
+    // Nothing in the cache so:
+    var moduleDescriptor = null;
+    var apiModule = null;
+    var response = false;
+    try{
+      moduleDescriptor = new AuthorisationProviderModuleDescriptor(descriptor);
+      apiModule = new AuthorisationProviderModule(moduleDescriptor);
+      if(apiModule !== null){
+        response = true;
+        this.setCache(descriptor, {
+          loadable : true,
+          module: apiModule
+        });
+      }
+    }catch(e){
+      response = false;
+      this.setCache(descriptor, {
+        loadable : false
+      });
+    }finally{
+      moduleDescriptor = null;
+      apiModule = null;
+    }
+    
+    return response;
+    
   }
 
   /**
@@ -22,9 +60,26 @@ class AuthorisationProviderModuleLoader{
    * @description Create and return a new Module from the descriptor
    */
   loadModuleFromDescriptor(descriptor){
-    // Parse config
-    // Check and validate values
-    // create and return a new Module object;
+
+    // Have we previously created and returned a module
+    const cachedModule = this.loadModuleFromCache(descriptor);
+    if( cachedModule ){
+      return cachedModule; 
+    }
+
+    // Nothing in the cache so do verify ourself:
+    const doesLoad = this.canLoadModuleDescriptor(descriptor);
+    if( doesLoad ){
+      const module = this.loadModuleFromCache(descriptor);
+      if(module){
+        return module;
+      }
+    }
+
+    // We cant load the Module so return null
+    // App will try more loaders and then handle the case where none work.
+    return null;
+
   }
 
 }

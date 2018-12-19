@@ -29,16 +29,16 @@ class Module{
     this.app = app; 
     this.eventService = app.getEventService();
     this.descriptor = descriptor; 
-    this.key = descriptor.key;
-    this.name = descriptor.name;
-    this.type = descriptor.type;
+    this.key = descriptor.getKey();
+    this.name = descriptor.getName();
+    this.type = descriptor.getType();
 
-    if(descriptor.cache){
-      this.cache = descriptor.cache;
+    if(descriptor.getCache()){
+      this.cache = descriptor.getCache();
     }
 
-    if(descriptor.roles){
-      this.roles = descriptor.roles;
+    if(descriptor.getRoles()){
+      this.roles = descriptor.getRoles();
     }
 
   }
@@ -68,16 +68,28 @@ class Module{
   }
 
   /**
-   * @method requiredRoles
+   * @method getRoles
    * @description Return the roles are required to use this module
    *              or Null if no Roles required.
    */
-  getRequiredRoles(){
+  getRoles(){
     return (
       this.roles &&
       this.roles.length &&
       this.roles.length >= 0 
     ) ? this.roles : null;
+  }
+
+  /**
+   * @method getCache
+   * @description Return the roles are required to use this module
+   *              or Null if no Roles required.
+   */
+  getCache(){
+    return (
+      this.cache &&
+      this.cache.policy
+    ) ? this.cache : {policy: "disabled"};
   }
 
   /**

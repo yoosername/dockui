@@ -15,17 +15,19 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
   /**
    * @class DockerEventsAppLoader
    * @description Load Apps from App descriptors detected via Docker events subsystem
+   * @argument {AppStore} appStore - The store to use for persistence.
    * @argument {Array} appModuleLoaders - The loaders to use for loading Modules.
    * @argument {EventService} eventService - The Event service.
    */
   class DockerEventsAppLoader extends AppLoader{
   
     constructor(
+      appStore,
       appModuleLoaders,
       eventService
     ){
 
-      super(appModuleLoaders,eventService);
+      super(appStore,appModuleLoaders,eventService);
 
       if(this.isDockerRunning()){
         this.client = new Docker({ socketPath: DOCKER_SOCKET });
@@ -120,6 +122,7 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
         // Try to load descriptor
         // If there is one then
         // Send App Load starting Event
+        // Parse descriptor (overwrite descriptor base url to detected public docker one)
         // Try to create App() using the parsed JSON Descriptor
         // If fail send App load failed event
         // Add the App to our Cache.

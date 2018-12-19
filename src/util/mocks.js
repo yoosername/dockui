@@ -105,9 +105,11 @@ const MockAppDescriptor = function(){
 const MockModuleDescriptor = function(){
     "use strict";
     return {
-        type:  "mockModuleType",
-        key: "mockModuleKey",
-        name: "mockModuleName"
+        getType: function () {return "mockModuleType";},
+        getKey: function () {return "mockModuleKey";},
+        getName: function () {return "mockModuleName";},
+        getCache: function () {return {policy: "disabled"};},
+        getRoles: function () {return [];}
     };
 };
 

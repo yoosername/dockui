@@ -1,5 +1,4 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-
 const ApiModuleDescriptor = require("../../model/descriptor/ApiModuleDescriptor");
 const ApiModule = require("../../model/ApiModule");
 
@@ -21,7 +20,7 @@ class ApiModuleLoader extends CachableModuleLoader{
   canLoadModuleDescriptor(descriptor){
 
     // Have we previously responded with a true
-    const cachedResponse = super.canLoadModuleDescriptor(descriptor);
+    const cachedResponse = this.canLoadModuleFromCache(descriptor);
     if( cachedResponse === true ){
       return true; 
     }else if ( cachedResponse === false){
@@ -35,11 +34,18 @@ class ApiModuleLoader extends CachableModuleLoader{
     try{
       moduleDescriptor = new ApiModuleDescriptor(descriptor);
       apiModule = new ApiModule(moduleDescriptor);
-      if(apiModule != null){
+      if(apiModule !== null){
         response = true;
+        this.setCache(descriptor, {
+          loadable : true,
+          module: apiModule
+        });
       }
     }catch(e){
       response = false;
+      this.setCache(descriptor, {
+        loadable : false
+      });
     }finally{
       moduleDescriptor = null;
       apiModule = null;
@@ -56,14 +62,24 @@ class ApiModuleLoader extends CachableModuleLoader{
   loadModuleFromDescriptor(descriptor){
 
     // Have we previously created and returned a module
-    const cachedModule = super.loadModuleFromDescriptor(descriptor);
+    const cachedModule = this.loadModuleFromCache(descriptor);
     if( cachedModule ){
       return cachedModule; 
     }
 
-    // Nothing in the cache so:
-    //  - Parse config
-    //  - Create and add to cache then return a new Module object
+    // Nothing in the cache so do verify ourself:
+    const doesLoad = this.canLoadModuleDescriptor(descriptor);
+    if( doesLoad ){
+      const module = this.loadModuleFromCache(descriptor);
+      if(module){
+        return module;
+      }
+    }
+
+    // We cant load the Module so return null
+    // App will try more loaders and then handle the case where none work.
+    return null;
+
   }
 
 }

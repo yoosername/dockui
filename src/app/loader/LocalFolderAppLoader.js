@@ -3,16 +3,18 @@ const AppLoader = require("./AppLoader");
 /**
  * @class LocalFolderAppLoader
  * @description Load Apps from App descriptors detected on the filepath
+ * @argument {AppStore} appStore - The store to use for persistence.
  * @argument {Array} AppModuleLoaders - The loaders to use for loading Modules.
  * @argument {EventService} eventService - The Event service.
  */
 class LocalFolderAppLoader extends AppLoader{
 
   constructor(
+    appStore,
     appModuleLoaders,
     eventService
   ){
-    super(appModuleLoaders, eventService);
+    super(appStore,appModuleLoaders, eventService);
   }
 
   /**
@@ -26,8 +28,12 @@ class LocalFolderAppLoader extends AppLoader{
   scanForNewApps(){
     // Look in some location
     // When App detected
-    // Try to load its descriptor
-    // If successfully loaded try to create a App using the descriptor
+    // Try to load its descriptor and create AppDescriptor
+    // Try to create App() using the parsed JSON Descriptor
+        // If fail send App load failed event
+        // Add the App to our Cache.
+        // enable all of this Apps modules.
+        // Send App Load Complete Event
   }
 
   /**
