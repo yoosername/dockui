@@ -49,35 +49,38 @@ class App{
     this.moduleLoaders = moduleLoaders;
     this.appStore = appStore;
     this.eventsService = eventService;
+    this.securityContext = null;
 
     this.modules = [];
     
-    this.initialize();
+    this.bootstrap();
 
   }
 
   /**
-   * @method initialize
-   * @description Initialize the app
+   * @method bootstrap
+   * @description bootstrap the app for example by setting up a 
+   *              seurity context and communicating shared secrets 
+   *              to the App for subsequent communication
    */
-  initialize(){
-    // Set app to disabled initially
+  async bootstrap(){
+    // All Apps start disabled until bootstrap complete
     this.enabled = false;
     // Try to create a new security context
     // The Context will check store for existing one if loaded before and
     // reuse it
-    const securityContext = new SecurityContext(this.appStore,this.descriptor);
     // If there is one try to perform a handshake with the APP
     // Need to do some async await shinanigans here
-    const handshakeComplete = securityContext.handshake();
-    if(handshakeComplete){
-      // If handshake was successful then try to load this Apps modules.
-      this.loadModules();
-    }else{
-      // Couldnt setup Security with App. Throw error here for App loader
-      // to handle.
+    try{
+      const securityContext = new SecurityContext(this.appStore,this.descriptor);
+      await securityContext.handshake();
+      this.securityContext = securityContext;
+    }catch(e){
+      // Couldnt setup Security with App. 
+      // Throw error here for App loader to handle.
     }
-    
+    // Handshake was successful so try to load this Apps modules.
+    await this.loadModules();
   }
 
   /**

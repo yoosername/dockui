@@ -31,7 +31,6 @@ const  {
       this.eventsService = eventService;
       this.loadedApps = [];
       this.loadFailedApps = [];
-      this.securityContexts = {};
   
     }
 
