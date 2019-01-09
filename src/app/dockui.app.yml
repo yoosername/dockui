@@ -8,11 +8,19 @@
 #   url: Remote location of this Descriptor
 #        - Only used if not yet known. I.e. because you manually installed the App from its descriptor file
 #        - Some loaders (e.g. DockerEventsLoader) would uoveride this with an internal Docker network address instead
+#   type: Type of the App. Can be one of 'static' or 'dynamic'. 
+#            static 
+#               - Can only use Route,WebPage,WebItem,WebFragment,WebResource modules
+#               - Modules are loaded once and cached until unload or disable called
+#            dynamic 
+#               - Can use all the above plus AuthenticationProvider,AuthorizationProvider,Api,Webhook
+#               - Modules are cached according to cache settings and Api and Auth proxied
+#               - A SecurityContext is setup using shared secrets for secure communication
 #   key: Universally unique key for this App
 #   version: Version of this App
 #   descriptor-version: Version of the DockUI App Descriptor being used by the App.
 #   icon: A relative (to the App) url pointing to an Icon Image file for use by the framework.
-#   lifecycle.installed: Callback that is syncronously called by the framework with a new security context during install.
+#   lifecycle.loaded: Callback that is syncronously called by the framework with a new security context during App load.
 #
 #      - App should respond with HTTP 200 OK or install will fail.
 #      - Security context payload contains the following JSON
@@ -34,9 +42,9 @@ version: 1.0.0
 descriptor-version: 1.0.0
 icon: '/static/logo.png'
 lifecycle: 
-  installed: /installed
+  - loaded: /loaded
 authentication:
-   - type: jwt
+  - type: jwt
 
 # ----------------------
 # Modules

@@ -20,9 +20,12 @@ const Shapes = Object.freeze(
             "getModuleLoaders","enable","disable","loadModules"
         ],
         "AppDescriptor":[
-            "getName","getKey","getUrl","getDescription","getVersion",
+            "getName","getKey","getType","getUrl","getDescription","getVersion",
             "getDescriptorVersion","getIcon","getLifecycle","getAuthentication",
             "getModules"
+        ],
+        "AppHttpClient":[
+            "get","post"
         ],
         "ModuleDescriptor":[
             "getType","getKey","getName","getCache","getRoles"

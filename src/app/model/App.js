@@ -1,3 +1,7 @@
+
+
+const uuidv4 = require('uuid/v4');
+
 const  {
   MODULE_LOAD_STARTED_EVENT,
   MODULE_LOAD_COMPLETE_EVENT,
@@ -9,6 +13,10 @@ const  {
 const  {
   validateShapes
 } = require("../../util/validate");
+
+const  {
+  AppBootstrapError
+} = require("../../constants/errors");
 
 const SecurityContext = require("./security/SecurityContext");
 
@@ -43,7 +51,8 @@ class App{
       {"shape":"EventService","object":eventService}
     ]);
 
-    this.key = key; 
+    this.key = key;
+    this.uuid = uuidv4();
     this.descriptor = descriptor;
     this.loader = loader; 
     this.moduleLoaders = moduleLoaders;
@@ -64,23 +73,46 @@ class App{
    *              to the App for subsequent communication
    */
   async bootstrap(){
+
     // All Apps start disabled until bootstrap complete
     this.enabled = false;
-    // Try to create a new security context
-    // The Context will check store for existing one if loaded before and
-    // reuse it
-    // If there is one try to perform a handshake with the APP
-    // Need to do some async await shinanigans here
-    try{
-      const securityContext = new SecurityContext(this.appStore,this.descriptor);
-      await securityContext.handshake();
-      this.securityContext = securityContext;
-    }catch(e){
-      // Couldnt setup Security with App. 
-      // Throw error here for App loader to handle.
-    }
-    // Handshake was successful so try to load this Apps modules.
-    await this.loadModules();
+
+    return new Promise(async (resolve, reject) => {
+
+      // Get the type
+      const type = this.getType();
+
+      // App is dynamic so we need a custom client to communicate with 
+      // the various service endpoints using desired auth
+      if( type === "dynamic" ){
+        const securityContext = new SecurityContext(this);
+        // TODO: Can be other types of Client
+        //const jwtClient = new JWTHttpClient(securityContext);
+        // TODO: Implement this
+        const jwtClient = new HttpClient();
+        try{
+          await jwtClient.init();
+        }catch(e){
+          return reject( new AppBootstrapError(e) );
+        }
+        this.httpClient = jwtClient;
+      }
+      // App is static so Just use a plain HttpClient
+      else{
+        this.httpClient = new HttpClient();
+      }
+
+      // HttpClient is setup so try to load this Apps modules.
+      try{
+        await this.loadModules();
+      }catch(e){
+        return reject( new AppBootstrapError(e) );
+      }
+
+      resolve();
+
+    });
+
   }
 
   /**
@@ -89,6 +121,30 @@ class App{
    */
   getKey(){
     return this.key;
+  }
+
+    /**
+   * @method getType
+   * @description return the type of this App (static/dynamic)
+   */
+  getType(){
+    return this.descriptor.getType();
+  }
+
+  /**
+   * @method getUrl
+   * @description Helper returns the base URL from this Apps descriptor
+   */
+  getUrl(){
+    return this.descriptor.getUrl();
+  }
+
+  /**
+   * @method getUUID
+   * @description return the uniquely generated framework identifier of this App instance
+   */
+  getUUID(){
+    return this.uuid;
   }
 
   /**
@@ -129,6 +185,14 @@ class App{
    */
   getModules(){
     return this.modules;
+  }
+
+  /**
+   * @method getHttpClient
+   * @description return the Http client configured for this App
+   */
+  getHttpClient(){
+    return this.httpClient;
   }
 
   /**

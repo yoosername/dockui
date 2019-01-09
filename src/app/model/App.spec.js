@@ -21,7 +21,9 @@ describe('App', function() {
       expect(App).to.be.a('function');
     });
 
+    // TODO: These tests
     // Test getKey
+    // Test getUUID ( given 2 App instances with same key uuid should be different )
     // Test getAppModules(filter)
     // Test getModule(moduleKey)
     // Test enable()

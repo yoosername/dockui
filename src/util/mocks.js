@@ -69,6 +69,13 @@ const MockApp = function(){
         loadModules: function () {}
     };
 };
+const MockAppHttpClient = function(){ 
+    "use strict";
+    return {
+        get: function () {}, 
+        post: function () {}
+    };
+};
 const MockModuleLoader = function(){
     "use strict";
     return {
@@ -92,6 +99,7 @@ const MockAppDescriptor = function(){
     return {
         getName: function () {}, 
         getKey: function () {}, 
+        getType: function () {},
         getUrl: function () {}, 
         getDescription: function () {}, 
         getVersion: function () {}, 
@@ -121,6 +129,7 @@ module.exports = {
     MockLifecycleEventsStrategy,
     MockEventService,
     MockApp,
+    MockAppHttpClient,
     MockModuleLoader,
     MockModule,
     MockAppDescriptor,

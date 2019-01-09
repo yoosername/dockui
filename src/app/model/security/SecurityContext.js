@@ -2,6 +2,8 @@ const  {
   validateShapes
 } = require("../../../util/validate");
 
+const uuidv4 = require('uuid/v4');
+const SECURITY_CONTEXT_STORE_PREFIX = "security-context_";
 
 /**
  * @class SecurityContext
@@ -11,18 +13,17 @@ const  {
 class SecurityContext{
 
   constructor(
-    store,
     app
   ){
     
     // Validate our args using ducktyping utils. (figure out better way to do this later)
     validateShapes([
-      {"shape":"AppStore","object":store},
       {"shape":"App","object":app}
     ]);
 
-    this.store = store;
-    this.app = app; 
+    this.app = app;
+    this.context = {};
+    this.getContext();
 
   }
 
@@ -35,21 +36,49 @@ class SecurityContext{
   }
 
   /**
-   * @method getStore
-   * @description return the Store we are using for persistence
+   * @method getContext
+   * @description Load context from the following in order:
+   *               - Cache
+   *               - Apps store if exists 
+   *               - or generate New One and store it
    */
-  getStore(){
-    return this.store;
+  getContext(){
+    // Fetch from local cache
+    var context = this.context;
+    if(context){
+      return context;
+    }
+
+    // Otherwise load from store into local cache
+    context = this.app.getStore().get(SECURITY_CONTEXT_STORE_PREFIX+this.app.getUUID());
+    if( context && context.key && context.secret ){
+      this.context = context;
+      return context;
+    }
+    
+    // Otherwise create a new one and save to store and cache
+    context = this.generateNewContext();
+    this.app.getStore().set(SECURITY_CONTEXT_STORE_PREFIX+this.app.getUUID(), context);
+    this.context = context;
+    return context;
   }
 
   /**
-   * @method handshake
-   * @description Attempt to connect to the App loaded lifecycle URL
-   *              and POST our Security Context expecting 200 OK in return
+   * @method generateNewContext
+   * @description Generate a unique context with apps key and fresh secret etc
+   * {
+   *       key: key-from-app-descriptor,
+   *       uuid: framework-unique-identifier-of-App,
+   *       secret: a-secret-used-for-jwt-signing-etc,
+   *       framework.url: https://base.url.of.the.calling.framework.instance
+   * }
    */
-  handshake(){
-    // POST Security context to APP. If 200 OK then return true.
-    // If not then return false;
+  generateNewContext(){
+    return {
+      key : this.app.getKey(), 
+      uuid: this.app.getUUID(), 
+      secret : uuidv4()
+    };
   }
 
 

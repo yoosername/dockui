@@ -4,6 +4,8 @@ class MissingEventServiceDuringSetupError extends Error{}
 class MissingAppServiceDuringSetupError extends Error{}
 class MissingWebServiceDuringSetupError extends Error{}
 class AppServiceValidationError extends Error{}
+class AppBootstrapError extends Error{}
+class SecurityContextAppPostFailedError extends Error{}
 class LifecycleEventsStrategyValidationError extends Error{}
 class MalformedModuleDescriptorError extends Error{}
 class MalformedAppDescriptorError extends Error{}
@@ -17,6 +19,8 @@ module.exports = {
     MissingAppServiceDuringSetupError,
     MissingWebServiceDuringSetupError,
     AppServiceValidationError,
+    AppBootstrapError,
+    SecurityContextAppPostFailedError,
     LifecycleEventsStrategyValidationError,
     MalformedModuleDescriptorError,
     MalformedAppDescriptorError,
