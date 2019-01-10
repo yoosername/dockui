@@ -22,7 +22,7 @@ const  {
       // Validate our args using ducktyping utils. (figure out better way to do this later)
       validateShapes([
         {"shape":"AppStore","object":appStore},
-        {"shape":"AppModuleLoader","object":moduleLoaders[0]},
+        {"shape":"ModuleLoader","object":moduleLoaders[0]},
         {"shape":"EventService","object":eventService}
       ]);
   

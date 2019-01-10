@@ -24,6 +24,7 @@ describe('App', function() {
     // TODO: These tests
     // Test getKey
     // Test getUUID ( given 2 App instances with same key uuid should be different )
+    // Test App should reuse its UUID from store if already exists
     // Test getAppModules(filter)
     // Test getModule(moduleKey)
     // Test enable()

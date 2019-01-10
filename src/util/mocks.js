@@ -85,6 +85,14 @@ const MockModuleLoader = function(){
         setCache: function () {},
     };
 };
+const MockModuleLoaders = function(loader){
+    "use strict";
+    return [
+        Object.assign({},(loader)?loader:new MockModuleLoader()),
+        Object.assign({},(loader)?loader:new MockModuleLoader()),
+        Object.assign({},(loader)?loader:new MockModuleLoader())
+    ];
+};
 const MockModule = function(){
     "use strict";
     return {
@@ -131,6 +139,7 @@ module.exports = {
     MockApp,
     MockAppHttpClient,
     MockModuleLoader,
+    MockModuleLoaders,
     MockModule,
     MockAppDescriptor,
     MockModuleDescriptor

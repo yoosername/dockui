@@ -18,7 +18,7 @@ class AppDescriptor{
         !descriptor.key||
         !actualURL||
         !descriptor.lifecycle||
-        !descriptor.lifecycle.installed ||
+        !descriptor.lifecycle.loaded ||
         !descriptor.authentication ||
         !descriptor.authentication.type
       ){
@@ -38,6 +38,8 @@ class AppDescriptor{
       this.lifecycleURLs = {
         loaded: descriptor.lifecycle.loaded
       };
+
+      this.modules = descriptor.modules;
 
     }
 
@@ -71,6 +73,10 @@ class AppDescriptor{
 
     getLifecycleURLs(){
       return this.lifecycleURLs;
+    }
+
+    getModules(){
+      return this.modules;
     }
   
   }

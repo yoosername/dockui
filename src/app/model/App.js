@@ -225,7 +225,7 @@ class App{
    */
   loadModules(){
 
-    this.appDescriptor.modules.forEach(moduleDescriptor =>{
+    this.appDescriptor.getModules().forEach(moduleDescriptor =>{
       var module = null;
       var loaded = false;
 
