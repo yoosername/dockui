@@ -13,7 +13,8 @@ const Shapes = Object.freeze(
             "getModules","getModule","enableModule","disableModule"
         ], 
         "AppLoader":[
-            "scanForNewApps","stopScanningForNewApps","getApps","getApp"
+            "scanForNewApps","stopScanningForNewApps","addApp","removeApp",
+            "getApps","getApp"
         ],
         "App":[
             "getKey","getLoader","getDescriptor","getEventService",

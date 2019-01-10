@@ -4,9 +4,9 @@ const sinon = require("sinon");
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-var LocalFolderAppLoader = require('./LocalFolderAppLoader');
+var UrlAppLoader = require('./UrlAppLoader');
 
-describe('LocalFolderAppLoader', function() {
+describe('UrlAppLoader', function() {
     "use strict";
 
     beforeEach(function(){
@@ -14,16 +14,16 @@ describe('LocalFolderAppLoader', function() {
     });
 
     it('should be defined and loadable', function() {
-        expect(LocalFolderAppLoader).to.not.be.undefined;
+        expect(UrlAppLoader).to.not.be.undefined;
     });
 
     it('should be a function', function() {
-        expect(LocalFolderAppLoader).to.be.a('function');
+        expect(UrlAppLoader).to.be.a('function');
     });
 
 // Methods to Test
 // "scanForNewApps"
-//   should find App Desriptor on Filesystem and be able to Parse it
+//   should find App Desriptor from valid Url and be able to Parse it
 //   should send ErrorLoadingAppEvent when cant parse Descriptor
 // "stopScanningForNewApps"
 //   should be called after scanForNewApps runs to prevent repeat loads

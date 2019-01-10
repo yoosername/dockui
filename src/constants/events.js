@@ -9,6 +9,7 @@ const APPSERVICE_SHUTDOWN_EVENT = "service:shutdown";
 /**
  * @description App lifecycle events
  */
+const APP_LOAD_REQUESTED_EVENT = "app:load:requested";
 const APP_LOAD_STARTED_EVENT = "app:load:started";
 const APP_LOAD_COMPLETE_EVENT = "app:load:complete";
 const APP_LOAD_FAILED_EVENT = "app:load:failed"; 
@@ -41,6 +42,7 @@ module.exports = {
     APPSERVICE_STARTED_EVENT,
     APPSERVICE_SHUTTING_DOWN_EVENT,
     APPSERVICE_SHUTDOWN_EVENT,
+    APP_LOAD_REQUESTED_EVENT,
     APP_LOAD_STARTED_EVENT,
     APP_LOAD_COMPLETE_EVENT,
     APP_LOAD_FAILED_EVENT,

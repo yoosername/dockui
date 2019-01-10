@@ -55,6 +55,24 @@ const  {
     }
 
     /**
+     * @method addApp
+     * @description Add a single App to the cache
+     */
+    addApp(app){
+      this.loadedApps.push(app);
+    }
+
+    /**
+     * @method removeApp
+     * @description Remove a single App from the cache
+     */
+    removeApp(app){
+      this.loadedApps = this.loadedApps.filter(function(appItem){
+        return appItem !== app;
+      });
+    }
+
+    /**
      * @method getApps
      * @argument {Function} filter - function to filter the list of Apps with
      * @description Return all loaded Apps.

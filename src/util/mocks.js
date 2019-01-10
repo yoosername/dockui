@@ -20,6 +20,8 @@ const MockAppLoader = function(){
     return { 
         scanForNewApps: function () {},
         stopScanningForNewApps: function () {},
+        addApp: function(){},
+        removeApp: function(){},
         getApps: function(){},
         getApp: function(){}
     };

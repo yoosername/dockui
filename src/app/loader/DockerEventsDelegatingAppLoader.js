@@ -1,11 +1,4 @@
 const AppLoader = require("./AppLoader");
-
-const  {
-  APP_UNLOAD_STARTING_EVENT,
-  APP_UNLOAD_COMPLETE_EVENT,
-  APP_UNLOAD_FAILED_EVENT,
-} = require("../../constants/events");
-
 const Docker = require('dockerode');
 const fs = require('fs');
 const DOCKER_SOCKET = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
@@ -13,13 +6,14 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
   
   
   /**
-   * @class DockerEventsAppLoader
-   * @description Load Apps from App descriptors detected via Docker events subsystem
+   * @class DockerEventsDelegatingAppLoader
+   * @description Detect Docker containers and relevent service URLs
+   *              Then delegate loading to UrlAppLoader via events
    * @argument {AppStore} appStore - The store to use for persistence.
    * @argument {Array} appModuleLoaders - The loaders to use for loading Modules.
    * @argument {EventService} eventService - The Event service.
    */
-  class DockerEventsAppLoader extends AppLoader{
+  class DockerEventsDelegatingAppLoader extends AppLoader{
   
     constructor(
       appStore,
@@ -64,6 +58,7 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
      */
     scanForNewApps(){
       
+      // The first time we run do a one off scan for all running containers
       if(!this.disabled && !this.scanning){
 
         this.client.listRunningContainers({all: true}, (err, containers) => {
@@ -118,18 +113,8 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
      */
     handleContainerStart(container){
       if( !this.disabled && this.scanning ){
-        // TODO: Add the Module Loader functionalty here.
-        // Try to load descriptor ( from well defined location specific to loader )
-        // If there is one then
-          // Send App Load starting Event
-          // this.eventService.emit(APP_LOAD_STARTING_EVENT, app);
-          // Parse descriptor (overwrite descriptor base url to detected public docker one)
-          // Try to create App() using the parsed JSON Descriptor
-          // If fail send App load failed event
-          // Add the App to our Cache.
-          // enable all of this Apps modules.
-          // Send App Load Complete Event
-          // this.eventService.emit(APP_LOAD_COMPLETE_EVENT, app);
+        // TODO: discover the URL of the container (private, network,service?)
+        // Submit a framework event of APP_LOAD_REQUESTED with the URL
       }
     }
 
@@ -140,18 +125,8 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
      */
     handleContainerStop(container){
       if( !this.disabled && this.scanning ){
-        const app = this.container_cache[container.Id];
-        if(app){
-          this.eventService.emit(APP_UNLOAD_STARTING_EVENT, app);
-          try{
-            app.getAppModules().forEach(module=>{
-              module.disable();
-            });
-          }catch(e){
-            return this.eventService.emit(APP_UNLOAD_FAILED_EVENT, e);
-          }
-          this.eventService.emit(APP_UNLOAD_COMPLETE_EVENT, app);
-        }
+        // TODO: discover the URL of the container (private, network,service?)
+        // Submit a framework event of APP_UNLOAD_REQUESTED with the URL
       }
     }
     
@@ -166,4 +141,4 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
   
   }
   
-  module.exports = DockerEventsAppLoader;
+  module.exports = DockerEventsDelegatingAppLoader;

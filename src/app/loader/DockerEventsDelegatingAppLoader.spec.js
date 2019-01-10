@@ -4,9 +4,9 @@ const sinon = require("sinon");
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-var DockerEventsAppLoader = require('./DockerEventsAppLoader');
+var DockerEventsDelegatingAppLoader = require('./DockerEventsDelegatingAppLoader');
 
-describe('DockerEventsAppLoader', function() {
+describe('DockerEventsDelegatingAppLoader', function() {
     "use strict";
 
     beforeEach(function(){
@@ -14,11 +14,11 @@ describe('DockerEventsAppLoader', function() {
     });
 
     it('should be defined and loadable', function() {
-        expect(DockerEventsAppLoader).to.not.be.undefined;
+        expect(DockerEventsDelegatingAppLoader).to.not.be.undefined;
     });
 
     it('should be a function', function() {
-        expect(DockerEventsAppLoader).to.be.a('function');
+        expect(DockerEventsDelegatingAppLoader).to.be.a('function');
     });
 
 // Methods to Test
