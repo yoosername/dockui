@@ -69,7 +69,7 @@ describe('DockUIApps', function() {
 
     });
 
-    it('should call AppService.stop method when stop() called', function() {
+    it('should call WebService.stop method when stop() called', function() {
       var webService = sinon.mock(mockWebService);
       webService.expects("shutdown").once();
       

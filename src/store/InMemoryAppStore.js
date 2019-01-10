@@ -6,8 +6,8 @@ const AppStore = require("./AppStore");
  */
 class InMemoryAppStore extends AppStore{
 
-    constructor(eventService){
-        super(eventService);
+    constructor(){
+        super();
         this.data = {};
     }
 

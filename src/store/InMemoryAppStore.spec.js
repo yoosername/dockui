@@ -24,7 +24,7 @@ describe('InMemoryAppStore', function() {
     });
 
     it('should return the same thing you save into it', function() {
-      const store = new InMemoryAppStore(mockEventService);
+      const store = new InMemoryAppStore();
       store.set("TEST1", "value1");
       store.set("TEST2", "value2");
       expect(store.get("TEST2")).to.eql("value2");

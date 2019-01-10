@@ -22,7 +22,7 @@ describe('AppStore', function() {
     it('should be a function', function() {
       expect(AppStore).to.be.a('function');
       expect(()=>{
-        new AppStore(mockEventService);
+        new AppStore();
       }).to.not.throw();
     });
 

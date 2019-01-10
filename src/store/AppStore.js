@@ -1,19 +1,10 @@
-const  {
-    validateShapes
-} = require("../util/validate");
-
 /**
  * @class AppStore
  * @description Simple Store for persisting App/AppModule state
  */
 class AppStore{
 
-    constructor(eventService){
-        this.eventService = eventService;
-
-        validateShapes([
-            {"shape":"EventService","object":eventService}
-        ]);
+    constructor(){
     }
 
     /**

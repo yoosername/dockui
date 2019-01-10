@@ -72,8 +72,6 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
             return console.warn(DockerProblemListingContainersError);
           }
 
-          this.scanning = true;
-
           containers.forEach((container) => {
 
             if( ! this.container_cache.includes(container) ){
@@ -96,8 +94,6 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
             return console.warn("Error getting Docker client events");
           }
 
-          this.initialised = true;
-
           events
             .on("start", (container) => {
               this.handleContainerStart(container);
@@ -105,6 +101,9 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
             .on("stop", (container) => {
               this.handleContainerStop(container);
             });
+
+          this.initialised = true;
+          this.scanning = true;
           
         });
 
@@ -119,15 +118,18 @@ const {DockerProblemListingContainersError} = require("../../constants/errors");
      */
     handleContainerStart(container){
       if( !this.disabled && this.scanning ){
-        // Try to load descriptor
+        // TODO: Add the Module Loader functionalty here.
+        // Try to load descriptor ( from well defined location specific to loader )
         // If there is one then
-        // Send App Load starting Event
-        // Parse descriptor (overwrite descriptor base url to detected public docker one)
-        // Try to create App() using the parsed JSON Descriptor
-        // If fail send App load failed event
-        // Add the App to our Cache.
-        // enable all of this Apps modules.
-        // Send App Load Complete Event
+          // Send App Load starting Event
+          // this.eventService.emit(APP_LOAD_STARTING_EVENT, app);
+          // Parse descriptor (overwrite descriptor base url to detected public docker one)
+          // Try to create App() using the parsed JSON Descriptor
+          // If fail send App load failed event
+          // Add the App to our Cache.
+          // enable all of this Apps modules.
+          // Send App Load Complete Event
+          // this.eventService.emit(APP_LOAD_COMPLETE_EVENT, app);
       }
     }
 

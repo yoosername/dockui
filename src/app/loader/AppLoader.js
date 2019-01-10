@@ -35,6 +35,26 @@ const  {
     }
 
     /**
+     * @method scanForNewApps
+     * @description Starting checking some location for new Apps 
+     *              and attempt to load them when found
+     *              Loading them involves fetching AppDescriptor
+     *              and creating a new App passing it in. The App will
+     *              attempt to Load its own Modules and use Events for lifecycle.
+     */
+    scanForNewApps(){
+      // This should be implemented by subclasses.
+    }
+
+    /**
+     * @method stopScanningForNewApps
+     * @description Stop checking for new Apps until scan is called again.
+     */
+    stopScanningForNewApps(){
+      // This should be implemented by subclasses.
+    }
+
+    /**
      * @method getApps
      * @argument {Function} filter - function to filter the list of Apps with
      * @description Return all loaded Apps.
@@ -44,14 +64,6 @@ const  {
         return this.loadedApps.filter(filter);
       }
       return this.loadedApps;
-    }
-
-    /**
-     * @method getApp
-     * @description Return single App by its Key
-     */
-    getApp(key){
-      return this.getApps(app=>app.getKey()===key);
     }
 
     /**

@@ -1,20 +1,65 @@
+const  {
+  WEBSERVICE_STARTING_EVENT,
+  WEBSERVICE_STARTED_EVENT,
+  WEBSERVICE_SHUTTING_DOWN_EVENT,
+  WEBSERVICE_SHUTDOWN_EVENT
+} = require("../constants/events"); 
+
+const  {
+  validateShapes
+} = require("../util/validate");
+
 /**
- * WebService
- * Wraps the intialization, configuration and starting/stopping of a web server
- * and associated routes etc.
+ * @class WebService
+ * @description Wraps the intialization, configuration and starting/stopping of a web server
+ *              and associated routes etc.
  */
 class WebService{
 
-  // Start the web server
-  start(){
-    "use strict";
-    console.log("\n\n[WebService] : Started");
+  constructor(eventService){
+    this.running = false;
+
+    validateShapes([
+      {"shape":"EventService","object":eventService}
+    ]);
+
+    this.eventService = eventService;
   }
 
-  // Start the web server
+  /**
+   * @method start
+   * @description initialize and start web server
+   */
+  start(){
+    "use strict";
+    
+    // Notify listeners that we are starting
+    this.eventService.emit(WEBSERVICE_STARTING_EVENT, this);
+    this.running = true;
+    // Notify listeners that we have started
+    this.eventService.emit(WEBSERVICE_STARTED_EVENT, this);
+  }
+
+  /**
+   * @method shutdown
+   * @description gracefully shutdown web server
+   */
   shutdown(){
     "use strict";
-    console.log("\n\n[WebService] : Stopping");
+    // Notify listeners that we are starting
+    this.eventService.emit(WEBSERVICE_SHUTTING_DOWN_EVENT);
+    this.running = false;
+    // Notify listeners that we have started
+    this.eventService.emit(WEBSERVICE_SHUTDOWN_EVENT);
+  }
+
+  /**
+   * @method isRunning
+   * @description Is the webserver currently serving requests
+   */
+  isRunning(){
+    "use strict";
+    return this.running;
   }
 
   // Add / Remove middleware route (Run before / after Handlers)
