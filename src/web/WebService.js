@@ -35,6 +35,12 @@ class WebService{
     
     // Notify listeners that we are starting
     this.eventService.emit(WEBSERVICE_STARTING_EVENT, this);
+
+    // TODO: Setup Express with some minimal management Rest API
+    //       - for loading and unloading Apps
+    //       - for enabling and disabling Apps
+    //       - for enabling and disabling Modules
+
     this.running = true;
     // Notify listeners that we have started
     this.eventService.emit(WEBSERVICE_STARTED_EVENT, this);
