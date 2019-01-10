@@ -31,6 +31,42 @@ class AppStore{
         console.warn("[AppStore] delete - NoOp implementation - this should be extended by child classes");
     }
 
+    /**
+    * @method enableApp
+    * @argument {App} app - the app to mark as enabled
+    * @description Mark an App as enabled in the store
+    */
+   enableApp(app){
+        console.warn("[AppStore] enableApp - NoOp implementation - this should be extended by child classes");
+   }
+
+    /**
+    * @method disableApp
+    * @argument {App} app - the app to mark as disabled
+    * @description Mark an App as disabled in the store
+    */
+   disableApp(app){
+        console.warn("[AppStore] disableApp - NoOp implementation - this should be extended by child classes");
+   }
+
+    /**
+    * @method enableModule
+    * @argument {Module} module - the module to mark as enabled
+    * @description Mark a specific Apps Module as enabled in the store
+    */
+   enableModule(app){
+        console.warn("[AppStore] enableModule - NoOp implementation - this should be extended by child classes");
+   }
+
+    /**
+    * @method disableModule
+    * @argument {Module} module - the module to mark as disabled
+    * @description Mark a specific Apps Module as disabled in the store
+    */
+   disableModule(app){
+        console.warn("[AppStore] disableModule - NoOp implementation - this should be extended by child classes");
+   }
+
 }
 
 module.exports = AppStore;

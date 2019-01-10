@@ -1,4 +1,6 @@
 const AppStore = require("./AppStore");
+const APP_ENABLED_KEY_PREFIX = "APP_ENABLED_";
+const MODULE_ENABLED_KEY_PREFIX = "MODULE_ENABLED_";
 
 /**
  * @class InMemoryAppStore
@@ -36,6 +38,42 @@ class InMemoryAppStore extends AppStore{
         this.data[key] = null;
         delete this.data[key];
         return data;
+    }
+
+    /**
+    * @method enableApp
+    * @argument {App} app - the app to mark as enabled
+    * @description Mark an App as enabled in the store
+    */
+    enableApp(app){
+        this.set(APP_ENABLED_KEY_PREFIX+app.getKey(), true);
+    }
+
+    /**
+    * @method disableApp
+    * @argument {App} app - the app to mark as disabled
+    * @description Mark an App as disabled in the store
+    */
+    disableApp(app){
+        this.set(APP_ENABLED_KEY_PREFIX+app.getKey(), false);
+    }
+
+    /**
+    * @method enableModule
+    * @argument {Module} module - the module to mark as enabled
+    * @description Mark a specific Apps Module as enabled in the store
+    */
+    enableModule(module){
+        this.set(MODULE_ENABLED_KEY_PREFIX+module.getKey(), true);
+    }
+
+    /**
+    * @method disableModule
+    * @argument {Module} module - the module to mark as disabled
+    * @description Mark a specific Apps Module as disabled in the store
+    */
+    disableModule(module){
+        this.set(MODULE_ENABLED_KEY_PREFIX+module.getKey(), false);
     }
 
 }
