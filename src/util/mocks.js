@@ -62,6 +62,7 @@ const MockApp = function(){
     "use strict";
     return {
         getKey: function () {},
+        getPermission: function () {},
         getLoader: function () {},
         getDescriptor: function () {},
         getEventService: function () {},
