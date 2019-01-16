@@ -1,6 +1,6 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const WebFragmentModuleDescriptor = require("../../model/descriptor/WebFragmentModuleDescriptor");
-const WebFragmentModule = require("../../model/WebFragmentModule");
+const WebFragmentModuleDescriptor = require("../../descriptor/impl/WebFragmentModuleDescriptor");
+const WebFragmentModule = require("../../module/impl/WebFragmentModule");
 
 /**
  * @class WebFragmentModuleLoader

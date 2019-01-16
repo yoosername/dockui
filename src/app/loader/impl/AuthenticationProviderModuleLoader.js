@@ -1,6 +1,6 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const AuthenticationProviderModuleDescriptor = require("../../model/descriptor/AuthenticationProviderModuleDescriptor");
-const AuthenticationProviderModule = require("../../model/AuthenticationProviderModule");
+const AuthenticationProviderModuleDescriptor = require("../../descriptor/impl/AuthenticationProviderModuleDescriptor");
+const AuthenticationProviderModule = require("../../module/impl/AuthenticationProviderModule");
 
 /**
  * @class AuthenticationProviderModuleLoader

@@ -1,6 +1,6 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const RouteModuleDescriptor = require("../../model/descriptor/RouteModuleDescriptor");
-const RouteModule = require("../../model/RouteModule");
+const RouteModuleDescriptor = require("../../descriptor/impl/RouteModuleDescriptor");
+const RouteModule = require("../../module/impl/RouteModule");
 
 /**
  * @class RouteModuleLoader

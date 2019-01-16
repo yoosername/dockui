@@ -1,6 +1,6 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const WebPageModuleDescriptor = require("../../model/descriptor/WebPageModuleDescriptor");
-const WebPageModule = require("../../model/WebPageModule");
+const WebPageModuleDescriptor = require("../../descriptor/impl/WebPageModuleDescriptor");
+const WebPageModule = require("../../module/impl/WebPageModule");
 
 /**
  * @class WebPageModuleLoader

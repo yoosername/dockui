@@ -1,6 +1,6 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const WebhookModuleDescriptor = require("../../model/descriptor/WebhookModuleDescriptor");
-const WebhookModule = require("../../model/WebhookModule");
+const WebhookModuleDescriptor = require("../../descriptor/impl/WebhookModuleDescriptor");
+const WebhookModule = require("../../module/impl/WebhookModule");
 
 /**
  * @class WebhookModuleLoader

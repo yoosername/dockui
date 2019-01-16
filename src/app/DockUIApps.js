@@ -78,7 +78,7 @@ class DockUIAppsBuilder{
 
     /**
      * @method withStore 
-     * @argument AppStore the AppStore to use
+     * @argument {AppStore} the AppStore to use
      */
     withStore(AppStore){
         this.appStore = AppStore;
@@ -87,7 +87,7 @@ class DockUIAppsBuilder{
 
     /**
      * @method withEventService 
-     * @argument eventService the EventService to use
+     * @argument {EventService} the EventService to use
      */
     withEventService(eventService){
         this.eventService = eventService;
@@ -96,7 +96,7 @@ class DockUIAppsBuilder{
 
     /**
      * @method withAppService 
-     * @argument AppService the AppService to use
+     * @argument {AppService} the AppService to use
      */
     withAppService(AppService){
         this.appService = AppService;
@@ -105,7 +105,7 @@ class DockUIAppsBuilder{
 
     /**
      * @method withWebService
-     * @argument webService the WebService to use
+     * @argument {WebService} the WebService to use
      */
     withWebService(webService){
         this.webService = webService;

@@ -23,7 +23,9 @@
     "jshint": "./node_modules/jshint/bin/jshint src/**/*.js",
     "coverage": "nyc ./node_modules/mocha/bin/mocha 'src/**/*spec.js' --reporter spec",
     "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
-    "generate-docs": "node ./node_modules/documentation/bin/documentation.js readme index.js --section=API && mocha 'src/**/*spec.js' --reporter=markdown > ./src/tests.md"
+    "generate-test-docs": "mocha 'src/**/*spec.js' --reporter=markdown > ./src/TESTS.md",
+    "generate-api-docs": "node ./node_modules/documentation/bin/documentation.js ./src/API.md index.js --section API",
+    "generate-docs": "npm run generate-test-docs && npm run generate-api-docs"
   },
   "dependencies": {
     "axios": "^0.18.0",

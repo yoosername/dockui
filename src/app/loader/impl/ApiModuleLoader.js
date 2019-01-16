@@ -1,6 +1,6 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const ApiModuleDescriptor = require("../../model/descriptor/ApiModuleDescriptor");
-const ApiModule = require("../../model/ApiModule");
+const ApiModuleDescriptor = require("../../descriptor/impl/ApiModuleDescriptor");
+const ApiModule = require("../../module/impl/ApiModule");
 
 /**
  * @class ApiModuleLoader

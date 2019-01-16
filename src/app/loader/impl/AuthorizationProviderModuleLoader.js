@@ -1,12 +1,12 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const AuthorisationProviderModuleDescriptor = require("../../model/descriptor/AuthorisationProviderModuleDescriptor");
-const AuthorisationProviderModule = require("../../model/AuthorisationProviderModule");
+const AuthorizationProviderModuleDescriptor = require("../../descriptor/impl/AuthorizationProviderModuleDescriptor");
+const AuthorizationProviderModule = require("../../module/impl/AuthorizationProviderModule");
 
 /**
- * @class AuthorisationProviderModuleLoader
- * @description Create a AuthorisationProviderModule from a descriptor
+ * @class AuthorizationProviderModuleLoader
+ * @description Create a AuthorizationProviderModule from a descriptor
  */
-class AuthorisationProviderModuleLoader extends CachableModuleLoader{
+class AuthorizationProviderModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -32,8 +32,8 @@ class AuthorisationProviderModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new AuthorisationProviderModuleDescriptor(descriptor);
-      apiModule = new AuthorisationProviderModule(moduleDescriptor);
+      moduleDescriptor = new AuthorizationProviderModuleDescriptor(descriptor);
+      apiModule = new AuthorizationProviderModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -84,4 +84,4 @@ class AuthorisationProviderModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = AuthorisationProviderModuleLoader;
+module.exports = AuthorizationProviderModuleLoader;
