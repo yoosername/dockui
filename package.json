@@ -24,9 +24,10 @@
     "coverage": "nyc ./node_modules/mocha/bin/mocha 'src/**/*spec.js' --reporter spec",
     "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "generate-test-docs": "mocha 'src/**/*spec.js' --reporter=markdown > ./src/TESTS.md",
+    "generate-index": "./tools/build_index.sh > index.js",
     "generate-api-docs": "node ./node_modules/documentation/bin/documentation.js build index.js -f html -o ./docs --theme node_modules/documentation-devseed-theme",
-    "generate-docs": "npm run generate-test-docs && npm run generate-api-docs",
-    "serve-docs": "node ./node_modules/documentation/bin/documentation.js serve --format html --theme node_modules/documentation-devseed-theme"
+    "generate-docs": "npm run generate-index && npm run generate-test-docs && npm run generate-api-docs",
+    "serve-docs": "npm run generate-index && node ./node_modules/documentation/bin/documentation.js serve --format html --theme node_modules/documentation-devseed-theme"
   },
   "dependencies": {
     "axios": "^0.18.0",

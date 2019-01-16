@@ -55,7 +55,6 @@ class WebItemModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method loadModuleFromDescriptor
    * @description Create and return a new Module from the descriptor
    * @argument {AppDescriptor} descriptor The AppDescriptor to load
    */

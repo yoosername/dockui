@@ -46,40 +46,72 @@ class AppDescriptor{
 
     /**
      * Returns key
-     * @returns {string} key - The key to return
+     * @returns {string} The App key
      */
     getKey(){
       return this.key;
     }
 
+    /**
+     * Returns URL
+     * @returns {string} The App base url
+     */
     getUrl(){
       return this.url;
     }
 
+    /**
+     * Returns Name
+     * @returns {string} Human readable App Name
+     */
     getName(){
       return this.name;
     }
 
+    /**
+     * Returns Version
+     * @returns {string} App version
+     */
     getVersion(){
       return this.version;
     }
 
+    /**
+     * Returns Descriptor Version
+     * @returns {string} The version of the Descriptor used by the App
+     */
     getDescriptorVersion(){
       return this.descriptorVersion;
     }
 
+    /**
+     * Returns Logo
+     * @returns {string} Relative URL of Apps logo
+     */
     getLogo(){
       return this.logo;
     }
 
+    /**
+     * Returns Authentication
+     * @returns {string} Type of Auth required by App ( e.g. JWT )
+     */
     getAuthentication(){
       return this.authentication;
     }
 
+    /**
+     * Returns LifecycleURLs
+     * @returns {string} URLs of lifecycle endpoints to be notified of various framework events
+     */
     getLifecycleURLs(){
       return this.lifecycleURLs;
     }
 
+    /**
+     * Returns Modules
+     * @returns {Array} Array of this Apps Modules
+     */
     getModules(){
       return this.modules;
     }
