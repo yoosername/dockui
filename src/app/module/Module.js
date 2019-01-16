@@ -8,13 +8,14 @@ const  {
 } = require("../../constants/events");
 
 /**
- * @class Module
  * @description Represents a single Module loaded from a Module Descriptor.
- * @argument {App} app - The App which loaded this module.
- * @argument {App} descriptor - The module descriptor used to load the module
  */
 class Module{
 
+  /**
+   * @argument {App} app - The App which loaded this module.
+   * @argument {App} descriptor - The module descriptor used to load the module
+   */
   constructor(
     app,
     descriptor
@@ -44,7 +45,6 @@ class Module{
   }
 
   /**
-   * @method getKey
    * @description The key of this Module
    */
   getKey(){
@@ -52,7 +52,6 @@ class Module{
   }
 
   /**
-   * @method getName
    * @description The Human readable name of this Module
    */
   getName(){
@@ -60,7 +59,6 @@ class Module{
   }
 
   /**
-   * @method getType
    * @description The type of this Module
    */
   getType(){
@@ -68,7 +66,6 @@ class Module{
   }
 
   /**
-   * @method getRoles
    * @description Return the roles are required to use this module
    *              or Null if no Roles required.
    */
@@ -81,7 +78,6 @@ class Module{
   }
 
   /**
-   * @method getCache
    * @description Return the roles are required to use this module
    *              or Null if no Roles required.
    */
@@ -93,7 +89,6 @@ class Module{
   }
 
   /**
-   * @method isCacheEnabled
    * @description If Caching is supported and enabled by this module
    */
   isCacheEnabled(){
@@ -105,7 +100,6 @@ class Module{
   }
 
   /**
-   * @method enable
    * @description default behaviour is to simply send an enabled event to all listeners.
    *              subclasses can extend this behaviour
    */
@@ -116,7 +110,6 @@ class Module{
   }
 
   /**
-   * @method disable
    * @description default behaviour is to simply send an disabled event to all listeners.
    *              subclasses can extend this behaviour
    */

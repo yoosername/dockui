@@ -4,15 +4,16 @@ const  {
   
   
   /**
-   * @class AppLoader
    * @description Load Apps from App descriptors detected in some manner
    *              The detection is left down to subclasses.
-   * @argument {AppStore} appStore - The store to use for persistence.
-   * @argument {Array} moduleLoaders - The loaders to use for loading Modules.
-   * @argument {EventService} eventService - The Event service.
    */
   class AppLoader{
   
+    /**
+    * @argument {AppStore} appStore - The store to use for persistence.
+    * @argument {Array} moduleLoaders - The loaders to use for loading Modules.
+    * @argument {EventService} eventService - The Event service.
+    */
     constructor(
       appStore,
       moduleLoaders,
@@ -35,7 +36,6 @@ const  {
     }
 
     /**
-     * @method scanForNewApps
      * @description Starting checking some location for new Apps 
      *              and attempt to load them when found
      *              Loading them involves fetching AppDescriptor
@@ -47,7 +47,6 @@ const  {
     }
 
     /**
-     * @method stopScanningForNewApps
      * @description Stop checking for new Apps until scan is called again.
      */
     stopScanningForNewApps(){
@@ -55,16 +54,16 @@ const  {
     }
 
     /**
-     * @method addApp
      * @description Add a single App to the cache
+     * @argument {App} app The App to add to the cache
      */
     addApp(app){
       this.loadedApps.push(app);
     }
 
     /**
-     * @method removeApp
      * @description Remove a single App from the cache
+     * @argument {App} app The App to remove
      */
     removeApp(app){
       this.loadedApps = this.loadedApps.filter(function(appItem){
@@ -73,9 +72,9 @@ const  {
     }
 
     /**
-     * @method getApps
-     * @argument {Function} filter - function to filter the list of Apps with
      * @description Return all loaded Apps.
+     * @argument {Function} filter - function to filter the list of Apps with
+     * @returns {Array} Array of Apps 
      */
     getApps(filter){
       if(filter && typeof filter === "function"){
@@ -85,8 +84,8 @@ const  {
     }
 
     /**
-     * @method getApp
      * @description Return single App by its Key
+     * @argument {String} key Key to filter on
      */
     getApp(key){
       return this.getApps(app=>app.getKey()===key);

@@ -3,7 +3,6 @@ const APP_ENABLED_KEY_PREFIX = "APP_ENABLED_";
 const MODULE_ENABLED_KEY_PREFIX = "MODULE_ENABLED_";
 
 /**
- * @class InMemoryAppStore
  * @description Simple Store for persisting App/AppModule state to memory
  */
 class InMemoryAppStore extends AppStore{
@@ -14,7 +13,6 @@ class InMemoryAppStore extends AppStore{
     }
 
     /**
-    * @method set
     * @description Store the value against the given key
     */
     set(key, val){
@@ -22,7 +20,6 @@ class InMemoryAppStore extends AppStore{
     }
 
     /**
-    * @method get
     * @description Retrieve the value for the provided key
     */
     get(key){
@@ -30,7 +27,6 @@ class InMemoryAppStore extends AppStore{
     }
 
     /**
-    * @method delete
     * @description Delete an entry by its key
     */
     delete(key){
@@ -41,7 +37,6 @@ class InMemoryAppStore extends AppStore{
     }
 
     /**
-    * @method enableApp
     * @argument {App} app - the app to mark as enabled
     * @description Mark an App as enabled in the store
     */
@@ -50,7 +45,6 @@ class InMemoryAppStore extends AppStore{
     }
 
     /**
-    * @method disableApp
     * @argument {App} app - the app to mark as disabled
     * @description Mark an App as disabled in the store
     */
@@ -59,7 +53,6 @@ class InMemoryAppStore extends AppStore{
     }
 
     /**
-    * @method enableModule
     * @argument {Module} module - the module to mark as enabled
     * @description Mark a specific Apps Module as enabled in the store
     */
@@ -68,7 +61,6 @@ class InMemoryAppStore extends AppStore{
     }
 
     /**
-    * @method disableModule
     * @argument {Module} module - the module to mark as disabled
     * @description Mark a specific Apps Module as disabled in the store
     */

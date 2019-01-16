@@ -18,12 +18,19 @@ const  {
 } = require("../../util/validate");
 
 /**
- * @class AppService
- * @description Use App loaders to detect and load Apps and
- *              a LifecycleStrategy to enable and disable Apps based on custom rules
+ * @description Orchestrates
+ *                loading Apps via AppLoaders, 
+ *                triggering events in the EventService based on the LifecycleEventsStrategy and 
+ *                state persistence via the AppStore
  */
 class AppService{
 
+  /**
+   * @param {Array} appLoaders - Array of {AppLoader} to use for loading {App}s
+   * @param {AppStore} appStore - The AppStore to use for framework persistence
+   * @param {LifecycleEventsStrategy} lifecycleEventsStrategy - This is used to customise framework events
+   * @param {EventService} eventService - The EventService to use for framework events
+   */
   constructor(
     appLoaders,
     appStore,
@@ -61,9 +68,7 @@ class AppService{
   }
 
   /**
-   * @method start
-   * @description initialize App service
-   * @public
+   * @description Initialize and start the AppService
    */
   start(){
     "use strict";
@@ -92,9 +97,7 @@ class AppService{
   }
 
   /**
-   * @method shutdown
-   * @description shutdown App service gracefully
-   * @public
+   * @description shutdown AppService gracefully
    */
   shutdown(){
     "use strict";
@@ -121,9 +124,7 @@ class AppService{
   }
 
   /**
-   * scanForNewApps
-   * @description Process new Apps using the App Loaders
-   * @public
+   * @description Tell each AppLoader to start looking for new Apps
    */
   scanForNewApps(){
     "use strict";
@@ -133,9 +134,7 @@ class AppService{
   }
 
   /**
-   * stopScanningForNewApps
-   * @description Tell Loaders we dont want any more scanning until called again
-   * @public
+   * @description Tell each AppLoader we dont want any more scanning until called again
    */
   stopScanningForNewApps(){
     "use strict";
@@ -145,10 +144,8 @@ class AppService{
   }
 
   /**
-   * getApps
    * @description Get all Apps from all Loaders
    * @argument {Function} filter : filter the list of Apps using this test
-   * @public
    */
   getApps(filter){
     "use strict";
@@ -160,10 +157,8 @@ class AppService{
   }
 
   /**
-   * getApp
    * @description Get single App by key
    * @argument {int} appKey
-   * @public
    */
   getApp(appKey){
     "use strict";
@@ -177,10 +172,8 @@ class AppService{
   }
 
   /**
-   * enableApp
    * @description Enable a single App
    * @argument {int} appKey
-   * @public
    */
   enableApp(appKey){
     "use strict";
@@ -196,10 +189,8 @@ class AppService{
   }
 
   /**
-   * disableApp
    * @description Disable a single App
-   * @argument {int} appKey
-   * @public
+   * @argument {String} appKey
    */
   disableApp(appKey){
     "use strict";
@@ -215,11 +206,9 @@ class AppService{
   }
 
   /**
-   * getModules(AppKey)
    * @description Return a single App(s) module(s)
    * @argument {int} appKey
    * @argument {Function} filter
-   * @public
    */
   getModules(appKey, filter){
     "use strict";
@@ -237,11 +226,9 @@ class AppService{
   }
 
     /**
-   * getModules(appKey)
    * @description Return a single App(s) module(s)
    * @argument {int} appKey
    * @argument {int} moduleKey
-   * @public
    */
   getModule(appKey, moduleKey){
     "use strict";
@@ -257,11 +244,9 @@ class AppService{
   }
 
   /**
-   * enableModule
    * @description Enable a single App(s) module
    * @argument {int} appKey
    * @argument {int} moduleKey
-   * @public
    */
   enableModule(appKey, moduleKey){
     "use strict";
@@ -277,11 +262,9 @@ class AppService{
   }
 
   /**
-   * disableModule
    * @description Disable a single App(s) module
    * @argument {int} appKey
    * @argument {int} moduleKey
-   * @public
    */
   disableModule(appKey, moduleKey){
     "use strict";

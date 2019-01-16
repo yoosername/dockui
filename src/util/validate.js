@@ -51,7 +51,6 @@ const Shapes = Object.freeze(
 );
 
 /**
- * @function validateShape
  * @description Check if the object has desired shape
  */
 function validateShape(shape, object){
@@ -75,7 +74,6 @@ function validateShape(shape, object){
 }
 
 /**
- * @function validateShapes
  * @description Check we are working with the right objects or throw
  */
 function validateShapes(shapeArray){

@@ -3,7 +3,6 @@ const WebhookModuleDescriptor = require("../../descriptor/impl/WebhookModuleDesc
 const WebhookModule = require("../../module/impl/WebhookModule");
 
 /**
- * @class WebhookModuleLoader
  * @description Create a WebhookModule from a descriptor
  */
 class WebhookModuleLoader extends CachableModuleLoader{
@@ -13,9 +12,9 @@ class WebhookModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method canLoadModuleDescriptor
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
+   * @argument {AppDescriptor} descriptor The AppDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -56,8 +55,8 @@ class WebhookModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method loadModuleFromDescriptor
    * @description Create and return a new Module from the descriptor
+   * @argument {AppDescriptor} descriptor The AppDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 

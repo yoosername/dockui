@@ -1,11 +1,13 @@
 const ModuleDescriptor = require("../ModuleDescriptor");
 
 /**
- * @class WebPageModuleDescriptor
  * @description Loads WebPage Module fields from a JSON descriptor
  */
 class WebPageModuleDescriptor extends ModuleDescriptor{
 
+    /**
+     * @argument {JSON} descriptor
+     */
     constructor(descriptor){
 
       super(descriptor);
@@ -14,6 +16,9 @@ class WebPageModuleDescriptor extends ModuleDescriptor{
 
     }
 
+    /**
+     * @description Get the URL of the endpoint serving the WebPage
+     */
     getURL(){
       return this.url;
     }

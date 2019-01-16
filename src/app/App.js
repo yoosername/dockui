@@ -22,7 +22,6 @@ const SecurityContext = require("./security/SecurityContext");
 
 
 /**
- * @class App
  * @description Represents a single App.
  * @argument {string} key - A universally unique key for this App.
  * @argument {string} permission - one of "READ", "WRITE", "ADMIN" (note these are additive)
@@ -71,10 +70,10 @@ class App{
   }
 
   /**
-   * @method bootstrap
    * @description bootstrap the app for example by setting up a 
    *              seurity context and communicating shared secrets 
    *              to the App for subsequent communication
+   * @async
    */
   async bootstrap(){
 
@@ -120,7 +119,6 @@ class App{
   }
 
   /**
-   * @method getKey
    * @description return the unique key of this App
    */
   getKey(){
@@ -128,15 +126,13 @@ class App{
   }
 
   /**
-   * @method getPermission 
    * @description return the assigned permission of this App ("READ","WRITE","ADMIN")
    */
   getPermission(){
     return this.permission;
   }
 
-    /**
-   * @method getType
+  /**
    * @description return the type of this App (static/dynamic)
    */
   getType(){
@@ -144,7 +140,6 @@ class App{
   }
 
   /**
-   * @method getUrl
    * @description Helper returns the base URL from this Apps descriptor
    */
   getUrl(){
@@ -152,7 +147,6 @@ class App{
   }
 
   /**
-   * @method getUUID
    * @description return the uniquely generated framework identifier of this App instance
    */
   getUUID(){
@@ -160,7 +154,6 @@ class App{
   }
 
   /**
-   * @method getLoader
    * @description return the loader which loaded this App
    */
   getLoader(){
@@ -168,7 +161,6 @@ class App{
   }
 
   /**
-   * @method getDescriptor
    * @description return the App Descriptor this App was parsed from
    */
   getDescriptor(){
@@ -176,7 +168,6 @@ class App{
   }
 
   /**
-   * @method getEventService
    * @description return event service
    */
   getEventService(){
@@ -184,7 +175,6 @@ class App{
   }
 
   /**
-   * @method getModuleLoaders
    * @description return Module loaders which are available for parsing Module Descriptors
    */
   getModuleLoaders(){
@@ -192,7 +182,6 @@ class App{
   }
 
   /**
-   * @method getModules
    * @description return all the modules that have been loaded
    */
   getModules(){
@@ -200,7 +189,6 @@ class App{
   }
 
   /**
-   * @method getHttpClient
    * @description return the Http client configured for this App
    */
   getHttpClient(){
@@ -208,7 +196,6 @@ class App{
   }
 
   /**
-   * @method enable
    * @description Toggle enabled flag and notify event listeners
    */
   enable(){
@@ -219,7 +206,6 @@ class App{
   }
 
   /**
-   * @method disable
    * @description Toggle enabled flag and notify event listeners
    */
   disable(){
@@ -230,7 +216,6 @@ class App{
   }
 
   /**
-   * @method loadModules
    * @description Try to parse the AppDescriptor.modules and load 
    * all the modules in it using any of the passed in ModuleLoaders
    * Unloadable modules are loaded anyway but automatically disabled

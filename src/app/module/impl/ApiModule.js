@@ -1,14 +1,14 @@
 const Module = require("../Module");
 
 /**
- * @class ApiModule
  * @description Represents an API Module.
- * @extends Module
- * @argument {App} app - The App which loaded this module.
- * @argument {Object} descriptor - The descriptor used to load this module
  */
 class ApiModule extends Module{
 
+  /**
+   * @argument {App} app - The App which loaded this module.
+   * @argument {Object} descriptor - The descriptor used to load this module
+   */
   constructor(
     app,
     descriptor
@@ -21,7 +21,6 @@ class ApiModule extends Module{
   }
 
   /**
-   * @method getVersion
    * @description The version of the API
    */
   getVersion(){
@@ -29,7 +28,6 @@ class ApiModule extends Module{
   }
 
   /**
-   * @method getUrl
    * @description The URL of the API relative to the App Url
    */
   getUrl(){

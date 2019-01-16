@@ -1,14 +1,14 @@
 const Module = require("../Module");
 
 /**
- * @class WebhookModule
  * @description Represents a Webhook Module.
- * @extends Module
- * @argument {App} app - The App which loaded this module.
- * @argument {Object} descriptor - The descriptor used to load this module
  */
 class WebhookModule extends Module{
 
+  /**
+   * @argument {App} app - The App which loaded this module.
+   * @argument {Object} descriptor - The descriptor used to load this module
+   */
   constructor(
     app,
     descriptor
@@ -20,7 +20,6 @@ class WebhookModule extends Module{
   }
 
   /**
-   * @method getUrl
    * @description The URL of the webhook relative to the App Url
    */
   getUrl(){
@@ -28,7 +27,6 @@ class WebhookModule extends Module{
   }
 
   /**
-   * @method getEvents
    * @description The list of events that wewant to be notified about
    */
   getEvents(){

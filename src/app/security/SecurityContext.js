@@ -6,12 +6,14 @@ const uuidv4 = require('uuid/v4');
 const SECURITY_CONTEXT_STORE_PREFIX = "security-context_";
 
 /**
- * @class SecurityContext
  * @description Represents security info required to communicate
  *              with an APP. E.g. shared secrets etc
  */
 class SecurityContext{
 
+  /**
+   * @param {App} app - The App this context is intended for
+   */
   constructor(
     app
   ){
@@ -28,7 +30,6 @@ class SecurityContext{
   }
 
   /**
-   * @method getApp
    * @description return the App this security context is for
    */
   getApp(){
@@ -36,7 +37,6 @@ class SecurityContext{
   }
 
   /**
-   * @method getContext
    * @description Load context from the following in order:
    *               - Cache
    *               - Apps store if exists 
@@ -64,7 +64,6 @@ class SecurityContext{
   }
 
   /**
-   * @method generateNewContext
    * @description Generate a unique context with apps key and fresh secret etc
    * {
    *       key: key-from-app-descriptor,

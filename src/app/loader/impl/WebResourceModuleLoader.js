@@ -3,7 +3,6 @@ const WebResourceModuleDescriptor = require("../../descriptor/impl/WebResourceMo
 const WebResourceModule = require("../../module/impl/WebResourceModule");
 
 /**
- * @class WebResourceModuleLoader
  * @description Create a WebResourceModule from a descriptor
  */
 class WebResourceModuleLoader extends CachableModuleLoader{
@@ -13,9 +12,9 @@ class WebResourceModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method canLoadModuleDescriptor
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
+   * @argument {AppDescriptor} descriptor The AppDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -56,8 +55,8 @@ class WebResourceModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method loadModuleFromDescriptor
    * @description Create and return a new Module from the descriptor
+   * @argument {AppDescriptor} descriptor The AppDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 

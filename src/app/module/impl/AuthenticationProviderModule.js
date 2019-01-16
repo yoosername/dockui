@@ -1,14 +1,14 @@
 const Module = require("../Module");
 
 /**
- * @class AuthenticationProviderModule
  * @description Represents an Authentication Provider Module.
- * @extends Module
- * @argument {App} app - The App which loaded this module.
- * @argument {Object} descriptor - The descriptor used to load this module
  */
 class AuthenticationProviderModule extends Module{
 
+  /**
+   * @argument {App} app - The App which loaded this module.
+   * @argument {Object} descriptor - The descriptor used to load this module
+   */
   constructor(
     app,
     descriptor
@@ -21,7 +21,6 @@ class AuthenticationProviderModule extends Module{
   }
 
   /**
-   * @method getUrl
    * @description The URL of the Provider relative to the App Url
    */
   getUrl(){
@@ -29,7 +28,6 @@ class AuthenticationProviderModule extends Module{
   }
 
   /**
-   * @method getWeight
    * @description The weight determines when this provider will fire.
    *              lower numbers come first starting at 0.
    */

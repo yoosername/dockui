@@ -10,12 +10,14 @@ const  {
 } = require("../util/validate");
 
 /**
- * @class WebService
  * @description Wraps the intialization, configuration and starting/stopping of a web server
  *              and associated routes etc.
  */
 class WebService{
 
+  /**
+   * @argument {EventService} eventService The EventService to use for web events
+   */
   constructor(eventService){
     this.running = false;
 
@@ -27,7 +29,6 @@ class WebService{
   }
 
   /**
-   * @method start
    * @description initialize and start web server
    */
   start(){
@@ -47,7 +48,6 @@ class WebService{
   }
 
   /**
-   * @method shutdown
    * @description gracefully shutdown web server
    */
   shutdown(){
@@ -60,7 +60,6 @@ class WebService{
   }
 
   /**
-   * @method isRunning
    * @description Is the webserver currently serving requests
    */
   isRunning(){

@@ -1,11 +1,13 @@
 const ModuleDescriptor = require("../ModuleDescriptor");
 
 /**
- * @class WebFragmentModuleDescriptor
  * @description Loads WebFragment Module fields from a JSON descriptor
  */
 class WebFragmentModuleDescriptor extends ModuleDescriptor{
 
+    /**
+     * @argument {JSON} descriptor
+     */
     constructor(descriptor){
 
       super(descriptor);
@@ -16,14 +18,23 @@ class WebFragmentModuleDescriptor extends ModuleDescriptor{
 
     }
 
+    /**
+     * @description Get URL of location Fragment is served from
+     */
     getURL(){
       return this.url;
     }
 
+    /**
+     * @description Get CSS Selector of element wrapping fragment
+     */
     getSelector(){
       return this.selector;
     }
 
+    /**
+     * @description Get Location to inject fragment
+     */
     getLocation(){
       return this.location;
     }

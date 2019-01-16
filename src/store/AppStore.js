@@ -1,5 +1,4 @@
 /**
- * @class AppStore
  * @description Simple Store for persisting App/AppModule state
  */
 class AppStore{
@@ -8,7 +7,6 @@ class AppStore{
     }
 
     /**
-    * @method set
     * @description Store the value against the given key
     */
     set(key, val){
@@ -16,7 +14,6 @@ class AppStore{
     }
 
     /**
-    * @method get
     * @description Retrieve the value for the provided key
     */
     get(key){
@@ -24,7 +21,6 @@ class AppStore{
     }
 
     /**
-    * @method delete
     * @description Delete an entry by its key
     */
     delete(key){
@@ -32,7 +28,6 @@ class AppStore{
     }
 
     /**
-    * @method enableApp
     * @argument {App} app - the app to mark as enabled
     * @description Mark an App as enabled in the store
     */
@@ -41,7 +36,6 @@ class AppStore{
    }
 
     /**
-    * @method disableApp
     * @argument {App} app - the app to mark as disabled
     * @description Mark an App as disabled in the store
     */
@@ -50,7 +44,6 @@ class AppStore{
    }
 
     /**
-    * @method enableModule
     * @argument {Module} module - the module to mark as enabled
     * @description Mark a specific Apps Module as enabled in the store
     */
@@ -59,7 +52,6 @@ class AppStore{
    }
 
     /**
-    * @method disableModule
     * @argument {Module} module - the module to mark as disabled
     * @description Mark a specific Apps Module as disabled in the store
     */

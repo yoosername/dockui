@@ -1,11 +1,13 @@
 const ModuleDescriptor = require("../ModuleDescriptor");
 
 /**
- * @class RouteModuleDescriptor
  * @description Loads Route Module fields from a JSON descriptor
  */
 class RouteModuleDescriptor extends ModuleDescriptor{
 
+    /**
+     * @argument {JSON} descriptor
+     */
     constructor(descriptor){
 
       super(descriptor);
@@ -15,10 +17,16 @@ class RouteModuleDescriptor extends ModuleDescriptor{
 
     }
 
+    /**
+     * @description Get Routes that need translating into real URL
+     */
     getRoutes(){
       return this.routes;
     }
 
+    /**
+     * @description Get Real URL to translate the Routes into
+     */
     getURL(){
       return this.url;
     }

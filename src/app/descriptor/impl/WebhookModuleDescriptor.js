@@ -1,11 +1,13 @@
 const ModuleDescriptor = require("../ModuleDescriptor");
 
 /**
- * @class WebhookModuleDescriptor
  * @description Loads Webhook Module fields from a JSON descriptor
  */
 class WebhookModuleDescriptor extends ModuleDescriptor{
 
+    /**
+     * @argument {JSON} descriptor
+     */
     constructor(descriptor){
 
       super(descriptor);
@@ -14,10 +16,16 @@ class WebhookModuleDescriptor extends ModuleDescriptor{
 
     }
 
+    /**
+     * @description Get URL of Webhook endpoint
+     */
     getURL(){
       return this.url;
     }
 
+    /**
+     * @description Get WebHook Events App is interested in listening to
+     */
     getEvents(){
       return this.events;
     }

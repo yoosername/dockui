@@ -3,7 +3,6 @@ const WebItemModuleDescriptor = require("../../descriptor/impl/WebItemModuleDesc
 const WebItemModule = require("../../module/impl/WebItemModule");
 
 /**
- * @class WebItemModuleLoader
  * @description Create a WebItemModule from a descriptor
  */
 class WebItemModuleLoader extends CachableModuleLoader{
@@ -13,9 +12,9 @@ class WebItemModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method canLoadModuleDescriptor
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
+   * @argument {AppDescriptor} descriptor The AppDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -58,6 +57,7 @@ class WebItemModuleLoader extends CachableModuleLoader{
   /**
    * @method loadModuleFromDescriptor
    * @description Create and return a new Module from the descriptor
+   * @argument {AppDescriptor} descriptor The AppDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 

@@ -3,7 +3,6 @@ const WebFragmentModuleDescriptor = require("../../descriptor/impl/WebFragmentMo
 const WebFragmentModule = require("../../module/impl/WebFragmentModule");
 
 /**
- * @class WebFragmentModuleLoader
  * @description Create a WebFragmentModule from a descriptor
  */
 class WebFragmentModuleLoader extends CachableModuleLoader{
@@ -13,9 +12,9 @@ class WebFragmentModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method canLoadModuleDescriptor
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
+   * @argument {AppDescriptor} descriptor The AppDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -56,8 +55,8 @@ class WebFragmentModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method loadModuleFromDescriptor
    * @description Create and return a new Module from the descriptor
+   * @argument {AppDescriptor} descriptor The AppDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 

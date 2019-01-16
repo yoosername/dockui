@@ -1,14 +1,14 @@
 const Module = require("../Module");
 
 /**
- * @class WebResourceModule
  * @description Represents an WebResource Module.
- * @extends Module
- * @argument {App} app - The App which loaded this module.
- * @argument {Object} descriptor - The descriptor used to load this module
  */
 class WebResourceModule extends Module{
 
+  /**
+   * @argument {App} app - The App which loaded this module.
+   * @argument {Object} descriptor - The descriptor used to load this module
+   */
   constructor(
     app,
     descriptor
@@ -22,7 +22,6 @@ class WebResourceModule extends Module{
   }
 
   /**
-   * @method getUrl
    * @description The URL of the API relative to the App Url
    */
   getUrl(){
@@ -30,7 +29,6 @@ class WebResourceModule extends Module{
   }
 
   /**
-   * @method getResources
    * @description The list of JS/CSS Resource objects where:
    *              type := JS, CSS
    *              path := path relative to getUrl()
@@ -40,7 +38,6 @@ class WebResourceModule extends Module{
   }
 
   /**
-   * @method getContext
    * @description The context to inject the resources into for example
    *              A particular page or set of pages may choose a context
    *              and all resources which target that context will be injected
@@ -50,7 +47,6 @@ class WebResourceModule extends Module{
   }
 
   /**
-   * @method getWeight
    * @description The order with which to inject these web resources.
    *              Starts at 0 and goes higher.
    */

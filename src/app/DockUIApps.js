@@ -12,14 +12,14 @@ const  {
 } = require("../constants/events");
 
 /**
- * @class DockUIApps
  * @description Wrapper around App services for easier usage
- * @constructor {DockUIAppsBuilder} builder
- * @method start - Starts framework
- * @throws DockuiFrameworkError
  */
 class DockUIApps{
 
+    /**
+     * @argument {DockUIAppsBuilder} builder
+     * @throws DockuiFrameworkError
+     */
     constructor(builder){
         if(!builder){
             return new DockUIAppsBuilder();
@@ -32,9 +32,7 @@ class DockUIApps{
     }
 
     /**
-     * @method start
-     * @description initialize App service
-     * @public
+     * @description Initialize and start App service
      */
     start(){
         this.appService.start();
@@ -45,9 +43,7 @@ class DockUIApps{
     }
 
     /**
-     * @method shutdown
-     * @description shutdown App service
-     * @public
+     * @description Shutdown App service
      */
     shutdown(){
         this.webService.shutdown();
@@ -64,7 +60,6 @@ class DockUIApps{
 
 
 /**
- * @class DockUIAppsBuilder
  * @description Builder that generates a DockUIApps instance
  */
 class DockUIAppsBuilder{
@@ -77,17 +72,17 @@ class DockUIAppsBuilder{
     }
 
     /**
-     * @method withStore 
-     * @argument {AppStore} the AppStore to use
+     * @description Use the specified AppStore
+     * @argument {AppStore} appStore The AppStore to use
      */
-    withStore(AppStore){
-        this.appStore = AppStore;
+    withStore(appStore){
+        this.appStore = appStore;
         return this;
     }
 
     /**
-     * @method withEventService 
-     * @argument {EventService} the EventService to use
+     * @description Use the specified EventService
+     * @argument {EventService} eventService The EventService to use
      */
     withEventService(eventService){
         this.eventService = eventService;
@@ -95,17 +90,17 @@ class DockUIAppsBuilder{
     }
 
     /**
-     * @method withAppService 
-     * @argument {AppService} the AppService to use
+     * @description Use the specified AppService
+     * @argument {AppService} appService The AppService to use
      */
-    withAppService(AppService){
-        this.appService = AppService;
+    withAppService(appService){
+        this.appService = appService;
         return this;
     }
 
     /**
-     * @method withWebService
-     * @argument {WebService} the WebService to use
+     * @description Use the specified WebService
+     * @argument {WebService} webService the WebService to use
      */
     withWebService(webService){
         this.webService = webService;
@@ -113,8 +108,8 @@ class DockUIAppsBuilder{
     }
 
     /**
-     * @method build
      * @description Validate options and return a new DockUIApps instance
+     * @returns {DockUIApps} instance of DockUIApps
      */
     build(){
         this.validate();
@@ -123,8 +118,11 @@ class DockUIAppsBuilder{
     }
 
     /**
-     * @method validate
      * @description Validate builder options
+     * @throws {MissingStoreDuringSetupError} MissingStoreDuringSetupError
+     * @throws {MissingEventServiceDuringSetupError} MissingEventServiceDuringSetupError
+     * @throws {MissingAppServiceDuringSetupError} MissingAppServiceDuringSetupError
+     * @throws {MissingWebServiceDuringSetupError} MissingWebServiceDuringSetupError
      */
     validate(){
         if(!this.appStore){

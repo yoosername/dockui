@@ -3,11 +3,13 @@ const  {
 } = require("../../constants/errors");
 
 /**
- * @class ModuleDescriptor
- * @description Loads a descriptor in JSON format into a Pojo
+ * @description Loads a raw JSON descriptor into a specific ModuleDescriptor object
  */
 class ModuleDescriptor{
 
+    /**
+     * @argument {JSON} descriptor the raw descriptor
+     */
     constructor(descriptor){
 
       if(!descriptor.type||!descriptor.name||!descriptor.key){
@@ -26,26 +28,44 @@ class ModuleDescriptor{
 
     }
 
+    /**
+     * @description Get the Module type
+     */
     getType(){
       return this.type;
     }
 
+    /**
+     * @description Get the Module name
+     */
     getName(){
       return this.name;
     }
 
+    /**
+     * @description Get the Module key
+     */
     getKey(){
       return this.key;
     }
 
+    /**
+     * @description Get the Module weight
+     */
     getWeight(){
       return this.weight;
     }
 
+    /**
+     * @description Get the Module cache settings
+     */
     getCache(){
       return this.cache;
     }
 
+    /**
+     * @description Get the Modules required Roles
+     */
     getRoles(){
       return this.roles;
     }

@@ -1,11 +1,13 @@
 const ModuleDescriptor = require("../ModuleDescriptor");
 
 /**
- * @class ApiModuleDescriptor
  * @description Loads API Module fields from a JSON descriptor
  */
 class ApiModuleDescriptor extends ModuleDescriptor{
 
+    /**
+     * @argument {JSON} descriptor
+     */
     constructor(descriptor){
 
       super(descriptor);
@@ -15,10 +17,16 @@ class ApiModuleDescriptor extends ModuleDescriptor{
 
     }
 
+    /**
+     * @description Get the version of the API being provided
+     */
     getVersion(){
       return this.version;
     }
 
+    /**
+     * @description Get URL to the API endpoint
+     */
     getURL(){
       return this.url;
     }

@@ -5,12 +5,13 @@ const  {
 const axios = require("axios");
 
 /**
- * @class HttpClient
  * @description Custom Client to perform communication over HTTP with a specific App
- * @argument {App} app - The Remote App.
  */
 class HttpClient{
 
+  /**
+   * @argument {App} app The Remote App.
+   */
   constructor(
     app
   ){
@@ -33,10 +34,9 @@ class HttpClient{
   }
 
   /**
-   * @async
-   * @method init
-   * @argument {object} client - The Http Client instance
    * @description Oppertunity for subclasses to configure the client before use
+   * @argument {object} client The Http Client instance
+   * @async
    */
   init(client){
     return new Promise((resolve,reject)=>{
@@ -49,10 +49,9 @@ class HttpClient{
   }
 
   /**
-   * @method send
-   * @async
-   * @argument {object} options - The request options
    * @description perform a relative request against the Apps base URL
+   * @argument {object} options The request options
+   * @async
    */
   send(options){
     options = this.transformRequest(options);
@@ -60,11 +59,10 @@ class HttpClient{
   }
 
   /**
-   * @method get
-   * @async
+   * @description perform a relative GET request against the Apps base URL
    * @argument {String} url - the URL to GET relative to the App
    * @argument {Object} options - optional request config
-   * @description perform a relative GET request against the Apps base URL
+   * @async
    */
   get(url, options){
     options = Object.assign(options, {
@@ -75,12 +73,11 @@ class HttpClient{
   }
 
   /**
-   * @method post
-   * @async
+   * @description perform a GET request against the App
    * @argument {String} url - the URL to POST to relative to the App
    * @argument {Object} data - the data to Post to the App
    * @argument {Object} options - optional request config
-   * @description perform a GET request against the App
+   * @async
    */
   post(url, data, options){
     options = Object.assign({},options, {
@@ -92,7 +89,6 @@ class HttpClient{
   }
 
   /**
-   * @method transformRequest
    * @argument {Object} options - The Request options prior to send
    */
   transformRequest(options){
@@ -101,7 +97,6 @@ class HttpClient{
   }
 
   /**
-   * @method transformResponse
    * @argument {Object} response - The raw response object post receive
    */
   transformResponse(response){

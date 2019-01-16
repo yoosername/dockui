@@ -3,7 +3,6 @@ const AuthorizationProviderModuleDescriptor = require("../../descriptor/impl/Aut
 const AuthorizationProviderModule = require("../../module/impl/AuthorizationProviderModule");
 
 /**
- * @class AuthorizationProviderModuleLoader
  * @description Create a AuthorizationProviderModule from a descriptor
  */
 class AuthorizationProviderModuleLoader extends CachableModuleLoader{
@@ -13,9 +12,9 @@ class AuthorizationProviderModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method canLoadModuleDescriptor
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
+   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -56,8 +55,8 @@ class AuthorizationProviderModuleLoader extends CachableModuleLoader{
   }
 
   /**
-   * @method loadModuleFromDescriptor
    * @description Create and return a new Module from the descriptor
+   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 

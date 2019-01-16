@@ -1,11 +1,13 @@
 const ModuleDescriptor = require("../ModuleDescriptor");
 
 /**
- * @class AuthenticationProviderModuleDescriptor
  * @description Loads AuthenticationProvider fields from a JSON descriptor
  */
 class AuthenticationProviderModuleDescriptor extends ModuleDescriptor{
 
+    /**
+     * @argument {JSON} descriptor
+     */
     constructor(descriptor){
 
       super(descriptor);
@@ -13,6 +15,9 @@ class AuthenticationProviderModuleDescriptor extends ModuleDescriptor{
 
     }
 
+    /**
+     * @description Get the URL of authentication endpoint
+     */
     getURL(){
       return this.url;
     }

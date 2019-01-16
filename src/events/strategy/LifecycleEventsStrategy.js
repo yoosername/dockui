@@ -14,13 +14,14 @@ const {
 } = require("./helper");
 
 /**
- * @class LifecycleEventsStrategy
  * @description Hook to add custom events handler logic into AppService
- * @argument {EventService} eventService - The Event Service to listen to
- * @argument {AppStore} appStore - The persistent state storage to use
  */
 class LifecycleEventsStrategy{
 
+  /**
+   * @argument {EventService} eventService - The Event Service to listen to
+   * @argument {AppStore} appStore - The persistent state storage to use
+   */
   constructor(eventService, appStore){
 
     validateShapes([
@@ -33,7 +34,6 @@ class LifecycleEventsStrategy{
   }
 
   /**
-   * @method setup
    * @description Used to add event listeners and other setup tasks
    */
   setup(){
@@ -44,7 +44,6 @@ class LifecycleEventsStrategy{
   }
 
   /**
-   * @method teardown
    * @description Used to remove event listeners and other shutdown tasks
    */
   teardown(){

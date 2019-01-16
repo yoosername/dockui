@@ -3,13 +3,14 @@ const  {
 } = require("../../constants/errors");
 
 /**
- * @class AppDescriptor
- * @description Loads a descriptor in JSON format into a useable object
- * @argument {JSON} descriptor - Raw JSON descriptor parsed from App service endpoint
- * @argument {string} url - Optional URL to overwrite the parsed Descriptor URL (e.g. for Docker private URLs)
+ * Loads a descriptor in JSON format into a useable object
  */
 class AppDescriptor{
 
+    /**
+     * @param {JSON} descriptor - Raw JSON descriptor parsed from App service endpoint
+     * @param {String} url - Optional URL to overwrite the parsed Descriptor URL (e.g. for Docker private URLs)
+     */
     constructor(descriptor, url){
 
       const actualURL = (url) ? url : descriptor.url;
@@ -43,6 +44,10 @@ class AppDescriptor{
 
     }
 
+    /**
+     * Returns key
+     * @returns {string} key - The key to return
+     */
     getKey(){
       return this.key;
     }

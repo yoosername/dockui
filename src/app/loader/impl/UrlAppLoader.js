@@ -1,16 +1,17 @@
 const AppLoader = require("../AppLoader");
 
 /**
- * @class UrlAppLoader
  * @description Listen to framework events for APP_LOAD_REQUESTED events.
  *              - when detected attempt to load descriptor from the URL
  *              - and create an App from the descriptor
- * @argument {AppStore} appStore - The store to use for persistence.
- * @argument {Array} AppModuleLoaders - The loaders to use for loading Modules.
- * @argument {EventService} eventService - The Event service.
  */
 class UrlAppLoader extends AppLoader{
 
+  /**
+   * @argument {AppStore} appStore - The store to use for persistence.
+   * @argument {Array} AppModuleLoaders - The loaders to use for loading Modules.
+   * @argument {EventService} eventService - The Event service.
+   */
   constructor(
     appStore,
     appModuleLoaders,
@@ -20,7 +21,6 @@ class UrlAppLoader extends AppLoader{
   }
 
   /**
-   * @method scanForNewApps
    * @description Listen to framework events for APP_LOAD_REQUESTED events.
    *              when detected:
    *              - Send APP_LOAD_STARTED Event
@@ -41,7 +41,6 @@ class UrlAppLoader extends AppLoader{
   }
 
   /**
-   * @method stopScanningForNewApps
    * @description Stop checking for new Apps until scan is called again.
    */
   stopScanningForNewApps(){

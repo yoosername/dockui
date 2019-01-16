@@ -1,14 +1,14 @@
 const Module = require("../Module");
 
 /**
- * @class WebPageModule
  * @description Represents an WebPage Module.
- * @extends Module
- * @argument {App} app - The App which loaded this module.
- * @argument {Object} descriptor - The descriptor used to load this module
  */
 class WebPageModule extends Module{
 
+  /**
+   * @argument {App} app - The App which loaded this module.
+   * @argument {Object} descriptor - The descriptor used to load this module
+   */
   constructor(
     app,
     descriptor
@@ -20,7 +20,6 @@ class WebPageModule extends Module{
   }
 
   /**
-   * @method getUrl
    * @description The URL of the API relative to the App Url
    */
   getUrl(){

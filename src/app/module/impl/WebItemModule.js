@@ -1,14 +1,14 @@
 const Module = require("../Module");
 
 /**
- * @class WebItemModule
  * @description Represents an WebItem Module.
- * @extends Module
- * @argument {App} app - The App which loaded this module.
- * @argument {Object} descriptor - The descriptor used to load this module
  */
 class WebItemModule extends Module{
 
+  /**
+   * @argument {App} app - The App which loaded this module.
+   * @argument {Object} descriptor - The descriptor used to load this module
+   */
   constructor(
     app,
     descriptor
@@ -24,7 +24,6 @@ class WebItemModule extends Module{
   }
 
   /**
-   * @method getUrl
    * @description The URL of the API relative to the App Url
    */
   getUrl(){
@@ -32,7 +31,6 @@ class WebItemModule extends Module{
   }
 
   /**
-   * @method getText
    * @description The text to display in the Link
    */
   getText(){
@@ -40,7 +38,6 @@ class WebItemModule extends Module{
   }
 
   /**
-   * @method getLocation
    * @description Where this WebItem is intended to be injected.
    */
   getLocation(){
@@ -48,7 +45,6 @@ class WebItemModule extends Module{
   }
 
   /**
-   * @method getTooltip
    * @description The hover text for this Web Item.
    */
   getTooltip(){
@@ -56,7 +52,6 @@ class WebItemModule extends Module{
   }
 
   /**
-   * @method getWeight
    * @description The weight determines the order that the WebItem
    *              will be displayed starting at 0.
    */
