@@ -1,7 +1,7 @@
 /**
- * @function enableAppOnLoad
  * @description When Apps are loaded successfully - 
  *       if were not previously disabled, enable them now
+ * @ignore
  */
 function enableAppOnLoad(payload){
     "use strict";
@@ -19,8 +19,8 @@ function enableAppOnLoad(payload){
 }
 
 /**
- * @function log
  * @description Log Lifecycle transition state
+ * @ignore
  */
 function logAppInstallStarted(payload){
     "use strict";
