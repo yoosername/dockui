@@ -63,6 +63,9 @@ const MockApp = function(){
     return {
         getKey: function () {},
         getPermission: function () {},
+        getType: function () {},
+        getUrl: function () {},
+        getUUID: function () {},
         getLoader: function () {},
         getDescriptor: function () {},
         getEventService: function () {},

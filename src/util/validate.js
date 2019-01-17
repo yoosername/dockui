@@ -17,7 +17,7 @@ const Shapes = Object.freeze(
             "getApps","getApp"
         ],
         "App":[
-            "getKey","getPermission","getLoader","getDescriptor","getEventService",
+            "getKey","getType","getUrl","getUUID","getPermission","getLoader","getDescriptor","getEventService",
             "getModuleLoaders","enable","disable","loadModules"
         ],
         "AppDescriptor":[

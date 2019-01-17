@@ -21,6 +21,8 @@ class HttpClient{
       {"shape":"App","object":app}
     ]);
 
+    this.app = app;
+
     const client = axios.create({
       baseURL: this.app.getUrl(),
       timeout: 1000,
@@ -28,8 +30,8 @@ class HttpClient{
       // transformResponse: [this.postReceiveHook]
     });
 
-    this.init(client);
-    this._client = client;
+    var initializedClient = this.init(client);
+    this._client = (initializedClient) ? initializedClient : client;
 
   }
 
@@ -39,13 +41,7 @@ class HttpClient{
    * @async
    */
   init(client){
-    return new Promise((resolve,reject)=>{
-      // Subclasses should do setup tasks here.
-      // e.g. modify default client options like:
-      //   client.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-      // e.g. do intial app handshake if using shared secrets etc
-      resolve();
-    });
+    return client;
   }
 
   /**
@@ -65,6 +61,7 @@ class HttpClient{
    * @async
    */
   get(url, options){
+    options = (options) ? options : {};
     options = Object.assign(options, {
       method: 'get',
       url: url
@@ -80,6 +77,7 @@ class HttpClient{
    * @async
    */
   post(url, data, options){
+    options = (options) ? options : {};
     options = Object.assign({},options, {
       method: 'post',
       url: url,
