@@ -5,6 +5,13 @@ const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
 const  {
+  MockAppStore,
+  MockAppService,
+  MockEventService,
+  MockWebService
+} = require("../util/mocks");
+
+const  {
   MissingStoreDuringSetupError,
   MissingEventServiceDuringSetupError,
   MissingAppServiceDuringSetupError,
@@ -12,6 +19,7 @@ const  {
 } = require("../constants/errors");
 
 var {DockUIApps, DockUIAppsBuilder} = require('./DockUIApps');
+
 var mockStore = null;
 var mockAppService = null;
 var mockEventService = null;
@@ -21,23 +29,10 @@ describe('DockUIApps', function() {
     "use strict";
 
     beforeEach(function(){
-      mockStore = { get: function () {}, set: function () {} };
-      mockAppService = { 
-        start: function () {}, 
-        shutdown: function () {},
-        scanForNewApps: function () {},
-        stopScanningForNewApps: function(){},
-        getApps: function(){},
-        getApp: function(){},
-        enableApp: function(){},
-        disableApp: function(){},
-        getAppModules: function(){},
-        getAppModule: function(){},
-        enableModule: function(){},
-        disableModule: function(){}
-      };
-      mockEventService = { on: function () {}, trigger: function () {} };
-      mockWebService = { start: function () {}, shutdown: function () {} };
+      mockStore = new MockAppStore();
+      mockAppService = new MockAppService();
+      mockEventService = new MockEventService();
+      mockWebService = new MockWebService();
     });
 
     it('should be defined and loadable', function() {

@@ -9,8 +9,7 @@ const Shapes = Object.freeze(
         ], 
         "AppService":[
             "start","shutdown","scanForNewApps","stopScanningForNewApps",
-            "getApps","getApp","enableApp","disableApp",
-            "getModules","getModule","enableModule","disableModule"
+            "getApps","getApp","getModules","getModule"
         ], 
         "AppLoader":[
             "scanForNewApps","stopScanningForNewApps","addApp","removeApp",
@@ -18,7 +17,7 @@ const Shapes = Object.freeze(
         ],
         "App":[
             "getKey","getType","getUrl","getUUID","getPermission","getLoader","getDescriptor","getEventService",
-            "getModuleLoaders","enable","disable","loadModules"
+            "getModuleLoaders","getModules","getHttpClient","enable","disable","loadModules"
         ],
         "AppDescriptor":[
             "getName","getKey","getType","getUrl","getDescription","getVersion",
@@ -45,7 +44,7 @@ const Shapes = Object.freeze(
             "set","get","delete"
         ],
         "WebService":[
-            "start","stop"
+            "start","shutdown"
         ]
     }
 );
@@ -64,7 +63,7 @@ function validateShape(shape, object){
     }
     if(Shapes.hasOwnProperty(shape)){
         Shapes[shape].forEach(prop => {
-            if(!object.hasOwnProperty(prop)){
+            if(prop in object === false){
                 throw new ShapeValidationError("[validateShape] shape ("+shape+") - object ("+object+") is not the required shape ("+Shapes[shape]+")");
             }
         });

@@ -1,4 +1,5 @@
 const AppStore = require("../AppStore");
+const APP_STATE_KEY_PREFIX = "APP_STATE_";
 const APP_ENABLED_KEY_PREFIX = "APP_ENABLED_";
 const MODULE_ENABLED_KEY_PREFIX = "MODULE_ENABLED_";
 
@@ -37,36 +38,36 @@ class InMemoryAppStore extends AppStore{
     }
 
     /**
-    * @argument {App} app - the app to mark as enabled
-    * @description Mark an App as enabled in the store
+    * @argument {App} app - the app which state we want to save
+    * @description Store the state of an App
     */
-    enableApp(app){
-        this.set(APP_ENABLED_KEY_PREFIX+app.getKey(), true);
+    saveState(app){
+        let oldState = this.getAppState(app);
+        oldState = (oldState) ? oldState : {};
+        const newState = {
+            uuid: app.getUUID(),
+            key: app.getKey(),
+            enabled: app.isEnabled(),
+            modules: []
+        };
+        app.getModules().forEach((module)=>{
+            newState.modules.push({
+                key: module.getKey(),
+                enabled: module.isEnabled()
+            });
+        });
+        const saveState = Object.assign({},oldState,newState);
+        this.set(APP_STATE_KEY_PREFIX+app.getUUID(), saveState);
     }
 
     /**
-    * @argument {App} app - the app to mark as disabled
-    * @description Mark an App as disabled in the store
+    * @argument {App} app - the app which state we want to fetch
+    * @description Retrieve the state of an App
     */
-    disableApp(app){
-        this.set(APP_ENABLED_KEY_PREFIX+app.getKey(), false);
+    getState(app){
+        return this.get(APP_STATE_KEY_PREFIX+app.getUUID());
     }
 
-    /**
-    * @argument {Module} module - the module to mark as enabled
-    * @description Mark a specific Apps Module as enabled in the store
-    */
-    enableModule(module){
-        this.set(MODULE_ENABLED_KEY_PREFIX+module.getKey(), true);
-    }
-
-    /**
-    * @argument {Module} module - the module to mark as disabled
-    * @description Mark a specific Apps Module as disabled in the store
-    */
-    disableModule(module){
-        this.set(MODULE_ENABLED_KEY_PREFIX+module.getKey(), false);
-    }
 
 }
 

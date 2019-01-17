@@ -15,7 +15,7 @@ class HttpClient{
   constructor(
     app
   ){
-    
+  
     // Validate our args using ducktyping utils. (figure out better way to do this later)
     validateShapes([
       {"shape":"App","object":app}

@@ -1,6 +1,7 @@
 
 
 const uuidv4 = require('uuid/v4');
+const HttpClient = require("./http/HttpClient");
 
 const  {
   MODULE_LOAD_STARTED_EVENT,
@@ -20,6 +21,9 @@ const  {
 
 const SecurityContext = require("./security/SecurityContext");
 
+const fetchExistingOrCreateNewUUID = (store, app)=>{
+  
+};
 
 /**
  * @description Represents a single App.
@@ -45,77 +49,87 @@ class App{
     
     // Validate our args using ducktyping utils. (figure out better way to do this later)
     validateShapes([
-      {"shape":"AppPermission","object":permission},
       {"shape":"AppDescriptor","object":descriptor},
       {"shape":"AppLoader","object":loader},
-      {"shape":"AppModuleLoader","object":moduleLoaders[0]},
+      {"shape":"ModuleLoader","object":moduleLoaders[0]},
       {"shape":"AppStore","object":appStore},
       {"shape":"EventService","object":eventService}
     ]);
 
     this.key = key;
-    this.permission = perission;
+    this.permission = permission;
     this.uuid = uuidv4();
     this.descriptor = descriptor;
     this.loader = loader; 
     this.moduleLoaders = moduleLoaders;
     this.appStore = appStore;
-    this.eventsService = eventService;
+    this.eventService = eventService;
     this.securityContext = null;
 
     this.modules = [];
-    
     this.bootstrap();
 
   }
 
   /**
    * @description bootstrap the app for example by setting up a 
-   *              seurity context and communicating shared secrets 
+   *              security context and communicating shared secrets 
    *              to the App for subsequent communication
-   * @async
    */
-  async bootstrap(){
+  bootstrap(){
 
     // All Apps start disabled until bootstrap complete
     this.enabled = false;
 
-    return new Promise(async (resolve, reject) => {
+    // Load our Modules
+    this.loadModules();
 
-      // Get the type
-      const type = this.getType();
+    // Hydrate from store
+    this.load();
 
-      // App is dynamic so we need a custom client to communicate with 
-      // the various service endpoints using desired auth
-      if( type === "dynamic" ){
-        const securityContext = new SecurityContext(this);
-        // TODO: Can be other types of Client
-        //const jwtClient = new JWTHttpClient(securityContext);
-        // TODO: Implement this
-        const jwtClient = new HttpClient();
-        try{
-          await jwtClient.init();
-        }catch(e){
-          return reject( new AppBootstrapError(e) );
-        }
-        this.httpClient = jwtClient;
-      }
-      // App is static so Just use a plain HttpClient
-      else{
-        this.httpClient = new HttpClient();
-      }
+    // TODO: Store SecurityContext & authType in the store, so only booptstrap if havent dope before
 
-      // HttpClient is setup so try to load this Apps modules.
-      try{
-        await this.loadModules();
-      }catch(e){
-        return reject( new AppBootstrapError(e) );
-      }
+    // Get the type
+    const type = this.getType();
 
-      resolve();
+    // App is dynamic so we need a custom client to communicate with 
+    // the various service endpoints using desired auth
+    if( type === "dynamic" ){
+      const securityContext = new SecurityContext(this);
+      // TODO: Need to switch clients based on theC ype and auth required
+      // Temporarily using simple one without auth
+      //const jwtClient = new JWTHttpClient(securityContext);        
+      this.httpClient = new HttpClient(this);
+    }
+    // App is static so Just use a plain HttpClient
+    else{
+      this.httpClient = new HttpClient(this);
+    }
 
-    });
+  }
 
+  /**
+  * @description Save this App state to the store
+  */
+  save(){
+    this.appStore.saveState(this);
+  }
+
+  /**
+  * @description Load this App state from the store
+  */
+  load(){
+    const state = this.appStore.getState(this);
+    this.uuid = state.uuid;
+    this.key = state.key;
+    this.enabled = (state.enabled) ? true : false;
+  }
+
+  /**
+  * @description Return true if the App is currently enabled
+  */
+  isEnabled(){
+    return this.enabled;
   }
 
   /**
@@ -182,10 +196,13 @@ class App{
   }
 
   /**
-   * @description return all the modules that have been loaded
+   * @description return all the modules that have been loaded (optionally filtered)
    */
-  getModules(){
-    return this.modules;
+  getModules(filter){
+    if(!filter){
+      return this.modules;
+    }
+    return this.modules.filter(filter);
   }
 
   /**
@@ -216,22 +233,22 @@ class App{
   }
 
   /**
-   * @description Try to parse the AppDescriptor.modules and load 
+   * @description Try to parse the descriptor.modules and load 
    * all the modules in it using any of the passed in ModuleLoaders
    * Unloadable modules are loaded anyway but automatically disabled
    */
   loadModules(){
 
-    this.appDescriptor.getModules().forEach(moduleDescriptor =>{
+    this.descriptor.getModules().forEach(moduleDescriptor =>{
       var module = null;
       var loaded = false;
 
-      this.eventService.trigger(MODULE_LOAD_STARTED_EVENT, {
+      this.eventService.emit(MODULE_LOAD_STARTED_EVENT, {
         "app" : this,
         "descriptor" : moduleDescriptor
       });
 
-      this.appModuleLoaders.forEach(moduleLoader =>{
+      this.moduleLoaders.forEach(moduleLoader =>{
         try{
           if(!loaded && moduleLoader.canLoadModuleDescriptor(moduleDescriptor)){
             module = moduleLoader.loadModuleFromDescriptor(moduleDescriptor);
@@ -249,13 +266,13 @@ class App{
       }
       if(module){
         this.modules.push(module);
-        this.eventService.trigger(MODULE_LOAD_COMPLETE_EVENT, {
+        this.eventService.emit(MODULE_LOAD_COMPLETE_EVENT, {
           "app" : this,
           "descriptor" : moduleDescriptor,
           "module" : module
         });
       }else{
-        this.eventService.trigger(MODULE_LOAD_FAILED_EVENT, {
+        this.eventService.emit(MODULE_LOAD_FAILED_EVENT, {
           "app" : this,
           "descriptor" : moduleDescriptor
         });

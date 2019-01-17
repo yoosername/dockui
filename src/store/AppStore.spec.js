@@ -39,18 +39,14 @@ describe('AppStore', function() {
       expect(store.get).to.be.a('function');
       expect(store.set).to.be.a('function');
       expect(store.delete).to.be.a('function');
-      expect(store.enableApp).to.be.a('function');
-      expect(store.disableApp).to.be.a('function');
-      expect(store.enableModule).to.be.a('function');
-      expect(store.disableModule).to.be.a('function');
+      expect(store.saveAppState).to.be.a('function');
+      expect(store.getAppState).to.be.a('function');
       store.get();
       store.set();
       store.delete();
-      store.enableApp();
-      store.disableApp();
-      store.enableModule();
-      store.disableModule();
-      expect(logSpy).to.be.called.callCount(7);
+      store.saveAppState();
+      store.getAppState();
+      expect(logSpy).to.be.called.callCount(5);
       logSpy.restore();
     });
 

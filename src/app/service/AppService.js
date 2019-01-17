@@ -172,40 +172,6 @@ class AppService{
   }
 
   /**
-   * @description Enable a single App
-   * @argument {int} appKey
-   */
-  enableApp(appKey){
-    "use strict";
-    var app = this.getApp(appKey);
-    if( app !== null){
-      this.appStore.enableApp(appKey);
-      this.eventService.emit(APP_ENABLED_EVENT, {
-        "App" : app
-      });
-    }else{
-      console.warn("[AppService] Attempted to enable App ("+appKey+") but it was not found - skipping");
-    }
-  }
-
-  /**
-   * @description Disable a single App
-   * @argument {String} appKey
-   */
-  disableApp(appKey){
-    "use strict";
-    var app = this.getApp(appKey);
-    if( app !== null){
-      this.appStore.disableApp(appKey);
-      this.eventService.emit(APP_DISABLED_EVENT, {
-        "App" : app
-      });
-    }else{
-      console.warn("[AppService] Attempted to disable App ("+appKey+") but it was not found - skipping");
-    }
-  }
-
-  /**
    * @description Return a single App(s) module(s)
    * @argument {int} appKey
    * @argument {Function} filter
@@ -243,41 +209,6 @@ class AppService{
     return module;
   }
 
-  /**
-   * @description Enable a single App(s) module
-   * @argument {int} appKey
-   * @argument {int} moduleKey
-   */
-  enableModule(appKey, moduleKey){
-    "use strict";
-    var module = this.getModule(appKey, moduleKey);
-    if( module !== null){
-      this.appStore.enableModule(appKey,moduleKey);
-      this.eventService.emit(MODULE_ENABLED_EVENT, {
-        "module" : module
-      });
-    }else{
-      console.warn("[AppService] Attempted to enable module ("+moduleKey+") for App ("+appKey+") but it was not found - skipping");
-    }
-  }
-
-  /**
-   * @description Disable a single App(s) module
-   * @argument {int} appKey
-   * @argument {int} moduleKey
-   */
-  disableModule(appKey, moduleKey){
-    "use strict";
-    var module = this.getModule(appKey, moduleKey);
-    if( module !== null){
-      this.appStore.disableModule(appKey,moduleKey);
-      this.eventService.emit(MODULE_DISABLED_EVENT, {
-        "module" : module
-      });
-    }else{
-      console.warn("[AppService] Attempted to disable module ("+moduleKey+") for App ("+appKey+") but it was not found - skipping");
-    }
-  }
 
 }
 

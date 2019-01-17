@@ -9,7 +9,6 @@ const  {
 } = require("../../util/validate");
 
 const {
-  enableAppOnLoad,
   log
 } = require("./helper");
 
@@ -39,7 +38,6 @@ class LifecycleEventsStrategy{
   setup(){
     this.eventService.addListener(APP_LOAD_STARTED_EVENT, log);
     this.eventService.addListener(APP_LOAD_COMPLETE_EVENT, log);
-    this.eventService.addListener(APP_LOAD_COMPLETE_EVENT, enableAppOnLoad);
     this.eventService.addListener(APP_LOAD_FAILED_EVENT, log);
   }
 
@@ -50,7 +48,6 @@ class LifecycleEventsStrategy{
     // Remove all our listeners.
     this.eventService.removeListener(APP_LOAD_STARTED_EVENT, log);
     this.eventService.removeListener(APP_LOAD_COMPLETE_EVENT, log);
-    this.eventService.removeListener(APP_LOAD_COMPLETE_EVENT, enableAppOnLoad);
     this.eventService.removeListener(APP_LOAD_FAILED_EVENT, log);
   }
 

@@ -7,12 +7,8 @@ const MockAppService = function(){
         "stopScanningForNewApps": function () {},
         "getApps": function () {},
         "getApp": function () {},
-        "enableApp": function () {},
-        "disableApp": function () {},
         "getModules": function () {},
-        "getModule": function () {},
-        "enableModule": function () {},
-        "disableModule": function () {}
+        "getModule": function () {}
     };
 };
 const MockAppLoader = function(){
@@ -39,7 +35,9 @@ const MockAppStore = function(){
     return {
         get: function () {}, 
         set: function () {},
-        delete: function () {}
+        delete: function () {},
+        saveState: function () {},
+        getState: function () {return {key:"",uuid:"",enabled:true,modules:[]};}
     };
 };
 const MockLifecycleEventsStrategy = function(){
@@ -62,14 +60,16 @@ const MockApp = function(){
     "use strict";
     return {
         getKey: function () {},
-        getPermission: function () {},
         getType: function () {},
         getUrl: function () {},
         getUUID: function () {},
+        getPermission: function () {},
         getLoader: function () {},
         getDescriptor: function () {},
         getEventService: function () {},
-        getModuleLoaders: function () {}, 
+        getModuleLoaders: function () {},
+        getModules: function () {}, 
+        getHttpClient: function () {}, 
         enable: function () {}, 
         disable: function () {}, 
         loadModules: function () {}
@@ -121,7 +121,7 @@ const MockAppDescriptor = function(){
         getIcon: function () {},
         getLifecycle: function () {},
         getAuthentication: function () {},
-        getModules: function () {}
+        getModules: function () {return [];}
     };
 };
 const MockModuleDescriptor = function(){
@@ -132,6 +132,13 @@ const MockModuleDescriptor = function(){
         getName: function () {return "mockModuleName";},
         getCache: function () {return {policy: "disabled"};},
         getRoles: function () {return [];}
+    };
+};
+const MockWebService = function(){
+    "use strict";
+    return {
+        start: function () {},
+        shutdown: function () {}
     };
 };
 
@@ -148,5 +155,6 @@ module.exports = {
     MockModuleLoaders,
     MockModule,
     MockAppDescriptor,
-    MockModuleDescriptor
+    MockModuleDescriptor,
+    MockWebService
 };
