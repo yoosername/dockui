@@ -136,43 +136,85 @@ describe('App', function() {
 
       });
 
-    // Test getModules(filter)
-    it('should return filtered Array of modules via getModules', function(){
-      const stubDescriptor = sinon.stub(mockAppDescriptor, "getModules");
-      stubDescriptor.returns([
-        {key:"m1"},{key:"m2"},{key:"m3"}
-      ]);
-      const stubCanLoad = sinon.stub(mockModuleLoaders[0], "canLoadModuleDescriptor");
-      stubCanLoad.returns(true);
-      const stubLoad = sinon.stub(mockModuleLoaders[0], "loadModuleFromDescriptor");
-      var count = 0;
-      stubLoad.returns({key:""+ (count++) +""});
+      // Test getModules(filter)
+      it('should return filtered Array of modules via getModules', function(){
 
-      const app = new App(
-        TEST_KEY,
-        AppPermission.READ,
-        mockAppDescriptor,
-        mockAppLoader, 
-        mockModuleLoaders,
-        mockAppStore,
-        mockEventService
-      );
+        const app = new App(
+          TEST_KEY,
+          AppPermission.READ,
+          mockAppDescriptor,
+          mockAppLoader, 
+          mockModuleLoaders,
+          mockAppStore,
+          mockEventService
+        );
 
-      expect(app.getModules().length).to.equal(3);
-      app.modules = [
-        {key:"m1"},{key:"m2"},{key:"m3"}
-      ];
-      expect(app.getModules((m)=>{return m.key==="m2";}).length).to.equal(1);
+        app.modules = [
+          {key:"m1"},{key:"m2"},{key:"m3"}
+        ];
+        expect(app.getModules().length).to.equal(3);
+        expect(app.getModules((m)=>{return m.key==="m2";}).length).to.equal(1);
 
-      stubDescriptor.restore();
-      stubCanLoad.restore();
-      stubLoad.restore();
-    });
+      });
 
-    // Test getModule(moduleKey)
-    // Test enable()
-    // Test disable()
-    });
+      // Test getModule(moduleKey)
+      it('should return correct single Module', function(){
+        
+        const stubDescriptor = sinon.stub(mockAppDescriptor, "getModules");
+        const SINGLEKEY = "test.single.key";
+        stubDescriptor.returns([
+          {key:SINGLEKEY}
+        ]);
+        const stubCanLoad = sinon.stub(mockModuleLoaders[0], "canLoadModuleDescriptor");
+        const stubLoad = sinon.stub(mockModuleLoaders[0], "loadModuleFromDescriptor");
+        stubCanLoad.returns(true);
+        stubLoad.returns({getKey:function(){return SINGLEKEY;}});
+
+        const app = new App(
+          TEST_KEY,
+          AppPermission.READ,
+          mockAppDescriptor,
+          mockAppLoader, 
+          mockModuleLoaders,
+          mockAppStore,
+          mockEventService
+        );
+
+        expect(mockAppStoreGetState.called).to.equal(true);
+        expect(app.getModule(SINGLEKEY).getKey()).to.equal(SINGLEKEY);
+
+        stubDescriptor.restore();
+        stubCanLoad.restore();
+        stubLoad.restore();
+
+      });
+
+      // Test enable()
+      it('calling enable/disable should make isEnabled === true/false and cause relevant EVENT', function(){
+        
+        const eventSpy = sinon.spy(mockEventService, "emit");
+        const app = new App(
+          TEST_KEY,
+          AppPermission.READ,
+          mockAppDescriptor,
+          mockAppLoader, 
+          mockModuleLoaders,
+          mockAppStore,
+          mockEventService
+        );
+
+        expect(app.isEnabled()).to.equal(true);
+        app.enable();
+        expect(eventSpy.called).to.equal(true);
+        eventSpy.reset();
+        app.disable();
+        expect(app.isEnabled()).to.equal(false);
+        expect(eventSpy.called).to.equal(true);
+        eventSpy.reset();
+        
+
+      });
+
+  });
     
-
 });

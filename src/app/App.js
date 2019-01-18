@@ -206,6 +206,14 @@ class App{
   }
 
   /**
+   * @description return a single module by key
+   */
+  getModule(key){
+    const filtered = this.modules.filter((module)=>{return (module.getKey() === key);});
+    return filtered[0];
+  }
+
+  /**
    * @description return the Http client configured for this App
    */
   getHttpClient(){
@@ -217,7 +225,7 @@ class App{
    */
   enable(){
     this.enabled = true;
-    this.eventService.trigger(APP_ENABLED_EVENT, {
+    this.eventService.emit(APP_ENABLED_EVENT, {
       "app" : this
     });
   }
@@ -227,7 +235,7 @@ class App{
    */
   disable(){
     this.enabled = false;
-    this.eventService.trigger(APP_DISABLED_EVENT, {
+    this.eventService.emit(APP_DISABLED_EVENT, {
       "app" : this
     });
   }
