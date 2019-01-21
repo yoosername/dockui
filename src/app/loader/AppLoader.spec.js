@@ -17,6 +17,9 @@ var mockAppStore = null;
 var mockModuleLoaders = null;
 var mockEventService = null;
 
+// TODO: We need an AppLoader which can Clone a git repo and build a docker image locally
+// TODO: We need an AppLoader which can start an App from a newly detected local Docker image
+
 describe('AppLoader', function() {
     "use strict";
 
