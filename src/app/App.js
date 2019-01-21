@@ -96,7 +96,7 @@ class App{
     // the various service endpoints using desired auth
     if( type === "dynamic" ){
       const securityContext = new SecurityContext(this);
-      // TODO: Need to switch clients based on theC ype and auth required
+      // TODO: Need to switch clients based on the type and auth required
       // Temporarily using simple one without auth
       //const jwtClient = new JWTHttpClient(securityContext);        
       this.httpClient = new HttpClient(this);
@@ -127,6 +127,7 @@ class App{
 
   /**
   * @description Return true if the App is currently enabled
+  * @returns {Boolean} Return true if this App is currently enabled
   */
   isEnabled(){
     return this.enabled;
@@ -134,20 +135,27 @@ class App{
 
   /**
    * @description return the unique key of this App
+   * @returns {String} The Apps key
    */
   getKey(){
     return this.key;
   }
 
   /**
-   * @description return the assigned permission of this App ("READ","WRITE","ADMIN")
+   * @description Returns the assigned AppPermission of this App.
+   * @returns {AppPermission} The AppPermission granted to this App.
+   * @example AppPermission.READ
+   * @example AppPermission.WRITE
+   * @example AppPermission.ADMIN
    */
   getPermission(){
     return this.permission;
   }
 
   /**
-   * @description return the type of this App (static/dynamic)
+   * @description Return the type of this App
+   * @returns {String} Type
+   * @example "static" or "dynamic"
    */
   getType(){
     return this.descriptor.getType();
@@ -155,48 +163,55 @@ class App{
 
   /**
    * @description Helper returns the base URL from this Apps descriptor
+   * @returns {String} URL
    */
   getUrl(){
     return this.descriptor.getUrl();
   }
 
   /**
-   * @description return the uniquely generated framework identifier of this App instance
+   * @description Return the uniquely generated framework identifier of this App instance
+   * @returns {String} UUID
    */
   getUUID(){
     return this.uuid;
   }
 
   /**
-   * @description return the loader which loaded this App
+   * @description Return the loader which loaded this App
+   * @returns {AppLoader} AppLoader
    */
   getLoader(){
     return this.loader;
   }
 
   /**
-   * @description return the App Descriptor this App was parsed from
+   * @description Return the App Descriptor this App was parsed from
+   * @returns {AppDescriptor} AppDescriptor
    */
   getDescriptor(){
     return this.descriptor;
   }
 
   /**
-   * @description return event service
+   * @description Return event service
+   * @returns {EventService} EventService
    */
   getEventService(){
     return this.eventService;
   }
 
   /**
-   * @description return Module loaders which are available for parsing Module Descriptors
+   * @description Return Module loaders which are available for parsing Module Descriptors
+   * @returns {Array} Array of ModuleLoader
    */
   getModuleLoaders(){
     return this.moduleLoaders;
   }
 
   /**
-   * @description return all the modules that have been loaded (optionally filtered)
+   * @description Return all the modules that have been loaded (optionally filtered)
+   * @returns {Array} Array of Module
    */
   getModules(filter){
     if(!filter){
@@ -207,6 +222,7 @@ class App{
 
   /**
    * @description return a single module by key
+   * @returns {Module} A single Module that matches the passed key
    */
   getModule(key){
     const filtered = this.modules.filter((module)=>{return (module.getKey() === key);});
@@ -215,26 +231,29 @@ class App{
 
   /**
    * @description return the Http client configured for this App
+   * @returns {HttpClient} HttpClient used for communicating with the App remotely
    */
   getHttpClient(){
     return this.httpClient;
   }
 
   /**
-   * @description Toggle enabled flag and notify event listeners
+   * @description Toggle enabled flag, save state to store and and notify event listeners
    */
   enable(){
     this.enabled = true;
+    this.save();
     this.eventService.emit(APP_ENABLED_EVENT, {
       "app" : this
     });
   }
 
   /**
-   * @description Toggle enabled flag and notify event listeners
+   * @description Toggle enabled flag off, save state and notify event listeners
    */
   disable(){
     this.enabled = false;
+    this.save();
     this.eventService.emit(APP_DISABLED_EVENT, {
       "app" : this
     });

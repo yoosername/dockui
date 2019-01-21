@@ -69,7 +69,6 @@ describe('App', function() {
       expect(App).to.be.a('function');
     });
 
-    // TODO: These tests
     // App should validate arguments
     it('should validate arguments or throw', function() {
       expect(()=>{new App();}).to.throw();
@@ -211,6 +210,27 @@ describe('App', function() {
         expect(app.isEnabled()).to.equal(false);
         expect(eventSpy.called).to.equal(true);
         eventSpy.reset();
+        
+
+      });
+
+      // Test enable()
+      it('calling enable/disable should save state to store', function(){
+        
+        const storeSpy = sinon.spy(mockAppStore, "saveState");
+        const app = new App(
+          TEST_KEY,
+          AppPermission.READ,
+          mockAppDescriptor,
+          mockAppLoader, 
+          mockModuleLoaders,
+          mockAppStore,
+          mockEventService
+        );
+
+        app.enable();
+        expect(storeSpy.called).to.equal(true);
+        storeSpy.reset();
         
 
       });
