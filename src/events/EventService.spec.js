@@ -1,4 +1,5 @@
 const expect = require('chai').expect;
+
 const EventService = require("./EventService");
 
 describe('EventService', function() {
@@ -20,7 +21,7 @@ describe('EventService', function() {
         expect(withoutNewOperator).to.be.an.instanceOf(EventService);
     });
 
-    it('should emit an event when trigger is called with the correct payload', function(done) {
+    it('should emit an event when emit() is called with the correct payload', function(done) {
 
         const es = new EventService();
         const eventPayload = {

@@ -1,9 +1,29 @@
-const MISSING_CLIENT_ERROR = "DockerService expects an instance of DockerClient as the first argument";
-const MISSING_EMITTER_ERROR = "DockerService expects an instance of EventEmitter as the second argument";
-const LISTING_RUNNING_CONTAINERS_ERROR = "There was a problem while trying to list the currently running containers";
-const DOCKER_NOT_RUNNING_ERROR = "Docker is not detected or is currently not running";
+class ShapeValidationError extends Error{}
+class MissingStoreDuringSetupError extends Error{}
+class MissingEventServiceDuringSetupError extends Error{}
+class MissingAppServiceDuringSetupError extends Error{}
+class MissingWebServiceDuringSetupError extends Error{}
+class AppServiceValidationError extends Error{}
+class AppBootstrapError extends Error{}
+class SecurityContextAppPostFailedError extends Error{}
+class LifecycleEventsStrategyValidationError extends Error{}
+class MalformedModuleDescriptorError extends Error{}
+class MalformedAppDescriptorError extends Error{}
+class DockerNotRunningError extends Error{}
+class DockerProblemListingContainersError extends Error{}
 
-module.exports.MISSING_CLIENT_ERROR = MISSING_CLIENT_ERROR;
-module.exports.MISSING_EMITTER_ERROR = MISSING_EMITTER_ERROR;
-module.exports.DOCKER_NOT_RUNNING_ERROR = DOCKER_NOT_RUNNING_ERROR;
-module.exports.LISTING_RUNNING_CONTAINERS_ERROR = LISTING_RUNNING_CONTAINERS_ERROR;
+module.exports = {
+    ShapeValidationError,
+    MissingStoreDuringSetupError,
+    MissingEventServiceDuringSetupError,
+    MissingAppServiceDuringSetupError,
+    MissingWebServiceDuringSetupError,
+    AppServiceValidationError,
+    AppBootstrapError,
+    SecurityContextAppPostFailedError,
+    LifecycleEventsStrategyValidationError,
+    MalformedModuleDescriptorError,
+    MalformedAppDescriptorError,
+    DockerNotRunningError,
+    DockerProblemListingContainersError
+};
