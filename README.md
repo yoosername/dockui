@@ -2,28 +2,43 @@
 
 > Compose a single web experience from loosely coupled Docker based Apps
 
-*Note: This is a draft and none of the commands below may yet work*
+*Note: This is a DRAFT and none of the commands below should be expected to work*
 
 ## Quick Start
 
-### Start the framework
-
-Use the CLI to generate a new dockui instance config in the current directory (generates dockui.yml)
+### Start a framework instance
 
 ```bash
+# Install the CLI globally and start a new project folder.
 mkdir ~/dockui-demo && cd ~/dockui-demo
 sudo npm install -g @dockui/cli
-```
-
-Start an instance of the framework using the config in the current directory
-Optionally run 'dockui start ./otherDir' or 'dockui start ./otherConfigFile.yml'
-Defaults to running in the background as a daemon unless you use the -fg switch
-
-```bash
+# Use the CLI to generate a new dockui instance config in the current directory (generates dockui.yml)
+# ./dockui.yml
+# {
+#     name: "Human Readable Name",
+#     uuid: "generated-instance-uuid-c4c5453c4",
+#     description: "A longer description of this instance",
+#     management: {
+#         api: {
+#           type: "socket",
+#           path: "/var/dockui/sockets/{uuid}"
+#         },
+#         creds: {
+#             user: "admin"
+#             password: "generatedInstanceGlobalAdminPassword"
+#         }
+#     }
+# }
 dockui init
+# Start an instance of the framework using the config in the current directory
+# Optionally run 'dockui start ./otherDir' or 'dockui start ./otherConfigFile.yml'
+# Defaults to running in the background as a daemon unless you use the -fg switch
 dockui start
-Starting Dockui instance 2ce46c5e - Logs output to STDOUT
+#> Starting Dockui instance 2ce46c5e in daemon mode - output to STDOUT
 ```
+
+*Note: The following commands assume the current directory has a dockui.yml config in it*
+*If it doesnt you need to add --config <cnf> or <cnf> -c arguments as the creds are used to communicate with the framework management API*
 
 ### List Loaded Apps
 
