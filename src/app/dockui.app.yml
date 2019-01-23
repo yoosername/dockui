@@ -7,7 +7,7 @@
 #   name: Human readable Name for this DockUI App
 #   url: Remote location of this Descriptor
 #        - Only used if not yet known. I.e. because you manually installed the App from its descriptor file
-#        - Some loaders (e.g. DockerEventsLoader) would uoveride this with an internal Docker network address instead
+#        - Some loaders (e.g. DockerEventsLoader) would overide this with an internal Docker network address instead
 #   type: Type of the App. Can be one of 'static' or 'dynamic'. 
 #            static 
 #               - Can only use Route,WebPage,WebItem,WebFragment,WebResource modules
@@ -20,16 +20,20 @@
 #   version: Version of this App
 #   descriptor-version: Version of the DockUI App Descriptor being used by the App.
 #   icon: A relative (to the App) url pointing to an Icon Image file for use by the framework.
+#   build: When loaded in source form, e.g. from Github, this tells the framework how to build and run the App
 #   lifecycle.loaded: Callback that is syncronously called by the framework with a new security context during App load.
 #
 #      - App should respond with HTTP 200 OK or install will fail.
 #      - Security context payload contains the following JSON
 #
 #       {
-#         key: key-from-your-app-descriptor,
-#         uuid: framework-unique-identifier-of-your-App,
-#         secret: a-secret-used-for-jwt-signing-etc,
-#         framework.url: https://base.url.of.the.calling.framework.instance
+#         key: key-declared-in-your-app-descriptor,
+#         uuid: framework-unique-identifier-for-your-app,
+#         secret: a-shared-secret-generated-for-jwt-signing-payloads-to-your-app,
+#         framework: {
+#            url: https://base.url.of.the.calling.framework.instance,
+#            uuid: framework-unique-instance-identifier
+#         }
 #       }
 #
 #   authentication.type: Mechanism used by App to authenticate with framework. (currently only JWT)
@@ -41,6 +45,9 @@ description: This is a demo App showing of the various features of the DockUI fr
 version: 1.0.0
 descriptor-version: 1.0.0
 icon: '/static/logo.png'
+build: 
+  - docker build --tag dockuidemo .
+  - docker run -t dockuidemo
 lifecycle: 
   - loaded: /loaded
 authentication:
@@ -60,6 +67,7 @@ modules:
   # name: A human readable name
   # key: A unique key (unique to the App)
   # weight: The order in which the module is either inserted into a UI or invoked. Lower = first
+  # enabled: Whether the module should start enabled. Defaults to true. (true or false)
 
   # ----------------------
   # Caching Properties
@@ -87,6 +95,7 @@ modules:
   # Properties:
   #   routes : a list of regular expressions to map to module URLs
   #   url: The real URL to route transform the requests to
+  #   weight: The precedence this route should be tested in a first come first serve scenario
 
     - type : Route
       name: Example Route
@@ -94,6 +103,7 @@ modules:
       routes:
         - /example*
       url: /apps/example-app-key/modules/example-webpage$1
+      weight: 0
 
   # ----------------------
   # AuthenticationProvider
@@ -298,6 +308,12 @@ modules:
       roles:
         - UNAUTHENTICATED
         - EVERYONE
+
+    - type : InitiallyDisabledWebPage
+      name : Example Webpage that starts life disabled
+      key : example-disabled-webpage
+      url : /pages/example2.html
+      enabled: false
 
   # ----------------------
   # API
