@@ -8,16 +8,21 @@
 
 ### Start the framework
 
+Use the CLI to generate a new dockui instance config in the current directory (generates dockui.yml)
+
 ```bash
 mkdir ~/dockui-demo && cd ~/dockui-demo
 sudo npm install -g @dockui/cli
-# Use the CLI to generate a new dockui instance config in the current directory (generates dockui.yml)
+```
+
+Start an instance of the framework using the config in the current directory
+Optionally run 'dockui start ./otherDir' or 'dockui start ./otherConfigFile.yml'
+Defaults to running in the background as a daemon unless you use the -fg switch
+
+```bash
 dockui init
-# Start an instance of the framework using the config in the current directory
-# Optionally run 'dockui start ./otherDir' or 'dockui start ./otherConfigFile.yml'
-# Defaults to running in the background as a daemon unless you use the -fg switch
 dockui start
-#> Starting Dockui instance 2ce46c5e - Logs output to STDOUT
+Starting Dockui instance 2ce46c5e - Logs output to STDOUT
 ```
 
 ### List Loaded Apps
