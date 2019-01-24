@@ -1,11 +1,13 @@
-# DockUI
+# DOCKUI
 
+```shell
 ██████╗  ██████╗  ██████╗██╗  ██╗██╗   ██╗██╗
 ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██║   ██║██║
 ██║  ██║██║   ██║██║     █████╔╝ ██║   ██║██║
 ██║  ██║██║   ██║██║     ██╔═██╗ ██║   ██║██║
 ██████╔╝╚██████╔╝╚██████╗██║  ██╗╚██████╔╝██║
 ╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═
+```
 
 > Compose a single web experience from loosely coupled Docker based Apps
 
@@ -60,6 +62,7 @@ default: "prod"
 ### Run a framework instance
 
 The **--config** option can be ignored if the config file is in the current directory
+
 The **instance** argument can be ignored if a **_default_** is specified in the config
 
 ```shell
@@ -92,9 +95,23 @@ ref          32432     Demo Dynamic App2     c6cc4af6     Loading..........     
 
 There are two types of App **"static"** and **"dynamic"**.
 
-* Static Apps can be loaded directly from a URL or File and will be cached.
-* Dynamic Apps may require some build steps if they are not already running
+* **Static** Apps can be loaded directly from a _URL_ or _File_ and will be cached.
+* **Dynamic** Apps may require some build steps if they are not already running
   * For example building and starting the respective docker image etc
+
+Apps can be loaded from a variety of locations through the use of AppLoaders. Built in ones include:
+
+* Manually adding from local file
+* Manually adding from remote URL
+* Detection of Docker container
+* Built from Git Repo
+
+These can all be triggered in two ways:
+* Manually using the **CLI**
+* Remotely by an **App** using Management REST API with shared creds
+  * Must have been loaded via the CLI
+  * Must be approved & enabled
+  * Must have been granted ADMIN permission
 
 ```shell
 dockui app load [--permission <permission> --config <configPath> --auto-approve <instance>] <url>
