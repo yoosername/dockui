@@ -1,7 +1,7 @@
 # DOCKUI
 
 > Compose a single web experience from loosely coupled Docker based Apps
-> This is a **DRAFT** of a _work in progress_ and none of the commands below should be expected to work
+  This is a **DRAFT** of a _work in progress_ and none of the commands below should be expected to work
 
 ## Quick Start
 
@@ -26,7 +26,7 @@ This will create a Dockui instance config following these rules:
 * If no *name* specified then it will use the default of "prod"
   * If the named section already exists it will be overwritten
   * There can be multiple instances specified by name
-* If a -y flag present all of the defaults will be chosen
+* If -y flag present all of the defaults will be chosen
 * If no -y flag then you will be prompted for answers to setup the instance
 
 ```yaml
@@ -66,16 +66,16 @@ Running Dockui instance 2ce46c5e in daemon mode, forwarding logs to /var/log/doc
 ### List Loaded Apps per instance
 
 ```shell
-dockui app ls [<instance> --config <configPath>]
+dockui ls [<instance> --config <configPath>]
 ```
 
 ```shell
-$ dockui app ls
+$ dockui ls
 Instance     Pid       App                   UUID         State                            Permission
 ------------------------------------------------------------------------------------------------------
-2ce46c5e     34982     Demo Theme App        3cd6745f     Loaded (enabled)                 READ
-2ce46c5e     34982     Demo ReadOnly App     6ec43a77     UnLoaded (Awaiting Approval)     NONE
-2ce46c5e     34982     Demo Dynamic App      37fe3c2c     Loaded (disabled)                ADMIN
+prod         34982     Demo Theme App        3cd6745f     Loaded (enabled)                 READ
+prod         34982     Demo ReadOnly App     6ec43a77     UnLoaded (Awaiting Approval)     NONE
+ref          32432     Demo Dynamic App      37fe3c2c     Loaded (disabled)                ADMIN
 ```
 
 ### Loading Apps
@@ -87,13 +87,13 @@ There are two types of App **"static"** and **"dynamic"**.
   * For example building and starting the respective docker image etc
 
 ```shell
-dockui app install [<instance>] <url> [--permission <permission> --config <configPath> -y]
+dockui app load [--permission <permission> --config <configPath> --auto-approve <instance>] <url>
 ```
 
 ### Load an App from a Github repo (dynamic)
 
 ```shell
-$ dockui app install https://github/yoosername/dockui-app-nodejs-demo --permission admin -y
+$ dockui app load --permission admin --auto-approve https://github/yoosername/dockui-app-nodejs-demo
 [CLI] Notify New Git based App to load
 [GitRepoLoader] Detected new Git based App load request
 [GitRepoLoader] Cloning Dockui App https://github/yoosername/dockui-app-nodejs-demo to ~/.dockui/cache/3cd6745f
@@ -122,7 +122,7 @@ $ dockui app install https://github/yoosername/dockui-app-nodejs-demo --permissi
 ### Load an App from a Github repo (static)
 
 ```shell
-$ dockui app install https://github/yoosername/dockui-app-static-demo --permission write -y
+$ dockui app load --permission write --auto-approve https://github/yoosername/dockui-app-static-demo
 [CLI] Notify New Git based App to load
 [GitRepoLoader] Detected new Git based App load request
 [GitRepoLoader] Cloning Dockui App https://github/yoosername/dockui-app-static-demo to ~/.dockui/cache/4ce675ef
@@ -139,7 +139,7 @@ $ dockui app install https://github/yoosername/dockui-app-static-demo --permissi
 ### Load an App from a Docker container image (dynamic)
 
 ```shell
-$ dockui app install dockui/demoapp --permission write -y
+$ dockui app load --permission write --auto-approve dockui/demoapp
 [CLI] Notify New Docker Image based App to load
 [DockerLoader] Detected new Docker Image App load request
 [DockerLoader] Attempting to start container using image dockui/demoapp
@@ -156,7 +156,7 @@ $ dockui app install dockui/demoapp --permission write -y
 ### Load an App from a remote URL (dynamic)
 
 ```shell
-$ dockui app install https://some.remote.url/dockui.app.yml --permission read -y
+$ dockui app load --permission read --auto-approve https://some.remote.url/dockui.app.yml
 [CLI] Notify New URL based App to load
 [URLLoader] Detected new App URL load request for https://some.remote.url/dockui.app.yml
 [URLLoader] Request not authorized so Notify (New URL based App to build) request needs validation
@@ -181,16 +181,20 @@ $ docker run -t dockui-demo -d -p 8000:8080 dockui/demoapp start
 > At this point its been detected but isnt loaded because it needs to be approved first
 
 ```shell
-$ dockui app ls 2ce46c5e
-Instance     App                   UUID         State                            Modules
------------------------------------------------------------------------------------------
-2ce46c5e     Demo App              4c3fe6ce     UnLoaded (Awaiting Approval)     5
+$ dockui ls prod
+Instance     Pid       App          UUID         State                            Permission
+------------------------------------------------------------------------------------------------------
+prod         34982     Demo App     4c3fe6ce     UnLoaded (Awaiting Approval)     NONE
 ```
 
 #### Approve the App load request
 
 ```shell
-$ docker app approve --permission read 4c3fe6ce
+dockui app approve [--permission <permission>] <uuid>
+```
+
+```shell
+$ dockui app approve --permission read 4c3fe6ce
 [CLI] Notify (Approve request for App 4c3fe6ce) request needs validation
 [RequestGuardian] Request is cached for this approval and Permission was explicitly granted by CLI
 [RequestGuardian] Notify New URL based App to build and cache validation result
