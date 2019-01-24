@@ -52,7 +52,7 @@ default: "prod"
 ### Run a framework instance
 
 > The --config option can be ignored if the config file is in the current directory
-> The **instance** argument can be ignored if a **_default_** is specified in the config
+The **instance** argument can be ignored if a **_default_** is specified in the config
 
 ```shell
 dockui run [<instance> --config <configPath> -fg]
@@ -71,11 +71,11 @@ dockui app ls [<instance> --config <configPath>]
 
 ```shell
 $ dockui app ls
-Instance     App                   UUID         State                            Modules
------------------------------------------------------------------------------------------
-2ce46c5e     Demo Theme App        3cd6745f     Loaded (enabled)                 12
-2ce46c5e     Demo ReadOnly App     6ec43a77     UnLoaded (Awaiting Approval)     5
-2ce46c5e     Demo Dynamic App      37fe3c2c     Loaded (disabled)                8
+Instance     Pid       App                   UUID         State                            Permission
+------------------------------------------------------------------------------------------------------
+2ce46c5e     34982     Demo Theme App        3cd6745f     Loaded (enabled)                 READ
+2ce46c5e     34982     Demo ReadOnly App     6ec43a77     UnLoaded (Awaiting Approval)     NONE
+2ce46c5e     34982     Demo Dynamic App      37fe3c2c     Loaded (disabled)                ADMIN
 ```
 
 ### Loading Apps
