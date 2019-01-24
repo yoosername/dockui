@@ -1,7 +1,8 @@
 # DOCKUI
 
 > Compose a single web experience from loosely coupled Docker based Apps
-  This is a **DRAFT** of a _work in progress_ and none of the commands below should be expected to work
+
+This is a **DRAFT** of a _work in progress_ and none of the commands below should be expected to work
 
 ## Quick Start
 
@@ -74,8 +75,9 @@ $ dockui ls
 Instance     Pid       App                   UUID         State                            Permission
 ------------------------------------------------------------------------------------------------------
 prod         34982     Demo Theme App        3cd6745f     Loaded (enabled)                 READ
-prod         34982     Demo ReadOnly App     6ec43a77     UnLoaded (Awaiting Approval)     NONE
+prod         34982     Demo ReadOnly App     6ec43a77     Loaded (Awaiting Approval)       NONE
 ref          32432     Demo Dynamic App      37fe3c2c     Loaded (disabled)                ADMIN
+ref          32432     Demo Dynamic App2     c6cc4af6     Loading..........                NONE
 ```
 
 ### Loading Apps
@@ -94,76 +96,73 @@ dockui app load [--permission <permission> --config <configPath> --auto-approve 
 
 ```shell
 $ dockui app load --permission admin --auto-approve https://github/yoosername/dockui-app-nodejs-demo
-[CLI] Notify New Git based App to load
+[CLI] Notify New Git based App load request
 [GitRepoLoader] Detected new Git based App load request
 [GitRepoLoader] Cloning Dockui App https://github/yoosername/dockui-app-nodejs-demo to ~/.dockui/cache/3cd6745f
-[GitRepoLoader] Notify New filesystem based App to load
+[GitRepoLoader] Notify New filesystem based App load request
 [FileLoader] Detected new file based App load request
 [FileLoader] Parsing Dockui App descriptor ~/.dockui/cache/3cd6745f/dockui.app.yml
 [FileLoader] Type is 'dynamic' so App will need to be build and run first
 [FileLoader] Detected Build instructions in ~/.dockui/cache/3cd6745f/dockui.app.yml
-[FileLoader] Notify (New filesystem based App to build) request needs validation
-[RequestGuardian] Request is correct and Permission was explicitly granted by CLI
-[RequestGuardian] Notify New filesystem based App to build and cache validation result
-[BuilderLoader] App build requested for App(3cd6745f) from source dir (~/.dockui/cache/3cd6745f)
-[BuilderLoader] Starting App(3cd6745f) build
-[BuilderLoader] Running build sandbox attached to (~/.dockui/cache/3cd6745f)
-[BuilderLoader] sandbox cmd: docker build --tag dockuidemo .
-[BuilderLoader] sandbox cmd: docker run -t dockuidemo
+[FileLoader] Notify new build request
+[Builder] App build requested using source dir (~/.dockui/cache/3cd6745f)
+[Builder] Starting App(3cd6745f) build
+[Builder] Running in sandbox attached to (~/.dockui/cache/3cd6745f)
+[Builder] sandbox cmd: docker build --tag dockuidemo .
+[Builder] sandbox cmd: docker run -t dockuidemo
 [DockerLoader] Detected new running Docker container
-[DockerLoader] Notify New Remote URL based App to load
+[DockerLoader] Notify New URL based App load request
 [URLLoader] Detected new App URL load request for http://localhost:31245/dockui.app.yml
-[URLLoader] Notify (New URL based App to build) request needs validation
-[RequestGuardian] Request validation is cached as authorised
-[RequestGuardian] Notify New URL based App to build
-[URLLoader] Loaded App with key(demo.app) successfully and enabled (10) out of (10) modules
+[URLLoader] Loaded App with key(demo.app) successfully
+[URLLoader] Notify Load complete
+[LifecycleEventsStrategy] Detected Loaded App (Auto Approved via CLI)
+[LifecycleEventsStrategy] Notify App Approval
+[LifecycleEventsStrategy] Detected App Approval, enabled (10) out of (10) modules
 ```
 
 ### Load an App from a Github repo (static)
 
 ```shell
 $ dockui app load --permission write --auto-approve https://github/yoosername/dockui-app-static-demo
-[CLI] Notify New Git based App to load
+[CLI] Notify New Git based App load request
 [GitRepoLoader] Detected new Git based App load request
 [GitRepoLoader] Cloning Dockui App https://github/yoosername/dockui-app-static-demo to ~/.dockui/cache/4ce675ef
-[GitRepoLoader] Notify New filesystem based App to load
+[GitRepoLoader] Notify new file based App load request
 [FileLoader] Detected new file based App load request
 [FileLoader] Parsing Dockui App descriptor ~/.dockui/cache/4ce675ef/dockui.app.yml
 [FileLoader] Type is 'static' so App can be loaded directly.
-[FileLoader] Notify (New filesystem based App to build) request needs validation
-[RequestGuardian] Request is correct and Permission was explicitly granted by CLI
-[RequestGuardian] Notify New filesystem based App to build and cache validation result
-[FileLoader] Loaded App with key(demo.static.app) successfully and enabled (5) out of (5) modules
+[FileLoader] Loaded App with key(demo.static.app) successfully
+[LifecycleEventsStrategy] Detected Loaded App (Auto Approved via CLI)
+[LifecycleEventsStrategy] Notify App Approval
+[LifecycleEventsStrategy] Detected App Approval, enabled (5) out of (5) modules
 ```
 
 ### Load an App from a Docker container image (dynamic)
 
 ```shell
 $ dockui app load --permission write --auto-approve dockui/demoapp
-[CLI] Notify New Docker Image based App to load
+[CLI] Notify New Docker Image based App load request
 [DockerLoader] Detected new Docker Image App load request
 [DockerLoader] Attempting to start container using image dockui/demoapp
 [DockerLoader] Detected new running Docker container
-[DockerLoader] Notify New Remote URL based App to load
-[URLLoader] Detected new App URL load request for http://localhost:31245/dockui.app.yml
-[URLLoader] Request not authorized so Notify (New URL based App to build) request needs validation
-[RequestGuardian] Request is correct and Permission was explicitly granted by CLI
-[RequestGuardian] Notify New URL based App to build and cache validation result
-[URLLoader] Request is authorized so continue
-[URLLoader] Loaded App with key(demo.app) successfully and enabled (10) out of (10) modules
+[DockerLoader] Notify new URL based App load request
+[URLLoader] Detected new URL based App load request for http://localhost:31245/dockui.app.yml
+[URLLoader] Loaded App with key(demo.app) successfully
+[LifecycleEventsStrategy] Detected Loaded App (Auto Approved via CLI)
+[LifecycleEventsStrategy] Notify App Approval
+[LifecycleEventsStrategy] Detected App Approval, enabled (1) out of (1) modules
 ```
 
 ### Load an App from a remote URL (dynamic)
 
 ```shell
 $ dockui app load --permission read --auto-approve https://some.remote.url/dockui.app.yml
-[CLI] Notify New URL based App to load
-[URLLoader] Detected new App URL load request for https://some.remote.url/dockui.app.yml
-[URLLoader] Request not authorized so Notify (New URL based App to build) request needs validation
-[RequestGuardian] Request is correct and Permission was explicitly granted by CLI
-[RequestGuardian] Notify New URL based App to build and cache validation result
-[URLLoader] Request is authorized so continue
-[URLLoader] Loaded App with key(demo.remote.app) successfully and enabled (10) out of (10) modules
+[CLI] Notify New URL based App load request
+[URLLoader] Detected new URL based App load request for https://some.remote.url/dockui.app.yml
+[URLLoader] Loaded App with key(demo.remote.app) successfully
+[LifecycleEventsStrategy] Detected Loaded App (Auto Approved via CLI)
+[LifecycleEventsStrategy] Notify App Approval
+[LifecycleEventsStrategy] Detected App Approval, enabled (10) out of (10) modules
 ```
 
 ### Load an App manually by starting a docker container using Docker CLI (dynamic)
@@ -173,18 +172,19 @@ $ dockui app load --permission read --auto-approve https://some.remote.url/docku
 ```shell
 $ docker run -t dockui-demo -d -p 8000:8080 dockui/demoapp start
 [DockerLoader] Detected new running Docker container
-[DockerLoader] Notify New Remote URL based App to load
-[URLLoader] Request not authorized so Notify (New URL based App to build) request needs validation
-[RequestGuardian] Request is correct but Permission hasnt yet been granted. Parking request until granted
+[DockerLoader] Notify New Remote URL based App load request
+[URLLoader] Detected new URL based App load request for https://some.remote.url/dockui.app.yml
+[URLLoader] Loaded App with key(demo.remote.app) successfully
+[LifecycleEventsStrategy] Detected Loaded App (Not approved - skipping)
 ```
 
-> At this point its been detected but isnt loaded because it needs to be approved first
+> At this point its been loaded but cant be enabled because it needs to be approved first
 
 ```shell
 $ dockui ls prod
-Instance     Pid       App          UUID         State                            Permission
-------------------------------------------------------------------------------------------------------
-prod         34982     Demo App     4c3fe6ce     UnLoaded (Awaiting Approval)     NONE
+Instance     Pid       App          UUID         State                          Permission
+------------------------------------------------------------------------------------------
+prod         34982     Demo App     4c3fe6ce     Loaded (Awaiting Approval)     NONE
 ```
 
 #### Approve the App load request
@@ -195,12 +195,8 @@ dockui app approve [--permission <permission>] <uuid>
 
 ```shell
 $ dockui app approve --permission read 4c3fe6ce
-[CLI] Notify (Approve request for App 4c3fe6ce) request needs validation
-[RequestGuardian] Request is cached for this approval and Permission was explicitly granted by CLI
-[RequestGuardian] Notify New URL based App to build and cache validation result
-[URLLoader] Detected new App URL load request for http://localhost:31245/dockui.app.yml
-[URLLoader] Request is authorized so continue
-[URLLoader] Loaded App with key(demo.app) successfully and enabled (10) out of (10) modules
+[CLI] Notify Approve request for App 4c3fe6ce
+[LifecycleEventsStrategy] Detected App Approval, enabled (10) out of (10) modules
 ```
 
 ## App Descriptor and Modules
