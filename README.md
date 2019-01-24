@@ -1,4 +1,11 @@
-# DOCKUI
+# DockUI
+
+██████╗  ██████╗  ██████╗██╗  ██╗██╗   ██╗██╗
+██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██║   ██║██║
+██║  ██║██║   ██║██║     █████╔╝ ██║   ██║██║
+██║  ██║██║   ██║██║     ██╔═██╗ ██║   ██║██║
+██████╔╝╚██████╔╝╚██████╗██║  ██╗╚██████╔╝██║
+╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═
 
 > Compose a single web experience from loosely coupled Docker based Apps
 
@@ -52,7 +59,7 @@ default: "prod"
 
 ### Run a framework instance
 
-> The --config option can be ignored if the config file is in the current directory
+The **--config** option can be ignored if the config file is in the current directory
 The **instance** argument can be ignored if a **_default_** is specified in the config
 
 ```shell
@@ -72,6 +79,7 @@ dockui ls [<instance> --config <configPath>]
 
 ```shell
 $ dockui ls
+
 Instance     Pid       App                   UUID         State                            Permission
 ------------------------------------------------------------------------------------------------------
 prod         34982     Demo Theme App        3cd6745f     Loaded (enabled)                 READ
@@ -96,6 +104,7 @@ dockui app load [--permission <permission> --config <configPath> --auto-approve 
 
 ```shell
 $ dockui app load --permission admin --auto-approve https://github/yoosername/dockui-app-nodejs-demo
+
 [CLI] Notify New Git based App load request
 [GitRepoLoader] Detected new Git based App load request
 [GitRepoLoader] Cloning Dockui App https://github/yoosername/dockui-app-nodejs-demo to ~/.dockui/cache/3cd6745f
@@ -124,6 +133,7 @@ $ dockui app load --permission admin --auto-approve https://github/yoosername/do
 
 ```shell
 $ dockui app load --permission write --auto-approve https://github/yoosername/dockui-app-static-demo
+
 [CLI] Notify New Git based App load request
 [GitRepoLoader] Detected new Git based App load request
 [GitRepoLoader] Cloning Dockui App https://github/yoosername/dockui-app-static-demo to ~/.dockui/cache/4ce675ef
@@ -141,6 +151,7 @@ $ dockui app load --permission write --auto-approve https://github/yoosername/do
 
 ```shell
 $ dockui app load --permission write --auto-approve dockui/demoapp
+
 [CLI] Notify New Docker Image based App load request
 [DockerLoader] Detected new Docker Image App load request
 [DockerLoader] Attempting to start container using image dockui/demoapp
@@ -157,6 +168,7 @@ $ dockui app load --permission write --auto-approve dockui/demoapp
 
 ```shell
 $ dockui app load --permission read --auto-approve https://some.remote.url/dockui.app.yml
+
 [CLI] Notify New URL based App load request
 [URLLoader] Detected new URL based App load request for https://some.remote.url/dockui.app.yml
 [URLLoader] Loaded App with key(demo.remote.app) successfully
@@ -171,6 +183,7 @@ $ dockui app load --permission read --auto-approve https://some.remote.url/docku
 
 ```shell
 $ docker run -t dockui-demo -d -p 8000:8080 dockui/demoapp start
+
 [DockerLoader] Detected new running Docker container
 [DockerLoader] Notify New Remote URL based App load request
 [URLLoader] Detected new URL based App load request for https://some.remote.url/dockui.app.yml
@@ -182,6 +195,7 @@ $ docker run -t dockui-demo -d -p 8000:8080 dockui/demoapp start
 
 ```shell
 $ dockui ls prod
+
 Instance     Pid       App          UUID         State                          Permission
 ------------------------------------------------------------------------------------------
 prod         34982     Demo App     4c3fe6ce     Loaded (Awaiting Approval)     NONE
@@ -195,6 +209,7 @@ dockui app approve [--permission <permission>] <uuid>
 
 ```shell
 $ dockui app approve --permission read 4c3fe6ce
+
 [CLI] Notify Approve request for App 4c3fe6ce
 [LifecycleEventsStrategy] Detected App Approval, enabled (10) out of (10) modules
 ```
