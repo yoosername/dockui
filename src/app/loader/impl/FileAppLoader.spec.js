@@ -23,13 +23,10 @@ describe('UrlAppLoader', function() {
 
 // Methods to Test
 // "scanForNewApps"
-//   Should detect URL_APP_LOAD_EVENT events
-//   should find App Desriptor from valid Url and be able to Parse it
-//   Should send URL_APP_LOAD_STARTED event
-//   Should send URL_APP_LOAD_COMPLETE event
-//   Should send URL_APP_LOAD_FAILED event when cant parse Descriptor or other errors
+//   should find App Desriptor from valid local path and be able to Parse it
+//   should send ErrorLoadingAppEvent when cant parse Descriptor
 // "stopScanningForNewApps"
-//   Should no longer detect or respond to URL_APP_LOAD_EVENT events
+//   should be called after scanForNewApps runs to prevent repeat loads
 // "getApps",
 //   using 2 correct Descriptors should return 2 Apps with correct info
 //   using 1 correct and 1 incorrect Descriptors should return 1 App with correct info
