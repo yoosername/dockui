@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const WebhookModuleDescriptor = require("../../descriptor/impl/WebhookModuleDescriptor");
-const WebhookModule = require("../../module/impl/WebhookModule");
+const WebFragmentModuleDescriptor = require("../../../descriptor/impl/WebFragmentModuleDescriptor");
+const WebFragmentModule = require("../../../module/impl/WebFragmentModule");
 
 /**
- * @description Create a WebhookModule from a descriptor
+ * @description Create a WebFragmentModule from a descriptor
  */
-class WebhookModuleLoader extends CachableModuleLoader{
+class WebFragmentModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -31,8 +31,8 @@ class WebhookModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new WebhookModuleDescriptor(descriptor);
-      apiModule = new WebhookModule(moduleDescriptor);
+      moduleDescriptor = new WebFragmentModuleDescriptor(descriptor);
+      apiModule = new WebFragmentModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -83,4 +83,4 @@ class WebhookModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = WebhookModuleLoader;
+module.exports = WebFragmentModuleLoader;

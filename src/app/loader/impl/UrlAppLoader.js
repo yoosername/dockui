@@ -25,14 +25,11 @@ class UrlAppLoader extends AppLoader{
    *              when detected:
    *              - Send APP_LOAD_STARTED Event
    *              - Attempt to load descriptor from the URL
-   *              - Create an App from the descriptor
+   *              - validate the descriptor
    *                  - If fail send App load failed event
-   *              - Add the App to our Cache.
-   *              - Send APP_LOAD_COMPLETE Event
-   *              Listen to framework events for APP_UNLOAD_REQUESTED events
-   *              when detected:
-   *              - disable all the Apps modules
-   *              - Remove associated App from cache
+   *              - downloa/d the descriptor to a local file cache
+   *              - Send URL_APP_LOAD_COMPLETE Event
+   *              - Send FILE_APP_LOAD_REQUEST Event
    */
   scanForNewApps(){
     // to add App to cache use this.addApp(app);

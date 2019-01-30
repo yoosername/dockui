@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const WebPageModuleDescriptor = require("../../descriptor/impl/WebPageModuleDescriptor");
-const WebPageModule = require("../../module/impl/WebPageModule");
+const AuthorizationProviderModuleDescriptor = require("../../../descriptor/impl/AuthorizationProviderModuleDescriptor");
+const AuthorizationProviderModule = require("../../../module/impl/AuthorizationProviderModule");
 
 /**
- * @description Create a WebPageModule from a descriptor
+ * @description Create a AuthorizationProviderModule from a descriptor
  */
-class WebPageModuleLoader extends CachableModuleLoader{
+class AuthorizationProviderModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -14,7 +14,7 @@ class WebPageModuleLoader extends CachableModuleLoader{
   /**
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
-   * @argument {AppDescriptor} descriptor The AppDescriptor to test
+   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -31,8 +31,8 @@ class WebPageModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new WebPageModuleDescriptor(descriptor);
-      apiModule = new WebPageModule(moduleDescriptor);
+      moduleDescriptor = new AuthorizationProviderModuleDescriptor(descriptor);
+      apiModule = new AuthorizationProviderModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -56,7 +56,7 @@ class WebPageModuleLoader extends CachableModuleLoader{
 
   /**
    * @description Create and return a new Module from the descriptor
-   * @argument {AppDescriptor} descriptor The AppDescriptor to load
+   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 
@@ -83,4 +83,4 @@ class WebPageModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = WebPageModuleLoader;
+module.exports = AuthorizationProviderModuleLoader;

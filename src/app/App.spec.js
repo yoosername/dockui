@@ -202,8 +202,9 @@ describe('App', function() {
           mockEventService
         );
 
-        expect(app.isEnabled()).to.equal(true);
+        expect(app.isEnabled()).to.equal(false);
         app.enable();
+        expect(app.isEnabled()).to.equal(true);
         expect(eventSpy.called).to.equal(true);
         eventSpy.resetHistory();
         app.disable();

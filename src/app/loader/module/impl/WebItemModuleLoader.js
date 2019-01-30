@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const AuthorizationProviderModuleDescriptor = require("../../descriptor/impl/AuthorizationProviderModuleDescriptor");
-const AuthorizationProviderModule = require("../../module/impl/AuthorizationProviderModule");
+const WebItemModuleDescriptor = require("../../../descriptor/impl/WebItemModuleDescriptor");
+const WebItemModule = require("../../../module/impl/WebItemModule");
 
 /**
- * @description Create a AuthorizationProviderModule from a descriptor
+ * @description Create a WebItemModule from a descriptor
  */
-class AuthorizationProviderModuleLoader extends CachableModuleLoader{
+class WebItemModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -14,7 +14,7 @@ class AuthorizationProviderModuleLoader extends CachableModuleLoader{
   /**
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
-   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to test
+   * @argument {AppDescriptor} descriptor The AppDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -31,8 +31,8 @@ class AuthorizationProviderModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new AuthorizationProviderModuleDescriptor(descriptor);
-      apiModule = new AuthorizationProviderModule(moduleDescriptor);
+      moduleDescriptor = new WebItemModuleDescriptor(descriptor);
+      apiModule = new WebItemModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -56,7 +56,7 @@ class AuthorizationProviderModuleLoader extends CachableModuleLoader{
 
   /**
    * @description Create and return a new Module from the descriptor
-   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to load
+   * @argument {AppDescriptor} descriptor The AppDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 
@@ -83,4 +83,4 @@ class AuthorizationProviderModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = AuthorizationProviderModuleLoader;
+module.exports = WebItemModuleLoader;

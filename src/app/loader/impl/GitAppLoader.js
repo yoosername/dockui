@@ -5,7 +5,7 @@ const AppLoader = require("../AppLoader");
  *              - when detected attempt to clone the repo to a temporary cache
  *              - and Request a File based App load Request
  */
-class GitRepoAppLoader extends AppLoader{
+class GitAppLoader extends AppLoader{
 
   /**
    * @argument {AppStore} appStore - The store to use for persistence.
@@ -38,4 +38,4 @@ class GitRepoAppLoader extends AppLoader{
 
 }
 
-module.exports = GitRepoAppLoader;
+module.exports = GitAppLoader;

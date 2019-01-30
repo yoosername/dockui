@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const RouteModuleDescriptor = require("../../descriptor/impl/RouteModuleDescriptor");
-const RouteModule = require("../../module/impl/RouteModule");
+const WebResourceModuleDescriptor = require("../../../descriptor/impl/WebResourceModuleDescriptor");
+const WebResourceModule = require("../../../module/impl/WebResourceModule");
 
 /**
- * @description Create a RouteModule from a descriptor
+ * @description Create a WebResourceModule from a descriptor
  */
-class RouteModuleLoader extends CachableModuleLoader{
+class WebResourceModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -31,8 +31,8 @@ class RouteModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new RouteModuleDescriptor(descriptor);
-      apiModule = new RouteModule(moduleDescriptor);
+      moduleDescriptor = new WebResourceModuleDescriptor(descriptor);
+      apiModule = new WebResourceModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -83,4 +83,4 @@ class RouteModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = RouteModuleLoader;
+module.exports = WebResourceModuleLoader;

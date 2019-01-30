@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const AuthenticationProviderModuleDescriptor = require("../../descriptor/impl/AuthenticationProviderModuleDescriptor");
-const AuthenticationProviderModule = require("../../module/impl/AuthenticationProviderModule");
+const WebhookModuleDescriptor = require("../../../descriptor/impl/WebhookModuleDescriptor");
+const WebhookModule = require("../../../module/impl/WebhookModule");
 
 /**
- * @description Create a AuthenticationProviderModule from a descriptor
+ * @description Create a WebhookModule from a descriptor
  */
-class AuthenticationProviderModuleLoader extends CachableModuleLoader{
+class WebhookModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -14,7 +14,7 @@ class AuthenticationProviderModuleLoader extends CachableModuleLoader{
   /**
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
-   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to test
+   * @argument {AppDescriptor} descriptor The AppDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -31,8 +31,8 @@ class AuthenticationProviderModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new AuthenticationProviderModuleDescriptor(descriptor);
-      apiModule = new AuthenticationProviderModule(moduleDescriptor);
+      moduleDescriptor = new WebhookModuleDescriptor(descriptor);
+      apiModule = new WebhookModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -56,7 +56,7 @@ class AuthenticationProviderModuleLoader extends CachableModuleLoader{
 
   /**
    * @description Create and return a new Module from the descriptor
-   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to load
+   * @argument {AppDescriptor} descriptor The AppDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 
@@ -83,4 +83,4 @@ class AuthenticationProviderModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = AuthenticationProviderModuleLoader;
+module.exports = WebhookModuleLoader;

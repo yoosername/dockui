@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const WebResourceModuleDescriptor = require("../../descriptor/impl/WebResourceModuleDescriptor");
-const WebResourceModule = require("../../module/impl/WebResourceModule");
+const ApiModuleDescriptor = require("../../../descriptor/impl/ApiModuleDescriptor");
+const ApiModule = require("../../../module/impl/ApiModule");
 
 /**
- * @description Create a WebResourceModule from a descriptor
+ * @description Create a ApiModule from a descriptor
  */
-class WebResourceModuleLoader extends CachableModuleLoader{
+class ApiModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -14,7 +14,7 @@ class WebResourceModuleLoader extends CachableModuleLoader{
   /**
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
-   * @argument {AppDescriptor} descriptor The AppDescriptor to test
+   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -31,8 +31,8 @@ class WebResourceModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new WebResourceModuleDescriptor(descriptor);
-      apiModule = new WebResourceModule(moduleDescriptor);
+      moduleDescriptor = new ApiModuleDescriptor(descriptor);
+      apiModule = new ApiModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -56,7 +56,7 @@ class WebResourceModuleLoader extends CachableModuleLoader{
 
   /**
    * @description Create and return a new Module from the descriptor
-   * @argument {AppDescriptor} descriptor The AppDescriptor to load
+   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 
@@ -83,4 +83,4 @@ class WebResourceModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = WebResourceModuleLoader;
+module.exports = ApiModuleLoader;
