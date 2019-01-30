@@ -1,9 +1,10 @@
 const AppLoader = require("../AppLoader");
 
 /**
- * @description Listen to framework events for FILE_APP_LOAD_REQUESTED events.
- *              - when detected attempt to load descriptor from the associated path
- *              - and create an App from the descriptor
+ * @description An AppLoader which detects FILE_APP_LOAD_REQUESTED events then
+ *              loads descriptor from the associated local file path then
+ *              - If it has a detectable remote loads the App and initializes it
+ *              - If it doesnt but it has build instructions then notifies the AppBuilderLoader
  */
 class FileAppLoader extends AppLoader{
 
@@ -23,12 +24,14 @@ class FileAppLoader extends AppLoader{
   /**
    * @description Listen to framework events for FILE_APP_LOAD_REQUESTED events.
    *              when detected:
-   *              - Send APP_LOAD_STARTED Event
+   *              - Send FILE_APP_LOAD_STARTED Event
    *              - Attempt to load descriptor from the path
-   *              - Create an App from the descriptor
-   *                  - If fail send APP_LOAD_FAILED event
-   *              - Add the App to our Cache.
-   *              - Send APP_LOAD_COMPLETE Event
+   *                  - If fail send FILE_APP_LOAD_FAILED event
+   *              - If it has a detectable remote loads the App and initializes it
+   *                - Add the App to our Cache.
+   *              - If it doesnt but it has build instructions then
+   *                - send APP_BUILD_REQUESTED Event
+   *              - Send FILE_APP_LOAD_COMPLETE Event
    */
   scanForNewApps(){
     // to add Apps to cache use this.addApp(app);

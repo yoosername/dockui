@@ -1,9 +1,9 @@
 const AppLoader = require("../AppLoader");
 
 /**
- * @description Listen to framework events for GIT_REPO_REQUESTED events.
+ * @description An AppLoader which detects GIT_REPO_REQUESTED events.
  *              - when detected attempt to clone the repo to a temporary cache
- *              - and Request a File based App load Request
+ *              - and send a FILE_APP_LOAD_REQUEST Event
  */
 class GitAppLoader extends AppLoader{
 
@@ -21,9 +21,9 @@ class GitAppLoader extends AppLoader{
   }
 
   /**
-   * @description Listen to framework events for GIT_REPO_REQUESTED events.
- *              - when detected attempt to clone the repo to a temporary cache
- *              - and Request a File based App load Request
+   * @description Detect GIT_REPO_REQUESTED events.
+   *              - when detected attempt to clone the repo to a temporary cache
+   *              - and send a FILE_APP_LOAD_REQUEST Event
    */
   scanForNewApps(){
     

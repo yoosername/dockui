@@ -1,9 +1,10 @@
 const AppLoader = require("../AppLoader");
 
 /**
- * @description Listen to framework events for URL_APP_LOAD_REQUESTED events.
+ * @description An AppLoader which detects URL_APP_LOAD_REQUESTED events.
  *              - when detected attempt to load descriptor from the URL
- *              - and create an App from the descriptor
+ *              - download the descriptor to a local file cache
+ *              - Send FILE_APP_LOAD_REQUEST Event
  */
 class UrlAppLoader extends AppLoader{
 
@@ -27,7 +28,7 @@ class UrlAppLoader extends AppLoader{
    *              - Attempt to load descriptor from the URL
    *              - validate the descriptor
    *                  - If fail send App load failed event
-   *              - downloa/d the descriptor to a local file cache
+   *              - download the descriptor to a local file cache
    *              - Send URL_APP_LOAD_COMPLETE Event
    *              - Send FILE_APP_LOAD_REQUEST Event
    */
