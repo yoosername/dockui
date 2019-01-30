@@ -74,6 +74,17 @@ $ dockui run
 Running Dockui instance 2ce46c5e in daemon mode, forwarding logs to /var/log/dockui/2ce46c5e.log
 ```
 
+### Stop a running framework instance
+
+```shell
+dockui stop [<instance> --config <configPath> -fg]
+```
+
+```shell
+$ dockui stop
+Stopping Dockui instance 2ce46c5e, Pid(34254)
+```
+
 ### List Loaded Apps per instance
 
 ```shell
@@ -122,15 +133,17 @@ dockui app load [--permission <permission> --config <configPath> --auto-approve 
 ```shell
 $ dockui app load --permission admin --auto-approve https://github/yoosername/dockui-app-nodejs-demo
 
-[CLI] Notify New Git based App load request
-[GitRepoLoader] Detected new Git based App load request
-[GitRepoLoader] Cloning Dockui App https://github/yoosername/dockui-app-nodejs-demo to ~/.dockui/cache/3cd6745f
-[GitRepoLoader] Notify New filesystem based App load request
+[CLI] Notify New Git Repo App load request - await
+[GitRepoAppLoader] Detected new Git based App load request
+[GitRepoAppLoader] Cloning Dockui App https://github/yoosername/dockui-app-nodejs-demo to ~/.dockui/cache/3cd6745f
+[GitRepoAppLoader] Cloned completed Successfully
+[CLI] Detected Successfully completed Git Clone Request, notify new File App request
 [FileLoader] Detected new file based App load request
 [FileLoader] Parsing Dockui App descriptor ~/.dockui/cache/3cd6745f/dockui.app.yml
 [FileLoader] Type is 'dynamic' so App will need to be build and run first
 [FileLoader] Detected Build instructions in ~/.dockui/cache/3cd6745f/dockui.app.yml
-[FileLoader] Notify new build request
+[FileLoader] File load successfuly completed ( Build required )
+[CLI] Detected partially completed File load Request, notify Build request
 [Builder] App build requested using source dir (~/.dockui/cache/3cd6745f)
 [Builder] Starting App(3cd6745f) build
 [Builder] Running in sandbox attached to (~/.dockui/cache/3cd6745f)

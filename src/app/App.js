@@ -15,15 +15,7 @@ const  {
   validateShapes
 } = require("../util/validate");
 
-const  {
-  AppBootstrapError
-} = require("../constants/errors");
-
 const SecurityContext = require("./security/SecurityContext");
-
-const fetchExistingOrCreateNewUUID = (store, app)=>{
-  
-};
 
 /**
  * @description Represents a single App.
@@ -66,6 +58,9 @@ class App{
     this.eventService = eventService;
     this.securityContext = null;
 
+    // Always start disabled.
+    this.enabled = false;
+
     this.modules = [];
     this.bootstrap();
 
@@ -78,16 +73,12 @@ class App{
    */
   bootstrap(){
 
-    // All Apps start disabled until bootstrap complete
-    this.enabled = false;
-
-    // Load our Modules
+    // Load the modules defined in the descriptor
     this.loadModules();
 
-    // Hydrate from store
+    // Hydrate our state from the attached store
+    // This will not enable or disable this app or its modules. That is performed by the LifeCycleEventsStrategy 
     this.load();
-
-    // TODO: Store SecurityContext & authType in the store, so only booptstrap if havent dope before
 
     // Get the type
     const type = this.getType();
@@ -95,10 +86,16 @@ class App{
     // App is dynamic so we need a custom client to communicate with 
     // the various service endpoints using desired auth
     if( type === "dynamic" ){
-      const securityContext = new SecurityContext(this);
-      // TODO: Need to switch clients based on the type and auth required
-      // Temporarily using simple one without auth
-      //const jwtClient = new JWTHttpClient(securityContext);        
+      
+      if(!this.securityContext){
+        this.securityContext = new SecurityContext(this);
+        // Save state as we now have a Security Context to persist
+        this.save();
+      }
+      
+      // Attach a HttpClient customised to communicate with the Remote App
+      // If it uses some kind of Auth then it has access to the SecurityContext via the App ref
+      //this.httpClient = new JWTHttpClient(this);
       this.httpClient = new HttpClient(this);
     }
     // App is static so Just use a plain HttpClient
@@ -116,13 +113,14 @@ class App{
   }
 
   /**
-  * @description Load this App state from the store
+  * @description Load this Apps state from the store if there is any
   */
   load(){
     const state = this.appStore.getState(this);
-    this.uuid = state.uuid;
-    this.key = state.key;
-    this.enabled = (state.enabled) ? true : false;
+    if(state){
+      this.uuid = (state.uuid) ? state.uuid : this.uuid;
+      this.securityContext = (state.securityContext) ? state.securityContext : this.securityContext;
+    }
   }
 
   /**

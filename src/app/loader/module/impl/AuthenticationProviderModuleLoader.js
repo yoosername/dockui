@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const WebFragmentModuleDescriptor = require("../../descriptor/impl/WebFragmentModuleDescriptor");
-const WebFragmentModule = require("../../module/impl/WebFragmentModule");
+const AuthenticationProviderModuleDescriptor = require("../../../descriptor/impl/AuthenticationProviderModuleDescriptor");
+const AuthenticationProviderModule = require("../../../module/impl/AuthenticationProviderModule");
 
 /**
- * @description Create a WebFragmentModule from a descriptor
+ * @description Create a AuthenticationProviderModule from a descriptor
  */
-class WebFragmentModuleLoader extends CachableModuleLoader{
+class AuthenticationProviderModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -14,7 +14,7 @@ class WebFragmentModuleLoader extends CachableModuleLoader{
   /**
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
-   * @argument {AppDescriptor} descriptor The AppDescriptor to test
+   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -31,8 +31,8 @@ class WebFragmentModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new WebFragmentModuleDescriptor(descriptor);
-      apiModule = new WebFragmentModule(moduleDescriptor);
+      moduleDescriptor = new AuthenticationProviderModuleDescriptor(descriptor);
+      apiModule = new AuthenticationProviderModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -56,7 +56,7 @@ class WebFragmentModuleLoader extends CachableModuleLoader{
 
   /**
    * @description Create and return a new Module from the descriptor
-   * @argument {AppDescriptor} descriptor The AppDescriptor to load
+   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 
@@ -83,4 +83,4 @@ class WebFragmentModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = WebFragmentModuleLoader;
+module.exports = AuthenticationProviderModuleLoader;

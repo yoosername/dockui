@@ -4,9 +4,9 @@ const sinon = require("sinon");
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-var DockerEventsDelegatingAppLoader = require('./DockerEventsDelegatingAppLoader');
+var DockerAppLoader = require('./DockerAppLoader');
 
-describe('DockerEventsDelegatingAppLoader', function() {
+describe('DockerAppLoader', function() {
     "use strict";
 
     beforeEach(function(){
@@ -14,23 +14,41 @@ describe('DockerEventsDelegatingAppLoader', function() {
     });
 
     it('should be defined and loadable', function() {
-        expect(DockerEventsDelegatingAppLoader).to.not.be.undefined;
+        expect(DockerAppLoader).to.not.be.undefined;
     });
 
     it('should be a function', function() {
-        expect(DockerEventsDelegatingAppLoader).to.be.a('function');
+        expect(DockerAppLoader).to.be.a('function');
     });
 
-// Methods to Test
-// "scanForNewApps"
-//   should find App Desriptor when container started and be able to Parse it
-//   should send ErrorLoadingAppEvent when cant parse Descriptor
-// "stopScanningForNewApps"
-//   should be called after scanForNewApps runs to prevent repeat loads
-// "getApps",
-//   using 2 correct Descriptors should return 2 Apps with correct info
-//   using 1 correct and 1 incorrect Descriptors should return 1 App with correct info
+    // TODO: These tests
+    it('should emit DOCKER_APP_LOAD_STARTED when container detected before processing', function() {
+        
+    });
 
+    it('should emit DOCKER_APP_LOAD_COMPLETE if it is detected as a real App', function() {
+        
+    });
+
+    it('should emit DOCKER_APP_LOAD_FAILURE if a container is detected but it doesnt serve a descriptor', function() {
+        
+    });
+
+    it('should emit URL_APP_LOAD_REQUESTED when new container detected, URL known and serving descriptor', function() {
+        
+    });
+
+    it('should initially detect all running containers when scanForNewApps is run', function() {
+        
+    });
+
+    it('should subsequently detect new containers individually until stopScanningForNewApps', function() {
+        
+    });
+
+    it('should not detect new containers once stopScanningForNewApps is run', function() {
+        
+    });
 
 
 //     it(`should trigger ${CONTAINER_START_EVENT_ID} event for all containers detected on start`, function(done) {

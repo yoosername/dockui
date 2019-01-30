@@ -11,6 +11,7 @@ class MalformedModuleDescriptorError extends Error{}
 class MalformedAppDescriptorError extends Error{}
 class DockerNotRunningError extends Error{}
 class DockerProblemListingContainersError extends Error{}
+class ConfigValidationError extends Error{}
 
 module.exports = {
     ShapeValidationError,
@@ -25,5 +26,6 @@ module.exports = {
     MalformedModuleDescriptorError,
     MalformedAppDescriptorError,
     DockerNotRunningError,
-    DockerProblemListingContainersError
+    DockerProblemListingContainersError,
+    ConfigValidationError
 };

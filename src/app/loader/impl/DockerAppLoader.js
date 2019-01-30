@@ -6,10 +6,11 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
   
   
   /**
-   * @description Detect Docker containers and relevent service URLs
-   *              Then delegate loading to UrlAppLoader via events
+   * @description An AppLoader which detects running Docker containers
+   *              discovers the private service URL to the App descriptor
+   *              then notifies the URLAppLoader to load the App
    */
-  class DockerEventsDelegatingAppLoader extends AppLoader{
+  class DockerAppLoader extends AppLoader{
   
     /**
      * @argument {AppStore} appStore - The store to use for persistence.
@@ -111,8 +112,7 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
      */
     handleContainerStart(container){
       if( !this.disabled && this.scanning ){
-        // TODO: discover the URL of the container (private, network,service?)
-        // Submit a framework event of APP_LOAD_REQUESTED with the URL
+        // Implement this.
       }
     }
 
@@ -122,8 +122,7 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
      */
     handleContainerStop(container){
       if( !this.disabled && this.scanning ){
-        // TODO: discover the URL of the container (private, network,service?)
-        // Submit a framework event of APP_UNLOAD_REQUESTED with the URL
+        // Implement this.
       }
     }
     
@@ -137,4 +136,4 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
   
   }
   
-  module.exports = DockerEventsDelegatingAppLoader;
+  module.exports = DockerAppLoader;

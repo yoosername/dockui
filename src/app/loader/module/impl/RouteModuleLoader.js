@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const ApiModuleDescriptor = require("../../descriptor/impl/ApiModuleDescriptor");
-const ApiModule = require("../../module/impl/ApiModule");
+const RouteModuleDescriptor = require("../../../descriptor/impl/RouteModuleDescriptor");
+const RouteModule = require("../../../module/impl/RouteModule");
 
 /**
- * @description Create a ApiModule from a descriptor
+ * @description Create a RouteModule from a descriptor
  */
-class ApiModuleLoader extends CachableModuleLoader{
+class RouteModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -14,7 +14,7 @@ class ApiModuleLoader extends CachableModuleLoader{
   /**
    * @description Return true if this descriptor can be parsed and is 
    *              the required format to produce this type of Module
-   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to test
+   * @argument {AppDescriptor} descriptor The AppDescriptor to test
    */
   canLoadModuleDescriptor(descriptor){
 
@@ -31,8 +31,8 @@ class ApiModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new ApiModuleDescriptor(descriptor);
-      apiModule = new ApiModule(moduleDescriptor);
+      moduleDescriptor = new RouteModuleDescriptor(descriptor);
+      apiModule = new RouteModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -56,7 +56,7 @@ class ApiModuleLoader extends CachableModuleLoader{
 
   /**
    * @description Create and return a new Module from the descriptor
-   * @argument {ModuleDescriptor} descriptor The ModuleDescriptor to load
+   * @argument {AppDescriptor} descriptor The AppDescriptor to load
    */
   loadModuleFromDescriptor(descriptor){
 
@@ -83,4 +83,4 @@ class ApiModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = ApiModuleLoader;
+module.exports = RouteModuleLoader;

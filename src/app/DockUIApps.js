@@ -143,9 +143,5 @@ class DockUIAppsBuilder{
 
 module.exports = {
     "DockUIApps" : DockUIApps,
-    "DockUIAppsBuilder" : DockUIAppsBuilder,
-    "MissingStoreDuringSetupError" : MissingStoreDuringSetupError,
-    "MissingEventServiceDuringSetupError" : MissingEventServiceDuringSetupError,
-    "MissingAppServiceDuringSetupError" : MissingAppServiceDuringSetupError,
-    "MissingWebServiceDuringSetupError" : MissingWebServiceDuringSetupError
+    "DockUIAppsBuilder" : DockUIAppsBuilder
 };

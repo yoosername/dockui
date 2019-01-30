@@ -80,70 +80,70 @@ describe('DockUIApps', function() {
 
     });
 
-});
-
-describe('DockUIAppsBuilder', function() {
-  "use strict";
-
-  it('should be able to set the Store', function() {
-    new DockUIAppsBuilder().withStore(mockStore);
-  });
-
-  it('should be able to set the EventService', function() {
-    new DockUIAppsBuilder().withEventService(mockEventService);
-  });
-
-  it('should be able to set the AppService', function() {
-    new DockUIAppsBuilder().withAppService(mockAppService);
-  });
-
-  it('should be able to set the WebService', function() {
-    new DockUIAppsBuilder().withWebService(mockWebService);
-  });
-
-  it('should return a DockUIApps instance when build is called', function() {
-    const dockuiAppsInstance = new DockUIAppsBuilder()
-      .withStore(mockStore)
-      .withEventService(mockEventService)
-      .withAppService(mockAppService)
-      .withWebService(mockWebService)
-      .build();
-    expect(dockuiAppsInstance).to.be.an.instanceOf(DockUIApps);  
-  });
-
-  it('should validate when build is called', function() {
-    expect(function(){
-      new DockUIAppsBuilder()
-        .withEventService(mockEventService)
-        .withAppService(mockAppService)
-        .withWebService(mockWebService)
-        .build();
-    }).to.throw(MissingStoreDuringSetupError);  
-
-    expect(function(){
-      new DockUIAppsBuilder()
-        .withStore(mockStore)
-        .withAppService(mockAppService)
-        .withWebService(mockWebService)
-        .build();
-    }).to.throw(MissingEventServiceDuringSetupError);  
-
-    expect(function(){
-      new DockUIAppsBuilder()
-        .withStore(mockStore)
-        .withEventService(mockEventService)
-        .withWebService(mockWebService)
-        .build();
-    }).to.throw(MissingAppServiceDuringSetupError);  
-
-    expect(function(){
-      new DockUIAppsBuilder()
-        .withStore(mockStore)
-        .withEventService(mockEventService)
-        .withAppService(mockAppService)
-        .build();
-    }).to.throw(MissingWebServiceDuringSetupError);  
-
-  });
+    describe('DockUIAppsBuilder', function() {
+      "use strict";
+    
+      it('should be able to set the Store', function() {
+        new DockUIAppsBuilder().withStore(mockStore);
+      });
+    
+      it('should be able to set the EventService', function() {
+        new DockUIAppsBuilder().withEventService(mockEventService);
+      });
+    
+      it('should be able to set the AppService', function() {
+        new DockUIAppsBuilder().withAppService(mockAppService);
+      });
+    
+      it('should be able to set the WebService', function() {
+        new DockUIAppsBuilder().withWebService(mockWebService);
+      });
+    
+      it('should return a DockUIApps instance when build is called', function() {
+        const dockuiAppsInstance = new DockUIAppsBuilder()
+          .withStore(mockStore)
+          .withEventService(mockEventService)
+          .withAppService(mockAppService)
+          .withWebService(mockWebService)
+          .build();
+        expect(dockuiAppsInstance).to.be.an.instanceOf(DockUIApps);  
+      });
+    
+      it('should validate when build is called', function() {
+        expect(function(){
+          new DockUIAppsBuilder()
+            .withEventService(mockEventService)
+            .withAppService(mockAppService)
+            .withWebService(mockWebService)
+            .build();
+        }).to.throw(MissingStoreDuringSetupError);  
+    
+        expect(function(){
+          new DockUIAppsBuilder()
+            .withStore(mockStore)
+            .withAppService(mockAppService)
+            .withWebService(mockWebService)
+            .build();
+        }).to.throw(MissingEventServiceDuringSetupError);  
+    
+        expect(function(){
+          new DockUIAppsBuilder()
+            .withStore(mockStore)
+            .withEventService(mockEventService)
+            .withWebService(mockWebService)
+            .build();
+        }).to.throw(MissingAppServiceDuringSetupError);  
+    
+        expect(function(){
+          new DockUIAppsBuilder()
+            .withStore(mockStore)
+            .withEventService(mockEventService)
+            .withAppService(mockAppService)
+            .build();
+        }).to.throw(MissingWebServiceDuringSetupError);  
+    
+      });
+    
+    });
 
 });

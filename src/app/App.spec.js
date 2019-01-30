@@ -202,14 +202,15 @@ describe('App', function() {
           mockEventService
         );
 
-        expect(app.isEnabled()).to.equal(true);
+        expect(app.isEnabled()).to.equal(false);
         app.enable();
+        expect(app.isEnabled()).to.equal(true);
         expect(eventSpy.called).to.equal(true);
-        eventSpy.reset();
+        eventSpy.resetHistory();
         app.disable();
         expect(app.isEnabled()).to.equal(false);
         expect(eventSpy.called).to.equal(true);
-        eventSpy.reset();
+        eventSpy.resetHistory();
         
 
       });
@@ -230,7 +231,7 @@ describe('App', function() {
 
         app.enable();
         expect(storeSpy.called).to.equal(true);
-        storeSpy.reset();
+        storeSpy.resetHistory();
         
 
       });

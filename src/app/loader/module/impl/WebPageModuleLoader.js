@@ -1,11 +1,11 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const WebItemModuleDescriptor = require("../../descriptor/impl/WebItemModuleDescriptor");
-const WebItemModule = require("../../module/impl/WebItemModule");
+const WebPageModuleDescriptor = require("../../../descriptor/impl/WebPageModuleDescriptor");
+const WebPageModule = require("../../../module/impl/WebPageModule");
 
 /**
- * @description Create a WebItemModule from a descriptor
+ * @description Create a WebPageModule from a descriptor
  */
-class WebItemModuleLoader extends CachableModuleLoader{
+class WebPageModuleLoader extends CachableModuleLoader{
 
   constructor(){
     super();
@@ -31,8 +31,8 @@ class WebItemModuleLoader extends CachableModuleLoader{
     var apiModule = null;
     var response = false;
     try{
-      moduleDescriptor = new WebItemModuleDescriptor(descriptor);
-      apiModule = new WebItemModule(moduleDescriptor);
+      moduleDescriptor = new WebPageModuleDescriptor(descriptor);
+      apiModule = new WebPageModule(moduleDescriptor);
       if(apiModule !== null){
         response = true;
         this.setCache(descriptor, {
@@ -83,4 +83,4 @@ class WebItemModuleLoader extends CachableModuleLoader{
 
 }
 
-module.exports = WebItemModuleLoader;
+module.exports = WebPageModuleLoader;
