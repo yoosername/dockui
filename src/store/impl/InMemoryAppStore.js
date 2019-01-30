@@ -1,7 +1,5 @@
 const AppStore = require("../AppStore");
 const APP_STATE_KEY_PREFIX = "APP_STATE_";
-const APP_ENABLED_KEY_PREFIX = "APP_ENABLED_";
-const MODULE_ENABLED_KEY_PREFIX = "MODULE_ENABLED_";
 
 /**
  * @description Simple Store for persisting App/AppModule state to memory
