@@ -56,12 +56,20 @@ class ConfigBuilder{
 
     /**
      * @description A single DockUI Instance Config
+     * @argument {String} key Unique Instance Key
      * @argument {InstanceConfig} instanceConfig
      * @returns {ConfigBuilder} the current config builder for chaining
      */
-    withInstance(instanceConfig){
+    withInstance(key, instanceConfig){
         this.instances = (this.instances) ? this.instances : {};
-        this.instances[instanceConfig.name] = instanceConfig.name;
+        this.instances[key] = {
+            name : instanceConfig.name,
+            uuid : instanceConfig.uuid,
+            description : instanceConfig.description,
+            socket : instanceConfig.socket,
+            port : instanceConfig.port,
+            creds : instanceConfig.creds,
+        };
         return this;
     }
 

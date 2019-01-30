@@ -28,7 +28,7 @@ class ConfigFileLoader extends ConfigLoader{
         try{
             tmpResource = fs.readFileSync(path, { encoding: 'utf8' });
         }catch(e){
-            console.warn("Error loading Config file from: ", path, ", Error: ", e);
+            throw new Error("Could not load resource: ",e);
         }
         if(tmpResource){
             this.resource = tmpResource;

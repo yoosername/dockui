@@ -47,9 +47,11 @@ describe('Config', function() {
       it('should be able to add multiple instances using an InstanceConfigBuilder', function() {
         const config = new ConfigBuilder()
           .withInstance(
+            "prod",
             new InstanceConfigBuilder().withName("prod").build()
           )
           .withInstance(
+            "ref",
             new InstanceConfigBuilder().withName("ref").build()
           )
           .build();
