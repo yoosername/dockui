@@ -16,6 +16,7 @@ const  {
     DOCKER_APP_LOAD_STARTED,
     DOCKER_APP_LOAD_COMPLETE,
     DOCKER_APP_LOAD_FAILED,
+    DOCKER_CONTAINER_DETECTED,
     URL_APP_LOAD_REQUEST
 } = require("../../../constants/events");
 
@@ -98,6 +99,45 @@ const generateContainers = (num) => {
     return list;
 };
 
+const SingleRequestDockerAppLoader = (image, container) =>{
+    "use strict";
+    const dockerEvents = new EventEmitter();
+    container.Image = image;
+    const customDockerodeStub = sinon.stub()
+        .returns({
+            listContainers : (fn)=>{fn(null, []);},
+            run : (img,cmd,stream,fn)=>{
+                dockerEvents.emit("start", container);
+                fn(null, null, container);
+            },
+            getEvents : (fn)=>{fn(null, dockerEvents);}
+        });
+    DockerAppLoader = proxyquire('./DockerAppLoader',{
+        'dockerode':customDockerodeStub,
+        'fs' : { 'statSync' : ()=>true }
+    });
+    return {DockerAppLoader, dockerEvents};
+};
+
+const SingleRequestFailedDockerAppLoader = (image, container) =>{
+    "use strict";
+    const dockerEvents = new EventEmitter();
+    container.Image = image;
+    const customDockerodeStub = sinon.stub()
+        .returns({
+            listContainers : (fn)=>{fn(null, []);},
+            run : (img,cmd,stream,fn)=>{
+                fn(new Error());
+            },
+            getEvents : (fn)=>{fn(null, dockerEvents);}
+        });
+    DockerAppLoader = proxyquire('./DockerAppLoader',{
+        'dockerode':customDockerodeStub,
+        'fs' : { 'statSync' : ()=>true }
+    });
+    return {DockerAppLoader, dockerEvents};
+};
+
 var proxyquire =  require('proxyquire');
 var dockerode0ContainersAtStartStub;
 var dockerode5ContainersAtStartStub;
@@ -147,66 +187,10 @@ describe('DockerAppLoader', function() {
         expect(DockerAppLoader).to.be.a('function');
     });
 
-    it('should attempt to start container when DOCKER_APP_LOAD_REQUEST detected', function(done) {
-        const eventService = new EventEmitter();
-        const singleContainer = generateContainer();
-        const IMAGE = "dockui/unittest";
-        singleContainer.Image = IMAGE;
-        const customDockerodeStub = sinon.stub()
-            .returns({
-                listContainers : (fn)=>{fn(null, []);},
-                run : (img,cmd,stream,fn)=>{
-                    docker0EventEmitter.emit("start", singleContainer);
-                    fn(null, null, singleContainer);
-                },
-                getEvents : (fn)=>{fn(null, docker0EventEmitter);}
-            });
-        DockerAppLoader = proxyquire('./DockerAppLoader',{
-            'dockerode':customDockerodeStub,
-            'fs' : { 'statSync' : ()=>true }
-        });
-        docker0EventEmitter.on("start", (container)=>{
-            expect(container.Image).to.equal(IMAGE);
-            done();
-        });
-        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,eventService);
-        dockerAppLoader.scanForNewApps();
-        eventService.emit(DOCKER_APP_LOAD_REQUEST, {image : IMAGE});
-    });
-
-    it('should emit DOCKER_APP_LOAD_STARTED when container detected before processing', function(done) {
-        const eventService = new EventEmitter();
-        eventService.on(DOCKER_APP_LOAD_STARTED, ()=>{
-            done();
-        });
-        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,eventService);
-        dockerAppLoader.scanForNewApps();
-        docker0EventEmitter.emit("start", generateContainer());
-    });
-
-    it('should emit DOCKER_APP_LOAD_COMPLETE when everything is complete', function(done) {
-        const eventService = new EventEmitter();
-        eventService.on(DOCKER_APP_LOAD_COMPLETE, ()=>{
-            done();
-        });
-        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,eventService);
-        dockerAppLoader.scanForNewApps();
-        docker0EventEmitter.emit("start", generateContainer());
-    });
-
-    // TODO: These tests
-    it('should emit DOCKER_APP_LOAD_FAILURE if a container is detected but it doesnt serve a reachable YAMl config', function() {
-        
-    });
-
-    it('should emit URL_APP_LOAD_REQUESTED if Container is serving a reachable YAMl config', function() {
-        
-    });
-
     it('should initially detect all running containers when scanForNewApps is run', function(done) {
         const eventService = new EventEmitter();
         var count = 0;
-        eventService.on(DOCKER_APP_LOAD_STARTED, ()=>{
+        eventService.on(DOCKER_CONTAINER_DETECTED, ()=>{
             count++;
             if(count===5){
                 done();
@@ -217,167 +201,93 @@ describe('DockerAppLoader', function() {
         dockerAppLoader.scanForNewApps();
     });
 
-    it('should subsequently detect new containers individually until stopScanningForNewApps', function() {
-        
+    it('should attempt to start container when DOCKER_APP_LOAD_REQUEST detected', function(done) {
+        const frameworkEvents = new EventEmitter();
+        const container = generateContainer();
+        const image = "dockui/unittest";
+        const {DockerAppLoader, dockerEvents} = SingleRequestDockerAppLoader(image,container);
+        dockerEvents.on("start", (container)=>{
+            expect(container.Image).to.equal(image);
+            done();
+        });
+        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        dockerAppLoader.scanForNewApps();
+        frameworkEvents.emit(DOCKER_APP_LOAD_REQUEST, {image : image});
     });
 
-    it('should not detect new containers once stopScanningForNewApps is run', function() {
-        
+    it('should emit DOCKER_APP_LOAD_STARTED when container detected before processing', function(done) {
+        const frameworkEvents = new EventEmitter();
+        const container = generateContainer();
+        const image = "dockui/unittest";
+        const {DockerAppLoader} = SingleRequestDockerAppLoader(image,container);
+        frameworkEvents.on(DOCKER_APP_LOAD_STARTED, (payload)=>{
+            expect(payload.image).to.equal(image);
+            done();
+        });
+        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        dockerAppLoader.scanForNewApps();
+        frameworkEvents.emit(DOCKER_APP_LOAD_REQUEST, {image : image});
     });
 
+    it('should emit DOCKER_APP_LOAD_COMPLETE when everything is complete', function(done) {
+        const frameworkEvents = new EventEmitter();
+        const container = generateContainer();
+        const image = "dockui/unittest";
+        const {DockerAppLoader} = SingleRequestDockerAppLoader(image,container);
+        frameworkEvents.on(DOCKER_APP_LOAD_COMPLETE, (payload)=>{
+            expect(payload.Image).to.equal(image);
+            done();
+        });
+        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        dockerAppLoader.scanForNewApps();
+        frameworkEvents.emit(DOCKER_APP_LOAD_REQUEST, {image : image});
+    });
 
-//     it(`should trigger ${CONTAINER_START_EVENT_ID} event for all containers detected on start`, function(done) {
-//         var emitter = new EventEmitter();
-//         var mockDockerClient = new DockerClient();
-//         var expectedContainerArray = mockDockerClient.containers;
+    it('should emit DOCKER_APP_LOAD_FAILED if a container cant be started', function(done) {
+        const frameworkEvents = new EventEmitter();
+        const container = generateContainer();
+        container.Ports = null;
+        const image = "dockui/unittest";
+        const {DockerAppLoader} = SingleRequestFailedDockerAppLoader(image,container);
+        frameworkEvents.on(DOCKER_APP_LOAD_FAILED, ()=>{
+            done();
+        });
+        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        dockerAppLoader.scanForNewApps();
+        frameworkEvents.emit(DOCKER_APP_LOAD_REQUEST, {image : image});
+    });
 
-//         emitter.on(CONTAINER_START_EVENT_ID, function(payload){
-//             expect(payload).to.eql(expectedContainerArray[0]);
-//             done();
-//         });
+    // TODO: These tests
+    it('should emit URL_APP_LOAD_REQUEST if Container has reachable URL', function(done) {
+        const frameworkEvents = new EventEmitter();
+        const container = generateContainer();
+        const image = "dockui/unittest";
+        const {DockerAppLoader,dockerEvents} = SingleRequestDockerAppLoader(image,container);
+        frameworkEvents.on(URL_APP_LOAD_REQUEST, ()=>{
+            done();
+        });
+        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        dockerAppLoader.scanForNewApps();
+        dockerEvents.emit("start", container);
+    });
 
-//         var ds = new DockerService(mockDockerClient,emitter);
-//         ds.start();
-//     });
-
-//     it('should throw an error if Docker is not running', function() {
-//         var emitter = new EventEmitter();
-//         var mockDockerClient = new DockerClient();
-//         mockDockerClient.setIsDockerRunning(false);
-//         var ds = new DockerService(mockDockerClient,emitter);
-
-//         expect(ds.isDockerRunning()).to.equal(false);
-//         expect(function(){ds.start();}).to.throw(Error, DOCKER_NOT_RUNNING_ERROR);
-
-//         mockDockerClient.setIsDockerRunning(true);
-
-//         expect(ds.isDockerRunning()).to.equal(true);
-//         expect(function(){ds.start();}).to.not.throw;
-        
-//     });
-
-//     it(`should not fire ${CONTAINER_START_EVENT_ID} for existing containers on subsequent starts`, function() {
-//         var emitter = new EventEmitter();
-//         var count = 0;
-//         emitter.on(CONTAINER_START_EVENT_ID, function(){
-//             count++;
-//         });
-//         var EXPECTED_COUNT = 5;
-//         var mockDockerClient = new DockerClient(EXPECTED_COUNT);
-//         var ds = new DockerService(mockDockerClient,emitter);
-//         ds.start();
-//         expect(count).to.equal(EXPECTED_COUNT);
-//         ds.start();
-//         expect(count).to.equal(EXPECTED_COUNT);
-//         ds.start();
-//         expect(count).to.equal(EXPECTED_COUNT);
-//     });
-
-//     it(`should fire ${CONTAINER_START_EVENT_ID} when client detects started container`, function(done) {
-//         var emitter = new EventEmitter();
-//         var EXPECTED_COUNT = 5;
-//         var mockDockerClient = new DockerClient(EXPECTED_COUNT);
-//         var ds = new DockerService(mockDockerClient,emitter);
-//         var count = 0;
-
-//         emitter.on(CONTAINER_START_EVENT_ID, function(){
-//             count++;
-//         });
-
-//         ds.start();
-
-//         expect(count).to.equal(EXPECTED_COUNT);
-
-//         var container = mockDockerClient.generateNewContainer();
-
-//         emitter.on(CONTAINER_START_EVENT_ID, function(c){
-//             expect(count).to.equal(EXPECTED_COUNT + 1);
-//             expect(c).to.eql(container);
-//             done();
-//         });
-
-//         mockDockerClient.startContainer(container);
-
-//     });
-
-//     it(`should fire ${CONTAINER_STOP_EVENT_ID} when client detects stopped container`, function(done) {
-//         var emitter = new EventEmitter();
-//         var EXPECTED_COUNT = 5;
-//         var mockDockerClient = new DockerClient(EXPECTED_COUNT);
-//         var ds = new DockerService(mockDockerClient,emitter);
-//         var count = 0;
-
-//         emitter.on(CONTAINER_START_EVENT_ID, function(){
-//             count++;
-//         });
-//         emitter.on(CONTAINER_STOP_EVENT_ID, function(){
-//             count--;
-//         });
-
-//         ds.start();
-
-//         expect(count).to.equal(EXPECTED_COUNT);
-
-//         var container = mockDockerClient.generateNewContainer();
-
-//         emitter.on(CONTAINER_START_EVENT_ID, function(){
-//             expect(count).to.equal(EXPECTED_COUNT + 1);
-//         });
-
-//         emitter.on(CONTAINER_STOP_EVENT_ID, function(c){
-//             expect(count).to.equal(EXPECTED_COUNT);
-//             expect(c).to.eql(container);
-//             done();
-//         });
-
-//         mockDockerClient.startContainer(container);
-//         mockDockerClient.stopContainer(container);
-
-//     });
-
-//     it(`should stop firing events when stop() is called but refire only the difference when restarted again`, function() {
-//         var emitter = new EventEmitter();
-//         var START_COUNT = 5;
-//         var mockDockerClient = new DockerClient(START_COUNT);
-//         var ds = new DockerService(mockDockerClient,emitter);
-//         var count = 0;
-
-//         emitter.on(CONTAINER_START_EVENT_ID, function(){
-//             count++;
-//         });
-
-//         var NEW_CONTAINER_BATCH_1 = [
-//             mockDockerClient.generateNewContainer(),
-//             mockDockerClient.generateNewContainer(),
-//             mockDockerClient.generateNewContainer()
-//         ];
-
-//         var NEW_CONTAINER_BATCH_2 = [
-//             mockDockerClient.generateNewContainer(),
-//             mockDockerClient.generateNewContainer(),
-//             mockDockerClient.generateNewContainer()
-//         ];
-
-//         ds.start();
-
-//         NEW_CONTAINER_BATCH_1.forEach((container) =>{
-//             mockDockerClient.startContainer(container);
-//         });
-
-//         expect(count).to.equal(START_COUNT + NEW_CONTAINER_BATCH_1.length);
-
-//         ds.stop();
-
-//         NEW_CONTAINER_BATCH_2.forEach((container) =>{
-//             mockDockerClient.startContainer(container);
-//         });
-
-//         expect(count).to.equal(START_COUNT + NEW_CONTAINER_BATCH_1.length);
-
-//         ds.start();
-
-//         expect(count).to.equal(START_COUNT + NEW_CONTAINER_BATCH_1.length + NEW_CONTAINER_BATCH_2.length);
-
-//     });
+    it('should keep detecting new containers individually until stopScanningForNewApps', function() {
+        const frameworkEvents = new EventEmitter();
+        const container = generateContainer();
+        const image = "dockui/unittest";
+        const {DockerAppLoader,dockerEvents} = SingleRequestDockerAppLoader(image,container);
+        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        const spy = sinon.spy(dockerAppLoader,"getOrSetCachedContainer");
+        dockerAppLoader.scanForNewApps();
+        expect(spy.callCount).to.equal(0);
+        dockerEvents.emit("start", generateContainer());
+        dockerEvents.emit("start", generateContainer());
+        dockerEvents.emit("start", generateContainer());
+        expect(spy.callCount).to.equal(3);
+        dockerAppLoader.stopScanningForNewApps();
+        dockerEvents.emit("start", generateContainer());
+        dockerEvents.emit("start", generateContainer());
+        expect(spy.callCount).to.equal(3);
+    });
 
 });

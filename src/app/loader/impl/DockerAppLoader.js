@@ -9,22 +9,13 @@ const  {
   DOCKER_APP_LOAD_STARTED,
   DOCKER_APP_LOAD_COMPLETE,
   DOCKER_APP_LOAD_FAILED,
+  DOCKER_CONTAINER_DETECTED,
   URL_APP_LOAD_REQUEST
 } = require("../../../constants/events");
 
-const exists = (thing)=>{
-  "use strict";
-  try{
-    var it = thing;
-    return true;
-  }catch(e){
-    return false;
-  }
-};
-
 const getContainerPublicAppURL = (container)=>{
   "use strict";
-  if(exists(container.Ports[0].PublicPort)){
+  if(container && container.Ports && container.Ports.length && container.Ports[0].PublicPort){
     return `http://localhost:${container.Ports[0].PublicPort}/dockui.app.yml`;
   }
   return null;
@@ -137,12 +128,29 @@ class DockerAppLoader extends AppLoader{
       // Start listening for events from the framework
       //  - DOCKER_APP_LOAD_REQUEST means user requested to start a Docker container image via the CLI
       this.eventsService.on(DOCKER_APP_LOAD_REQUEST, (request)=>{
+
         const image = request.image;
         const cmd = request.cmd || [];
-        // Use client to start image then end ( container client events will continue after started)
-        this.client.run(image, cmd, process.stdout, function (err, data, container) {
-          if(err) console.warn("Error running Docker image: ",image," with cmd: ",cmd);
+
+        // Tell the system we has started processing a new Container
+        this.eventsService.emit(DOCKER_APP_LOAD_STARTED,{
+          status : "loading",
+          message : "A Container with Image (" +image+") was requested to run",
+          image: image,
+          cmd : cmd
         });
+
+        // Use client to start image then end ( container client events will continue after started)
+        this.client.run(image, cmd, process.stdout, (err, data, container) => {
+          if(err){
+            //console.warn("Error running Docker image: ",image," with cmd: ",cmd);
+            this.eventsService.emit(DOCKER_APP_LOAD_FAILED, {error: err});
+          }else{
+            // Tell the system we have successfully Run the Container
+            this.eventsService.emit(DOCKER_APP_LOAD_COMPLETE, container);
+          }
+        });
+
       });
 
       // Start listening for events from Docker to detect new Container starts
@@ -175,20 +183,16 @@ class DockerAppLoader extends AppLoader{
     // Only act at all if we are current set to scanning
     if( this.scanning ){
 
-      
+      // Emit a Container detected event
+      this.eventsService.emit(DOCKER_CONTAINER_DETECTED,{
+        container : container
+      });
+
       // Get the cached version of the container
       var cached = this.getOrSetCachedContainer(container);
-      var completeResponse = {container : cached};
 
       // If we have already Tested for config and submitted URL Load request then nothing to do
       if(cached.requested !== true && cached.isAnApp !== false){
-        
-        // Tell the system we has started processing a new Container
-        this.eventsService.emit(DOCKER_APP_LOAD_STARTED,{
-          status : "loading",
-          message : "A Container with ID (" +cached.Id+") has started and not previously requested, checking if it serves an App config",
-          container : container
-        });
 
         // Check if the Container is actually an App
         const appUrl = getContainerPublicAppURL(cached);
@@ -205,19 +209,9 @@ class DockerAppLoader extends AppLoader{
           // Cache the fact we loaded this container already
           cached.requested = true;
 
-          // Notify Completed successfully
-          completeResponse.status = "success";
-          completeResponse.msg = "A Container[id:" +cached.Id+",url:"+appUrl+"] has been processed and a URL request made";
-          
-
         }else{
           cached.isAnApp = false;
-          completeResponse.status = "success";
-          completeResponse.msg = "A Container with ID (" +cached.Id+") was detected but not an App so skipping";
         }
-
-        // Tell the system we have successfully loaded a new Container
-        this.eventsService.emit(DOCKER_APP_LOAD_COMPLETE, completeResponse);
 
       }
 

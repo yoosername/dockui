@@ -29,6 +29,7 @@ const DOCKER_APP_LOAD_REQUEST = "dockerapploader:app:load:request";
 const DOCKER_APP_LOAD_STARTED = "dockerapploader:app:load:started";
 const DOCKER_APP_LOAD_COMPLETE = "dockerapploader:app:load:complete";
 const DOCKER_APP_LOAD_FAILED = "dockerapploader:app:load:failed";
+const DOCKER_CONTAINER_DETECTED = "dockerapploader:container:detected";
 const GIT_APP_LOAD_REQUEST = "gitapploader:app:load:request";
 const GIT_APP_LOAD_STARTED = "gitapploader:app:load:started";
 const GIT_APP_LOAD_COMPLETE = "gitapploader:app:load:complete";
@@ -89,6 +90,7 @@ module.exports = {
     DOCKER_APP_LOAD_STARTED,
     DOCKER_APP_LOAD_COMPLETE,
     DOCKER_APP_LOAD_FAILED,
+    DOCKER_CONTAINER_DETECTED,
     GIT_APP_LOAD_REQUEST,
     GIT_APP_LOAD_STARTED,
     GIT_APP_LOAD_COMPLETE,
