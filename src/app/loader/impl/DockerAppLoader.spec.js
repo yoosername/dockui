@@ -257,7 +257,6 @@ describe('DockerAppLoader', function() {
         frameworkEvents.emit(DOCKER_APP_LOAD_REQUEST, {image : image});
     });
 
-    // TODO: These tests
     it('should emit URL_APP_LOAD_REQUEST if Container has reachable URL', function(done) {
         const frameworkEvents = new EventEmitter();
         const container = generateContainer();
