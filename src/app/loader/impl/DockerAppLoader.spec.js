@@ -129,8 +129,14 @@ describe('DockerAppLoader', function() {
             listContainers : (fn)=>{fn(null, generateContainers(5));},
             getEvents : (fn)=>{fn(null, docker5EventEmitter);}
         });
-        DockerAppLoader = proxyquire('./DockerAppLoader',{'dockerode':dockerode0ContainersAtStartStub});
-        DockerAppLoaderWith5StartedContainers = proxyquire('./DockerAppLoader',{'dockerode':dockerode5ContainersAtStartStub});
+        DockerAppLoader = proxyquire('./DockerAppLoader',{
+            'dockerode':dockerode0ContainersAtStartStub,
+            'fs' : { 'statSync' : ()=>true }
+        });
+        DockerAppLoaderWith5StartedContainers = proxyquire('./DockerAppLoader',{
+            'dockerode':dockerode5ContainersAtStartStub,
+            'fs' : { 'statSync' : ()=>true }
+        });
     });
 
     it('should be defined and loadable', function() {
@@ -141,15 +147,31 @@ describe('DockerAppLoader', function() {
         expect(DockerAppLoader).to.be.a('function');
     });
 
-    it('should emit DOCKER_APP_LOAD_STARTED when DOCKER_APP_LOAD_REQUEST detected before processing', function(done) {
+    it('should attempt to start container when DOCKER_APP_LOAD_REQUEST detected', function(done) {
         const eventService = new EventEmitter();
-        eventService.on(DOCKER_APP_LOAD_STARTED, ()=>{
+        const singleContainer = generateContainer();
+        const IMAGE = "dockui/unittest";
+        singleContainer.Image = IMAGE;
+        const customDockerodeStub = sinon.stub()
+            .returns({
+                listContainers : (fn)=>{fn(null, []);},
+                run : (img,cmd,stream,fn)=>{
+                    docker0EventEmitter.emit("start", singleContainer);
+                    fn(null, null, singleContainer);
+                },
+                getEvents : (fn)=>{fn(null, docker0EventEmitter);}
+            });
+        DockerAppLoader = proxyquire('./DockerAppLoader',{
+            'dockerode':customDockerodeStub,
+            'fs' : { 'statSync' : ()=>true }
+        });
+        docker0EventEmitter.on("start", (payload)=>{
+            expect(payload.Image).to.equal(IMAGE);
             done();
         });
         const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,eventService);
-        dockerAppLoader.isDockerRunning = () => true;
         dockerAppLoader.scanForNewApps();
-        eventService.emit(DOCKER_APP_LOAD_REQUEST);
+        eventService.emit(DOCKER_APP_LOAD_REQUEST, {image : IMAGE});
     });
 
     it('should emit DOCKER_APP_LOAD_STARTED when container detected before processing', function(done) {
@@ -158,23 +180,26 @@ describe('DockerAppLoader', function() {
             done();
         });
         const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,eventService);
-        dockerAppLoader.isDockerRunning = () => true;
+        dockerAppLoader.scanForNewApps();
+        docker0EventEmitter.emit("start", generateContainer());
+    });
+
+    it('should emit DOCKER_APP_LOAD_COMPLETE when everything is complete', function(done) {
+        const eventService = new EventEmitter();
+        eventService.on(DOCKER_APP_LOAD_COMPLETE, ()=>{
+            done();
+        });
+        const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,eventService);
         dockerAppLoader.scanForNewApps();
         docker0EventEmitter.emit("start", generateContainer());
     });
 
     // TODO: These tests
-    it('should emit DOCKER_APP_LOAD_COMPLETE if Container is serving a reachable YAMl config', function() {
-        //DockerAppLoader = require('./DockerAppLoader');
-        //const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,mockEventService);
-        //dockerAppLoader.scanForNewApps();
-    });
-
     it('should emit DOCKER_APP_LOAD_FAILURE if a container is detected but it doesnt serve a reachable YAMl config', function() {
         
     });
 
-    it('should emit URL_APP_LOAD_REQUESTED when everything else is good', function() {
+    it('should emit URL_APP_LOAD_REQUESTED if Container is serving a reachable YAMl config', function() {
         
     });
 
