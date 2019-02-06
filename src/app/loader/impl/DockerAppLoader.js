@@ -3,7 +3,14 @@ const Docker = require('dockerode');
 const fs = require('fs');
 const DOCKER_SOCKET = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
 const {DockerProblemListingContainersError} = require("../../../constants/errors");
-  
+
+const  {
+  DOCKER_APP_LOAD_REQUEST,
+  DOCKER_APP_LOAD_STARTED,
+  DOCKER_APP_LOAD_COMPLETE,
+  DOCKER_APP_LOAD_FAILED,
+  URL_APP_LOAD_REQUEST
+} = require("../../../constants/events");
   
   /**
    * @description An AppLoader which detects running Docker containers
@@ -44,8 +51,31 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
      */
     isDockerRunning(){
       "use strict";
+      const running = fs.statSync(DOCKER_SOCKET);
+      return running;
+    }
 
-      return fs.statSync(DOCKER_SOCKET);
+    /** 
+     * @description Adds a single Container to the local cache so we dont process it twice
+     * @returns {Object} Container
+     */
+    addContainerToCache(container){
+      "use strict";
+      const id = container.Id;
+      if(id){
+        this.container_cache[id] = container;
+        return true;
+      }
+      return false;
+    }
+
+    /** 
+     * @description returns Containers that has the passed Id
+     * @returns {Object} Container
+     */
+    getCachedContainer(id){
+      "use strict";
+      return this.container_cache[id] || null;
     }
 
     /**
@@ -59,31 +89,38 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
     scanForNewApps(){
       
       // The first time we run do a one off scan for all running containers
-      if(!this.disabled && !this.scanning){
+      if((!this.scanning) && this.client){
 
-        this.client.listRunningContainers({all: true}, (err, containers) => {
+        // var opts = {
+        //   "status": "running"
+        // };
+        
+        // First things first mark us as scanning
+        this.scanning = true;
+        
+        this.client.listContainers((err, containers) => {
 
           if(err){
             return console.warn(DockerProblemListingContainersError);
           }
 
           containers.forEach((container) => {
-
-            if( ! this.container_cache.includes(container) ){
+            if( ! this.getCachedContainer(container.Id) ){
               this.handleContainerStart(container);
             }
-            
           });
 
         });
 
-      }
+        // Start listening for events from the framework
+        //  - DOCKER_APP_LOAD_REQUEST means user requested to start a Docker container image via the CLI
+        this.eventsService.on(DOCKER_APP_LOAD_REQUEST, ()=>{
+          this.eventsService.emit(DOCKER_APP_LOAD_STARTED);
+          // Use client to start image then end ( container client events will continue after started)
+        });
 
-      // The first time we run - hook up some event listeners for container events
-      if( !this.disabled && !this.initialised ){
-
-        // Start listening for events from the client
-        this._client.getEvents((err, events) =>{
+        // Start listening for events from Docker to detect new Container starts
+        this.client.getEvents((err, events) =>{
 
           if(err){
             return console.warn("Error getting Docker client events");
@@ -96,9 +133,6 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
             .on("stop", (container) => {
               this.handleContainerStop(container);
             });
-
-          this.initialised = true;
-          this.scanning = true;
           
         });
 
@@ -111,8 +145,10 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
      * @argument {object} container - the container that was started
      */
     handleContainerStart(container){
-      if( !this.disabled && this.scanning ){
-        // Implement this.
+      //console.log(container);
+      if( this.scanning ){
+        this.addContainerToCache(container);
+        this.eventsService.emit(DOCKER_APP_LOAD_STARTED);
       }
     }
 
@@ -121,7 +157,7 @@ const {DockerProblemListingContainersError} = require("../../../constants/errors
      * @argument {object} container - the container that was stopped
      */
     handleContainerStop(container){
-      if( !this.disabled && this.scanning ){
+      if( this.scanning ){
         // Implement this.
       }
     }
