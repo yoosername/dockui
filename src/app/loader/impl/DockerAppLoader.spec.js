@@ -165,8 +165,8 @@ describe('DockerAppLoader', function() {
             'dockerode':customDockerodeStub,
             'fs' : { 'statSync' : ()=>true }
         });
-        docker0EventEmitter.on("start", (payload)=>{
-            expect(payload.Image).to.equal(IMAGE);
+        docker0EventEmitter.on("start", (container)=>{
+            expect(container.Image).to.equal(IMAGE);
             done();
         });
         const dockerAppLoader = new DockerAppLoader(mockAppStore,mockModuleLoaders,eventService);
