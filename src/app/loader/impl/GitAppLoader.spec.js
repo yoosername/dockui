@@ -1,16 +1,64 @@
+const proxyquire =  require('proxyquire');
+const EventEmitter = require("events");
 const chai = require("chai");
 const expect = chai.expect;
 const sinon = require("sinon");
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-var GitAppLoader = require('./GitAppLoader');
+const  {
+    MockAppStore,
+    MockModuleLoaders,
+    MockEventService
+} = require("../../../util/mocks");
+
+const  {
+    GIT_APP_LOAD_REQUEST,
+    GIT_APP_LOAD_STARTED,
+    GIT_APP_LOAD_COMPLETE,
+    GIT_APP_LOAD_FAILED,
+    URL_APP_LOAD_REQUEST
+} = require("../../../constants/events");
+
+var mockAppStore = null;
+var mockModuleLoaders = null;
+var mockEventService = null;
+var nodeGitRepoURLRequested = null;
+var nodeGitSuccessfulStub = null;
+var nodeGitFailureStub = null;
+const REJECTION_ERROR_MSG = "This git repo couldnt be loaded for some reason";
+
+var GitAppLoader;
+var GitFailingAppLoader;
 
 describe('GitAppLoader', function() {
     "use strict";
 
     beforeEach(function(){
-        
+        mockAppStore = new MockAppStore();
+        mockModuleLoaders = new MockModuleLoaders();
+        mockEventService = new MockEventService();
+        nodeGitRepoURLRequested = null;
+        nodeGitSuccessfulStub = new sinon.stub()
+        .returns({
+            Clone: function(url) {
+              nodeGitRepoURLRequested = url;
+              return Promise.resolve(url);
+            }
+        })();
+        nodeGitFailureStub = new sinon.stub()
+        .returns({
+            Clone: function() {
+              nodeGitRepoURLRequested = null;
+              return Promise.reject(new Error(REJECTION_ERROR_MSG));
+            }
+        })();
+        GitAppLoader = proxyquire('./GitAppLoader',{
+            'nodegit':nodeGitSuccessfulStub
+        });
+        GitFailingAppLoader = proxyquire('./GitAppLoader',{
+            'nodegit':nodeGitFailureStub
+        });
     });
 
     it('should be defined and loadable', function() {
@@ -24,9 +72,21 @@ describe('GitAppLoader', function() {
     // TODO: These tests
     // Methods to Test
     // "scanForNewApps"
-    //   should detect GIT_CLONE_REQUESTED event after scanForApps run
-    it('should detect GIT_CLONE_REQUESTED events after scanForNewApps run', function() {
-        
+    //   should detect GIT_APP_LOAD_REQUEST event after scanForApps run
+    it('should detect GIT_APP_LOAD_REQUEST events after scanForNewApps run', function() {
+        const frameworkEvents = new EventEmitter();
+        const gitRepo = "dockui/unittest";
+        var gitAppLoader = new GitAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        gitAppLoader.scanForNewApps();
+        frameworkEvents.emit(GIT_APP_LOAD_REQUEST, {repo : gitRepo});
+        expect(gitAppLoader.scanning).to.equal(true);
+        expect(nodeGitRepoURLRequested).to.equal(gitRepo);
+
+        gitAppLoader = new GitFailingAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        gitAppLoader.scanForNewApps();
+        frameworkEvents.emit(GIT_APP_LOAD_REQUEST, {repo : gitRepo});
+        expect(gitAppLoader.scanning).to.equal(true);
+        expect(nodeGitRepoURLRequested).to.equal(null);
     });
 
     //   Should submit a GIT_CLONE_STARTED event
@@ -53,7 +113,15 @@ describe('GitAppLoader', function() {
     // "stopScanningForNewApps"
     //   should no longer detect GIT_CLONE_REQUESTED events
     it('should no longer detect GIT_CLONE_REQUESTED events after stopScanningForNewApps run', function() {
-        
+        const frameworkEvents = new EventEmitter();
+        const gitRepo = "dockui/unittest";
+        var gitAppLoader = new GitAppLoader(mockAppStore,mockModuleLoaders,frameworkEvents);
+        gitAppLoader.scanForNewApps();
+        expect(gitAppLoader.scanning).to.equal(true);
+        gitAppLoader.stopScanningForNewApps();
+        frameworkEvents.emit(GIT_APP_LOAD_REQUEST, {repo : gitRepo});
+        expect(gitAppLoader.scanning).to.equal(false);
+        expect(nodeGitRepoURLRequested).to.equal(null);
     });
 
 });
