@@ -6,19 +6,14 @@ const AppLoader = require("../AppLoader");
  *              - If it has a detectable remote loads the App and initializes it
  *              - If it doesnt but it has build instructions then notifies the AppBuilderLoader
  */
-class FileAppLoader extends AppLoader{
-
+class FileAppLoader extends AppLoader {
   /**
    * @argument {AppStore} appStore - The store to use for persistence.
    * @argument {Array} AppModuleLoaders - The loaders to use for loading Modules.
    * @argument {EventService} eventService - The Event service.
    */
-  constructor(
-    appStore,
-    appModuleLoaders,
-    eventService
-  ){
-    super(appStore,appModuleLoaders, eventService);
+  constructor(appStore, appModuleLoaders, eventService) {
+    super(appStore, appModuleLoaders, eventService);
   }
 
   /**
@@ -33,7 +28,7 @@ class FileAppLoader extends AppLoader{
    *                - send APP_BUILD_REQUESTED Event
    *              - Send FILE_APP_LOAD_COMPLETE Event
    */
-  scanForNewApps(){
+  scanForNewApps() {
     // to add Apps to cache use this.addApp(app);
     // to remove Apps from cache use this.removeApp(app);
   }
@@ -41,10 +36,7 @@ class FileAppLoader extends AppLoader{
   /**
    * @description Stop checking for new Apps until scan is called again.
    */
-  stopScanningForNewApps(){
-    
-  }
-
+  stopScanningForNewApps() {}
 }
 
 module.exports = FileAppLoader;

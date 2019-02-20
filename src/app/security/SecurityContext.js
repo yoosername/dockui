@@ -1,64 +1,59 @@
-const  {
-  validateShapes
-} = require("../../util/validate");
+const { validateShapes } = require("../../util/validate");
 
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require("uuid/v4");
 const SECURITY_CONTEXT_STORE_PREFIX = "security-context_";
 
 /**
  * @description Represents security info required to communicate
  *              with an APP. E.g. shared secrets etc
  */
-class SecurityContext{
-
+class SecurityContext {
   /**
    * @param {App} app - The App this context is intended for
    */
-  constructor(
-    app
-  ){
-    
+  constructor(app) {
     // Validate our args using ducktyping utils. (figure out better way to do this later)
-    validateShapes([
-      {"shape":"App","object":app}
-    ]);
+    validateShapes([{ shape: "App", object: app }]);
 
     this.app = app;
     this.context = {};
     this.getContext();
-
   }
 
   /**
    * @description return the App this security context is for
    */
-  getApp(){
+  getApp() {
     return this.app;
   }
 
   /**
    * @description Load context from the following in order:
    *               - Cache
-   *               - Apps store if exists 
+   *               - Apps store if exists
    *               - or generate New One and store it
    */
-  getContext(){
+  getContext() {
     // Fetch from local cache
     var context = this.context;
-    if(context){
+    if (context) {
       return context;
     }
 
     // Otherwise load from store into local cache
-    context = this.app.getStore().get(SECURITY_CONTEXT_STORE_PREFIX+this.app.getUUID());
-    if( context && context.key && context.secret ){
+    context = this.app
+      .getStore()
+      .get(SECURITY_CONTEXT_STORE_PREFIX + this.app.getUUID());
+    if (context && context.key && context.secret) {
       this.context = context;
       return context;
     }
-    
+
     // Otherwise create a new one and save to store and cache
     context = this.generateNewContext();
-    this.app.getStore().set(SECURITY_CONTEXT_STORE_PREFIX+this.app.getUUID(), context);
+    this.app
+      .getStore()
+      .set(SECURITY_CONTEXT_STORE_PREFIX + this.app.getUUID(), context);
     this.context = context;
     return context;
   }
@@ -72,15 +67,13 @@ class SecurityContext{
    *       framework.url: https://base.url.of.the.calling.framework.instance
    * }
    */
-  generateNewContext(){
+  generateNewContext() {
     return {
-      key : this.app.getKey(), 
-      uuid: this.app.getUUID(), 
-      secret : uuidv4()
+      key: this.app.getKey(),
+      uuid: this.app.getUUID(),
+      secret: uuidv4()
     };
   }
-
-
 }
 
 module.exports = SecurityContext;

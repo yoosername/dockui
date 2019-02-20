@@ -1,13 +1,13 @@
 const chai = require("chai");
 const expect = chai.expect;
 const sinon = require("sinon");
-const sinonChai = require('sinon-chai');
+const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require("uuid/v4");
 
 const AppPermission = require("./permission/AppPermission");
 
-const  {
+const {
   MockAppStore,
   MockAppDescriptor,
   MockAppLoader,
@@ -15,7 +15,7 @@ const  {
   MockEventService
 } = require("../util/mocks");
 
-var App = require('./App');
+var App = require("./App");
 
 var mockAppStore = null;
 var mockAppStore2 = null;
@@ -30,212 +30,227 @@ const TEST_KEY = "test.key";
 const TEST_UUID = uuidv4();
 const TEST_UUID2 = uuidv4();
 const TEST_STATE = {
-  key : TEST_KEY,
+  key: TEST_KEY,
   uuid: TEST_UUID,
   enabled: true
 };
 const TEST_STATE2 = {
-  key : TEST_KEY,
+  key: TEST_KEY,
   uuid: TEST_UUID2,
   enabled: false
 };
 
-describe('App', function() {
-    "use strict";
+describe("App", function() {
+  "use strict";
 
-    beforeEach(function(){
-      mockAppStore = new MockAppStore();
-      mockAppStore2 = new MockAppStore();
-      mockAppStoreGetState = sinon.stub(mockAppStore, "getState");
-      mockAppStoreGetState.returns(TEST_STATE);
-      mockAppStore2GetState = sinon.stub(mockAppStore2, "getState");
-      mockAppStore2GetState.returns(TEST_STATE2);
-      mockAppLoader = new MockAppLoader();
-      mockAppDescriptor = new MockAppDescriptor();
-      mockModuleLoaders = new MockModuleLoaders();
-      mockEventService = new MockEventService();
-    });
+  beforeEach(function() {
+    mockAppStore = new MockAppStore();
+    mockAppStore2 = new MockAppStore();
+    mockAppStoreGetState = sinon.stub(mockAppStore, "getState");
+    mockAppStoreGetState.returns(TEST_STATE);
+    mockAppStore2GetState = sinon.stub(mockAppStore2, "getState");
+    mockAppStore2GetState.returns(TEST_STATE2);
+    mockAppLoader = new MockAppLoader();
+    mockAppDescriptor = new MockAppDescriptor();
+    mockModuleLoaders = new MockModuleLoaders();
+    mockEventService = new MockEventService();
+  });
 
-    afterEach(function(){
-      mockAppStoreGetState.restore();
-      mockAppStore2GetState.restore();
-    });
+  afterEach(function() {
+    mockAppStoreGetState.restore();
+    mockAppStore2GetState.restore();
+  });
 
-    it('should be defined and loadable', function() {
-      expect(App).to.not.be.undefined;
-    });
+  it("should be defined and loadable", function() {
+    expect(App).to.not.be.undefined;
+  });
 
-    it('should be a function', function() {
-      expect(App).to.be.a('function');
-    });
+  it("should be a function", function() {
+    expect(App).to.be.a("function");
+  });
 
-    // App should validate arguments
-    it('should validate arguments or throw', function() {
-      expect(()=>{new App();}).to.throw();
-      expect(()=>{new App("","","","","","","");}).to.throw();
-      expect(()=>{new App({},{},{},{},{},{},{});}).to.throw();
-      expect(()=>{new App(null,null,null,null,null,null,null);}).to.throw();
-      expect(()=>{new App(undefined,undefined,undefined,undefined,undefined,undefined,undefined);}).to.throw();
-      expect(()=>{new App(
+  // App should validate arguments
+  it("should validate arguments or throw", function() {
+    expect(() => {
+      new App();
+    }).to.throw();
+    expect(() => {
+      new App("", "", "", "", "", "", "");
+    }).to.throw();
+    expect(() => {
+      new App({}, {}, {}, {}, {}, {}, {});
+    }).to.throw();
+    expect(() => {
+      new App(null, null, null, null, null, null, null);
+    }).to.throw();
+    expect(() => {
+      new App(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined
+      );
+    }).to.throw();
+    expect(() => {
+      new App(
         TEST_KEY,
         AppPermission.READ,
         mockAppDescriptor,
-        mockAppLoader, 
+        mockAppLoader,
         mockModuleLoaders,
         mockAppStore,
         mockEventService
-      );}).to.not.throw();
+      );
+    }).to.not.throw();
+  });
+
+  describe("Methods", function() {
+    var mockApp;
+    var mockApp2;
+
+    beforeEach(function() {
+      const generateApp = store => {
+        return new App(
+          TEST_KEY,
+          AppPermission.READ,
+          mockAppDescriptor,
+          mockAppLoader,
+          mockModuleLoaders,
+          store,
+          mockEventService
+        );
+      };
+      mockApp = generateApp(mockAppStore);
+      mockApp2 = generateApp(mockAppStore2);
     });
 
-    describe('Methods', function(){
+    it("getKey should return correct key", function() {
+      expect(mockApp.getKey()).to.equal(TEST_KEY);
+    });
 
-      var mockApp;
-      var mockApp2;
+    it("2 instances with the same key should have different UUIDs", function() {
+      expect(mockApp.getKey()).to.equal(mockApp2.getKey());
+      expect(mockApp.getUUID()).to.not.equal(mockApp2.getUUID());
+    });
 
-      beforeEach(function(){
-        const generateApp = (store)=>{
-          return new App(
-            TEST_KEY,
-            AppPermission.READ,
-            mockAppDescriptor,
-            mockAppLoader, 
-            mockModuleLoaders,
-            store,
-            mockEventService
-          );
-        };
-        mockApp = generateApp(mockAppStore);
-        mockApp2 = generateApp(mockAppStore2);
+    // Test App should reuse its UUID from store if already exists
+    it("should reuse UUID pulled from store if there is one", function() {
+      const app = new App(
+        TEST_KEY,
+        AppPermission.READ,
+        mockAppDescriptor,
+        mockAppLoader,
+        mockModuleLoaders,
+        mockAppStore,
+        mockEventService
+      );
+
+      expect(mockAppStoreGetState.called).to.equal(true);
+      expect(app.getUUID()).to.equal(TEST_UUID);
+    });
+
+    // Test getModules(filter)
+    it("should return filtered Array of modules via getModules", function() {
+      const app = new App(
+        TEST_KEY,
+        AppPermission.READ,
+        mockAppDescriptor,
+        mockAppLoader,
+        mockModuleLoaders,
+        mockAppStore,
+        mockEventService
+      );
+
+      app.modules = [{ key: "m1" }, { key: "m2" }, { key: "m3" }];
+      expect(app.getModules().length).to.equal(3);
+      expect(
+        app.getModules(m => {
+          return m.key === "m2";
+        }).length
+      ).to.equal(1);
+    });
+
+    // Test getModule(moduleKey)
+    it("should return correct single Module", function() {
+      const stubDescriptor = sinon.stub(mockAppDescriptor, "getModules");
+      const SINGLEKEY = "test.single.key";
+      stubDescriptor.returns([{ key: SINGLEKEY }]);
+      const stubCanLoad = sinon.stub(
+        mockModuleLoaders[0],
+        "canLoadModuleDescriptor"
+      );
+      const stubLoad = sinon.stub(
+        mockModuleLoaders[0],
+        "loadModuleFromDescriptor"
+      );
+      stubCanLoad.returns(true);
+      stubLoad.returns({
+        getKey: function() {
+          return SINGLEKEY;
+        }
       });
 
-      it('getKey should return correct key', function(){
-        expect(mockApp.getKey()).to.equal(TEST_KEY);
-      });
+      const app = new App(
+        TEST_KEY,
+        AppPermission.READ,
+        mockAppDescriptor,
+        mockAppLoader,
+        mockModuleLoaders,
+        mockAppStore,
+        mockEventService
+      );
 
-      it('2 instances with the same key should have different UUIDs', function(){
-        expect(mockApp.getKey()).to.equal(mockApp2.getKey());
-        expect(mockApp.getUUID()).to.not.equal(mockApp2.getUUID());
-      });
+      expect(mockAppStoreGetState.called).to.equal(true);
+      expect(app.getModule(SINGLEKEY).getKey()).to.equal(SINGLEKEY);
 
-      // Test App should reuse its UUID from store if already exists
-      it('should reuse UUID pulled from store if there is one', function(){
-        
-        const app = new App(
-          TEST_KEY,
-          AppPermission.READ,
-          mockAppDescriptor,
-          mockAppLoader, 
-          mockModuleLoaders,
-          mockAppStore,
-          mockEventService
-        );
+      stubDescriptor.restore();
+      stubCanLoad.restore();
+      stubLoad.restore();
+    });
 
-        expect(mockAppStoreGetState.called).to.equal(true);
-        expect(app.getUUID()).to.equal(TEST_UUID);
+    // Test enable()
+    it("calling enable/disable should make isEnabled === true/false and cause relevant EVENT", function() {
+      const eventSpy = sinon.spy(mockEventService, "emit");
+      const app = new App(
+        TEST_KEY,
+        AppPermission.READ,
+        mockAppDescriptor,
+        mockAppLoader,
+        mockModuleLoaders,
+        mockAppStore,
+        mockEventService
+      );
 
-      });
+      expect(app.isEnabled()).to.equal(false);
+      app.enable();
+      expect(app.isEnabled()).to.equal(true);
+      expect(eventSpy.called).to.equal(true);
+      eventSpy.resetHistory();
+      app.disable();
+      expect(app.isEnabled()).to.equal(false);
+      expect(eventSpy.called).to.equal(true);
+      eventSpy.resetHistory();
+    });
 
-      // Test getModules(filter)
-      it('should return filtered Array of modules via getModules', function(){
+    // Test enable()
+    it("calling enable/disable should save state to store", function() {
+      const storeSpy = sinon.spy(mockAppStore, "saveState");
+      const app = new App(
+        TEST_KEY,
+        AppPermission.READ,
+        mockAppDescriptor,
+        mockAppLoader,
+        mockModuleLoaders,
+        mockAppStore,
+        mockEventService
+      );
 
-        const app = new App(
-          TEST_KEY,
-          AppPermission.READ,
-          mockAppDescriptor,
-          mockAppLoader, 
-          mockModuleLoaders,
-          mockAppStore,
-          mockEventService
-        );
-
-        app.modules = [
-          {key:"m1"},{key:"m2"},{key:"m3"}
-        ];
-        expect(app.getModules().length).to.equal(3);
-        expect(app.getModules((m)=>{return m.key==="m2";}).length).to.equal(1);
-
-      });
-
-      // Test getModule(moduleKey)
-      it('should return correct single Module', function(){
-        
-        const stubDescriptor = sinon.stub(mockAppDescriptor, "getModules");
-        const SINGLEKEY = "test.single.key";
-        stubDescriptor.returns([
-          {key:SINGLEKEY}
-        ]);
-        const stubCanLoad = sinon.stub(mockModuleLoaders[0], "canLoadModuleDescriptor");
-        const stubLoad = sinon.stub(mockModuleLoaders[0], "loadModuleFromDescriptor");
-        stubCanLoad.returns(true);
-        stubLoad.returns({getKey:function(){return SINGLEKEY;}});
-
-        const app = new App(
-          TEST_KEY,
-          AppPermission.READ,
-          mockAppDescriptor,
-          mockAppLoader, 
-          mockModuleLoaders,
-          mockAppStore,
-          mockEventService
-        );
-
-        expect(mockAppStoreGetState.called).to.equal(true);
-        expect(app.getModule(SINGLEKEY).getKey()).to.equal(SINGLEKEY);
-
-        stubDescriptor.restore();
-        stubCanLoad.restore();
-        stubLoad.restore();
-
-      });
-
-      // Test enable()
-      it('calling enable/disable should make isEnabled === true/false and cause relevant EVENT', function(){
-        
-        const eventSpy = sinon.spy(mockEventService, "emit");
-        const app = new App(
-          TEST_KEY,
-          AppPermission.READ,
-          mockAppDescriptor,
-          mockAppLoader, 
-          mockModuleLoaders,
-          mockAppStore,
-          mockEventService
-        );
-
-        expect(app.isEnabled()).to.equal(false);
-        app.enable();
-        expect(app.isEnabled()).to.equal(true);
-        expect(eventSpy.called).to.equal(true);
-        eventSpy.resetHistory();
-        app.disable();
-        expect(app.isEnabled()).to.equal(false);
-        expect(eventSpy.called).to.equal(true);
-        eventSpy.resetHistory();
-        
-
-      });
-
-      // Test enable()
-      it('calling enable/disable should save state to store', function(){
-        
-        const storeSpy = sinon.spy(mockAppStore, "saveState");
-        const app = new App(
-          TEST_KEY,
-          AppPermission.READ,
-          mockAppDescriptor,
-          mockAppLoader, 
-          mockModuleLoaders,
-          mockAppStore,
-          mockEventService
-        );
-
-        app.enable();
-        expect(storeSpy.called).to.equal(true);
-        storeSpy.resetHistory();
-        
-
-      });
-
+      app.enable();
+      expect(storeSpy.called).to.equal(true);
+      storeSpy.resetHistory();
+    });
   });
-    
 });

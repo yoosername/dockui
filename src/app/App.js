@@ -1,9 +1,7 @@
-
-
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require("uuid/v4");
 const HttpClient = require("./http/HttpClient");
 
-const  {
+const {
   MODULE_LOAD_STARTED_EVENT,
   MODULE_LOAD_COMPLETE_EVENT,
   MODULE_LOAD_FAILED_EVENT,
@@ -11,9 +9,7 @@ const  {
   APP_DISABLED_EVENT
 } = require("../constants/events");
 
-const  {
-  validateShapes
-} = require("../util/validate");
+const { validateShapes } = require("../util/validate");
 
 const SecurityContext = require("./security/SecurityContext");
 
@@ -27,32 +23,30 @@ const SecurityContext = require("./security/SecurityContext");
  * @argument {AppStore} appStore - The store to use for persistence.
  * @argument {EventService} eventService - The Event service.
  */
-class App{
-
+class App {
   constructor(
     key,
     permission,
     descriptor,
-    loader, 
+    loader,
     moduleLoaders,
     appStore,
     eventService
-  ){
-    
+  ) {
     // Validate our args using ducktyping utils. (figure out better way to do this later)
     validateShapes([
-      {"shape":"AppDescriptor","object":descriptor},
-      {"shape":"AppLoader","object":loader},
-      {"shape":"ModuleLoader","object":moduleLoaders[0]},
-      {"shape":"AppStore","object":appStore},
-      {"shape":"EventService","object":eventService}
+      { shape: "AppDescriptor", object: descriptor },
+      { shape: "AppLoader", object: loader },
+      { shape: "ModuleLoader", object: moduleLoaders[0] },
+      { shape: "AppStore", object: appStore },
+      { shape: "EventService", object: eventService }
     ]);
 
     this.key = key;
     this.permission = permission;
     this.uuid = uuidv4();
     this.descriptor = descriptor;
-    this.loader = loader; 
+    this.loader = loader;
     this.moduleLoaders = moduleLoaders;
     this.appStore = appStore;
     this.eventService = eventService;
@@ -63,71 +57,69 @@ class App{
 
     this.modules = [];
     this.bootstrap();
-
   }
 
   /**
-   * @description bootstrap the app for example by setting up a 
-   *              security context and communicating shared secrets 
+   * @description bootstrap the app for example by setting up a
+   *              security context and communicating shared secrets
    *              to the App for subsequent communication
    */
-  bootstrap(){
-
+  bootstrap() {
     // Load the modules defined in the descriptor
     this.loadModules();
 
     // Hydrate our state from the attached store
-    // This will not enable or disable this app or its modules. That is performed by the LifeCycleEventsStrategy 
+    // This will not enable or disable this app or its modules. That is performed by the LifeCycleEventsStrategy
     this.load();
 
     // Get the type
     const type = this.getType();
 
-    // App is dynamic so we need a custom client to communicate with 
+    // App is dynamic so we need a custom client to communicate with
     // the various service endpoints using desired auth
-    if( type === "dynamic" ){
-      
-      if(!this.securityContext){
+    if (type === "dynamic") {
+      if (!this.securityContext) {
         this.securityContext = new SecurityContext(this);
         // Save state as we now have a Security Context to persist
         this.save();
       }
-      
+
       // Attach a HttpClient customised to communicate with the Remote App
       // If it uses some kind of Auth then it has access to the SecurityContext via the App ref
       //this.httpClient = new JWTHttpClient(this);
       this.httpClient = new HttpClient(this);
     }
     // App is static so Just use a plain HttpClient
-    else{
+    else {
       this.httpClient = new HttpClient(this);
     }
-
   }
 
   /**
-  * @description Save this App state to the store
-  */
-  save(){
+   * @description Save this App state to the store
+   */
+  save() {
     this.appStore.saveState(this);
   }
 
   /**
-  * @description Load this Apps state from the store if there is any
-  */
-  load(){
+   * @description Load this Apps state from the store if there is any
+   */
+  load() {
     const state = this.appStore.getState(this);
-    if(state){
-      this.uuid = (state.uuid) ? state.uuid : this.uuid;
-      this.securityContext = (state.securityContext) ? state.securityContext : this.securityContext;
+    if (state) {
+      this.uuid = state.uuid ? state.uuid : this.uuid;
+      this.securityContext = state.securityContext
+        ? state.securityContext
+        : this.securityContext;
     }
   }
 
   /**
-  * @description Return true if the App is currently enabled
-  * @returns {Boolean} Return true if this App is currently enabled
-  */
-  isEnabled(){
+   * @description Return true if the App is currently enabled
+   * @returns {Boolean} Return true if this App is currently enabled
+   */
+  isEnabled() {
     return this.enabled;
   }
 
@@ -135,7 +127,7 @@ class App{
    * @description return the unique key of this App
    * @returns {String} The Apps key
    */
-  getKey(){
+  getKey() {
     return this.key;
   }
 
@@ -146,7 +138,7 @@ class App{
    * @example AppPermission.WRITE
    * @example AppPermission.ADMIN
    */
-  getPermission(){
+  getPermission() {
     return this.permission;
   }
 
@@ -155,7 +147,7 @@ class App{
    * @returns {String} Type
    * @example "static" or "dynamic"
    */
-  getType(){
+  getType() {
     return this.descriptor.getType();
   }
 
@@ -163,7 +155,7 @@ class App{
    * @description Helper returns the base URL from this Apps descriptor
    * @returns {String} URL
    */
-  getUrl(){
+  getUrl() {
     return this.descriptor.getUrl();
   }
 
@@ -171,7 +163,7 @@ class App{
    * @description Return the uniquely generated framework identifier of this App instance
    * @returns {String} UUID
    */
-  getUUID(){
+  getUUID() {
     return this.uuid;
   }
 
@@ -179,7 +171,7 @@ class App{
    * @description Return the loader which loaded this App
    * @returns {AppLoader} AppLoader
    */
-  getLoader(){
+  getLoader() {
     return this.loader;
   }
 
@@ -187,7 +179,7 @@ class App{
    * @description Return the App Descriptor this App was parsed from
    * @returns {AppDescriptor} AppDescriptor
    */
-  getDescriptor(){
+  getDescriptor() {
     return this.descriptor;
   }
 
@@ -195,7 +187,7 @@ class App{
    * @description Return event service
    * @returns {EventService} EventService
    */
-  getEventService(){
+  getEventService() {
     return this.eventService;
   }
 
@@ -203,7 +195,7 @@ class App{
    * @description Return Module loaders which are available for parsing Module Descriptors
    * @returns {Array} Array of ModuleLoader
    */
-  getModuleLoaders(){
+  getModuleLoaders() {
     return this.moduleLoaders;
   }
 
@@ -211,8 +203,8 @@ class App{
    * @description Return all the modules that have been loaded (optionally filtered)
    * @returns {Array} Array of Module
    */
-  getModules(filter){
-    if(!filter){
+  getModules(filter) {
+    if (!filter) {
       return this.modules;
     }
     return this.modules.filter(filter);
@@ -222,8 +214,10 @@ class App{
    * @description return a single module by key
    * @returns {Module} A single Module that matches the passed key
    */
-  getModule(key){
-    const filtered = this.modules.filter((module)=>{return (module.getKey() === key);});
+  getModule(key) {
+    const filtered = this.modules.filter(module => {
+      return module.getKey() === key;
+    });
     return filtered[0];
   }
 
@@ -231,81 +225,81 @@ class App{
    * @description return the Http client configured for this App
    * @returns {HttpClient} HttpClient used for communicating with the App remotely
    */
-  getHttpClient(){
+  getHttpClient() {
     return this.httpClient;
   }
 
   /**
    * @description Toggle enabled flag, save state to store and and notify event listeners
    */
-  enable(){
+  enable() {
     this.enabled = true;
     this.save();
     this.eventService.emit(APP_ENABLED_EVENT, {
-      "app" : this
+      app: this
     });
   }
 
   /**
    * @description Toggle enabled flag off, save state and notify event listeners
    */
-  disable(){
+  disable() {
     this.enabled = false;
     this.save();
     this.eventService.emit(APP_DISABLED_EVENT, {
-      "app" : this
+      app: this
     });
   }
 
   /**
-   * @description Try to parse the descriptor.modules and load 
+   * @description Try to parse the descriptor.modules and load
    * all the modules in it using any of the passed in ModuleLoaders
    * Unloadable modules are loaded anyway but automatically disabled
    */
-  loadModules(){
-
-    this.descriptor.getModules().forEach(moduleDescriptor =>{
+  loadModules() {
+    this.descriptor.getModules().forEach(moduleDescriptor => {
       var module = null;
       var loaded = false;
 
       this.eventService.emit(MODULE_LOAD_STARTED_EVENT, {
-        "app" : this,
-        "descriptor" : moduleDescriptor
+        app: this,
+        descriptor: moduleDescriptor
       });
 
-      this.moduleLoaders.forEach(moduleLoader =>{
-        try{
-          if(!loaded && moduleLoader.canLoadModuleDescriptor(moduleDescriptor)){
+      this.moduleLoaders.forEach(moduleLoader => {
+        try {
+          if (
+            !loaded &&
+            moduleLoader.canLoadModuleDescriptor(moduleDescriptor)
+          ) {
             module = moduleLoader.loadModuleFromDescriptor(moduleDescriptor);
-            if(module){
+            if (module) {
               loaded = true;
-            } 
+            }
           }
-        }catch(e){
+        } catch (e) {
           // Do nothing as another loader might handle it
         }
       });
-      if(!module){
-        // Here we could create a special UnloadableModule 
+      if (!module) {
+        // Here we could create a special UnloadableModule
         // that is automatically disabled - that contains its own error
       }
-      if(module){
+      if (module) {
         this.modules.push(module);
         this.eventService.emit(MODULE_LOAD_COMPLETE_EVENT, {
-          "app" : this,
-          "descriptor" : moduleDescriptor,
-          "module" : module
+          app: this,
+          descriptor: moduleDescriptor,
+          module: module
         });
-      }else{
+      } else {
         this.eventService.emit(MODULE_LOAD_FAILED_EVENT, {
-          "app" : this,
-          "descriptor" : moduleDescriptor
+          app: this,
+          descriptor: moduleDescriptor
         });
       }
     });
-
   }
-
 }
 
 module.exports = App;
