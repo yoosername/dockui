@@ -21,7 +21,7 @@ describe('UrlAppLoader', function() {
         expect(UrlAppLoader).to.be.a('function');
     });
 
-    // TODO: These tests
+    // TODO (v0.0.2-Alpha): These tests
     // Methods to Test
     // "scanForNewApps"
     //   should detect FILE_APP_LOAD_EVENT event after scanForApps run

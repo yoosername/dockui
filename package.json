@@ -1,7 +1,7 @@
 {
   "name": "dockui",
-  "version": "2.0.0",
-  "description": "plug and play web apps using docker containers",
+  "version": "0.0.1-Alpha",
+  "description": "Create Plug and Play front/back end microservices using containers",
   "author": "https://github.com/yoosername",
   "repository": {
     "type": "git",
@@ -10,9 +10,14 @@
   "keywords": [
     "docker",
     "composition",
+    "plug-and-play",
     "app",
     "webapp",
-    "ui"
+    "ui",
+    "microservices",
+    "frontend",
+    "backend",
+    "api-gateway"
   ],
   "license": "MIT",
   "main": "index.js",
@@ -30,18 +35,15 @@
     "serve-docs": "npm run generate-index && node ./node_modules/documentation/bin/documentation.js serve --format html"
   },
   "dependencies": {
-    "@types/proxyquire": "^1.3.28",
     "axios": "^0.18.0",
     "dockerode": "^2.5.7",
     "events": "^1.1.1",
     "js-yaml": "^3.12.1",
     "nodegit": "^0.24.0",
-    "randomatic": ">=3.0.0",
-    "superagent": "^3.8.3",
-    "util": "^0.10.4",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/proxyquire": "^1.3.28",
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
     "documentation": "^5.5.0",
@@ -49,7 +51,6 @@
     "mocha": "^4.1.0",
     "mocha-lcov-reporter": "^1.3.0",
     "moxios": "^0.4.0",
-    "nock": "^9.6.1",
     "nyc": "^11.9.0",
     "proxyquire": "^2.1.0",
     "sinon": "^4.5.0",

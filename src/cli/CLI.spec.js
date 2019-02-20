@@ -18,7 +18,7 @@ describe('CLI', function() {
       expect(CLI).to.be.a('function');
     });
 
-    // TODO: These tests
+    // TODO (v0.0.1-Alpha): These tests
     // Keep this in mind: https://12factor.net/
     //
     // Generic things to test
@@ -71,5 +71,9 @@ describe('CLI', function() {
     // (6) Gracefully stop the running DockUI instance
     //
     //     $ Ctrl+C or SIGTERM
+    //
+    // (7) Standardize the logging output format. 
+    //       Do it 12 factor style. Aka log to STDOUT, 
+    //       but allow customization of verbosity
     
 });

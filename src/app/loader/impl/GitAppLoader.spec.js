@@ -88,7 +88,7 @@ describe('GitAppLoader', function() {
         expect(nodeGitRepoURLRequested).to.equal(null);
     });
 
-    // TODO: These tests
+    // TODO (v0.0.2-Alpha): These tests
     //   Should submit a GIT_CLONE_STARTED event
     it('should submit a GIT_CLONE_STARTED event upon detection of GIT_CLONE_REQUESTED', function() {
         

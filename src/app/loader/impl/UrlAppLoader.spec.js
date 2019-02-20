@@ -22,7 +22,7 @@ describe('UrlAppLoader', function() {
     });
 
 
-    // TODO: These tests
+    // TODO (v0.0.1-Alpha): These tests
     // Methods to Test
     // "scanForNewApps"
     // should detect URL_APP_LOAD_REQUEST event after scanForApps run

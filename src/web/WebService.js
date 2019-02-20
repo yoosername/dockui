@@ -39,20 +39,6 @@ class WebService{
     
     // Notify listeners that we are starting
     this.eventService.emit(WEBSERVICE_STARTING_EVENT, this);
-
-    // TODO: Setup Express with defaults
-    // TODO: Add a route for Management Rest API ( Takes precendence over Apps provided route of same name )
-    //       List All Apps - GET /rest/admin/apps
-    //       Attempt to Load App - POST /rest/admin/apps {url: "https:/location.of/descriptor.yml", permission: "READ"} - returns new App URI
-    //       Get single App - GET /rest/admin/apps/{appKey}||{appUUID}
-    //       Reload App (or change Permission) - PUT /rest/admin/apps/{appKey}||{appUUID} {url: "https:/location.of/descriptor.yml", permission: "READ"}
-    //       Unload App - DELETE /rest/admin/apps/{appKey}||{appUUID}
-    //       List Apps Modules - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules
-    //       Enable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/enable
-    //       Disable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/disable
-    //       Enable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/enable
-    //       Disable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/disable
-
     this.running = true;
     // Notify listeners that we have started
     this.eventService.emit(WEBSERVICE_STARTED_EVENT, this);
@@ -96,16 +82,6 @@ class WebService{
     "use strict";
     return this.eventService;
   }
-
-  // Add / Remove middleware route (Run before / after Handlers)
-  // - this should Build a new Router and add all middleare from 
-  // - previous one plus our new one, then switch old for new
-  // - possibly do switch only after no new routes modified for
-  // -  well deinfed timeout latch
-  // Add / Remove Req handler ( GET, POST etc )
-  // Add / Remove route (specialized middleware - translates bas routes to plugin routes (Run first))
-  // Add / Remove authentication handler (special middleware (Run before other middleware))
-  // Add / Remove authorization handler (special middleware (Run before other middleware))
 
 }
 

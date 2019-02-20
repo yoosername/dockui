@@ -48,7 +48,7 @@ describe('WebService', function() {
       expect(spy.calledTwice).to.equal(true);
     });
 
-    // TODO: Add the following Managment endpoint units:
+    // TODO (v0.0.1-Alpha): Add the following Managment endpoint units:
     //        Add a route for Management Rest API ( Takes precendence over Apps provided route of same name )
     //        List All Apps - GET /rest/admin/apps
     //        Attempt to Load App - POST /rest/admin/apps {url: "https:/location.of/descriptor.yml", permission: "READ"} - returns new App URI
@@ -62,7 +62,7 @@ describe('WebService', function() {
     //        Disable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/disable
 
 
-    // TODO: Test that we are following 12 Factor Rules (to ensure scalability etc) aka:
+    // TODO (v0.0.1-Alpha): Test that we are following 12 Factor Rules (to ensure scalability etc) aka:
     // I. Codebase
     //   One codebase tracked in revision control, many deploys
     // II. Dependencies
@@ -89,7 +89,7 @@ describe('WebService', function() {
     //   Run admin/management tasks as one-off processes
 
 
-    // TODO: 
+    // TODO (v0.0.2-Alpha): 
     // Implement the concept of a URN for subject, resource 
     // Implement the concept of action
     // Do this mapping early in the handling of traffic. (Perhaps after authentication) Examples:
