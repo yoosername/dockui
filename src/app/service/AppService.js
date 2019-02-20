@@ -1,4 +1,4 @@
-const  {
+const {
   APP_SERVICE_STARTING_EVENT,
   APP_SERVICE_STARTED_EVENT,
   APP_SERVICE_SHUTTING_DOWN_EVENT,
@@ -9,54 +9,48 @@ const  {
   MODULE_DISABLED_EVENT
 } = require("../../constants/events");
 
-const  {
-  AppServiceValidationError
-} = require("../../constants/errors");
+const { AppServiceValidationError } = require("../../constants/errors");
 
-const  {
-  validateShapes
-} = require("../../util/validate");
+const { validateShapes } = require("../../util/validate");
 
 /**
  * @description Orchestrates
- *                loading Apps via AppLoaders, 
- *                triggering events in the EventService based on the LifecycleEventsStrategy and 
+ *                loading Apps via AppLoaders,
+ *                triggering events in the EventService based on the LifecycleEventsStrategy and
  *                state persistence via the AppStore
  */
-class AppService{
-
+class AppService {
   /**
    * @param {Array} appLoaders - Array of {AppLoader} to use for loading {App}s
    * @param {AppStore} appStore - The AppStore to use for framework persistence
    * @param {LifecycleEventsStrategy} lifecycleEventsStrategy - This is used to customise framework events
    * @param {EventService} eventService - The EventService to use for framework events
    */
-  constructor(
-    appLoaders,
-    appStore,
-    lifecycleEventsStrategy,
-    eventService
-  ){
-    
+  constructor(appLoaders, appStore, lifecycleEventsStrategy, eventService) {
     this._running = false;
     var lifecycleEventsStrategyInst = lifecycleEventsStrategy;
 
-    try{
-
+    try {
       // if lifecycleEventStrategy is a function then create the instance now
-      if(typeof lifecycleEventsStrategyInst==="function"){
-        lifecycleEventsStrategyInst = new lifecycleEventsStrategyInst(this, eventService, AppStore);
+      if (typeof lifecycleEventsStrategyInst === "function") {
+        lifecycleEventsStrategyInst = new lifecycleEventsStrategyInst(
+          this,
+          eventService,
+          AppStore
+        );
       }
 
       // Validate our args using ducktyping utils. (figure out better way to do this later)
       validateShapes([
-        {"shape":"AppLoader","object":appLoaders[0]}, 
-        {"shape":"AppStore","object":appStore}, 
-        {"shape":"LifecycleEventsStrategy","object":lifecycleEventsStrategyInst}, 
-        {"shape":"EventService","object":eventService}
+        { shape: "AppLoader", object: appLoaders[0] },
+        { shape: "AppStore", object: appStore },
+        {
+          shape: "LifecycleEventsStrategy",
+          object: lifecycleEventsStrategyInst
+        },
+        { shape: "EventService", object: eventService }
       ]);
-
-    }catch(e){
+    } catch (e) {
       throw new AppServiceValidationError(e);
     }
 
@@ -64,19 +58,16 @@ class AppService{
     this.appStore = appStore;
     this.eventService = eventService;
     this.lifecycleEventsStrategy = lifecycleEventsStrategyInst;
-    
   }
 
   /**
    * @description Initialize and start the AppService
    */
-  start(){
+  start() {
     "use strict";
 
     // If we are not already started
-    if( this._running !== true ){
-
-
+    if (this._running !== true) {
       // Notify listeners that we are starting up
       this.eventService.emit(APP_SERVICE_STARTING_EVENT);
 
@@ -87,24 +78,21 @@ class AppService{
       this.scanForNewApps();
 
       // Flag that we are now running
-      this._running = true; 
+      this._running = true;
 
       // Notify listeners that we have started
       this.eventService.emit(APP_SERVICE_STARTED_EVENT);
-
     }
-
   }
 
   /**
    * @description shutdown AppService gracefully
    */
-  shutdown(){
+  shutdown() {
     "use strict";
 
     // If we are not already shutdown
-    if( this._running === true ){
-
+    if (this._running === true) {
       // Notify listeners that we are shutting down
       this.eventService.emit(APP_SERVICE_SHUTTING_DOWN_EVENT);
 
@@ -119,27 +107,26 @@ class AppService{
 
       // Notify listeners that we have shutdown successfully
       this.eventService.emit(APP_SERVICE_SHUTDOWN_EVENT);
-
     }
   }
 
   /**
    * @description Tell each AppLoader to start looking for new Apps
    */
-  scanForNewApps(){
+  scanForNewApps() {
     "use strict";
     this.appLoaders.forEach(appLoader => {
-        appLoader.scanForNewApps();
+      appLoader.scanForNewApps();
     });
   }
 
   /**
    * @description Tell each AppLoader we dont want any more scanning until called again
    */
-  stopScanningForNewApps(){
+  stopScanningForNewApps() {
     "use strict";
     this.appLoaders.forEach(appLoader => {
-        appLoader.stopScanningForNewApps();
+      appLoader.stopScanningForNewApps();
     });
   }
 
@@ -147,11 +134,11 @@ class AppService{
    * @description Get all Apps from all Loaders
    * @argument {Function} filter : filter the list of Apps using this test
    */
-  getApps(filter){
+  getApps(filter) {
     "use strict";
     var allApps = [];
     this.appLoaders.forEach(appLoader => {
-        allApps.push(appLoader.getApps(filter));
+      allApps.push(appLoader.getApps(filter));
     });
     return allApps;
   }
@@ -160,13 +147,17 @@ class AppService{
    * @description Get single App by key
    * @argument {int} appKey
    */
-  getApp(appKey){
+  getApp(appKey) {
     "use strict";
     var App = null;
-    try{
+    try {
       App = this.getApps(App => App.getKey() === appKey)[0];
-    }catch(e){
-      console.warn("[AppService] Attempted to locate App ("+appKey+") but it was not found");
+    } catch (e) {
+      console.warn(
+        "[AppService] Attempted to locate App (" +
+          appKey +
+          ") but it was not found"
+      );
     }
     return App;
   }
@@ -176,40 +167,48 @@ class AppService{
    * @argument {int} appKey
    * @argument {Function} filter
    */
-  getModules(appKey, filter){
+  getModules(appKey, filter) {
     "use strict";
     var modules = [];
     var app = this.getApp(appKey);
-    if( app !== null){
+    if (app !== null) {
       modules = app.getModules();
-      if(filter && typeof filter === "function"){
+      if (filter && typeof filter === "function") {
         modules = modules.filter(filter);
       }
-    }else{
-      console.warn("[AppService] Attempted to get modules for App ("+appKey+") but it was not found - skipping");
+    } else {
+      console.warn(
+        "[AppService] Attempted to get modules for App (" +
+          appKey +
+          ") but it was not found - skipping"
+      );
     }
     return modules;
   }
 
-    /**
+  /**
    * @description Return a single App(s) module(s)
    * @argument {int} appKey
    * @argument {int} moduleKey
    */
-  getModule(appKey, moduleKey){
+  getModule(appKey, moduleKey) {
     "use strict";
     var module = null;
-    try{
+    try {
       module = this.getModules(appKey, module => {
-        return (module.getKey() === moduleKey);
+        return module.getKey() === moduleKey;
       })[0];
-    }catch(e){
-      console.warn("[AppService] Attempted to locate module ("+moduleKey+") for App ("+appKey+") but it was not found");
+    } catch (e) {
+      console.warn(
+        "[AppService] Attempted to locate module (" +
+          moduleKey +
+          ") for App (" +
+          appKey +
+          ") but it was not found"
+      );
     }
     return module;
   }
-
-
 }
 
 module.exports = AppService;

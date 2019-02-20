@@ -51,12 +51,12 @@
 //     ],
 //     "Status": "Up About an hour"
 //   };
-  
+
 // }
 
 // /**
 //  * ContainerGenerator
-//  * @description returns array of random container objects 
+//  * @description returns array of random container objects
 //  * @param count how many containers to return
 //  * @private
 //  */
@@ -81,7 +81,7 @@
 //  */
 // function MockDockerClient(num) {
 //     "use strict";
-  
+
 //     if (!(this instanceof MockDockerClient)) {
 //       return new MockDockerClient(num);
 //     }
@@ -93,7 +93,7 @@
 //     this._isDockerRunning = true;
 //     this._events = new EventEmitter();
 //     this.containers = ContainerGenerator(num);
-    
+
 // }
 
 // MockDockerClient.prototype = Object.create(DockerClient.prototype, {constructor: {value: MockDockerClient}});

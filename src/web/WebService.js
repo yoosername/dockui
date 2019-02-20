@@ -1,30 +1,27 @@
-const  {
+const {
   WEBSERVICE_STARTING_EVENT,
   WEBSERVICE_STARTED_EVENT,
   WEBSERVICE_SHUTTING_DOWN_EVENT,
   WEBSERVICE_SHUTDOWN_EVENT
-} = require("../constants/events"); 
+} = require("../constants/events");
 
-const  {
-  validateShapes
-} = require("../util/validate");
+const { validateShapes } = require("../util/validate");
 
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
  *              and associated routes etc.
  */
-class WebService{
-
+class WebService {
   /**
-  * @argument {AppService} appService The AppService for interacting with Apps 
-  * @argument {EventService} eventService The EventService to use for web events
-  */
-  constructor(appService, eventService){
+   * @argument {AppService} appService The AppService for interacting with Apps
+   * @argument {EventService} eventService The EventService to use for web events
+   */
+  constructor(appService, eventService) {
     this.running = false;
 
     validateShapes([
-      {"shape":"AppService","object":appService},
-      {"shape":"EventService","object":eventService}
+      { shape: "AppService", object: appService },
+      { shape: "EventService", object: eventService }
     ]);
 
     this.appService = appService;
@@ -34,9 +31,9 @@ class WebService{
   /**
    * @description initialize and start web server
    */
-  start(){
+  start() {
     "use strict";
-    
+
     // Notify listeners that we are starting
     this.eventService.emit(WEBSERVICE_STARTING_EVENT, this);
     this.running = true;
@@ -47,7 +44,7 @@ class WebService{
   /**
    * @description Gracefully shutdown web server
    */
-  shutdown(){
+  shutdown() {
     "use strict";
     // Notify listeners that we are starting
     this.eventService.emit(WEBSERVICE_SHUTTING_DOWN_EVENT);
@@ -60,7 +57,7 @@ class WebService{
    * @description Is the webserver currently serving requests
    * @returns {Boolean} Returns true if the WebService is currently running
    */
-  isRunning(){
+  isRunning() {
     "use strict";
     return this.running;
   }
@@ -69,7 +66,7 @@ class WebService{
    * @description Helper to get the passed in AppService
    * @returns {AppService} the AppService
    */
-  getAppService(){
+  getAppService() {
     "use strict";
     return this.appService;
   }
@@ -78,11 +75,10 @@ class WebService{
    * @description Helper to get the passed in EventService
    * @returns {EventService} the EventService
    */
-  getEventService(){
+  getEventService() {
     "use strict";
     return this.eventService;
   }
-
 }
 
 module.exports = WebService;

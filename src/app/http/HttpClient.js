@@ -1,38 +1,29 @@
-const  {
-  validateShapes
-} = require("../../util/validate");
+const { validateShapes } = require("../../util/validate");
 
 const axios = require("axios");
 
 /**
  * @description Custom Client to perform communication over HTTP with a specific App
  */
-class HttpClient{
-
+class HttpClient {
   /**
    * @argument {App} app The Remote App.
    */
-  constructor(
-    app
-  ){
-  
+  constructor(app) {
     // Validate our args using ducktyping utils. (figure out better way to do this later)
-    validateShapes([
-      {"shape":"App","object":app}
-    ]);
+    validateShapes([{ shape: "App", object: app }]);
 
     this.app = app;
 
     const client = axios.create({
       baseURL: this.app.getUrl(),
-      timeout: 1000,
+      timeout: 1000
       // transformRequest: [this.preSendHook],
       // transformResponse: [this.postReceiveHook]
     });
 
     var initializedClient = this.init(client);
-    this._client = (initializedClient) ? initializedClient : client;
-
+    this._client = initializedClient ? initializedClient : client;
   }
 
   /**
@@ -40,7 +31,7 @@ class HttpClient{
    * @argument {object} client The Http Client instance
    * @async
    */
-  init(client){
+  init(client) {
     return client;
   }
 
@@ -49,7 +40,7 @@ class HttpClient{
    * @argument {object} options The request options
    * @async
    */
-  send(options){
+  send(options) {
     options = this.transformRequest(options);
     return this._client(options).then(this.transformResponse);
   }
@@ -60,10 +51,10 @@ class HttpClient{
    * @argument {Object} options - optional request config
    * @async
    */
-  get(url, options){
-    options = (options) ? options : {};
+  get(url, options) {
+    options = options ? options : {};
     options = Object.assign(options, {
-      method: 'get',
+      method: "get",
       url: url
     });
     return this.send(options);
@@ -76,10 +67,10 @@ class HttpClient{
    * @argument {Object} options - optional request config
    * @async
    */
-  post(url, data, options){
-    options = (options) ? options : {};
-    options = Object.assign({},options, {
-      method: 'post',
+  post(url, data, options) {
+    options = options ? options : {};
+    options = Object.assign({}, options, {
+      method: "post",
       url: url,
       data
     });
@@ -89,7 +80,7 @@ class HttpClient{
   /**
    * @argument {Object} options - The Request options prior to send
    */
-  transformRequest(options){
+  transformRequest(options) {
     // subclasses should override this to modify request behaviour
     return options;
   }
@@ -97,12 +88,10 @@ class HttpClient{
   /**
    * @argument {Object} response - The raw response object post receive
    */
-  transformResponse(response){
+  transformResponse(response) {
     // subclasses should override this to modify response behaviour
     return response;
   }
-
-
 }
 
 module.exports = HttpClient;

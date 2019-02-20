@@ -6,9 +6,9 @@
  *              - ADMIN (includes READ,WRITE) App can also use the managment API to e.g. load,unload,enable,diable Apps and Modules
  */
 const AppPermission = Object.freeze({
-  READ : "READ",
-  WRITE : "WRITE",
-  ADMIN : "ADMIN"
+  READ: "READ",
+  WRITE: "WRITE",
+  ADMIN: "ADMIN"
 });
 
 module.exports = AppPermission;

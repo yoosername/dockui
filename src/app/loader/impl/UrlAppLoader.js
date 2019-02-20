@@ -1,4 +1,7 @@
 const AppLoader = require("../AppLoader");
+const axios = require("axios");
+
+const { URL_APP_LOAD_REQUEST } = require("../../../constants/events");
 
 /**
  * @description An AppLoader which detects URL_APP_LOAD_REQUESTED events.
@@ -6,19 +9,18 @@ const AppLoader = require("../AppLoader");
  *              - download the descriptor to a local file cache
  *              - Send FILE_APP_LOAD_REQUEST Event
  */
-class UrlAppLoader extends AppLoader{
-
+class UrlAppLoader extends AppLoader {
   /**
    * @argument {AppStore} appStore - The store to use for persistence.
    * @argument {Array} AppModuleLoaders - The loaders to use for loading Modules.
    * @argument {EventService} eventService - The Event service.
    */
-  constructor(
-    appStore,
-    appModuleLoaders,
-    eventService
-  ){
-    super(appStore,appModuleLoaders, eventService);
+  constructor(appStore, appModuleLoaders, eventService) {
+    super(appStore, appModuleLoaders, eventService);
+
+    this.client = axios.create({
+      timeout: 1000
+    });
   }
 
   /**
@@ -32,7 +34,18 @@ class UrlAppLoader extends AppLoader{
    *              - Send URL_APP_LOAD_COMPLETE Event
    *              - Send FILE_APP_LOAD_REQUEST Event
    */
-  scanForNewApps(){
+  scanForNewApps() {
+    // The first time we run do a one off scan for all running containers
+    if (!this.scanning && this.client) {
+      // First things first mark us as scanning
+      this.scanning = true;
+
+      // now listen for any events we care about.
+      this.eventsService.on(URL_APP_LOAD_REQUEST, async request => {
+        const url = request.url;
+        await this._client(options).then(this.transformResponse);
+      });
+    }
     // to add App to cache use this.addApp(app);
     // to remove App from cache use this.removeApp(app);
   }
@@ -40,10 +53,7 @@ class UrlAppLoader extends AppLoader{
   /**
    * @description Stop checking for new Apps until scan is called again.
    */
-  stopScanningForNewApps(){
-
-  }
-
+  stopScanningForNewApps() {}
 }
 
 module.exports = UrlAppLoader;
