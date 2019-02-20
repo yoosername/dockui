@@ -40,7 +40,7 @@ class GitAppLoader extends AppLoader {
         const cloneUrl = request.repo;
 
         // Tell the system we has started processing a new Container
-        this.eventsService.emit(GIT_APP_LOAD_STARTED, {
+        this.eventService.emit(GIT_APP_LOAD_STARTED, {
           status: "loading",
           message:
             "A Git Repo (" + cloneUrl + ") was requested and will be fetched",
@@ -63,7 +63,7 @@ class GitAppLoader extends AppLoader {
             return NodeGit.Repository.open(localClonePath);
           })
           .catch(err => {
-            this.eventsService.emit(GIT_APP_LOAD_FAILED, { error: err });
+            this.eventService.emit(GIT_APP_LOAD_FAILED, { error: err });
           })
           .then(repository => {
             // Access any repository methods here.
@@ -72,14 +72,14 @@ class GitAppLoader extends AppLoader {
               repository,
               localClonePath
             );
-            this.eventsService.emit(GIT_APP_LOAD_COMPLETE, repository);
+            this.eventService.emit(GIT_APP_LOAD_COMPLETE, repository);
           });
       }
     });
 
     this.listeners.forEach(event => {
       "use strict";
-      this.eventsService.addListener(event.eventName, event.listener);
+      this.eventService.addListener(event.eventName, event.listener);
     });
   }
 
@@ -89,7 +89,7 @@ class GitAppLoader extends AppLoader {
   removeEventListeners() {
     this.listeners.forEach(event => {
       "use strict";
-      this.eventsService.removeListener(event.eventName, event.listener);
+      this.eventService.removeListener(event.eventName, event.listener);
     });
   }
 

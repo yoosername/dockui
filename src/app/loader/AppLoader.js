@@ -23,7 +23,7 @@ class AppLoader {
 
     this.appStore = appStore;
     this.moduleLoaders = moduleLoaders;
-    this.eventsService = eventService;
+    this.eventService = eventService;
     this.loadedApps = [];
     this.loadFailedApps = [];
   }
@@ -81,7 +81,12 @@ class AppLoader {
    * @argument {String} key Key to filter on
    */
   getApp(key) {
-    return this.getApps(app => app.getKey() === key);
+    const apps = this.getApps(app => app.getKey() === key);
+    if (apps.length) {
+      return apps[0];
+    } else {
+      return null;
+    }
   }
 }
 

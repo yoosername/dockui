@@ -22,23 +22,33 @@ class AppDescriptor {
       throw new MalformedAppDescriptorError();
     }
 
-    this.key = descriptor.key;
-    this.url = descriptor.url;
     this.name = descriptor.name ? descriptor.name : descriptor.key;
+    this.key = descriptor.key;
+    this.type = descriptor.type;
+    this.url = descriptor.url;
+    this.description = descriptor.description;
     this.version = descriptor.version ? descriptor.version : "1.0.0";
     this.descriptorVersion = descriptor["descriptor-version"]
       ? descriptor["descriptor-version"]
       : "1";
-    this.logo = descriptor.logo ? descriptor.logo : "";
+    this.icon = descriptor.icon ? descriptor.icon : "";
 
     this.authentication = {
       type: descriptor.authentication.type
     };
-    this.lifecycleURLs = {
+    this.lifecycle = {
       loaded: descriptor.lifecycle.loaded
     };
 
-    this.modules = descriptor.modules;
+    this.modules = descriptor.modules ? descriptor.modules : [];
+  }
+
+  /**
+   * Returns Name
+   * @returns {string} Human readable App Name
+   */
+  getName() {
+    return this.name;
   }
 
   /**
@@ -50,6 +60,14 @@ class AppDescriptor {
   }
 
   /**
+   * Returns Type
+   * @returns {string} Whether this is a Dynamic or Static App
+   */
+  getType() {
+    return this.type;
+  }
+
+  /**
    * Returns URL
    * @returns {string} The App base url
    */
@@ -58,11 +76,11 @@ class AppDescriptor {
   }
 
   /**
-   * Returns Name
-   * @returns {string} Human readable App Name
+   * Returns Description
+   * @returns {string} The App description
    */
-  getName() {
-    return this.name;
+  getDescription() {
+    return this.description;
   }
 
   /**
@@ -82,11 +100,19 @@ class AppDescriptor {
   }
 
   /**
-   * Returns Logo
-   * @returns {string} Relative URL of Apps logo
+   * Returns Icon
+   * @returns {string} Relative URL of Apps Icon image file
    */
-  getLogo() {
-    return this.logo;
+  getIcon() {
+    return this.icon;
+  }
+
+  /**
+   * Returns Lifecycle
+   * @returns {string} URLs of lifecycle endpoints to be notified of various framework events
+   */
+  getLifecycle() {
+    return this.lifecycle;
   }
 
   /**
@@ -95,14 +121,6 @@ class AppDescriptor {
    */
   getAuthentication() {
     return this.authentication;
-  }
-
-  /**
-   * Returns LifecycleURLs
-   * @returns {string} URLs of lifecycle endpoints to be notified of various framework events
-   */
-  getLifecycleURLs() {
-    return this.lifecycleURLs;
   }
 
   /**

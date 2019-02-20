@@ -123,12 +123,12 @@ class DockerAppLoader extends AppLoader {
 
       // Start listening for events from the framework
       //  - DOCKER_APP_LOAD_REQUEST means user requested to start a Docker container image via the CLI
-      this.eventsService.on(DOCKER_APP_LOAD_REQUEST, request => {
+      this.eventService.on(DOCKER_APP_LOAD_REQUEST, request => {
         const image = request.image;
         const cmd = request.cmd || [];
 
         // Tell the system we has started processing a new Container
-        this.eventsService.emit(DOCKER_APP_LOAD_STARTED, {
+        this.eventService.emit(DOCKER_APP_LOAD_STARTED, {
           status: "loading",
           message:
             "A Container with Image (" + image + ") was requested to run",
@@ -140,10 +140,10 @@ class DockerAppLoader extends AppLoader {
         this.client.run(image, cmd, process.stdout, (err, data, container) => {
           if (err) {
             //console.warn("Error running Docker image: ",image," with cmd: ",cmd);
-            this.eventsService.emit(DOCKER_APP_LOAD_FAILED, { error: err });
+            this.eventService.emit(DOCKER_APP_LOAD_FAILED, { error: err });
           } else {
             // Tell the system we have successfully Run the Container
-            this.eventsService.emit(DOCKER_APP_LOAD_COMPLETE, container);
+            this.eventService.emit(DOCKER_APP_LOAD_COMPLETE, container);
           }
         });
       });
@@ -173,7 +173,7 @@ class DockerAppLoader extends AppLoader {
     // Only act at all if we are current set to scanning
     if (this.scanning) {
       // Emit a Container detected event
-      this.eventsService.emit(DOCKER_CONTAINER_DETECTED, {
+      this.eventService.emit(DOCKER_CONTAINER_DETECTED, {
         container: container
       });
 
@@ -188,7 +188,7 @@ class DockerAppLoader extends AppLoader {
         // If it is then Yey, use the URL to emit a URL Load Request and cache thast weve requested it
         if (appUrl) {
           // Request a URL App Load
-          this.eventsService.emit(URL_APP_LOAD_REQUEST, {
+          this.eventService.emit(URL_APP_LOAD_REQUEST, {
             origin: "DockerAppLoader:Container(id:" + cached.Id + ")",
             url: appUrl
           });
