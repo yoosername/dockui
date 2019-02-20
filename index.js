@@ -107,3 +107,8 @@ mocks,
 validate,
 WebService,
 }
+
+
+// TODO: Standardize the logging output format. 
+//       Do it 12 factor style. Aka log to STDOUT, 
+//       but allow customization of verbosity

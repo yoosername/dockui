@@ -69,7 +69,6 @@ describe('GitAppLoader', function() {
         expect(GitAppLoader).to.be.a('function');
     });
 
-    // TODO: These tests
     // Methods to Test
     // "scanForNewApps"
     //   should detect GIT_APP_LOAD_REQUEST event after scanForApps run
@@ -89,6 +88,7 @@ describe('GitAppLoader', function() {
         expect(nodeGitRepoURLRequested).to.equal(null);
     });
 
+    // TODO: These tests
     //   Should submit a GIT_CLONE_STARTED event
     it('should submit a GIT_CLONE_STARTED event upon detection of GIT_CLONE_REQUESTED', function() {
         
