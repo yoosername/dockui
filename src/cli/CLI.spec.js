@@ -43,7 +43,7 @@ describe('CLI', function() {
     //
     // Dockui Info
     // ------------------------------------------------------------------------------------------------------
-    // DB: local://~/.dockui/db
+    // DB: memory://~/.dockui/db
     // Messaging: rabbitmq://127.0.0.1:5672
     // Admin Access Key: ce33fee.dd467a987a.34ace31
     // Web: http://127.0.0.1/8080/dockui
