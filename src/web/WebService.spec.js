@@ -1,8 +1,11 @@
 const chai = require("chai");
+let should = chai.should();
 const expect = chai.expect;
 const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
+let chaiHttp = require("chai-http");
+chai.use(chaiHttp);
 var proxyquire = require("proxyquire");
 var EventEmitter = require("events");
 
@@ -30,7 +33,11 @@ describe("WebService", function() {
     mockEventService = new EventEmitter();
     useSpy = sinon.spy();
     expressStub = sinon.stub().returns({
-      use: useSpy
+      use: useSpy,
+      get: useSpy,
+      post: useSpy,
+      put: useSpy,
+      delete: useSpy
     });
     httpServerStub = sinon.stub().returns({
       listen: (_, cb) => {
@@ -74,29 +81,55 @@ describe("WebService", function() {
     webService.start();
   });
 
-  it("should fire stopping events", function(done) {
+  it("should fire shutdown events", function(done) {
+    var count = 0;
+    mockEventService.on(WEBSERVICE_STARTING_EVENT, () => {
+      count++;
+    });
     mockEventService.on(WEBSERVICE_SHUTTING_DOWN_EVENT, () => {
       mockEventService.on(WEBSERVICE_SHUTDOWN_EVENT, () => {
+        count++;
         done();
       });
     });
     webService.start();
+    expect(count).to.equal(1);
     webService.shutdown();
   });
 
   describe("DockUI Management API", function() {
-    // Should have an Swagger Definition UI served from /api/admin/docs
-    it("Should have an Swagger UI representing API at /api/admin/docs", function() {
+    // Should have an Swagger Definition UI served from /api/admin/doc
+    it("should define a Swagger API explorer @ /api/admin/doc", function() {
       webService.start();
-      expect(useSpy).to.have.been.calledWith("/api/admin/docs");
+      expect(useSpy).to.have.been.calledWith("/api/admin/doc");
     });
 
-    // TODO (v0.0.1-Alpha): Add the following Managment endpoint units:
-    //        Add a route for Management Rest API ( Takes precendence over Apps provided route of same name
-    //        List All Apps - GET /rest/admin/apps
-    //it("should be able to List all Apps", function() {
-    //
-    //});
+    // List All Apps - GET /api/admin/app
+    it("should be able to List all Apps", function(done) {
+      WebService = require("./WebService");
+      // Custom mockAppService which produces 2 known Apps
+      webService = new WebService(mockAppService, mockEventService);
+
+      // Send valid test data to webService as request
+      chai
+        .request(webService.expressApp)
+        .get("/api/admin/app")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.equal(2);
+          done();
+        });
+      // Check correct call is made to AppService
+      //   expect(appServiceGetAppsSpy).to.have.been.calledWith(null)
+      // Check REST API JSON response for success
+      // Send invalid test data to webService as request
+      // Check correct call is made to AppService
+      //   expect(appServiceGetAppsSpy).to.have.been.calledWith(null)
+      // Check REST API JSON response for success
+    });
+
+    // TODO (v0.0.1-Alpha): Finish these tests:
     //        Attempt to Load App - POST /rest/admin/apps {url: "https:/location.of/descriptor.yml", permission: "READ"} - returns new App URI
     //it("should be able to load a single App", function() {
     //

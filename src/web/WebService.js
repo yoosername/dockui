@@ -2,16 +2,31 @@ const express = require("express");
 const app = express();
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./admin/swagger.json");
+let bodyParser = require("body-parser");
 
 const swaggerOptions = {
   explorer: true
 };
 
+// >>> Setup Routes
+
 app.use(
-  "/api/admin/docs",
+  "/api/admin/doc",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument, swaggerOptions)
 );
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text());
+app.use(bodyParser.json({ type: "application/json" }));
+
+app.get("/api/admin/app", (req, res) => {
+  // TODO: Actually link this up to the AppService method
+  res.json([{ bla: "di" }, { bla: "doh" }]);
+});
+
+// <<< End Routes Setup
 
 const WEBSERVICE_PORT = 3000;
 
@@ -42,6 +57,7 @@ class WebService {
     ]);
 
     this.server = null;
+    this.expressApp = app;
     this.appService = appService;
     this.eventService = eventService;
   }
