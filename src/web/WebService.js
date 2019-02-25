@@ -46,10 +46,10 @@ class WebService {
    */
   shutdown() {
     "use strict";
-    // Notify listeners that we are starting
+    // Notify listeners that we are shutting down
     this.eventService.emit(WEBSERVICE_SHUTTING_DOWN_EVENT);
     this.running = false;
-    // Notify listeners that we have started
+    // Notify listeners that we have stopped
     this.eventService.emit(WEBSERVICE_SHUTDOWN_EVENT);
   }
 

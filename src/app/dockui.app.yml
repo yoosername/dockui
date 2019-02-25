@@ -8,11 +8,11 @@
 #   url: Remote location of this Descriptor
 #        - Only used if not yet known. I.e. because you manually installed the App from its descriptor file
 #        - Some loaders (e.g. DockerEventsLoader) would overide this with an internal Docker network address instead
-#   type: Type of the App. Can be one of 'static' or 'dynamic'. 
-#            static 
+#   type: Type of the App. Can be one of 'static' or 'dynamic'.
+#            static
 #               - Can only use Route,WebPage,WebItem,WebFragment,WebResource modules
 #               - Modules are loaded once and cached until unload or disable called
-#            dynamic 
+#            dynamic
 #               - Can use all the above plus AuthenticationProvider,AuthorizationProvider,Api,Webhook
 #               - Modules are cached according to cache settings and Api and Auth proxied
 #               - A SecurityContext is setup using shared secrets for secure communication
@@ -44,11 +44,11 @@ key: dockui-unique-demo-app-key
 description: This is a demo App showing of the various features of the DockUI framework
 version: 1.0.0
 descriptor-version: 1.0.0
-icon: '/static/logo.png'
-build: 
+icon: "/static/logo.png"
+build:
   - docker build --tag dockuidemo .
   - docker run -t dockuidemo
-lifecycle: 
+lifecycle:
   - loaded: /loaded
 authentication:
   - type: jwt
@@ -59,7 +59,6 @@ authentication:
 # Description: Modules define the features the App provides to the framework
 #              - they can be individually loaded, enabled and disabled by the framework.
 modules:
-
   # ----------------------
   # Common Properties
   # ----------------------
@@ -75,11 +74,11 @@ modules:
   # cache:
   #   policy: (disable or enable) Whether to cache what this module provides or not
   #   expire: (0=never) If caching enabled, how long in MS till we expire the cache
-  
+
   # ----------------------
   # Security Properties
   # ----------------------
-  # roles: A List of the roles that are required by this module. They can be anything so long as one of the 
+  # roles: A List of the roles that are required by this module. They can be anything so long as one of the
   #        AuthorizationProviders can recognise and handle it.
 
   # ----------------------
@@ -87,8 +86,8 @@ modules:
   # ----------------------
   # Description: Routes are a way to generate prettier urls for a given webpage or api request
   #
-  # Examples: 
-  #   using the below config a call would be mapped from 
+  # Examples:
+  #   using the below config a call would be mapped from
   #     from /example?demo#bla
   #     to   /Apps/example-App-key/modules/example-webpage?demo#bla
   #
@@ -97,13 +96,13 @@ modules:
   #   url: The real URL to route transform the requests to
   #   weight: The precedence this route should be tested in a first come first serve scenario
 
-    - type : Route
-      name: Example Route
-      key: example-route
-      routes:
-        - /example*
-      url: /apps/example-app-key/modules/example-webpage$1
-      weight: 0
+  - type: Route
+    name: Example Route
+    key: example-route
+    routes:
+      - /example*
+    url: /apps/example-app-key/modules/example-webpage$1
+    weight: 0
 
   # ----------------------
   # AuthenticationProvider
@@ -115,17 +114,17 @@ modules:
   #  - Providers are chained (weight represents order this will be called)
   #  - Providers must authenticate a user, send error, send redirect, or pass to next provider
   #
-  # Examples: 
+  # Examples:
   #
   #   Providers are sent a JSON with:
-  # 
+  #
   #   {
   #     url: /relative/url/being/requested?withParams#etc,
   #     headers: [All Headers]
   #   }
-  # 
+  #
   #   They should respond with one of:
-  # 
+  #
   #   HTTP 200 (Successfully Handled this request)
   #   {
   #     action: allow||deny:<msg>||redirect:<url>,
@@ -144,14 +143,13 @@ modules:
   # Properties:
   #   url : The endpoint that the framework will make authentication requests to
 
-
-    - type : AuthenticationProvider
-      name: Authentication Provider
-      key: example-authentication-provider
-      url: /authenticate
-      cache:
-        policy: disabled
-      weight: 1
+  - type: AuthenticationProvider
+    name: Authentication Provider
+    key: example-authentication-provider
+    url: /authenticate
+    cache:
+      policy: disabled
+    weight: 1
 
   # ----------------------
   # AuthorizationProvider
@@ -163,16 +161,16 @@ modules:
   #  - All providers will be called in order until all required Roles come back true or all have
   #    been called
   #  - True values override false values on subsequent passes. False values have no effect after the first one.
-  # 
-  # Examples:   
+  #
+  # Examples:
   #   - Authorization providers are sent the following json:
   #
-  #   {      
+  #   {
   #       id: <userId>,
   #       timestamp: <datetime>,
   #       required: [EVERYONE, GLOBAL_ADMIN]
   #   }
-  # 
+  #
   #     and are expected to reply with:
   #
   #   {
@@ -188,14 +186,14 @@ modules:
   # Properties:
   #   url : A relative App served endpoint tthat the framework will make authorization requests to
 
-    - type : AuthorizationProvider
-      name: Example Authorization Provider
-      key: example-authorization-provider
-      url: /authorize
-      weight: 5
-      cache:
-        policy: enabled
-        expire: 6000
+  - type: AuthorizationProvider
+    name: Example Authorization Provider
+    key: example-authorization-provider
+    url: /authorize
+    weight: 5
+    cache:
+      policy: enabled
+      expire: 6000
 
   # ----------------------
   # WebItem
@@ -204,48 +202,48 @@ modules:
   #
   # Properties:
   #   url : A relative (to the framework) or absolute URL
-  #   text : Human readable Link text 
+  #   text : Human readable Link text
   #   location : Where this Webitem will be injected into
   #   tooltip : Hint about what the webitem link is for
 
-    - type : WebItem
-      name: Example Webitem
-      key: example-webitem
-      url: /example/relative/url
-      text: Example Webitem
-      location: example.home.header.links
-      tooltip: This is a Tooltip (Hint)
-      weight: 10
-      cache:
-        policy: enabled
-        expire: 0
+  - type: WebItem
+    name: Example Webitem
+    key: example-webitem
+    url: /example/relative/url
+    text: Example Webitem
+    location: example.home.header.links
+    tooltip: This is a Tooltip (Hint)
+    weight: 10
+    cache:
+      policy: enabled
+      expire: 0
 
   # ----------------------
   # Webfragment
   # ----------------------
   # Description: Webfragments are html partials which will be injected into all WebPages that define the specified location
   #
-  # Examples: 
+  # Examples:
   #
   #   <div data-webfragments=example.home.footer>The fragment defined below would be injected here!!</div>
   #
   # Properties:
   #   url : local Url to the fragment HTMl page served from the App
   #   selector: A css selector to isolate the fragment from an existing page ( Useful for testing fragments in isolation )
-  #   location: This fragment will be injected into any Webpage that specifies the location 
+  #   location: This fragment will be injected into any Webpage that specifies the location
 
-    - type : WebFragment
-      name : Example fragment
-      key : example-fragment
-      url : /fragments/example.html
-      selector : '#example-fragment-selector'
-      location: example.home.footer
-      weight : 10
-      cache:
-        policy: enabled
-        expire: 0
-      roles:
-        - EVERYONE
+  - type: WebFragment
+    name: Example fragment
+    key: example-fragment
+    url: /fragments/example.html
+    selector: "#example-fragment-selector"
+    location: example.home.footer
+    weight: 10
+    cache:
+      policy: enabled
+      expire: 0
+    roles:
+      - EVERYONE
 
   # ----------------------
   # WebResource
@@ -259,23 +257,23 @@ modules:
   #     url: the relative url of the resource (relative to the modules url)
   #   context: WebPage(s) to inject the resources into (Provided by WebPages using resources metatag).
 
-    - type : WebResource
-      name : Example webresource
-      key : example-webresource
-      url : /static
-      resources :
-        - type: js
-          path : js/example.javascript.js
-        - type: css
-          path : css/example.style.css
-      context : example.resources.context
-      weight : 100
-      cache:
-        policy: enabled
-        expire: 0
-      roles:
-        - UNAUTHENTICATED
-        - EVERYONE
+  - type: WebResource
+    name: Example webresource
+    key: example-webresource
+    url: /static
+    resources:
+      - type: js
+        path: js/example.javascript.js
+      - type: css
+        path: css/example.style.css
+    context: example.resources.context
+    weight: 100
+    cache:
+      policy: enabled
+      expire: 0
+    roles:
+      - UNAUTHENTICATED
+      - EVERYONE
 
   # ----------------------
   # WebPage
@@ -286,8 +284,8 @@ modules:
   #   Within the HTML page you can define the following:
   #     - Decorator: add a decorator metatag to wrap the page with the specified WebPage module before render
   #     - Resources: use the resources metatag to have the framework inject static resources from all WebResource
-  #          modules that target the specified context 
-  #     - Webitem: add data-webitems attribute to any dom element to have webitems injected from any Webitem module 
+  #          modules that target the specified context
+  #     - Webitem: add data-webitems attribute to any dom element to have webitems injected from any Webitem module
   #          which targets the defined location. The innerHTML is used as the template for the WebItem e.g.:
   #          <li data-webitems=app.home.header.primary.dropdown.webitems tabindex=-1>
   #            <a href={{webitem.link}}>{{webitem.text}}</a>
@@ -299,21 +297,21 @@ modules:
   # Properties:
   #   url: local relative url of the WebPage served by the App
 
-    - type : WebPage
-      name : Example Webpage
-      key : example-webpage
-      url : /pages/example.html
-      cache:
-        policy: disabled
-      roles:
-        - UNAUTHENTICATED
-        - EVERYONE
+  - type: WebPage
+    name: Example Webpage
+    key: example-webpage
+    url: /pages/example.html
+    cache:
+      policy: disabled
+    roles:
+      - UNAUTHENTICATED
+      - EVERYONE
 
-    - type : InitiallyDisabledWebPage
-      name : Example Webpage that starts life disabled
-      key : example-disabled-webpage
-      url : /pages/example2.html
-      enabled: false
+  - type: WebPage
+    name: Example Webpage that starts life disabled
+    key: example-disabled-webpage
+    url: /pages/example2.html
+    enabled: false
 
   # ----------------------
   # API
@@ -322,7 +320,7 @@ modules:
   #  - typically used to proxy REST or Graphql APIs
   #
   # Example:
-  #  The below config would proxy 
+  #  The below config would proxy
   #       from: <host>/api/dockui-demo-unique-App-key/example-rest-api-endpoint/special/api
   #       to:   <App>/rest/api/1.0/special/api
   #
@@ -330,16 +328,16 @@ modules:
   #   version: version of the API being served. Allows you to serve newer versions in tandom for Beta testing etc
   #   url: local baseUrl of the API being proxied to.
 
-    - type : Api
-      name : Example API
-      key : example-rest-api-endpoint
-      version : 1.0
-      url : /rest/api/1.0/
-      cache:
-        policy: enabled
-        expire: 6000
-      roles:
-        - EVERYONE
+  - type: Api
+    name: Example API
+    key: example-rest-api-endpoint
+    version: 1.0
+    url: /rest/api/1.0/
+    cache:
+      policy: enabled
+      expire: 6000
+    roles:
+      - EVERYONE
 
   # ----------------------
   # WebHook
@@ -347,7 +345,7 @@ modules:
   # Description: provide the ability to asyncronously participate in framework events remotely
   #
   # Example:
-  #  The hook will receive an asyncronous event payload e.g. 
+  #  The hook will receive an asyncronous event payload e.g.
   #
   #       {
   #         "event": "app:enabled",
@@ -359,9 +357,9 @@ modules:
   #   url: local endpoint to receive the event payload
   #   events: list of events we want to be notified about
 
-    - type : Webhook
-      name: Webhook
-      key: example-webhook
-      url: /hook
-      events: 
-        - app:enabled
+  - type: Webhook
+    name: Webhook
+    key: example-webhook
+    url: /hook
+    events:
+      - app:enabled

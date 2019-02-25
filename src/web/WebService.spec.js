@@ -48,18 +48,29 @@ describe("WebService", function() {
     expect(spy.calledTwice).to.equal(true);
   });
 
-  // TODO (v0.0.1-Alpha): Add the following Managment endpoint units:
-  //        Add a route for Management Rest API ( Takes precendence over Apps provided route of same name )
-  //        List All Apps - GET /rest/admin/apps
-  //        Attempt to Load App - POST /rest/admin/apps {url: "https:/location.of/descriptor.yml", permission: "READ"} - returns new App URI
-  //        Get single App - GET /rest/admin/apps/{appKey}||{appUUID}
-  //        Reload App (or change Permission) - PUT /rest/admin/apps/{appKey}||{appUUID} {url: "https:/location.of/descriptor.yml", permission: "READ"}
-  //        Unload App - DELETE /rest/admin/apps/{appKey}||{appUUID}
-  //        List Apps Modules - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules
-  //        Enable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/enable
-  //        Disable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/disable
-  //        Enable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/enable
-  //        Disable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/disable
+  describe("DockUI Management API", function() {
+    // Should have an Swagger Definition UI served from /api/admin/docs
+    it("Should have an Swagger UI representing API at /api/admin/docs", function() {});
+
+    // TODO (v0.0.1-Alpha): Add the following Managment endpoint units:
+    //        Add a route for Management Rest API ( Takes precendence over Apps provided route of same name
+    //        List All Apps - GET /rest/admin/apps
+    //it("should be able to List all Apps", function() {
+    //
+    //});
+    //        Attempt to Load App - POST /rest/admin/apps {url: "https:/location.of/descriptor.yml", permission: "READ"} - returns new App URI
+    //it("should be able to load a single App", function() {
+    //
+    //});
+    //        Get single App - GET /rest/admin/apps/{appKey}||{appUUID}
+    //        Reload App (or change Permission) - PUT /rest/admin/apps/{appKey}||{appUUID} {url: "https:/location.of/descriptor.yml", permission: "READ"}
+    //        Unload App - DELETE /rest/admin/apps/{appKey}||{appUUID}
+    //        List Apps Modules - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules
+    //        Enable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/enable
+    //        Disable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/disable
+    //        Enable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/enable
+    //        Disable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/disable
+  });
 
   // TODO (v0.0.1-Alpha): Test that we are following 12 Factor Rules (to ensure scalability etc) aka:
   // I. Codebase
