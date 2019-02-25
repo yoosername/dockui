@@ -41,6 +41,7 @@
     "events": "^1.1.1",
     "js-yaml": "^3.12.1",
     "nodegit": "^0.24.0",
+    "swagger-ui-express": "^4.0.2",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

@@ -3,6 +3,8 @@ const expect = chai.expect;
 const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
+var proxyquire = require("proxyquire");
+var EventEmitter = require("events");
 
 const {
   WEBSERVICE_STARTING_EVENT,
@@ -11,17 +13,40 @@ const {
   WEBSERVICE_SHUTDOWN_EVENT
 } = require("../constants/events");
 
-const { MockEventService, MockAppService } = require("../util/mocks");
+const { MockAppService } = require("../util/mocks");
 var mockEventService = null;
 var mockAppService = null;
-var WebService = require("./WebService");
+var httpServerStub = null;
+var useSpy = null;
+var expressStub = null;
+var WebService = null;
+var webService = null;
 
 describe("WebService", function() {
   "use strict";
 
   beforeEach(function() {
     mockAppService = new MockAppService();
-    mockEventService = new MockEventService();
+    mockEventService = new EventEmitter();
+    useSpy = sinon.spy();
+    expressStub = sinon.stub().returns({
+      use: useSpy
+    });
+    httpServerStub = sinon.stub().returns({
+      listen: (_, cb) => {
+        cb();
+      },
+      close: cb => {
+        cb();
+      }
+    });
+    WebService = proxyquire("./WebService", {
+      http: {
+        createServer: httpServerStub
+      },
+      express: expressStub
+    });
+    webService = new WebService(mockAppService, mockEventService);
   });
 
   it("should be defined and loadable", function() {
@@ -32,25 +57,39 @@ describe("WebService", function() {
     expect(WebService).to.be.a("function");
   });
 
-  it("should know if its running or not", function() {
-    const web = new WebService(mockAppService, mockEventService);
-    expect(web.isRunning()).to.equal(false);
-    web.start();
-    expect(web.isRunning()).to.equal(true);
-    web.shutdown();
-    expect(web.isRunning()).to.equal(false);
+  it("should report if its running correctly", function() {
+    expect(webService.isRunning()).to.equal(false);
+    webService.start();
+    expect(webService.isRunning()).to.equal(true);
+    webService.shutdown();
+    expect(webService.isRunning()).to.equal(false);
   });
 
-  it("should fire start and stop events", function() {
-    const spy = sinon.spy(mockEventService, "emit");
-    const web = new WebService(mockAppService, mockEventService);
-    web.start();
-    expect(spy.calledTwice).to.equal(true);
+  it("should fire starting events", function(done) {
+    mockEventService.on(WEBSERVICE_STARTING_EVENT, () => {
+      mockEventService.on(WEBSERVICE_STARTED_EVENT, () => {
+        done();
+      });
+    });
+    webService.start();
+  });
+
+  it("should fire stopping events", function(done) {
+    mockEventService.on(WEBSERVICE_SHUTTING_DOWN_EVENT, () => {
+      mockEventService.on(WEBSERVICE_SHUTDOWN_EVENT, () => {
+        done();
+      });
+    });
+    webService.start();
+    webService.shutdown();
   });
 
   describe("DockUI Management API", function() {
     // Should have an Swagger Definition UI served from /api/admin/docs
-    it("Should have an Swagger UI representing API at /api/admin/docs", function() {});
+    it("Should have an Swagger UI representing API at /api/admin/docs", function() {
+      webService.start();
+      expect(useSpy).to.have.been.calledWith("/api/admin/docs");
+    });
 
     // TODO (v0.0.1-Alpha): Add the following Managment endpoint units:
     //        Add a route for Management Rest API ( Takes precendence over Apps provided route of same name
