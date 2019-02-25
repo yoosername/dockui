@@ -1,8 +1,13 @@
 const chai = require("chai");
+let should = chai.should();
 const expect = chai.expect;
 const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
+let chaiHttp = require("chai-http");
+chai.use(chaiHttp);
+var proxyquire = require("proxyquire");
+var EventEmitter = require("events");
 
 const {
   WEBSERVICE_STARTING_EVENT,
@@ -11,17 +16,44 @@ const {
   WEBSERVICE_SHUTDOWN_EVENT
 } = require("../constants/events");
 
-const { MockEventService, MockAppService } = require("../util/mocks");
+const { MockAppService } = require("../util/mocks");
 var mockEventService = null;
 var mockAppService = null;
-var WebService = require("./WebService");
+var httpServerStub = null;
+var useSpy = null;
+var expressStub = null;
+var WebService = null;
+var webService = null;
 
 describe("WebService", function() {
   "use strict";
 
   beforeEach(function() {
     mockAppService = new MockAppService();
-    mockEventService = new MockEventService();
+    mockEventService = new EventEmitter();
+    useSpy = sinon.spy();
+    expressStub = sinon.stub().returns({
+      use: useSpy,
+      get: useSpy,
+      post: useSpy,
+      put: useSpy,
+      delete: useSpy
+    });
+    httpServerStub = sinon.stub().returns({
+      listen: (_, cb) => {
+        cb();
+      },
+      close: cb => {
+        cb();
+      }
+    });
+    WebService = proxyquire("./WebService", {
+      http: {
+        createServer: httpServerStub
+      },
+      express: expressStub
+    });
+    webService = new WebService(mockAppService, mockEventService);
   });
 
   it("should be defined and loadable", function() {
@@ -32,34 +64,85 @@ describe("WebService", function() {
     expect(WebService).to.be.a("function");
   });
 
-  it("should know if its running or not", function() {
-    const web = new WebService(mockAppService, mockEventService);
-    expect(web.isRunning()).to.equal(false);
-    web.start();
-    expect(web.isRunning()).to.equal(true);
-    web.shutdown();
-    expect(web.isRunning()).to.equal(false);
+  it("should report if its running correctly", function() {
+    expect(webService.isRunning()).to.equal(false);
+    webService.start();
+    expect(webService.isRunning()).to.equal(true);
+    webService.shutdown();
+    expect(webService.isRunning()).to.equal(false);
   });
 
-  it("should fire start and stop events", function() {
-    const spy = sinon.spy(mockEventService, "emit");
-    const web = new WebService(mockAppService, mockEventService);
-    web.start();
-    expect(spy.calledTwice).to.equal(true);
+  it("should fire starting events", function(done) {
+    mockEventService.on(WEBSERVICE_STARTING_EVENT, () => {
+      mockEventService.on(WEBSERVICE_STARTED_EVENT, () => {
+        done();
+      });
+    });
+    webService.start();
   });
 
-  // TODO (v0.0.1-Alpha): Add the following Managment endpoint units:
-  //        Add a route for Management Rest API ( Takes precendence over Apps provided route of same name )
-  //        List All Apps - GET /rest/admin/apps
-  //        Attempt to Load App - POST /rest/admin/apps {url: "https:/location.of/descriptor.yml", permission: "READ"} - returns new App URI
-  //        Get single App - GET /rest/admin/apps/{appKey}||{appUUID}
-  //        Reload App (or change Permission) - PUT /rest/admin/apps/{appKey}||{appUUID} {url: "https:/location.of/descriptor.yml", permission: "READ"}
-  //        Unload App - DELETE /rest/admin/apps/{appKey}||{appUUID}
-  //        List Apps Modules - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules
-  //        Enable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/enable
-  //        Disable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/disable
-  //        Enable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/enable
-  //        Disable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/disable
+  it("should fire shutdown events", function(done) {
+    var count = 0;
+    mockEventService.on(WEBSERVICE_STARTING_EVENT, () => {
+      count++;
+    });
+    mockEventService.on(WEBSERVICE_SHUTTING_DOWN_EVENT, () => {
+      mockEventService.on(WEBSERVICE_SHUTDOWN_EVENT, () => {
+        count++;
+        done();
+      });
+    });
+    webService.start();
+    expect(count).to.equal(1);
+    webService.shutdown();
+  });
+
+  describe("DockUI Management API", function() {
+    // Should have an Swagger Definition UI served from /api/admin/doc
+    it("should define a Swagger API explorer @ /api/admin/doc", function() {
+      webService.start();
+      expect(useSpy).to.have.been.calledWith("/api/admin/doc");
+    });
+
+    // List All Apps - GET /api/admin/app
+    it("should be able to List all Apps", function(done) {
+      WebService = require("./WebService");
+      // Custom mockAppService which produces 2 known Apps
+      webService = new WebService(mockAppService, mockEventService);
+
+      // Send valid test data to webService as request
+      chai
+        .request(webService.expressApp)
+        .get("/api/admin/app")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.equal(2);
+          done();
+        });
+      // Check correct call is made to AppService
+      //   expect(appServiceGetAppsSpy).to.have.been.calledWith(null)
+      // Check REST API JSON response for success
+      // Send invalid test data to webService as request
+      // Check correct call is made to AppService
+      //   expect(appServiceGetAppsSpy).to.have.been.calledWith(null)
+      // Check REST API JSON response for success
+    });
+
+    // TODO (v0.0.1-Alpha): Finish these tests:
+    //        Attempt to Load App - POST /rest/admin/apps {url: "https:/location.of/descriptor.yml", permission: "READ"} - returns new App URI
+    //it("should be able to load a single App", function() {
+    //
+    //});
+    //        Get single App - GET /rest/admin/apps/{appKey}||{appUUID}
+    //        Reload App (or change Permission) - PUT /rest/admin/apps/{appKey}||{appUUID} {url: "https:/location.of/descriptor.yml", permission: "READ"}
+    //        Unload App - DELETE /rest/admin/apps/{appKey}||{appUUID}
+    //        List Apps Modules - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules
+    //        Enable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/enable
+    //        Disable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/disable
+    //        Enable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/enable
+    //        Disable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/disable
+  });
 
   // TODO (v0.0.1-Alpha): Test that we are following 12 Factor Rules (to ensure scalability etc) aka:
   // I. Codebase
