@@ -70,6 +70,14 @@ class WebService {
     this.expressApp.use(bodyParser.json({ type: "application/json" }));
 
     /**
+     * CLI Admin Authentication Handler
+     *  Before we have any AuthenticationHandler modules in the system
+     *  we still only want priviledged entities to make changes
+     *  so we authenticate requests using a root ACCESS_TOKEN which is
+     *  granted the first time a DockUI instance is created.
+     */
+
+    /**
      * DockUI Management Routes
      */
     // List all Apps
@@ -114,6 +122,127 @@ class WebService {
       this.eventService.emit(URL_APP_UNLOAD_REQUEST, newRequest);
       res.json(newRequest);
     });
+
+    // get a single Apps modules
+    this.expressApp.get("/api/admin/app/:id/modules", (req, res) => {
+      const id = req.params.id;
+      const app = this.appService.getApp(id);
+      if (app) {
+        res.json(app.getModules());
+      } else {
+        res.status(404).json({
+          code: 404,
+          type: "unknown_app_error",
+          message: "Cannot find App with the provided UUID or Key"
+        });
+      }
+    });
+
+    // Enable an App
+    this.expressApp.put("/api/admin/app/:id/enable", (req, res) => {
+      const id = req.params.id;
+      const app = this.appService.getApp(id);
+      if (app) {
+        app.enable();
+        res.status(200).json({
+          code: 200,
+          type: "app_enabled",
+          message: `Enabled App ${app.getName()} successfully`
+        });
+      } else {
+        res.status(404).json({
+          code: 404,
+          type: "unknown_app_error",
+          message: "Cannot find App with the provided UUID or Key"
+        });
+      }
+    });
+
+    // Disable an App
+    this.expressApp.put("/api/admin/app/:id/disable", (req, res) => {
+      const id = req.params.id;
+      const app = this.appService.getApp(id);
+      if (app) {
+        app.disable();
+        res.status(200).json({
+          code: 200,
+          type: "app_disabled",
+          message: `Disabled App ${app.getName()} successfully`
+        });
+      } else {
+        res.status(404).json({
+          code: 404,
+          type: "unknown_app_error",
+          message: "Cannot find App with the provided UUID or Key"
+        });
+      }
+    });
+
+    // Enable a Module
+    this.expressApp.put(
+      "/api/admin/app/:id/modules/:moduleId/enable",
+      (req, res) => {
+        const id = req.params.id;
+        const moduleId = req.params.moduleId;
+        const app = this.appService.getApp(id);
+        if (app) {
+          const module = app.getModule(moduleId);
+          if (module) {
+            module.enable();
+            res.status(200).json({
+              code: 200,
+              type: "app_enabled",
+              message: `Enabled Module ${module.getName()} in App ${app.getName()} successfully`
+            });
+          } else {
+            res.status(404).json({
+              code: 404,
+              type: "unknown_module_error",
+              message: "Cannot find Module with the provided UUID or Key"
+            });
+          }
+        } else {
+          res.status(404).json({
+            code: 404,
+            type: "unknown_app_error",
+            message: "Cannot find App with the provided UUID or Key"
+          });
+        }
+      }
+    );
+
+    // Disable a Module
+    this.expressApp.put(
+      "/api/admin/app/:id/modules/:moduleId/disable",
+      (req, res) => {
+        const id = req.params.id;
+        const moduleId = req.params.moduleId;
+        const app = this.appService.getApp(id);
+        if (app) {
+          const module = app.getModule(moduleId);
+          if (module) {
+            module.disable();
+            res.status(200).json({
+              code: 200,
+              type: "app_disabled",
+              message: `Disabled Module ${module.getName()} in App ${app.getName()} successfully`
+            });
+          } else {
+            res.status(404).json({
+              code: 404,
+              type: "unknown_module_error",
+              message: "Cannot find Module with the provided UUID or Key"
+            });
+          }
+        } else {
+          res.status(404).json({
+            code: 404,
+            type: "unknown_app_error",
+            message: "Cannot find App with the provided UUID or Key"
+          });
+        }
+      }
+    );
   }
 
   /**

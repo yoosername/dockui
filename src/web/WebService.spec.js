@@ -215,38 +215,141 @@ describe("WebService", function() {
           done();
         });
     });
-    // List Apps Modules - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules
-    // Enable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/enable
-    // Disable App - GET/POST /rest/admin/apps/{appKey}||{appUUID}/disable
-    // Enable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/enable
-    // Disable Module - GET/POST /rest/admin/apps/{appKey}||{appUUID}/modules/{moduleKey}/disable
-  });
 
-  // TODO (v0.0.1-Alpha): Test that we are following 12 Factor Rules (to ensure scalability etc) aka:
-  // I. Codebase
-  //   One codebase tracked in revision control, many deploys
-  // II. Dependencies
-  //   Explicitly declare and isolate dependencies
-  // III. Config
-  //   Store config in the environment
-  // IV. Backing services
-  //   Treat backing services as attached resources
-  // V. Build, release, run
-  //   Strictly separate build and run stages
-  // VI. Processes
-  //   Execute the app as one or more stateless processes
-  // VII. Port binding
-  //   Export services via port binding
-  // VIII. Concurrency
-  //   Scale out via the process model
-  // IX. Disposability
-  //   Maximize robustness with fast startup and graceful shutdown
-  // X. Dev/prod parity
-  //   Keep development, staging, and production as similar as possible
-  // XI. Logs
-  //   Treat logs as event streams
-  // XII. Admin processes
-  //   Run admin/management tasks as one-off processes
+    // List Apps Modules - GET /api/admin/app/:id/modules
+    it("should be able to list a single Apps Modules", function(done) {
+      WebService = require("./WebService");
+      const FAKE_MODULES = [
+        { key: "module1", name: "Module 1" },
+        { key: "module2", name: "Module 2" },
+        { key: "module3", name: "Module 3" }
+      ];
+      const getAppStub = sinon.stub(mockAppService, "getApp").returns({
+        getModules: () => {
+          return FAKE_MODULES;
+        }
+      });
+      webService = new WebService(mockAppService, mockEventService);
+
+      // Check REST API returns correct results
+      chai
+        .request(webService.getExpressApp())
+        .get("/api/admin/app/app1/modules")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an("array");
+          res.body.should.eql(FAKE_MODULES);
+          getAppStub.restore();
+          done();
+        });
+    });
+
+    // Enable App - PUT /api/admin/app/:id/enable
+    it("should be able to enable an App", function(done) {
+      WebService = require("./WebService");
+      const APP_NAME = "Appy";
+      const getAppStub = sinon.stub(mockAppService, "getApp").returns({
+        enable: () => {},
+        getName: () => {
+          return APP_NAME;
+        }
+      });
+      webService = new WebService(mockAppService, mockEventService);
+
+      // Check REST API returns correct results
+      chai
+        .request(webService.getExpressApp())
+        .put("/api/admin/app/app1/enable")
+        .end((err, res) => {
+          res.should.have.status(200);
+          getAppStub.restore();
+          done();
+        });
+    });
+
+    // Disable App - PUT /api/admin/app/:id/disable
+    it("should be able to disable an App", function(done) {
+      WebService = require("./WebService");
+      const APP_NAME = "Appy";
+      const getAppStub = sinon.stub(mockAppService, "getApp").returns({
+        disable: () => {},
+        getName: () => {
+          return APP_NAME;
+        }
+      });
+      webService = new WebService(mockAppService, mockEventService);
+
+      // Check REST API returns correct results
+      chai
+        .request(webService.getExpressApp())
+        .put("/api/admin/app/app1/disable")
+        .end((err, res) => {
+          res.should.have.status(200);
+          getAppStub.restore();
+          done();
+        });
+    });
+
+    // Enable Module - PUT /api/admin/app/:id/modules/:moduleId/enable
+    it("should be able to enable a Module", function(done) {
+      WebService = require("./WebService");
+      const APP_NAME = "Appy";
+      const getAppStub = sinon.stub(mockAppService, "getApp").returns({
+        getName: () => {
+          return APP_NAME;
+        },
+        getModule: () => {
+          return {
+            getName: () => {
+              return APP_NAME;
+            },
+            enable: () => {}
+          };
+        }
+      });
+      webService = new WebService(mockAppService, mockEventService);
+
+      // Check REST API returns correct results
+      chai
+        .request(webService.getExpressApp())
+        .put("/api/admin/app/app1/modules/module1/enable")
+        .end((err, res) => {
+          res.should.have.status(200);
+          getAppStub.restore();
+          done();
+        });
+    });
+
+    // Disable Module - PUT /api/admin/app/:id/modules/:moduleId/disable
+    it("should be able to disable a Module", function(done) {
+      WebService = require("./WebService");
+      const APP_NAME = "Appy";
+      const getAppStub = sinon.stub(mockAppService, "getApp").returns({
+        getName: () => {
+          return APP_NAME;
+        },
+        getModule: () => {
+          return {
+            getName: () => {
+              return APP_NAME;
+            },
+            disable: () => {}
+          };
+        }
+      });
+      webService = new WebService(mockAppService, mockEventService);
+
+      // Check REST API returns correct results
+      chai
+        .request(webService.getExpressApp())
+        .put("/api/admin/app/app1/modules/module1/disable")
+        .end((err, res) => {
+          res.should.have.status(200);
+          getAppStub.restore();
+          done();
+        });
+    });
+  });
 
   // TODO (v0.0.2-Alpha):
   // Implement the concept of a URN for subject, resource
