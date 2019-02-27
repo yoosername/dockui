@@ -35,6 +35,7 @@ const FILE_APP_LOAD_STARTED = "fileapploader:app:load:started";
 const FILE_APP_LOAD_COMPLETE = "fileapploader:app:load:complete";
 const FILE_APP_LOAD_FAILED = "fileapploader:app:load:failed";
 const URL_APP_LOAD_REQUEST = "urlapploader:app:load:request";
+const URL_APP_UNLOAD_REQUEST = "urlapploader:app:unload:request";
 const URL_APP_LOAD_STARTED = "urlapploader:app:load:started";
 const URL_APP_LOAD_COMPLETE = "urlapploader:app:load:complete";
 const URL_APP_LOAD_FAILED = "urlapploader:app:load:failed";
@@ -71,6 +72,7 @@ module.exports = {
   FILE_APP_LOAD_COMPLETE,
   FILE_APP_LOAD_FAILED,
   URL_APP_LOAD_REQUEST,
+  URL_APP_UNLOAD_REQUEST,
   URL_APP_LOAD_STARTED,
   URL_APP_LOAD_COMPLETE,
   URL_APP_LOAD_FAILED
