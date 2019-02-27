@@ -26,7 +26,7 @@
   ],
   "schemes": ["https", "http"],
   "paths": {
-    "/request/{requestUuid}": {
+    "/request/{id}": {
       "get": {
         "tags": ["request"],
         "summary": "Find Request by Id",
@@ -35,7 +35,7 @@
         "produces": ["application/json"],
         "parameters": [
           {
-            "name": "requestUuid",
+            "name": "id",
             "in": "path",
             "description": "UUID of request to return",
             "required": true,
@@ -117,7 +117,7 @@
         }
       }
     },
-    "/app/{appUuid}": {
+    "/app/{id}": {
       "get": {
         "tags": ["app"],
         "summary": "Find single App by UUID or Key",
@@ -126,7 +126,7 @@
         "produces": ["application/json"],
         "parameters": [
           {
-            "name": "appUuid",
+            "name": "id",
             "in": "path",
             "description": "UUID  or Key of the App to find",
             "required": true,
@@ -158,7 +158,7 @@
         "produces": ["application/json"],
         "parameters": [
           {
-            "name": "appUuid",
+            "name": "id",
             "in": "path",
             "description": "UUID  or Key of the App to unload / remove",
             "required": true,
@@ -183,18 +183,18 @@
         }
       }
     },
-    "/app/{appUuid}/modules": {
-      "get": {
+    "/app/{id}/enable": {
+      "put": {
         "tags": ["app"],
-        "summary": "Find single App by UUID or Key",
+        "summary": "Enable an App by UUID or Key",
         "description": "Can use App UUID or App Key",
-        "operationId": "getAppModules",
+        "operationId": "enableApp",
         "produces": ["application/json"],
         "parameters": [
           {
-            "name": "appUuid",
+            "name": "id",
             "in": "path",
-            "description": "UUID  or Key of the App to find",
+            "description": "UUID  or Key of the App we wish to enable",
             "required": true,
             "type": "string"
           }
@@ -208,6 +208,109 @@
           },
           "404": {
             "description": "Unknown App Uuid or Key",
+            "schema": {
+              "$ref": "#/definitions/AppUnknownError"
+            }
+          }
+        }
+      }
+    },
+    "/app/{id}/disable": {
+      "put": {
+        "tags": ["app"],
+        "summary": "Disable an App by UUID or Key",
+        "description": "Can use App UUID or App Key",
+        "operationId": "disableApp",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "UUID  or Key of the App we wish to disable",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/App"
+            }
+          },
+          "404": {
+            "description": "Unknown App Uuid or Key",
+            "schema": {
+              "$ref": "#/definitions/AppUnknownError"
+            }
+          }
+        }
+      }
+    },
+    "/app/{id}/modules": {
+      "get": {
+        "tags": ["app"],
+        "summary": "Find single App by UUID or Key",
+        "description": "Can use App UUID or App Key",
+        "operationId": "getAppModules",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "UUID  or Key of the App whos modules we want to list",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/App"
+            }
+          },
+          "404": {
+            "description": "Unknown App Uuid or Key",
+            "schema": {
+              "$ref": "#/definitions/AppUnknownError"
+            }
+          }
+        }
+      }
+    },
+    "/app/{id}/modules/{moduleId}": {
+      "get": {
+        "tags": ["app"],
+        "summary": "Find single App by UUID or Key",
+        "description": "Can use App UUID or App Key",
+        "operationId": "getAppModule",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "UUID  or Key of the App whos modules we want to filter on",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "moduleId",
+            "in": "path",
+            "description": "UUID  or Key of the Module we want to show",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/App"
+            }
+          },
+          "404": {
+            "description": "Unknown App Uuid or Key or Unknown Module Id",
             "schema": {
               "$ref": "#/definitions/AppUnknownError"
             }
