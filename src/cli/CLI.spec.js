@@ -17,60 +17,23 @@ describe("CLI", function() {
   });
 
   // TODO (v0.0.1-Alpha): These tests
-  // Keep this in mind: https://12factor.net/
-  // TODO (v0.0.1-Alpha): Test that we are following 12 Factor Rules (to ensure scalability etc) aka:
-  // I. Codebase
-  //   One codebase tracked in revision control, many deploys
-  // II. Dependencies
-  //   Explicitly declare and isolate dependencies
-  // III. Config
-  //   Store config in the environment
-  // IV. Backing services
-  //   Treat backing services as attached resources
-  // V. Build, release, run
-  //   Strictly separate build and run stages
-  // VI. Processes
-  //   Execute the app as one or more stateless processes
-  // VII. Port binding
-  //   Export services via port binding
-  // VIII. Concurrency
-  //   Scale out via the process model
-  // IX. Disposability
-  //   Maximize robustness with fast startup and graceful shutdown
-  // X. Dev/prod parity
-  //   Keep development, staging, and production as similar as possible
-  // XI. Logs
-  //   Treat logs as event streams
-  // XII. Admin processes
-  //   Run admin/management tasks as one-off processes
-  //
-  // Generic things to test
-  // Should produce usage when --help is specified
-  // Should be configurable by ENV var based config
-  // Should work without ENV vars and provide sensible defaults (for example in memory store)
 
-  // When you run an instance it isnt unique in any way. It should be persitable via connection external service like DB
-  // You can run multiple instances on one host.
-  // logging is via the standard output stream
+  // GENERIC TESTS
+  // (a) Should log usage when --help is passed on command line
 
+  // (b) Should be configurable by a heirarchy of ConfigLoaders
+
+  // (c) Should work without Configuration with sensible defaults
+
+  // (d) Should log to STDOUT (with configurable verbosity)
+
+  // COMMAND TESTS
   // Instance Commands to test
   // (1) Run an instance of the DockUI framework
   //     - This should output all required details to STDOUT like web host and port being used
   //     - Required security keys etc are accessed via the DB, which in the case of the default is a well defined persistent in memory DB
   //
   //     $ dockui run
-
-  // (2) List management information about the running instance
-  //
-  //     $ dockui info
-  //
-  // Dockui Info
-  // ------------------------------------------------------------------------------------------------------
-  // DB: memory://~/.dockui/db
-  // Messaging: rabbitmq://127.0.0.1:5672
-  // Admin Access Key: ce33fee.dd467a987a.34ace31
-  // Web: http://127.0.0.1/8080/dockui
-  // ------------------------------------------------------------------------------------------------------
 
   // (3) List state of Loaded Apps
   //
@@ -95,7 +58,4 @@ describe("CLI", function() {
   //
   //     $ Ctrl+C or SIGTERM
   //
-  // (7) Standardize the logging output format.
-  //       Do it 12 factor style. Aka log to STDOUT,
-  //       but allow customization of verbosity
 });
