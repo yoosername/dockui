@@ -71,7 +71,7 @@ To end a running DockUI instance send a SIGTERM (e.g. Ctrl->C on Linux)
 
 DockUI is intended for running in the foreground in Docker Containers
 however to run as daemon on a host you can use something like
-(PM2)[https://pm2.io/doc/en/runtime/overview/]
+[PM2](https://pm2.io/doc/en/runtime/overview/)
 
 ### List Loaded Apps
 
