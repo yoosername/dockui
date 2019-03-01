@@ -22,116 +22,101 @@ $ sudo npm install -g @dockui/cli
 ...
 ```
 
-### Initialise a new framework instance
-
-```shell
-$ dockui init [<name> <filename> -y]
-...
-Created new Dockui instance config in ./dockui.yml
-```
-
-This will create a Dockui instance config following these rules:
-
-* If no *filename* specified it will be created in a file called dockui.yml in the current directory
-* If no *name* specified then it will use the default of "prod"
-  * If the named section already exists it will be overwritten
-  * There can be multiple instances specified by name
-* If -y flag present all of the defaults will be chosen
-* If no -y flag then you will be prompted for answers to setup the instance
-
-```yaml
----
-version: "1.0"
-instances:
-  prod:
-    name: "Human Readable Name"
-    uuid: "generated-instance-uuid-c4c5453c4"
-    description: "A longer description of this instance"
-    management:
-      api:
-        socket:
-          path: "/var/dockui/sockets/{uuid}"
-        http:
-          port: "8008"
-        creds:
-          user: "admin"
-          password: "generatedInstanceGlobalAdminPassword"
-default: "prod"
-```
-
-### Run a framework instance
-
-The **--config** option can be ignored if the config file is in the current directory
-
-The **instance** argument can be ignored if a **_default_** is specified in the config
-
-```shell
-dockui run [<instance> --config <configPath> -fg]
-```
+### Start a new framework instance (using default config)
 
 ```shell
 $ dockui run
-Running Dockui instance 2ce46c5e in daemon mode, forwarding logs to /var/log/dockui/2ce46c5e.log
+Starting - logging to STDOUT
+Created new Dockui instance config in /etc/dockui/dockui.yml
+...
+Startup complete
+...
+```
+
+If there wasnt already one found, this will create an instance config that looks like this
+
+```yaml
+---
+store: file:./store.db
+events: memory
+port: 5000
+secret: changeme
+```
+
+### Run a framework instance (using existing config)
+
+#### (Option 1) Make sure a file called dockui.yml is in /etc/dockui then run
+
+```shell
+$ dockui run
+...
+```
+
+#### (Option 2) Make sure you set required ENV vars as follows
+
+```shell
+$ DOCKUI_STORE=file:/tmp/store.db \
+  DOCKUI_EVENTS=memory \
+  DOCKUI_PORT=1234 \
+  DOCKUI_SECRET=whatever \
+  dockui run
+...
 ```
 
 ### Stop a running framework instance
 
-```shell
-dockui stop [<instance> --config <configPath> -fg]
-```
+To end a running DockUI instance send a SIGTERM (e.g. Ctrl->C on Linux)
 
-```shell
-$ dockui stop
-Stopping Dockui instance 2ce46c5e, Pid(34254)
-```
+### Run DockUI as a daemon
 
-### List Loaded Apps per instance
+DockUI is intended for running in the foreground in Docker Containers
+however to run as daemon on a host you can use something like
+(PM2)[https://pm2.io/doc/en/runtime/overview/]
 
-```shell
-dockui ls [<instance> --config <configPath>]
-```
+### List Loaded Apps
 
 ```shell
 $ dockui ls
 
-Instance     Pid       App                   UUID         State                            Permission
-------------------------------------------------------------------------------------------------------
-prod         34982     Demo Theme App        3cd6745f     Loaded (enabled)                 READ
-prod         34982     Demo ReadOnly App     6ec43a77     Loaded (Awaiting Approval)       NONE
-ref          32432     Demo Dynamic App      37fe3c2c     Loaded (disabled)                ADMIN
-ref          32432     Demo Dynamic App2     c6cc4af6     Loading..........                NONE
+App                   UUID         State                            Permission
+------------------------------------------------------------------------------
+Demo Theme App        3cd6745f     Loaded (enabled)                 READ
+Demo ReadOnly App     6ec43a77     Loaded (Awaiting Approval)       NONE
+Demo Dynamic App      37fe3c2c     Loaded (disabled)                ADMIN
+Demo Dynamic App2     c6cc4af6     Loading..........                NONE
 ```
 
 ### Loading Apps
 
 There are two types of App **"static"** and **"dynamic"**.
 
-* **Static** Apps can be loaded directly from a _URL_ or _File_ and will be cached.
-* **Dynamic** Apps may require some build steps if they are not already running
-  * For example building and starting the respective docker image etc
+- **Static** Apps can be loaded directly from a _URL_ or _File_ and will be cached.
+- **Dynamic** Apps may require some build steps if they are not already running
+  - For example building and starting the respective docker image etc
 
 Apps can be loaded from a variety of locations through the use of AppLoaders. Built in ones include:
 
-* Manually adding from local file
-* Manually adding from remote URL
-* Detection of Docker container
-* Built from Git Repo
+- Manually adding from local file
+- Manually adding from remote URL
+- Detection of Docker container
+- Built from Git Repo
 
 These can all be triggered in two ways:
-* Manually using the **CLI**
-* Remotely by an **App** using Management REST API with shared creds
-  * Must have been loaded via the CLI
-  * Must be approved & enabled
-  * Must have been granted ADMIN permission
+
+- Manually using the **CLI**
+- Remotely by an **App** using Management REST API with shared creds
+  - Must have been loaded via the CLI
+  - Must be approved & enabled
+  - Must have been granted ADMIN permission
 
 ```shell
-dockui app load [--permission <permission> --config <configPath> --auto-approve <instance>] <url>
+dockui load [--permission <permission> --auto-approve <instance>] <url>
 ```
 
 ### Load an App from a Github repo (dynamic)
 
 ```shell
-$ dockui app load --permission admin --auto-approve https://github/yoosername/dockui-app-nodejs-demo
+$ dockui load --permission admin --auto-approve https://github/yoosername/dockui-app-nodejs-demo
 
 [CLI] Notify New Git Repo App load request - await
 [GitRepoAppLoader] Detected new Git based App load request
@@ -162,7 +147,7 @@ $ dockui app load --permission admin --auto-approve https://github/yoosername/do
 ### Load an App from a Github repo (static)
 
 ```shell
-$ dockui app load --permission write --auto-approve https://github/yoosername/dockui-app-static-demo
+$ dockui load --permission write --auto-approve https://github/yoosername/dockui-app-static-demo
 
 [CLI] Notify New Git based App load request
 [GitRepoLoader] Detected new Git based App load request
@@ -180,7 +165,7 @@ $ dockui app load --permission write --auto-approve https://github/yoosername/do
 ### Load an App from a Docker container image (dynamic)
 
 ```shell
-$ dockui app load --permission write --auto-approve dockui/demoapp
+$ dockui load --permission write --auto-approve dockui/demoapp
 
 [CLI] Notify New Docker Image based App load request
 [DockerLoader] Detected new Docker Image App load request
@@ -197,7 +182,7 @@ $ dockui app load --permission write --auto-approve dockui/demoapp
 ### Load an App from a remote URL (dynamic)
 
 ```shell
-$ dockui app load --permission read --auto-approve https://some.remote.url/dockui.app.yml
+$ dockui load --permission read --auto-approve https://some.remote.url/dockui.app.yml
 
 [CLI] Notify New URL based App load request
 [URLLoader] Detected new URL based App load request for https://some.remote.url/dockui.app.yml
@@ -224,7 +209,7 @@ $ docker run -t dockui-demo -d -p 8000:8080 dockui/demoapp start
 > At this point its been loaded but cant be enabled because it needs to be approved first
 
 ```shell
-$ dockui ls prod
+$ dockui ls
 
 Instance     Pid       App          UUID         State                          Permission
 ------------------------------------------------------------------------------------------
@@ -257,3 +242,53 @@ See API here: [API.md](API.md)
 ## TESTS
 
 See TESTS here: [TESTS.md](TESTS.md)
+
+## 12 Factor best practices to Keep in mind while I refactor!
+
+### 1: Codebase
+
+> One codebase tracked in revision control, many deploys
+
+### 2: Dependencies
+
+> Explicitly declare and isolate dependencies
+
+### 3: Config
+
+> Store config in the environment
+
+### 4: Backing services
+
+> Treat backing services as attached resources
+
+### 5: Build, release, run
+
+> Strictly separate build and run stages
+
+### 6: Processes
+
+> Execute the app as one or more stateless processes
+
+### 7: Port binding
+
+> Export services via port binding
+
+### 8: Concurrency
+
+> Scale out via the process model
+
+### 9: Disposability
+
+> Maximize robustness with fast startup and graceful shutdown
+
+### 10: Dev/prod parity
+
+> Keep development, staging, and production as similar as possible
+
+### 11: Logs
+
+> Treat logs as event streams
+
+### 12: Admin processes
+
+> Run admin/management tasks as one-off processes

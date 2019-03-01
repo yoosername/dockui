@@ -13,9 +13,10 @@ class Config {
       return new ConfigBuilder();
     }
 
-    this.version = builder.version;
-    this.defaultInstance = builder.defaultInstance;
-    this.instances = builder.instances;
+    this.store = builder.store;
+    this.events = builder.events;
+    this.port = builder.port;
+    this.secret = builder.secret;
   }
 }
 
@@ -24,47 +25,49 @@ class Config {
  */
 class ConfigBuilder {
   constructor() {
-    this.version = null;
-    this.instances = null;
-    this.defaultInstance = null;
+    this.store = null;
+    this.events = null;
+    this.port = null;
+    this.secret = null;
   }
 
   /**
-   * @description Specifies the Config Version ( Derived from the Loader which loaded us )
-   * @argument {String} version
+   * @description Specifies the Store ( defaults to local file store )
+   * @argument {String} store
    * @returns {ConfigBuilder} the current config builder for chaining
    */
-  withVersion(version) {
-    this.version = version;
+  withStore(store) {
+    this.store = store;
     return this;
   }
 
   /**
-   * @description Specifies which instance to use when none is specified during CLI calls
-   * @argument {String} instanceName
+   * @description Specifies the Events/Messaging service to use ( defaults to in memory )
+   * @argument {String} events
    * @returns {ConfigBuilder} the current config builder for chaining
    */
-  withDefaultInstance(instanceName) {
-    this.defaultInstance = instanceName;
+  withEvents(events) {
+    this.events = events;
     return this;
   }
 
   /**
-   * @description A single DockUI Instance Config
-   * @argument {String} key Unique Instance Key
-   * @argument {InstanceConfig} instanceConfig
+   * @description Specifies the Web Port to listen on ( defaults to 5000 )
+   * @argument {String} port
    * @returns {ConfigBuilder} the current config builder for chaining
    */
-  withInstance(key, instanceConfig) {
-    this.instances = this.instances ? this.instances : {};
-    this.instances[key] = {
-      name: instanceConfig.name,
-      uuid: instanceConfig.uuid,
-      description: instanceConfig.description,
-      socket: instanceConfig.socket,
-      port: instanceConfig.port,
-      creds: instanceConfig.creds
-    };
+  withPort(port) {
+    this.port = port;
+    return this;
+  }
+
+  /**
+   * @description Specifies the initial root secret (defaults to changeme)
+   * @argument {String} secret
+   * @returns {ConfigBuilder} the current config builder for chaining
+   */
+  withSecret(secret) {
+    this.secret = secret;
     return this;
   }
 
@@ -77,111 +80,7 @@ class ConfigBuilder {
   }
 }
 
-/**
- * An InstanceConfig encapsulates all of the runtime options of a single DockUI instance (e.g prod,ref etc)
- */
-class InstanceConfig {
-  /**
-   * @argument {InstanceConfigBuilder} builder
-   * @throws InstanceConfigValidationError
-   */
-  constructor(builder) {
-    if (!builder) {
-      return new InstanceConfigBuilder();
-    }
-
-    this.name = builder.name;
-    this.uuid = builder.uuid;
-    this.description = builder.description;
-    this.socket = builder.socket;
-    this.port = builder.port;
-    this.creds = builder.creds;
-  }
-}
-
-/**
- * @description Builder that generates a DockUI InstanceConfig
- */
-class InstanceConfigBuilder {
-  constructor() {
-    this.name = null;
-    this.uuid = null;
-    this.description = null;
-    this.socket = null;
-    this.port = null;
-    this.creds = null;
-  }
-
-  /**
-   * @description The unique name of the Instance
-   * @returns {InstanceConfigBuilder} this InstanceConfigBuilder for chaining
-   */
-  withName(name) {
-    this.name = name;
-    return this;
-  }
-
-  /**
-   * @description The unique UUID of the Instance
-   * @returns {InstanceConfigBuilder} this InstanceConfigBuilder for chaining
-   */
-  withUUID(uuid) {
-    this.uuid = uuid;
-    return this;
-  }
-
-  /**
-   * @description A Human readable description of the instance
-   * @returns {InstanceConfigBuilder} this InstanceConfigBuilder for chaining
-   */
-  withDescription(description) {
-    this.description = description;
-    return this;
-  }
-
-  /**
-   * @description The management socket path for local admin and CLI access
-   * @returns {InstanceConfigBuilder} this InstanceConfigBuilder for chaining
-   */
-  withSocket(path) {
-    this.socket = path;
-    return this;
-  }
-
-  /**
-   * @description The Http Port that DockUI Gateway and Management API are served from
-   * @returns {InstanceConfigBuilder} this InstanceConfigBuilder for chaining
-   */
-  withPort(port) {
-    this.port = port;
-    return this;
-  }
-
-  /**
-   * @description The Global Admin credentials that this instance is started with.
-   *              Used by the CLI to make calls to the management API
-   * @returns {InstanceConfigBuilder} this InstanceConfigBuilder for chaining
-   */
-  withCreds(username, password) {
-    this.creds = {
-      username: username,
-      password: password
-    };
-    return this;
-  }
-
-  /**
-   * @description Validate options and return a new Config instance
-   * @returns {Config} instance of Config
-   */
-  build() {
-    return new InstanceConfig(this);
-  }
-}
-
 module.exports = {
   Config,
-  ConfigBuilder,
-  InstanceConfig,
-  InstanceConfigBuilder
+  ConfigBuilder
 };
