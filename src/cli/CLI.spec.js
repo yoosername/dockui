@@ -1,12 +1,43 @@
 const chai = require("chai");
 const expect = chai.expect;
+const sandbox = require("sinon").createSandbox();
+const sinonChai = require("sinon-chai");
+chai.use(sinonChai);
 
+var configLoader1 = null;
+var configLoader2 = null;
 var CLI = require("./CLI");
+var cli = null;
 
 describe("CLI", function() {
   "use strict";
 
-  beforeEach(function() {});
+  beforeEach(function() {
+    sandbox.spy(console, "log");
+    configLoader1 = sandbox.stub().returns({
+      load: () => {
+        return {
+          store: "store1",
+          events: "events1",
+          port: "port1",
+          secret: "secret1"
+        };
+      }
+    });
+    configLoader2 = sandbox.stub().returns({
+      load: () => {
+        return {
+          store: "store2",
+          port: "port2"
+        };
+      }
+    });
+    cli = new CLI(configLoader1(), configLoader2());
+  });
+
+  afterEach(function() {
+    sandbox.restore();
+  });
 
   it("should be defined and loadable", function() {
     expect(CLI).to.not.be.undefined;
@@ -19,10 +50,30 @@ describe("CLI", function() {
   // TODO (v0.0.1-Alpha): These tests
 
   // GENERIC TESTS
-  // (a) Should log usage when --help is passed on command line
+  // (a) Should be configurable by a heirarchy of ConfigLoaders
+  it("should be configurable by a heirarchy of ConfigLoaders", function() {
+    expect(cli.getConfig).to.be.a("function");
+    expect(cli.getConfig().store).to.equal("store2");
+    expect(cli.getConfig().events).to.equal("events1");
+    expect(cli.getConfig().port).to.equal("port2");
+    expect(cli.getConfig().secret).to.equal("secret1");
+  });
 
-  // (b) Should be configurable by a heirarchy of ConfigLoaders
-
+  // (b) Should log usage when --help is passed on command line
+  it("should log usage when --help is passed as Arg", function(done) {
+    cli
+      .parse(["node", "dockui", "--help"])
+      .then(cmd => {
+        console.log("ERHERIGHIEHGIEGIEHGIEHRIGH");
+        expect(cmd).to.equal("dockui");
+        expect(console.log).to.be.called.callCount(1);
+        expect(console.log.getCall(0).args[0]).to.contain(
+          "Usage: dockui [options] <cmd>"
+        );
+        done();
+      })
+      .catch(console.log);
+  });
   // (c) Should work without Configuration with sensible defaults
 
   // (d) Should log to STDOUT (with configurable verbosity)
