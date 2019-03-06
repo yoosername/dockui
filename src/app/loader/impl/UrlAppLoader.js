@@ -37,7 +37,7 @@ class UrlAppLoader extends AppLoader {
   /**
    * @description Setup our required EventListeners
    */
-  addEventListeners() {
+  addListeners() {
     this.listeners.push({
       eventName: URL_APP_LOAD_REQUEST,
       listener: async request => {
@@ -81,7 +81,7 @@ class UrlAppLoader extends AppLoader {
   /**
    * @description Remove all added EventListeners
    */
-  removeEventListeners() {
+  removeListeners() {
     this.listeners.forEach(event => {
       "use strict";
       this.eventService.removeListener(event.eventName, event.listener);
@@ -106,7 +106,7 @@ class UrlAppLoader extends AppLoader {
       this.scanning = true;
 
       // Attach required events
-      this.addEventListeners();
+      this.addListeners();
     }
   }
 
@@ -200,7 +200,7 @@ class UrlAppLoader extends AppLoader {
    */
   stopScanningForNewApps() {
     // Remove existing handlers
-    this.removeEventListeners();
+    this.removeListeners();
 
     // Mark ourselves as not scanning
     this.scanning = false;

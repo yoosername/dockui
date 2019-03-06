@@ -6,7 +6,7 @@ chai.use(sinonChai);
 
 var UrlAppLoader = require("./UrlAppLoader");
 
-describe("UrlAppLoader", function() {
+describe("FileAppLoader", function() {
   "use strict";
 
   beforeEach(function() {});

@@ -1,4 +1,8 @@
-const expect = require("chai").expect;
+const chai = require("chai");
+const expect = chai.expect;
+const sinon = require("sinon");
+const sinonChai = require("sinon-chai");
+chai.use(sinonChai);
 
 const EventService = require("./EventService");
 
@@ -21,15 +25,22 @@ describe("EventService", function() {
     expect(withoutNewOperator).to.be.an.instanceOf(EventService);
   });
 
-  it("should emit an event when emit() is called with the correct payload", function(done) {
-    const es = new EventService();
-    const eventPayload = {
-      action: "thing"
-    };
-    es.on("test:event", function(payload) {
-      expect(payload).to.eql(eventPayload);
-      done();
-    });
-    es.emit("test:event", eventPayload);
+  it("should have correct signature", function() {
+    const eventsService = new EventService();
+    expect(eventsService.on).to.be.a("function");
+    expect(eventsService.addListener).to.be.a("function");
+    expect(eventsService.removeListener).to.be.a("function");
+    expect(eventsService.emit).to.be.a("function");
+  });
+
+  it("should log a warning if you dont extend the default behaviour", function() {
+    var logSpy = sinon.stub(console, "warn");
+    const eventsService = new EventService();
+    eventsService.on();
+    eventsService.addListener();
+    eventsService.removeListener();
+    eventsService.emit();
+    expect(logSpy).to.be.called.callCount(4);
+    logSpy.restore();
   });
 });

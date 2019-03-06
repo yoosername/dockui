@@ -76,7 +76,7 @@ however to run as daemon on a host you can use something like
 ### List Loaded Apps
 
 ```shell
-$ dockui ls
+$ dockui apps
 
 App                   UUID         State                            Permission
 ------------------------------------------------------------------------------
@@ -90,18 +90,29 @@ Demo Dynamic App2     c6cc4af6     Loading..........                NONE
 
 There are two types of App **"static"** and **"dynamic"**.
 
-- **Static** Apps can be loaded directly from a _URL_ or _File_ and will be cached.
-- **Dynamic** Apps may require some build steps if they are not already running
-  - For example building and starting the respective docker image etc
+#### Static Apps
+
+These will be loaded once from URL and cached until unloaded or reloaded.
+
+#### Dynamic Apps
+
+- May require some processing steps if not already running
+  - For example if loaded using Git Loader will
+    - Clone Repo
+    - Attach to build container
+    - Run build steps specified in App descriptor
+- Some modules will be cached based upon relevant cache policy
+
+#### App Loaders
 
 Apps can be loaded from a variety of locations through the use of AppLoaders. Built in ones include:
 
 - Manually adding from local file
 - Manually adding from remote URL
-- Detection of Docker container
+- Detection of Docker container using Docker events
 - Built from Git Repo
 
-These can all be triggered in two ways:
+These can all be triggered in a couple of ways:
 
 - Manually using the **CLI**
 - Remotely by an **App** using Management REST API with shared creds
@@ -110,13 +121,13 @@ These can all be triggered in two ways:
   - Must have been granted ADMIN permission
 
 ```shell
-dockui load [--permission <permission> --auto-approve <instance>] <url>
+dockui apps load [--permission <permission> --auto-approve <instance>] <url>
 ```
 
 ### Load an App from a Github repo (dynamic)
 
 ```shell
-$ dockui load --permission admin --auto-approve https://github/yoosername/dockui-app-nodejs-demo
+$ dockui apps load --permission admin --auto-approve https://github/yoosername/dockui-app-nodejs-demo
 
 [CLI] Notify New Git Repo App load request - await
 [GitRepoAppLoader] Detected new Git based App load request
@@ -147,7 +158,7 @@ $ dockui load --permission admin --auto-approve https://github/yoosername/dockui
 ### Load an App from a Github repo (static)
 
 ```shell
-$ dockui load --permission write --auto-approve https://github/yoosername/dockui-app-static-demo
+$ dockui apps load --permission write --auto-approve https://github/yoosername/dockui-app-static-demo
 
 [CLI] Notify New Git based App load request
 [GitRepoLoader] Detected new Git based App load request
@@ -165,7 +176,7 @@ $ dockui load --permission write --auto-approve https://github/yoosername/dockui
 ### Load an App from a Docker container image (dynamic)
 
 ```shell
-$ dockui load --permission write --auto-approve dockui/demoapp
+$ dockui apps load --permission write --auto-approve dockui/demoapp
 
 [CLI] Notify New Docker Image based App load request
 [DockerLoader] Detected new Docker Image App load request
@@ -182,7 +193,7 @@ $ dockui load --permission write --auto-approve dockui/demoapp
 ### Load an App from a remote URL (dynamic)
 
 ```shell
-$ dockui load --permission read --auto-approve https://some.remote.url/dockui.app.yml
+$ dockui apps load --permission read --auto-approve https://some.remote.url/dockui.app.yml
 
 [CLI] Notify New URL based App load request
 [URLLoader] Detected new URL based App load request for https://some.remote.url/dockui.app.yml
@@ -209,21 +220,21 @@ $ docker run -t dockui-demo -d -p 8000:8080 dockui/demoapp start
 > At this point its been loaded but cant be enabled because it needs to be approved first
 
 ```shell
-$ dockui ls
+$ dockui apps
 
-Instance     Pid       App          UUID         State                          Permission
-------------------------------------------------------------------------------------------
-prod         34982     Demo App     4c3fe6ce     Loaded (Awaiting Approval)     NONE
+App          UUID         State                          Permission
+-------------------------------------------------------------------
+Demo App     4c3fe6ce     Loaded (Awaiting Approval)     NONE
 ```
 
 #### Approve the App load request
 
 ```shell
-dockui app approve [--permission <permission>] <uuid>
+dockui apps approve [--permission <permission>] <uuid>
 ```
 
 ```shell
-$ dockui app approve --permission read 4c3fe6ce
+$ dockui apps approve --permission read 4c3fe6ce
 
 [CLI] Notify Approve request for App 4c3fe6ce
 [LifecycleEventsStrategy] Detected App Approval, enabled (10) out of (10) modules

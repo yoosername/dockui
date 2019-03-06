@@ -31,7 +31,7 @@ class GitAppLoader extends AppLoader {
   /**
    * @description Setup our required EventListeners
    */
-  addEventListeners() {
+  addListeners() {
     //  Start listening for events from the framework
     //  - GIT_APP_LOAD_REQUEST means user requested an App load from a git repo
     this.listeners.push({
@@ -86,7 +86,7 @@ class GitAppLoader extends AppLoader {
   /**
    * @description Remove all added EventListeners
    */
-  removeEventListeners() {
+  removeListeners() {
     this.listeners.forEach(event => {
       "use strict";
       this.eventService.removeListener(event.eventName, event.listener);
@@ -105,7 +105,7 @@ class GitAppLoader extends AppLoader {
       this.scanning = true;
 
       // Attach required events
-      this.addEventListeners();
+      this.addListeners();
     }
   }
 
@@ -114,7 +114,7 @@ class GitAppLoader extends AppLoader {
    */
   stopScanningForNewApps() {
     // Remove existing handlers
-    this.removeEventListeners();
+    this.removeListeners();
 
     // Mark ourselves as not scanning
     this.scanning = false;

@@ -1,8 +1,13 @@
+const EventEmitter = require("events");
+const EventService = require("../EventService");
 /**
  * @description Simple native events service
  */
-class EventService {
-  constructor() {}
+class InMemoryEventService extends EventService {
+  constructor() {
+    super();
+    this.emitter = new EventEmitter();
+  }
 
   /**
    * @description helper for adding an event listener
@@ -10,9 +15,7 @@ class EventService {
    * @argument {Function} fn - The callback to run when the event is emmited
    */
   on(event, fn) {
-    console.warn(
-      "[EventsService] on - NoOp implementation - this should be extended by child classes"
-    );
+    this.addListener(event, fn);
   }
 
   /**
@@ -21,9 +24,7 @@ class EventService {
    * @argument {Function} fn - The callback to run when the event is emmited
    */
   addListener(event, fn) {
-    console.warn(
-      "[EventsService] addListener - NoOp implementation - this should be extended by child classes"
-    );
+    this.emitter.addListener(event, fn);
   }
 
   /**
@@ -32,9 +33,7 @@ class EventService {
    * @argument {Function} fn - The callback to remove
    */
   removeListener(event, fn) {
-    console.warn(
-      "[EventsService] removeListener - NoOp implementation - this should be extended by child classes"
-    );
+    this.emitter.removeListener(event, fn);
   }
 
   /**
@@ -43,10 +42,8 @@ class EventService {
    * @argument {Object} payload - The payload of the event
    */
   emit(event, payload) {
-    console.warn(
-      "[EventsService] emit - NoOp implementation - this should be extended by child classes"
-    );
+    this.emitter.emit(event, payload);
   }
 }
 
-module.exports = EventService;
+module.exports = InMemoryEventService;

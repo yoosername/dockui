@@ -4,19 +4,19 @@ const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 
-const LifecycleEventsStrategy = require("./LifecycleEventsStrategy");
+const DefaultLifecycleEventsStrategy = require("./DefaultLifecycleEventsStrategy");
 
 const {
   MockAppService,
   MockAppStore,
   MockEventService
-} = require("../../util/mocks");
+} = require("../../../util/mocks");
 
 var mockAppService = null;
 var mockAppStore = null;
 var mockEventService = null;
 
-describe("LifecycleEventsStrategy", function() {
+describe("DefaultLifecycleEventsStrategy", function() {
   "use strict";
 
   beforeEach(function() {
@@ -26,31 +26,31 @@ describe("LifecycleEventsStrategy", function() {
   });
 
   it("should be defined and loadable", function() {
-    expect(LifecycleEventsStrategy).to.not.be.undefined;
+    expect(DefaultLifecycleEventsStrategy).to.not.be.undefined;
   });
 
   it("should be a function", function() {
-    expect(LifecycleEventsStrategy).to.be.a("function");
+    expect(DefaultLifecycleEventsStrategy).to.be.a("function");
   });
 
   it("should throw if incorrect or missing args", function() {
     expect(function() {
-      new LifecycleEventsStrategy();
+      new DefaultLifecycleEventsStrategy();
     }).to.throw();
     expect(function() {
-      new LifecycleEventsStrategy("", "", "");
+      new DefaultLifecycleEventsStrategy("", "", "");
     }).to.throw();
     expect(function() {
-      new LifecycleEventsStrategy(null, null, null);
+      new DefaultLifecycleEventsStrategy(null, null, null);
     }).to.throw();
     expect(function() {
-      new LifecycleEventsStrategy(undefined, undefined, undefined);
+      new DefaultLifecycleEventsStrategy(undefined, undefined, undefined);
     }).to.throw();
     expect(function() {
-      new LifecycleEventsStrategy({}, {}, {});
+      new DefaultLifecycleEventsStrategy({}, {}, {});
     }).to.throw();
     expect(function() {
-      new LifecycleEventsStrategy(
+      new DefaultLifecycleEventsStrategy(
         {
           get: {},
           set: {}
@@ -60,28 +60,22 @@ describe("LifecycleEventsStrategy", function() {
       );
     }).to.throw();
     expect(function() {
-      new LifecycleEventsStrategy(mockEventService, mockAppStore);
+      new DefaultLifecycleEventsStrategy(mockEventService, mockAppStore);
     }).to.not.throw();
   });
 
-  it("should have correct signature", function() {
-    const lifecycleEventsStrategy = new LifecycleEventsStrategy(
-      mockEventService,
-      mockAppStore
-    );
-    expect(lifecycleEventsStrategy.setup).to.be.a("function");
-    expect(lifecycleEventsStrategy.teardown).to.be.a("function");
-  });
+  it("should detach the same number of event listeners as have been added during teardown", function() {
+    var addSpy = sinon.spy(mockEventService, "addListener");
+    var removeSpy = sinon.spy(mockEventService, "removeListener");
 
-  it("should log a warning if you dont extend the default behaviour", function() {
-    var logSpy = sinon.stub(console, "warn");
-    const lifecycleEventsStrategy = new LifecycleEventsStrategy(
+    var lifecycleEventsStrategy = new DefaultLifecycleEventsStrategy(
       mockEventService,
       mockAppStore
     );
     lifecycleEventsStrategy.setup();
+    var addedCount = addSpy.callCount;
     lifecycleEventsStrategy.teardown();
-    expect(logSpy).to.be.called.callCount(2);
-    logSpy.restore();
+
+    expect(removeSpy).to.be.called.callCount(addedCount);
   });
 });
