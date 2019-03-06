@@ -244,13 +244,19 @@ class DefaultWebService extends WebService {
     "use strict";
 
     // Notify listeners that we are starting
-    this.eventService.emit(WEBSERVICE_STARTING_EVENT, this);
+    this.eventService.emit(WEBSERVICE_STARTING_EVENT, {
+      msg: "Webservice Starting",
+      port: WEBSERVICE_PORT
+    });
     if (!this.isRunning()) {
       this.server = require("http").createServer(this.getExpressApp());
       this.server.listen(WEBSERVICE_PORT, () => {
         this.running = true;
         // Notify listeners that we have started
-        this.eventService.emit(WEBSERVICE_STARTED_EVENT, this);
+        this.eventService.emit(WEBSERVICE_STARTED_EVENT, {
+          msg: "Webservice Started",
+          port: WEBSERVICE_PORT
+        });
       });
     }
   }
@@ -261,11 +267,15 @@ class DefaultWebService extends WebService {
   shutdown() {
     "use strict";
     // Notify listeners that we are shutting down
-    this.eventService.emit(WEBSERVICE_SHUTTING_DOWN_EVENT);
+    this.eventService.emit(WEBSERVICE_SHUTTING_DOWN_EVENT, {
+      msg: "Webservice Shutting down"
+    });
     this.server.close(() => {
       this.running = false;
       // Notify listeners that we have stopped
-      this.eventService.emit(WEBSERVICE_SHUTDOWN_EVENT);
+      this.eventService.emit(WEBSERVICE_SHUTDOWN_EVENT, {
+        msg: "Webservice Shut down"
+      });
     });
   }
 

@@ -6,9 +6,9 @@ const {
 } = require("../constants/errors");
 
 const {
-  APP_SERVICE_STARTED_EVENT,
-  WEB_SERVICE_SHUTDOWN_EVENT,
-  APP_SERVICE_SHUTDOWN_EVENT
+  APPSERVICE_STARTED_EVENT,
+  WEBSERVICE_SHUTDOWN_EVENT,
+  APPSERVICE_SHUTDOWN_EVENT
 } = require("../constants/events");
 
 /**
@@ -34,25 +34,29 @@ class DockUIApps {
    * @description Initialize and start App service
    */
   start() {
-    this.appService.start();
-    this.eventService.on(APP_SERVICE_STARTED_EVENT, () => {
-      console.log("[DockUIApps] Framework has started, starting Web Service");
+    // Add graceful shutdown hook
+    const shutdown = () => {
+      console.log("SIGTERM signal received, shutting down");
+      this.shutdown();
+      process.exit(0);
+    };
+    process.on("SIGTERM", shutdown);
+    process.on("SIGINT", shutdown);
+    this.eventService.on(APPSERVICE_STARTED_EVENT, () => {
       this.webService.start();
     });
+    this.appService.start();
   }
 
   /**
    * @description Shutdown App service
    */
   shutdown() {
-    this.webService.shutdown();
-    this.eventService.on(WEB_SERVICE_SHUTDOWN_EVENT, () => {
-      console.log("[DockUIApps] Web system has shutdown successfully");
+    this.eventService.on(WEBSERVICE_SHUTDOWN_EVENT, () => {
       this.appService.shutdown();
     });
-    this.eventService.on(APP_SERVICE_SHUTDOWN_EVENT, () => {
-      console.log("[DockUIApps] Framework has shutdown successfully");
-    });
+    this.eventService.on(APPSERVICE_SHUTDOWN_EVENT, () => {});
+    this.webService.shutdown();
   }
 }
 

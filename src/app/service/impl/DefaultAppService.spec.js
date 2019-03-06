@@ -5,10 +5,10 @@ const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 
 const {
-  APP_SERVICE_STARTING_EVENT,
-  APP_SERVICE_STARTED_EVENT,
-  APP_SERVICE_SHUTTING_DOWN_EVENT,
-  APP_SERVICE_SHUTDOWN_EVENT
+  APPSERVICE_STARTING_EVENT,
+  APPSERVICE_STARTED_EVENT,
+  APPSERVICE_SHUTTING_DOWN_EVENT,
+  APPSERVICE_SHUTDOWN_EVENT
 } = require("../../../constants/events");
 
 const { appServiceValidationError } = require("../../../constants/errors");
@@ -127,19 +127,19 @@ describe("DefaultAppService", function() {
     events
       .expects("emit")
       .once()
-      .calledWith(APP_SERVICE_STARTING_EVENT);
+      .calledWith(APPSERVICE_STARTING_EVENT);
     events
       .expects("emit")
       .once()
-      .calledWith(APP_SERVICE_STARTED_EVENT);
+      .calledWith(APPSERVICE_STARTED_EVENT);
     events
       .expects("emit")
       .once()
-      .calledWith(APP_SERVICE_SHUTTING_DOWN_EVENT);
+      .calledWith(APPSERVICE_SHUTTING_DOWN_EVENT);
     events
       .expects("emit")
       .once()
-      .calledWith(APP_SERVICE_SHUTDOWN_EVENT);
+      .calledWith(APPSERVICE_SHUTDOWN_EVENT);
     var appService = new DefaultAppService(
       mockAppLoaders,
       mockAppStore,

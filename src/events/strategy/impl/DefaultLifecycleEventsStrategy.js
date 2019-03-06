@@ -1,7 +1,12 @@
 const {
-  APP_LOAD_STARTED_EVENT,
-  APP_LOAD_COMPLETE_EVENT,
-  APP_LOAD_FAILED_EVENT
+  APPSERVICE_STARTING_EVENT,
+  APPSERVICE_STARTED_EVENT,
+  APPSERVICE_SHUTTING_DOWN_EVENT,
+  APPSERVICE_SHUTDOWN_EVENT,
+  WEBSERVICE_STARTING_EVENT,
+  WEBSERVICE_STARTED_EVENT,
+  WEBSERVICE_SHUTTING_DOWN_EVENT,
+  WEBSERVICE_SHUTDOWN_EVENT
 } = require("../../../constants/events");
 
 const { log } = require("./helper");
@@ -24,19 +29,28 @@ class DefaultLifecycleEventsStrategy extends LifecycleEventsStrategy {
    * @description Used to add event listeners and other setup tasks
    */
   setup() {
-    this.eventService.addListener(APP_LOAD_STARTED_EVENT, log);
-    this.eventService.addListener(APP_LOAD_COMPLETE_EVENT, log);
-    this.eventService.addListener(APP_LOAD_FAILED_EVENT, log);
+    this.eventService.addListener(APPSERVICE_STARTING_EVENT, log);
+    this.eventService.addListener(APPSERVICE_STARTED_EVENT, log);
+    this.eventService.addListener(APPSERVICE_SHUTTING_DOWN_EVENT, log);
+    this.eventService.addListener(APPSERVICE_SHUTDOWN_EVENT, log);
+    this.eventService.addListener(WEBSERVICE_STARTING_EVENT, log);
+    this.eventService.addListener(WEBSERVICE_STARTED_EVENT, log);
+    this.eventService.addListener(WEBSERVICE_SHUTTING_DOWN_EVENT, log);
+    this.eventService.addListener(WEBSERVICE_SHUTDOWN_EVENT, log);
   }
 
   /**
    * @description Used to remove event listeners and other shutdown tasks
    */
   teardown() {
-    // Remove all our listeners.
-    this.eventService.removeListener(APP_LOAD_STARTED_EVENT, log);
-    this.eventService.removeListener(APP_LOAD_COMPLETE_EVENT, log);
-    this.eventService.removeListener(APP_LOAD_FAILED_EVENT, log);
+    this.eventService.removeListener(APPSERVICE_STARTING_EVENT, log);
+    this.eventService.removeListener(APPSERVICE_STARTED_EVENT, log);
+    this.eventService.removeListener(APPSERVICE_SHUTTING_DOWN_EVENT, log);
+    this.eventService.removeListener(APPSERVICE_SHUTDOWN_EVENT, log);
+    this.eventService.removeListener(WEBSERVICE_STARTING_EVENT, log);
+    this.eventService.removeListener(WEBSERVICE_STARTED_EVENT, log);
+    this.eventService.removeListener(WEBSERVICE_SHUTTING_DOWN_EVENT, log);
+    this.eventService.removeListener(WEBSERVICE_SHUTDOWN_EVENT, log);
   }
 }
 
