@@ -34,7 +34,9 @@ class DefaultAppService extends AppService {
     // If we are not already started
     if (this._running !== true) {
       // Notify listeners that we are starting up
-      this.eventService.emit(APP_SERVICE_STARTING_EVENT);
+      this.eventService.emit(APP_SERVICE_STARTING_EVENT, {
+        msg: "App Service Starting"
+      });
 
       // setup AppEventLifecycleStrategy to handle events
       this.lifecycleEventsStrategy.setup();
@@ -46,7 +48,9 @@ class DefaultAppService extends AppService {
       this._running = true;
 
       // Notify listeners that we have started
-      this.eventService.emit(APP_SERVICE_STARTED_EVENT);
+      this.eventService.emit(APP_SERVICE_STARTED_EVENT, {
+        msg: "App Service Started"
+      });
     }
   }
 
@@ -59,7 +63,9 @@ class DefaultAppService extends AppService {
     // If we are not already shutdown
     if (this._running === true) {
       // Notify listeners that we are shutting down
-      this.eventService.emit(APP_SERVICE_SHUTTING_DOWN_EVENT);
+      this.eventService.emit(APP_SERVICE_SHUTTING_DOWN_EVENT, {
+        msg: "App Service Shutting Down"
+      });
 
       // Tell Loaders to stop loading Apps
       this.stopScanningForNewApps();
@@ -71,7 +77,9 @@ class DefaultAppService extends AppService {
       this._running = false;
 
       // Notify listeners that we have shutdown successfully
-      this.eventService.emit(APP_SERVICE_SHUTDOWN_EVENT);
+      this.eventService.emit(APP_SERVICE_SHUTDOWN_EVENT, {
+        msg: "App Service Shutdown"
+      });
     }
   }
 

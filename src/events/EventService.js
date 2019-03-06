@@ -20,9 +20,9 @@ class EventService {
    * @argument {String} event - The Event
    * @argument {Function} fn - The callback to run when the event is emmited
    */
-  addEventListener(event, fn) {
+  addListener(event, fn) {
     console.warn(
-      "[EventsService] addEventListener - NoOp implementation - this should be extended by child classes"
+      "[EventsService] addListener - NoOp implementation - this should be extended by child classes"
     );
   }
 
@@ -31,9 +31,9 @@ class EventService {
    * @argument {String} event - The Event
    * @argument {Function} fn - The callback to remove
    */
-  removeEventListener(event, fn) {
+  removeListener(event, fn) {
     console.warn(
-      "[EventsService] removeEventListener - NoOp implementation - this should be extended by child classes"
+      "[EventsService] removeListener - NoOp implementation - this should be extended by child classes"
     );
   }
 

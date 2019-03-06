@@ -12,6 +12,8 @@ var configLoader1 = null;
 var configLoader2 = null;
 var logSpy = null;
 var loggerSpy = null;
+var dockuiStartSpy;
+var dockUIStub;
 var CLI = require("./CLI");
 var cli = null;
 
@@ -37,11 +39,16 @@ describe("CLI", function() {
         };
       }
     });
+    dockuiStartSpy = sandbox.spy();
+    dockUIStub = sandbox.stub().returns({
+      start: dockuiStartSpy
+    });
     logSpy = sandbox.spy();
     loggerSpy = sandbox.stub().returns({ log: logSpy });
     cli = new CLI({
       logger: new loggerSpy(),
-      configLoaders: [configLoader1(), configLoader2()]
+      configLoaders: [configLoader1(), configLoader2()],
+      dockui: new dockUIStub()
     });
   });
 
@@ -62,10 +69,11 @@ describe("CLI", function() {
   // GENERIC TESTS
   // Should be configurable by passing in a config object
   it("should be configurable by passing in a config", function() {
-    cli = new CLI();
+    cli = new CLI({ dockui: new dockUIStub() });
     expect(cli.getConfig).to.be.a("function");
-    expect(cli.getConfig().secret).to.equal(null);
+    expect(cli.getConfig().secret).to.equal("changeme");
     cli = new CLI({
+      dockui: new dockUIStub(),
       config: {
         store: "store1",
         events: "events1",
@@ -100,16 +108,16 @@ describe("CLI", function() {
       .catch(console.log);
   });
 
-  // Should log usage when --help is passed when executed as main module
-  it("should be able to run as main module with no args", async function() {
-    const file = path.join(__dirname, ".", "CLI.js");
-    var { stdout, stderr } = await exec(`${file} --help`);
-    expect(stderr).to.be.empty;
-    expect(stdout).to.contain("Usage");
-    var { stdout, stderr } = await exec(`${file}`);
-    expect(stderr).to.be.empty;
-    expect(stdout).to.contain("Usage");
-  });
+  // Move this E2E test out of here
+  // it("should be able to run as main module with no args", async function() {
+  //   const file = path.join(__dirname, ".", "CLI.js");
+  //   var { stdout, stderr } = await exec(`${file} --help`);
+  //   expect(stderr).to.be.empty;
+  //   expect(stdout).to.contain("Usage");
+  //   var { stdout, stderr } = await exec(`${file}`);
+  //   expect(stderr).to.be.empty;
+  //   expect(stdout).to.contain("Usage");
+  // });
 
   // Should log to STDOUT (with configurable verbosity)
   it("should log to STDOUT (with configurable verbosity)", async function() {

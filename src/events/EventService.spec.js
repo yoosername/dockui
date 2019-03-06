@@ -28,8 +28,8 @@ describe("EventService", function() {
   it("should have correct signature", function() {
     const eventsService = new EventService();
     expect(eventsService.on).to.be.a("function");
-    expect(eventsService.addEventListener).to.be.a("function");
-    expect(eventsService.removeEventListener).to.be.a("function");
+    expect(eventsService.addListener).to.be.a("function");
+    expect(eventsService.removeListener).to.be.a("function");
     expect(eventsService.emit).to.be.a("function");
   });
 
@@ -37,8 +37,8 @@ describe("EventService", function() {
     var logSpy = sinon.stub(console, "warn");
     const eventsService = new EventService();
     eventsService.on();
-    eventsService.addEventListener();
-    eventsService.removeEventListener();
+    eventsService.addListener();
+    eventsService.removeListener();
     eventsService.emit();
     expect(logSpy).to.be.called.callCount(4);
     logSpy.restore();

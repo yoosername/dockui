@@ -12,6 +12,7 @@ const DEFAULT_SECRET = "changeme";
 const InMemoryAppStore = require("../store/impl/InMemoryAppStore");
 const InMemoryEventService = require("../events/impl/InMemoryEventService");
 const DefaultLifecycleEventsStrategy = require("../events/strategy/impl/DefaultLifecycleEventsStrategy");
+
 const WebResourceModuleLoader = require("../app/loader/module/impl/WebResourceModuleLoader");
 const WebPageModuleLoader = require("../app/loader/module/impl/WebPageModuleLoader");
 const WebItemModuleLoader = require("../app/loader/module/impl/WebItemModuleLoader");
@@ -22,6 +23,12 @@ const CachableModuleLoader = require("../app/loader/module/impl/CachableModuleLo
 const AuthorizationProviderModuleLoader = require("../app/loader/module/impl/AuthorizationProviderModuleLoader");
 const AuthenticationProviderModuleLoader = require("../app/loader/module/impl/AuthenticationProviderModuleLoader");
 const ApiModuleLoader = require("../app/loader/module/impl/ApiModuleLoader");
+
+const DockerAppLoader = require("../app/loader/impl/DockerAppLoader");
+const GitAppLoader = require("../app/loader/impl/GitAppLoader");
+const FileAppLoader = require("../app/loader/impl/FileAppLoader");
+const UrlAppLoader = require("../app/loader/impl/UrlAppLoader");
+
 const DefaultAppService = require("../app/service/impl/DefaultAppService");
 const DefaultWebService = require("../web/impl/DefaultWebService");
 
@@ -46,25 +53,25 @@ const showUsage = ({ name = "cli.js", logger, logLevel = "info" }) => {
 const StoreFactory = type => {
   switch (type) {
     case "memory":
-      return new InMemoryAppStore();
+      return InMemoryAppStore;
     default:
-      return new InMemoryAppStore();
+      return InMemoryAppStore;
   }
 };
 
-const EventsServiceFactory = type => {
+const EventServiceFactory = type => {
   switch (type) {
     case "memory":
-      return new InMemoryEventService();
+      return InMemoryEventService;
     default:
-      return new InMemoryEventService();
+      return InMemoryEventService;
   }
 };
 
 const defaultDockUIApps = config => {
   let Store = null;
   let store = null;
-  let EventsService = null;
+  let EventService = null;
   let eventService = null;
   let lifecycleEventsStrategy = null;
   let moduleLoaders = null;
@@ -76,10 +83,12 @@ const defaultDockUIApps = config => {
   try {
     Store = StoreFactory(config.store);
     store = new Store();
-    EventsService = EventsServiceFactory(config.events);
-    eventService = new EventsService();
-    webService = new DefaultWebService(config.port);
-    lifecycleEventsStrategy = new DefaultLifecycleEventsStrategy();
+    EventService = EventServiceFactory(config.events);
+    eventService = new EventService();
+    lifecycleEventsStrategy = new DefaultLifecycleEventsStrategy(
+      eventService,
+      store
+    );
     moduleLoaders = [
       new WebResourceModuleLoader(),
       new WebPageModuleLoader(),
@@ -104,11 +113,12 @@ const defaultDockUIApps = config => {
       lifecycleEventsStrategy,
       eventService
     );
-    new DockUIApps()
+    webService = new DefaultWebService(appService, eventService);
+    dockUIApps = new DockUIApps()
       .withStore(store)
       .withEventService(eventService)
       .withAppService(appService)
-      .withWebService(mockWebService)
+      .withWebService(webService)
       .build();
   } catch (err) {
     console.error(err);
@@ -166,7 +176,7 @@ class CLI {
    *
    */
   parse(args) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         this.args = minimist(args, {
           string: ["v"]
@@ -180,14 +190,20 @@ class CLI {
         this.logLevel = LOG_LEVELS[this.args.v.length - 1];
       }
 
-      // user specified --help
+      // user specified --help, show usage
       if (this.args && this.args.help) {
         return resolve(showUsage(this));
       }
 
-      // No cmd args were specified
+      // No cmd args were specified, show usage
       if (this.args._ && this.args._.length === 2) {
         return resolve(showUsage(this));
+      }
+
+      // Run Command
+      if (this.args._[2] === "run") {
+        await this.dockui.start();
+        return resolve();
       }
 
       resolve(arguments);

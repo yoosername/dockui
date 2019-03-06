@@ -15,7 +15,7 @@ class InMemoryEventService extends EventService {
    * @argument {Function} fn - The callback to run when the event is emmited
    */
   on(event, fn) {
-    this.addEventListener(event, fn);
+    this.addListener(event, fn);
   }
 
   /**
@@ -23,7 +23,7 @@ class InMemoryEventService extends EventService {
    * @argument {String} event - The Event
    * @argument {Function} fn - The callback to run when the event is emmited
    */
-  addEventListener(event, fn) {
+  addListener(event, fn) {
     this.emitter.addListener(event, fn);
   }
 
@@ -32,7 +32,7 @@ class InMemoryEventService extends EventService {
    * @argument {String} event - The Event
    * @argument {Function} fn - The callback to remove
    */
-  removeEventListener(event, fn) {
+  removeListener(event, fn) {
     this.emitter.removeListener(event, fn);
   }
 

@@ -2,232 +2,232 @@
 
 ### Table of Contents
 
--   [SecurityContext][1]
-    -   [getApp][2]
-    -   [getContext][3]
-    -   [generateNewContext][4]
--   [WebResourceModule][5]
-    -   [getUrl][6]
-    -   [getResources][7]
-    -   [getContext][8]
-    -   [getWeight][9]
--   [RouteModule][10]
-    -   [getRoutes][11]
-    -   [getUrl][12]
--   [AuthenticationProviderModule][13]
-    -   [getUrl][14]
-    -   [getWeight][15]
--   [WebhookModule][16]
-    -   [getUrl][17]
-    -   [getEvents][18]
--   [WebPageModule][19]
-    -   [getUrl][20]
--   [ApiModule][21]
-    -   [getVersion][22]
-    -   [getUrl][23]
--   [WebItemModule][24]
-    -   [getUrl][25]
-    -   [getText][26]
-    -   [getLocation][27]
-    -   [getTooltip][28]
-    -   [getWeight][29]
--   [AuthorizationProviderModule][30]
-    -   [getUrl][31]
-    -   [getWeight][32]
--   [WebFragmentModule][33]
-    -   [getUrl][34]
-    -   [getSelector][35]
-    -   [getLocation][36]
-    -   [getWeight][37]
--   [Module][38]
-    -   [getKey][39]
-    -   [getName][40]
-    -   [getType][41]
-    -   [getRoles][42]
-    -   [getCache][43]
-    -   [isCacheEnabled][44]
-    -   [enable][45]
-    -   [disable][46]
--   [DockUIApps][47]
-    -   [start][48]
-    -   [shutdown][49]
--   [DockUIAppsBuilder][50]
-    -   [withStore][51]
-    -   [withEventService][52]
-    -   [withAppService][53]
-    -   [withWebService][54]
-    -   [build][55]
-    -   [validate][56]
--   [AuthenticationProviderModuleLoader][57]
-    -   [canLoadModuleDescriptor][58]
-    -   [loadModuleFromDescriptor][59]
--   [WebFragmentModuleLoader][60]
-    -   [canLoadModuleDescriptor][61]
-    -   [loadModuleFromDescriptor][62]
--   [WebPageModuleLoader][63]
-    -   [canLoadModuleDescriptor][64]
-    -   [loadModuleFromDescriptor][65]
--   [WebhookModuleLoader][66]
-    -   [canLoadModuleDescriptor][67]
-    -   [loadModuleFromDescriptor][68]
--   [CachableModuleLoader][69]
-    -   [getCache][70]
-    -   [setCache][71]
-    -   [canLoadModuleFromCache][72]
-    -   [loadModuleFromCache][73]
--   [UrlAppLoader][74]
-    -   [scanForNewApps][75]
-    -   [stopScanningForNewApps][76]
--   [AuthorizationProviderModuleLoader][77]
-    -   [canLoadModuleDescriptor][78]
-    -   [loadModuleFromDescriptor][79]
--   [RouteModuleLoader][80]
-    -   [canLoadModuleDescriptor][81]
-    -   [loadModuleFromDescriptor][82]
--   [WebResourceModuleLoader][83]
-    -   [canLoadModuleDescriptor][84]
-    -   [loadModuleFromDescriptor][85]
--   [ApiModuleLoader][86]
-    -   [canLoadModuleDescriptor][87]
-    -   [loadModuleFromDescriptor][88]
--   [DockerEventsDelegatingAppLoader][89]
-    -   [isDockerRunning][90]
-    -   [scanForNewApps][91]
-    -   [handleContainerStart][92]
-    -   [handleContainerStop][93]
-    -   [stopScanningForNewApps][94]
--   [WebItemModuleLoader][95]
-    -   [canLoadModuleDescriptor][96]
-    -   [loadModuleFromDescriptor][97]
--   [AppLoader][98]
-    -   [scanForNewApps][99]
-    -   [stopScanningForNewApps][100]
-    -   [addApp][101]
-    -   [removeApp][102]
-    -   [getApps][103]
-    -   [getApp][104]
--   [ModuleLoader][105]
-    -   [canLoadModuleDescriptor][106]
-    -   [loadModuleFromDescriptor][107]
--   [HttpClient][108]
-    -   [init][109]
-    -   [send][110]
-    -   [get][111]
-    -   [post][112]
-    -   [transformRequest][113]
-    -   [transformResponse][114]
--   [RouteModuleDescriptor][115]
-    -   [getRoutes][116]
-    -   [getURL][117]
--   [ApiModuleDescriptor][118]
-    -   [getVersion][119]
-    -   [getURL][120]
--   [WebResourceModuleDescriptor][121]
-    -   [getURL][122]
-    -   [getResources][123]
-    -   [getContext][124]
--   [WebhookModuleDescriptor][125]
-    -   [getURL][126]
-    -   [getEvents][127]
--   [AuthenticationProviderModuleDescriptor][128]
-    -   [getURL][129]
--   [AuthorizationProviderModuleDescriptor][130]
-    -   [getURL][131]
--   [WebItemModuleDescriptor][132]
-    -   [getURL][133]
-    -   [getText][134]
-    -   [getLocation][135]
-    -   [getTooltip][136]
--   [WebFragmentModuleDescriptor][137]
-    -   [getURL][138]
-    -   [getSelector][139]
-    -   [getLocation][140]
--   [WebPageModuleDescriptor][141]
-    -   [getURL][142]
--   [AppDescriptor][143]
-    -   [getKey][144]
-    -   [getUrl][145]
-    -   [getName][146]
-    -   [getVersion][147]
-    -   [getDescriptorVersion][148]
-    -   [getLogo][149]
-    -   [getAuthentication][150]
-    -   [getLifecycleURLs][151]
-    -   [getModules][152]
--   [ModuleDescriptor][153]
-    -   [getType][154]
-    -   [getName][155]
-    -   [getKey][156]
-    -   [getWeight][157]
-    -   [getCache][158]
-    -   [getRoles][159]
--   [AppService][160]
-    -   [start][161]
-    -   [shutdown][162]
-    -   [scanForNewApps][163]
-    -   [stopScanningForNewApps][164]
-    -   [getApps][165]
-    -   [getApp][166]
-    -   [enableApp][167]
-    -   [disableApp][168]
-    -   [getModules][169]
-    -   [getModule][170]
-    -   [enableModule][171]
-    -   [disableModule][172]
--   [AppPermission][173]
--   [App][174]
-    -   [bootstrap][175]
-    -   [getKey][176]
-    -   [getPermission][177]
-    -   [getType][178]
-    -   [getUrl][179]
-    -   [getUUID][180]
-    -   [getLoader][181]
-    -   [getDescriptor][182]
-    -   [getEventService][183]
-    -   [getModuleLoaders][184]
-    -   [getModules][185]
-    -   [getHttpClient][186]
-    -   [enable][187]
-    -   [disable][188]
-    -   [loadModules][189]
--   [WebService][190]
-    -   [start][191]
-    -   [shutdown][192]
-    -   [isRunning][193]
--   [EventsService][194]
-    -   [on][195]
-    -   [addEventListener][196]
-    -   [removeEventListener][197]
-    -   [emit][198]
--   [LifecycleEventsStrategy][199]
-    -   [setup][200]
-    -   [teardown][201]
--   [InMemoryAppStore][202]
-    -   [set][203]
-    -   [get][204]
-    -   [delete][205]
-    -   [enableApp][206]
-    -   [disableApp][207]
-    -   [enableModule][208]
-    -   [disableModule][209]
--   [AppStore][210]
-    -   [set][211]
-    -   [get][212]
-    -   [delete][213]
-    -   [enableApp][214]
-    -   [disableApp][215]
-    -   [enableModule][216]
-    -   [disableModule][217]
+- [SecurityContext][1]
+  - [getApp][2]
+  - [getContext][3]
+  - [generateNewContext][4]
+- [WebResourceModule][5]
+  - [getUrl][6]
+  - [getResources][7]
+  - [getContext][8]
+  - [getWeight][9]
+- [RouteModule][10]
+  - [getRoutes][11]
+  - [getUrl][12]
+- [AuthenticationProviderModule][13]
+  - [getUrl][14]
+  - [getWeight][15]
+- [WebhookModule][16]
+  - [getUrl][17]
+  - [getEvents][18]
+- [WebPageModule][19]
+  - [getUrl][20]
+- [ApiModule][21]
+  - [getVersion][22]
+  - [getUrl][23]
+- [WebItemModule][24]
+  - [getUrl][25]
+  - [getText][26]
+  - [getLocation][27]
+  - [getTooltip][28]
+  - [getWeight][29]
+- [AuthorizationProviderModule][30]
+  - [getUrl][31]
+  - [getWeight][32]
+- [WebFragmentModule][33]
+  - [getUrl][34]
+  - [getSelector][35]
+  - [getLocation][36]
+  - [getWeight][37]
+- [Module][38]
+  - [getKey][39]
+  - [getName][40]
+  - [getType][41]
+  - [getRoles][42]
+  - [getCache][43]
+  - [isCacheEnabled][44]
+  - [enable][45]
+  - [disable][46]
+- [DockUIApps][47]
+  - [start][48]
+  - [shutdown][49]
+- [DockUIAppsBuilder][50]
+  - [withStore][51]
+  - [withEventService][52]
+  - [withAppService][53]
+  - [withWebService][54]
+  - [build][55]
+  - [validate][56]
+- [AuthenticationProviderModuleLoader][57]
+  - [canLoadModuleDescriptor][58]
+  - [loadModuleFromDescriptor][59]
+- [WebFragmentModuleLoader][60]
+  - [canLoadModuleDescriptor][61]
+  - [loadModuleFromDescriptor][62]
+- [WebPageModuleLoader][63]
+  - [canLoadModuleDescriptor][64]
+  - [loadModuleFromDescriptor][65]
+- [WebhookModuleLoader][66]
+  - [canLoadModuleDescriptor][67]
+  - [loadModuleFromDescriptor][68]
+- [CachableModuleLoader][69]
+  - [getCache][70]
+  - [setCache][71]
+  - [canLoadModuleFromCache][72]
+  - [loadModuleFromCache][73]
+- [UrlAppLoader][74]
+  - [scanForNewApps][75]
+  - [stopScanningForNewApps][76]
+- [AuthorizationProviderModuleLoader][77]
+  - [canLoadModuleDescriptor][78]
+  - [loadModuleFromDescriptor][79]
+- [RouteModuleLoader][80]
+  - [canLoadModuleDescriptor][81]
+  - [loadModuleFromDescriptor][82]
+- [WebResourceModuleLoader][83]
+  - [canLoadModuleDescriptor][84]
+  - [loadModuleFromDescriptor][85]
+- [ApiModuleLoader][86]
+  - [canLoadModuleDescriptor][87]
+  - [loadModuleFromDescriptor][88]
+- [DockerEventsDelegatingAppLoader][89]
+  - [isDockerRunning][90]
+  - [scanForNewApps][91]
+  - [handleContainerStart][92]
+  - [handleContainerStop][93]
+  - [stopScanningForNewApps][94]
+- [WebItemModuleLoader][95]
+  - [canLoadModuleDescriptor][96]
+  - [loadModuleFromDescriptor][97]
+- [AppLoader][98]
+  - [scanForNewApps][99]
+  - [stopScanningForNewApps][100]
+  - [addApp][101]
+  - [removeApp][102]
+  - [getApps][103]
+  - [getApp][104]
+- [ModuleLoader][105]
+  - [canLoadModuleDescriptor][106]
+  - [loadModuleFromDescriptor][107]
+- [HttpClient][108]
+  - [init][109]
+  - [send][110]
+  - [get][111]
+  - [post][112]
+  - [transformRequest][113]
+  - [transformResponse][114]
+- [RouteModuleDescriptor][115]
+  - [getRoutes][116]
+  - [getURL][117]
+- [ApiModuleDescriptor][118]
+  - [getVersion][119]
+  - [getURL][120]
+- [WebResourceModuleDescriptor][121]
+  - [getURL][122]
+  - [getResources][123]
+  - [getContext][124]
+- [WebhookModuleDescriptor][125]
+  - [getURL][126]
+  - [getEvents][127]
+- [AuthenticationProviderModuleDescriptor][128]
+  - [getURL][129]
+- [AuthorizationProviderModuleDescriptor][130]
+  - [getURL][131]
+- [WebItemModuleDescriptor][132]
+  - [getURL][133]
+  - [getText][134]
+  - [getLocation][135]
+  - [getTooltip][136]
+- [WebFragmentModuleDescriptor][137]
+  - [getURL][138]
+  - [getSelector][139]
+  - [getLocation][140]
+- [WebPageModuleDescriptor][141]
+  - [getURL][142]
+- [AppDescriptor][143]
+  - [getKey][144]
+  - [getUrl][145]
+  - [getName][146]
+  - [getVersion][147]
+  - [getDescriptorVersion][148]
+  - [getLogo][149]
+  - [getAuthentication][150]
+  - [getLifecycleURLs][151]
+  - [getModules][152]
+- [ModuleDescriptor][153]
+  - [getType][154]
+  - [getName][155]
+  - [getKey][156]
+  - [getWeight][157]
+  - [getCache][158]
+  - [getRoles][159]
+- [AppService][160]
+  - [start][161]
+  - [shutdown][162]
+  - [scanForNewApps][163]
+  - [stopScanningForNewApps][164]
+  - [getApps][165]
+  - [getApp][166]
+  - [enableApp][167]
+  - [disableApp][168]
+  - [getModules][169]
+  - [getModule][170]
+  - [enableModule][171]
+  - [disableModule][172]
+- [AppPermission][173]
+- [App][174]
+  - [bootstrap][175]
+  - [getKey][176]
+  - [getPermission][177]
+  - [getType][178]
+  - [getUrl][179]
+  - [getUUID][180]
+  - [getLoader][181]
+  - [getDescriptor][182]
+  - [getEventService][183]
+  - [getModuleLoaders][184]
+  - [getModules][185]
+  - [getHttpClient][186]
+  - [enable][187]
+  - [disable][188]
+  - [loadModules][189]
+- [WebService][190]
+  - [start][191]
+  - [shutdown][192]
+  - [isRunning][193]
+- [EventsService][194]
+  - [on][195]
+  - [addListener][196]
+  - [removeListener][197]
+  - [emit][198]
+- [LifecycleEventsStrategy][199]
+  - [setup][200]
+  - [teardown][201]
+- [InMemoryAppStore][202]
+  - [set][203]
+  - [get][204]
+  - [delete][205]
+  - [enableApp][206]
+  - [disableApp][207]
+  - [enableModule][208]
+  - [disableModule][209]
+- [AppStore][210]
+  - [set][211]
+  - [get][212]
+  - [delete][213]
+  - [enableApp][214]
+  - [disableApp][215]
+  - [enableModule][216]
+  - [disableModule][217]
 
 ## SecurityContext
 
 Represents security info required to communicate
-             with an APP. E.g. shared secrets etc
+with an APP. E.g. shared secrets etc
 
 **Parameters**
 
--   `app` **[App][218]** The App this context is intended for
+- `app` **[App][218]** The App this context is intended for
 
 ### getApp
 
@@ -236,18 +236,18 @@ return the App this security context is for
 ### getContext
 
 Load context from the following in order:
-              \- Cache
-              \- Apps store if exists 
-              \- or generate New One and store it
+\- Cache
+\- Apps store if exists
+\- or generate New One and store it
 
 ### generateNewContext
 
 Generate a unique context with apps key and fresh secret etc
 {
-      key: key-from-app-descriptor,
-      uuid: framework-unique-identifier-of-App,
-      secret: a-secret-used-for-jwt-signing-etc,
-      framework.url: [https://base.url.of.the.calling.framework.instance][219]
+key: key-from-app-descriptor,
+uuid: framework-unique-identifier-of-App,
+secret: a-secret-used-for-jwt-signing-etc,
+framework.url: [https://base.url.of.the.calling.framework.instance][219]
 }
 
 ## WebResourceModule
@@ -258,8 +258,8 @@ Represents an WebResource Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getUrl
 
@@ -268,19 +268,19 @@ The URL of the API relative to the App Url
 ### getResources
 
 The list of JS/CSS Resource objects where:
-             type := JS, CSS
-             path := path relative to getUrl()
+type := JS, CSS
+path := path relative to getUrl()
 
 ### getContext
 
 The context to inject the resources into for example
-             A particular page or set of pages may choose a context
-             and all resources which target that context will be injected
+A particular page or set of pages may choose a context
+and all resources which target that context will be injected
 
 ### getWeight
 
 The order with which to inject these web resources.
-             Starts at 0 and goes higher.
+Starts at 0 and goes higher.
 
 ## RouteModule
 
@@ -290,8 +290,8 @@ Represents an Route Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getRoutes
 
@@ -309,8 +309,8 @@ Represents an Authentication Provider Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getUrl
 
@@ -319,7 +319,7 @@ The URL of the Provider relative to the App Url
 ### getWeight
 
 The weight determines when this provider will fire.
-             lower numbers come first starting at 0.
+lower numbers come first starting at 0.
 
 ## WebhookModule
 
@@ -329,8 +329,8 @@ Represents a Webhook Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getUrl
 
@@ -348,8 +348,8 @@ Represents an WebPage Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getUrl
 
@@ -363,8 +363,8 @@ Represents an API Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getVersion
 
@@ -382,8 +382,8 @@ Represents an WebItem Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getUrl
 
@@ -404,7 +404,7 @@ The hover text for this Web Item.
 ### getWeight
 
 The weight determines the order that the WebItem
-             will be displayed starting at 0.
+will be displayed starting at 0.
 
 ## AuthorizationProviderModule
 
@@ -414,8 +414,8 @@ Represents an AuthorizationProvider Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getUrl
 
@@ -424,7 +424,7 @@ The URL of the Provider relative to the App Url
 ### getWeight
 
 The weight determines when this provider will fire.
-             lower numbers come first starting at 0.
+lower numbers come first starting at 0.
 
 ## WebFragmentModule
 
@@ -434,8 +434,8 @@ Represents a WebFragment Module.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[Object][220]** The descriptor used to load this module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[Object][220]** The descriptor used to load this module
 
 ### getUrl
 
@@ -444,7 +444,7 @@ The URL of the API relative to the App Url
 ### getSelector
 
 The CSS Selector to use to parse out the fragment body
-             from the HTML retrieved from getURL()
+from the HTML retrieved from getURL()
 
 ### getLocation
 
@@ -453,7 +453,7 @@ The location to inject the fragment
 ### getWeight
 
 The weight determines the order that the WebFragment
-             will be displayed starting at 0.
+will be displayed starting at 0.
 
 ## Module
 
@@ -461,8 +461,8 @@ Represents a single Module loaded from a Module Descriptor.
 
 **Parameters**
 
--   `app` **[App][218]** The App which loaded this module.
--   `descriptor` **[App][218]** The module descriptor used to load the module
+- `app` **[App][218]** The App which loaded this module.
+- `descriptor` **[App][218]** The module descriptor used to load the module
 
 ### getKey
 
@@ -479,12 +479,12 @@ The type of this Module
 ### getRoles
 
 Return the roles are required to use this module
-             or Null if no Roles required.
+or Null if no Roles required.
 
 ### getCache
 
 Return the roles are required to use this module
-             or Null if no Roles required.
+or Null if no Roles required.
 
 ### isCacheEnabled
 
@@ -493,12 +493,12 @@ If Caching is supported and enabled by this module
 ### enable
 
 default behaviour is to simply send an enabled event to all listeners.
-             subclasses can extend this behaviour
+subclasses can extend this behaviour
 
 ### disable
 
 default behaviour is to simply send an disabled event to all listeners.
-             subclasses can extend this behaviour
+subclasses can extend this behaviour
 
 ## DockUIApps
 
@@ -506,7 +506,7 @@ Wrapper around App services for easier usage
 
 **Parameters**
 
--   `builder` **[DockUIAppsBuilder][221]** 
+- `builder` **[DockUIAppsBuilder][221]**
 
 ### start
 
@@ -526,7 +526,7 @@ Use the specified AppStore
 
 **Parameters**
 
--   `appStore` **[AppStore][222]** The AppStore to use
+- `appStore` **[AppStore][222]** The AppStore to use
 
 ### withEventService
 
@@ -534,7 +534,7 @@ Use the specified EventService
 
 **Parameters**
 
--   `eventService` **EventService** The EventService to use
+- `eventService` **EventService** The EventService to use
 
 ### withAppService
 
@@ -542,7 +542,7 @@ Use the specified AppService
 
 **Parameters**
 
--   `appService` **[AppService][223]** The AppService to use
+- `appService` **[AppService][223]** The AppService to use
 
 ### withWebService
 
@@ -550,7 +550,7 @@ Use the specified WebService
 
 **Parameters**
 
--   `webService` **[WebService][224]** the WebService to use
+- `webService` **[WebService][224]** the WebService to use
 
 ### build
 
@@ -562,10 +562,10 @@ Returns **[DockUIApps][225]** instance of DockUIApps
 
 Validate builder options
 
--   Throws **MissingStoreDuringSetupError** MissingStoreDuringSetupError
--   Throws **MissingEventServiceDuringSetupError** MissingEventServiceDuringSetupError
--   Throws **MissingAppServiceDuringSetupError** MissingAppServiceDuringSetupError
--   Throws **MissingWebServiceDuringSetupError** MissingWebServiceDuringSetupError
+- Throws **MissingStoreDuringSetupError** MissingStoreDuringSetupError
+- Throws **MissingEventServiceDuringSetupError** MissingEventServiceDuringSetupError
+- Throws **MissingAppServiceDuringSetupError** MissingAppServiceDuringSetupError
+- Throws **MissingWebServiceDuringSetupError** MissingWebServiceDuringSetupError
 
 ## AuthenticationProviderModuleLoader
 
@@ -575,12 +575,12 @@ Create a AuthenticationProviderModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -588,7 +588,7 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
 
 ## WebFragmentModuleLoader
 
@@ -598,12 +598,12 @@ Create a WebFragmentModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -611,7 +611,7 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
 
 ## WebPageModuleLoader
 
@@ -621,12 +621,12 @@ Create a WebPageModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -634,7 +634,7 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
 
 ## WebhookModuleLoader
 
@@ -644,12 +644,12 @@ Create a WebhookModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -657,14 +657,14 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
 
 ## CachableModuleLoader
 
 **Extends ModuleLoader**
 
 Creates a Module object from a descriptor
-             \- looks in cache first
+\- looks in cache first
 
 ### getCache
 
@@ -672,7 +672,7 @@ get an entry from the Cache or null if not exist
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to retrieve from cache
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to retrieve from cache
 
 ### setCache
 
@@ -680,18 +680,18 @@ set an entry to the cache keyed on the hash of the descriptor
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to cache
--   `state` **[Object][220]** The information to save
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to cache
+- `state` **[Object][220]** The information to save
 
 ### canLoadModuleFromCache
 
 Returns true if entry in cache as being loadable
-             Returns False if entry in cache as not being loadable
-             Returns null if no entry - means another loader should handle it
+Returns False if entry in cache as not being loadable
+Returns null if no entry - means another loader should handle it
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
 
 ### loadModuleFromCache
 
@@ -699,37 +699,37 @@ Return the Module saved in the cache
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
 
 ## UrlAppLoader
 
 **Extends AppLoader**
 
 Listen to framework events for APP_LOAD_REQUESTED events.
-             \- when detected attempt to load descriptor from the URL
-             \- and create an App from the descriptor
+\- when detected attempt to load descriptor from the URL
+\- and create an App from the descriptor
 
 **Parameters**
 
--   `appStore` **[AppStore][222]** The store to use for persistence.
--   `appModuleLoaders`  
--   `eventService` **EventService** The Event service.
--   `AppModuleLoaders` **[Array][228]** The loaders to use for loading Modules.
+- `appStore` **[AppStore][222]** The store to use for persistence.
+- `appModuleLoaders`
+- `eventService` **EventService** The Event service.
+- `AppModuleLoaders` **[Array][228]** The loaders to use for loading Modules.
 
 ### scanForNewApps
 
 Listen to framework events for APP_LOAD_REQUESTED events.
-             when detected:
-             \- Send APP_LOAD_STARTED Event
-             \- Attempt to load descriptor from the URL
-             \- Create an App from the descriptor
-                 \- If fail send App load failed event
-             \- Add the App to our Cache.
-             \- Send APP_LOAD_COMPLETE Event
-             Listen to framework events for APP_UNLOAD_REQUESTED events
-             when detected:
-             \- disable all the Apps modules
-             \- Remove associated App from cache
+when detected:
+\- Send APP_LOAD_STARTED Event
+\- Attempt to load descriptor from the URL
+\- Create an App from the descriptor
+\- If fail send App load failed event
+\- Add the App to our Cache.
+\- Send APP_LOAD_COMPLETE Event
+Listen to framework events for APP_UNLOAD_REQUESTED events
+when detected:
+\- disable all the Apps modules
+\- Remove associated App from cache
 
 ### stopScanningForNewApps
 
@@ -743,12 +743,12 @@ Create a AuthorizationProviderModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -756,7 +756,7 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
 
 ## RouteModuleLoader
 
@@ -766,12 +766,12 @@ Create a RouteModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -779,7 +779,7 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
 
 ## WebResourceModuleLoader
 
@@ -789,12 +789,12 @@ Create a WebResourceModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -802,7 +802,7 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
 
 ## ApiModuleLoader
 
@@ -812,12 +812,12 @@ Create a ApiModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -825,20 +825,20 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
 
 ## DockerEventsDelegatingAppLoader
 
 **Extends AppLoader**
 
 Detect Docker containers and relevent service URLs
-             Then delegate loading to UrlAppLoader via events
+Then delegate loading to UrlAppLoader via events
 
 **Parameters**
 
--   `appStore` **[AppStore][222]** The store to use for persistence.
--   `appModuleLoaders` **[Array][228]** The loaders to use for loading Modules.
--   `eventService` **EventService** The Event service.
+- `appStore` **[AppStore][222]** The store to use for persistence.
+- `appModuleLoaders` **[Array][228]** The loaders to use for loading Modules.
+- `eventService` **EventService** The Event service.
 
 ### isDockerRunning
 
@@ -849,10 +849,10 @@ Returns **[Boolean][229]** True if Docker is detected as running
 ### scanForNewApps
 
 Starting listening to Docker events for containers
-             and any we dont yet know about when found attempt to load
-             a descriptor. If there is one create App and enable
-             all of the apps modules then
-             Send App Load started Event
+and any we dont yet know about when found attempt to load
+a descriptor. If there is one create App and enable
+all of the apps modules then
+Send App Load started Event
 
 ### handleContainerStart
 
@@ -860,7 +860,7 @@ Handle what happens when a Container is started
 
 **Parameters**
 
--   `container` **[object][220]** the container that was started
+- `container` **[object][220]** the container that was started
 
 ### handleContainerStop
 
@@ -868,7 +868,7 @@ Handle what happens when a Container is stopped
 
 **Parameters**
 
--   `container` **[object][220]** the container that was stopped
+- `container` **[object][220]** the container that was stopped
 
 ### stopScanningForNewApps
 
@@ -882,12 +882,12 @@ Create a WebItemModule from a descriptor
 
 ### canLoadModuleDescriptor
 
-Return true if this descriptor can be parsed and is 
-             the required format to produce this type of Module
+Return true if this descriptor can be parsed and is
+the required format to produce this type of Module
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to test
 
 ### loadModuleFromDescriptor
 
@@ -895,26 +895,26 @@ Create and return a new Module from the descriptor
 
 **Parameters**
 
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor to load
 
 ## AppLoader
 
 Load Apps from App descriptors detected in some manner
-             The detection is left down to subclasses.
+The detection is left down to subclasses.
 
 **Parameters**
 
--   `appStore` **[AppStore][222]** The store to use for persistence.
--   `moduleLoaders` **[Array][228]** The loaders to use for loading Modules.
--   `eventService` **EventService** The Event service.
+- `appStore` **[AppStore][222]** The store to use for persistence.
+- `moduleLoaders` **[Array][228]** The loaders to use for loading Modules.
+- `eventService` **EventService** The Event service.
 
 ### scanForNewApps
 
-Starting checking some location for new Apps 
-             and attempt to load them when found
-             Loading them involves fetching AppDescriptor
-             and creating a new App passing it in. The App will
-             attempt to Load its own Modules and use Events for lifecycle.
+Starting checking some location for new Apps
+and attempt to load them when found
+Loading them involves fetching AppDescriptor
+and creating a new App passing it in. The App will
+attempt to Load its own Modules and use Events for lifecycle.
 
 ### stopScanningForNewApps
 
@@ -926,7 +926,7 @@ Add a single App to the cache
 
 **Parameters**
 
--   `app` **[App][218]** The App to add to the cache
+- `app` **[App][218]** The App to add to the cache
 
 ### removeApp
 
@@ -934,7 +934,7 @@ Remove a single App from the cache
 
 **Parameters**
 
--   `app` **[App][218]** The App to remove
+- `app` **[App][218]** The App to remove
 
 ### getApps
 
@@ -942,7 +942,7 @@ Return all loaded Apps.
 
 **Parameters**
 
--   `filter` **[Function][230]** function to filter the list of Apps with
+- `filter` **[Function][230]** function to filter the list of Apps with
 
 Returns **[Array][228]** Array of Apps
 
@@ -952,7 +952,7 @@ Return single App by its Key
 
 **Parameters**
 
--   `key` **[String][231]** Key to filter on
+- `key` **[String][231]** Key to filter on
 
 ## ModuleLoader
 
@@ -961,27 +961,27 @@ Creates a Module object from a descriptor
 ### canLoadModuleDescriptor
 
 Return true if this descriptor can be parsed by this Loader.
-             Implementations should:
-              \- Parse descriptor
-              \- Check and validate values
-              \- Return true if can successfully create a Module
-              \- Return false if cannot create Module
+Implementations should:
+\- Parse descriptor
+\- Check and validate values
+\- Return true if can successfully create a Module
+\- Return false if cannot create Module
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to test
 
 ### loadModuleFromDescriptor
 
 Create and return a new RouteModule from the descriptor
-             Implementations should:
-              \- Parse descriptor
-              \- Check and validate values
-              \- Return new subclass Module object
+Implementations should:
+\- Parse descriptor
+\- Check and validate values
+\- Return new subclass Module object
 
 **Parameters**
 
--   `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
+- `descriptor` **[ModuleDescriptor][226]** The ModuleDescriptor to load
 
 ## HttpClient
 
@@ -989,7 +989,7 @@ Custom Client to perform communication over HTTP with a specific App
 
 **Parameters**
 
--   `app` **[App][218]** The Remote App.
+- `app` **[App][218]** The Remote App.
 
 ### init
 
@@ -997,7 +997,7 @@ Oppertunity for subclasses to configure the client before use
 
 **Parameters**
 
--   `client` **[object][220]** The Http Client instance
+- `client` **[object][220]** The Http Client instance
 
 ### send
 
@@ -1005,7 +1005,7 @@ perform a relative request against the Apps base URL
 
 **Parameters**
 
--   `options` **[object][220]** The request options
+- `options` **[object][220]** The request options
 
 ### get
 
@@ -1013,8 +1013,8 @@ perform a relative GET request against the Apps base URL
 
 **Parameters**
 
--   `url` **[String][231]** the URL to GET relative to the App
--   `options` **[Object][220]** optional request config
+- `url` **[String][231]** the URL to GET relative to the App
+- `options` **[Object][220]** optional request config
 
 ### post
 
@@ -1022,21 +1022,21 @@ perform a GET request against the App
 
 **Parameters**
 
--   `url` **[String][231]** the URL to POST to relative to the App
--   `data` **[Object][220]** the data to Post to the App
--   `options` **[Object][220]** optional request config
+- `url` **[String][231]** the URL to POST to relative to the App
+- `data` **[Object][220]** the data to Post to the App
+- `options` **[Object][220]** optional request config
 
 ### transformRequest
 
 **Parameters**
 
--   `options` **[Object][220]** The Request options prior to send
+- `options` **[Object][220]** The Request options prior to send
 
 ### transformResponse
 
 **Parameters**
 
--   `response` **[Object][220]** The raw response object post receive
+- `response` **[Object][220]** The raw response object post receive
 
 ## RouteModuleDescriptor
 
@@ -1046,7 +1046,7 @@ Loads Route Module fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getRoutes
 
@@ -1064,7 +1064,7 @@ Loads API Module fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getVersion
 
@@ -1082,7 +1082,7 @@ Loads WebResource Module fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getURL
 
@@ -1104,7 +1104,7 @@ Loads Webhook Module fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getURL
 
@@ -1122,7 +1122,7 @@ Loads AuthenticationProvider fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getURL
 
@@ -1136,7 +1136,7 @@ Loads AuthorizationProvider fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getURL
 
@@ -1150,7 +1150,7 @@ Loads WebItem Module fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getURL
 
@@ -1176,7 +1176,7 @@ Loads WebFragment Module fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getURL
 
@@ -1198,7 +1198,7 @@ Loads WebPage Module fields from a JSON descriptor
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** 
+- `descriptor` **[JSON][232]**
 
 ### getURL
 
@@ -1210,8 +1210,8 @@ Loads a descriptor in JSON format into a useable object
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** Raw JSON descriptor parsed from App service endpoint
--   `url` **[String][231]** Optional URL to overwrite the parsed Descriptor URL (e.g. for Docker private URLs)
+- `descriptor` **[JSON][232]** Raw JSON descriptor parsed from App service endpoint
+- `url` **[String][231]** Optional URL to overwrite the parsed Descriptor URL (e.g. for Docker private URLs)
 
 ### getKey
 
@@ -1273,7 +1273,7 @@ Loads a raw JSON descriptor into a specific ModuleDescriptor object
 
 **Parameters**
 
--   `descriptor` **[JSON][232]** the raw descriptor
+- `descriptor` **[JSON][232]** the raw descriptor
 
 ### getType
 
@@ -1302,16 +1302,16 @@ Get the Modules required Roles
 ## AppService
 
 Orchestrates
-               loading Apps via AppLoaders, 
-               triggering events in the EventService based on the LifecycleEventsStrategy and 
-               state persistence via the AppStore
+loading Apps via AppLoaders,
+triggering events in the EventService based on the LifecycleEventsStrategy and
+state persistence via the AppStore
 
 **Parameters**
 
--   `appLoaders` **[Array][228]** Array of {AppLoader} to use for loading {App}s
--   `appStore` **[AppStore][222]** The AppStore to use for framework persistence
--   `lifecycleEventsStrategy` **[LifecycleEventsStrategy][233]** This is used to customise framework events
--   `eventService` **EventService** The EventService to use for framework events
+- `appLoaders` **[Array][228]** Array of {AppLoader} to use for loading {App}s
+- `appStore` **[AppStore][222]** The AppStore to use for framework persistence
+- `lifecycleEventsStrategy` **[LifecycleEventsStrategy][233]** This is used to customise framework events
+- `eventService` **EventService** The EventService to use for framework events
 
 ### start
 
@@ -1335,7 +1335,7 @@ Get all Apps from all Loaders
 
 **Parameters**
 
--   `filter` **[Function][230]** : filter the list of Apps using this test
+- `filter` **[Function][230]** : filter the list of Apps using this test
 
 ### getApp
 
@@ -1343,7 +1343,7 @@ Get single App by key
 
 **Parameters**
 
--   `appKey` **int** 
+- `appKey` **int**
 
 ### enableApp
 
@@ -1351,7 +1351,7 @@ Enable a single App
 
 **Parameters**
 
--   `appKey` **int** 
+- `appKey` **int**
 
 ### disableApp
 
@@ -1359,7 +1359,7 @@ Disable a single App
 
 **Parameters**
 
--   `appKey` **[String][231]** 
+- `appKey` **[String][231]**
 
 ### getModules
 
@@ -1367,8 +1367,8 @@ Return a single App(s) module(s)
 
 **Parameters**
 
--   `appKey` **int** 
--   `filter` **[Function][230]** 
+- `appKey` **int**
+- `filter` **[Function][230]**
 
 ### getModule
 
@@ -1376,8 +1376,8 @@ Return a single App(s) module(s)
 
 **Parameters**
 
--   `appKey` **int** 
--   `moduleKey` **int** 
+- `appKey` **int**
+- `moduleKey` **int**
 
 ### enableModule
 
@@ -1385,8 +1385,8 @@ Enable a single App(s) module
 
 **Parameters**
 
--   `appKey` **int** 
--   `moduleKey` **int** 
+- `appKey` **int**
+- `moduleKey` **int**
 
 ### disableModule
 
@@ -1394,15 +1394,15 @@ Disable a single App(s) module
 
 **Parameters**
 
--   `appKey` **int** 
--   `moduleKey` **int** 
+- `appKey` **int**
+- `moduleKey` **int**
 
 ## AppPermission
 
 Represents the permitted behaviour of a loaded App.
-             \- READ App can be notified about events but cannot contribute any modules which modify the system
-             \- WRITE (includes READ) App can also contribute Modules such as WebPage WebResource etc which may modify behaviour
-             \- ADMIN (includes READ,WRITE) App can also use the managment API to e.g. load,unload,enable,diable Apps and Modules
+\- READ App can be notified about events but cannot contribute any modules which modify the system
+\- WRITE (includes READ) App can also contribute Modules such as WebPage WebResource etc which may modify behaviour
+\- ADMIN (includes READ,WRITE) App can also use the managment API to e.g. load,unload,enable,diable Apps and Modules
 
 ## App
 
@@ -1410,19 +1410,19 @@ Represents a single App.
 
 **Parameters**
 
--   `key` **[string][231]** A universally unique key for this App.
--   `permission` **[string][231]** one of "READ", "WRITE", "ADMIN" (note these are additive)
--   `descriptor` **[AppDescriptor][227]** The AppDescriptor built from the Apps descriptor file.
--   `loader` **[AppLoader][234]** The AppLoader which loaded this App.
--   `moduleLoaders` **[Array][228]** An array of ModuleLoaders to use to load any declared app modules
--   `appStore` **[AppStore][222]** The store to use for persistence.
--   `eventService` **EventService** The Event service.
+- `key` **[string][231]** A universally unique key for this App.
+- `permission` **[string][231]** one of "READ", "WRITE", "ADMIN" (note these are additive)
+- `descriptor` **[AppDescriptor][227]** The AppDescriptor built from the Apps descriptor file.
+- `loader` **[AppLoader][234]** The AppLoader which loaded this App.
+- `moduleLoaders` **[Array][228]** An array of ModuleLoaders to use to load any declared app modules
+- `appStore` **[AppStore][222]** The store to use for persistence.
+- `eventService` **EventService** The Event service.
 
 ### bootstrap
 
-bootstrap the app for example by setting up a 
-             seurity context and communicating shared secrets 
-             to the App for subsequent communication
+bootstrap the app for example by setting up a
+seurity context and communicating shared secrets
+to the App for subsequent communication
 
 ### getKey
 
@@ -1478,18 +1478,18 @@ Toggle enabled flag and notify event listeners
 
 ### loadModules
 
-Try to parse the AppDescriptor.modules and load 
+Try to parse the AppDescriptor.modules and load
 all the modules in it using any of the passed in ModuleLoaders
 Unloadable modules are loaded anyway but automatically disabled
 
 ## WebService
 
 Wraps the intialization, configuration and starting/stopping of a web server
-             and associated routes etc.
+and associated routes etc.
 
 **Parameters**
 
--   `eventService` **EventService** The EventService to use for web events
+- `eventService` **EventService** The EventService to use for web events
 
 ### start
 
@@ -1513,26 +1513,26 @@ helper for adding an event listener
 
 **Parameters**
 
--   `event` **[String][231]** The Event
--   `fn` **[Function][230]** The callback to run when the event is emmited
+- `event` **[String][231]** The Event
+- `fn` **[Function][230]** The callback to run when the event is emmited
 
-### addEventListener
+### addListener
 
 Add an event listener
 
 **Parameters**
 
--   `event` **[String][231]** The Event
--   `fn` **[Function][230]** The callback to run when the event is emmited
+- `event` **[String][231]** The Event
+- `fn` **[Function][230]** The callback to run when the event is emmited
 
-### removeEventListener
+### removeListener
 
 Remove an event listener
 
 **Parameters**
 
--   `event` **[String][231]** The Event
--   `fn` **[Function][230]** The callback to remove
+- `event` **[String][231]** The Event
+- `fn` **[Function][230]** The callback to remove
 
 ### emit
 
@@ -1540,8 +1540,8 @@ Trigger an event with optional payload
 
 **Parameters**
 
--   `event` **[String][231]** The Event id
--   `payload` **[Object][220]** The payload of the event
+- `event` **[String][231]** The Event id
+- `payload` **[Object][220]** The payload of the event
 
 ## LifecycleEventsStrategy
 
@@ -1549,8 +1549,8 @@ Hook to add custom events handler logic into AppService
 
 **Parameters**
 
--   `eventService` **EventService** The Event Service to listen to
--   `appStore` **[AppStore][222]** The persistent state storage to use
+- `eventService` **EventService** The Event Service to listen to
+- `appStore` **[AppStore][222]** The persistent state storage to use
 
 ### setup
 
@@ -1572,8 +1572,8 @@ Store the value against the given key
 
 **Parameters**
 
--   `key`  
--   `val`  
+- `key`
+- `val`
 
 ### get
 
@@ -1581,7 +1581,7 @@ Retrieve the value for the provided key
 
 **Parameters**
 
--   `key`  
+- `key`
 
 ### delete
 
@@ -1589,7 +1589,7 @@ Delete an entry by its key
 
 **Parameters**
 
--   `key`  
+- `key`
 
 ### enableApp
 
@@ -1597,7 +1597,7 @@ Mark an App as enabled in the store
 
 **Parameters**
 
--   `app` **[App][218]** the app to mark as enabled
+- `app` **[App][218]** the app to mark as enabled
 
 ### disableApp
 
@@ -1605,7 +1605,7 @@ Mark an App as disabled in the store
 
 **Parameters**
 
--   `app` **[App][218]** the app to mark as disabled
+- `app` **[App][218]** the app to mark as disabled
 
 ### enableModule
 
@@ -1613,7 +1613,7 @@ Mark a specific Apps Module as enabled in the store
 
 **Parameters**
 
--   `module` **[Module][235]** the module to mark as enabled
+- `module` **[Module][235]** the module to mark as enabled
 
 ### disableModule
 
@@ -1621,7 +1621,7 @@ Mark a specific Apps Module as disabled in the store
 
 **Parameters**
 
--   `module` **[Module][235]** the module to mark as disabled
+- `module` **[Module][235]** the module to mark as disabled
 
 ## AppStore
 
@@ -1633,8 +1633,8 @@ Store the value against the given key
 
 **Parameters**
 
--   `key`  
--   `val`  
+- `key`
+- `val`
 
 ### get
 
@@ -1642,7 +1642,7 @@ Retrieve the value for the provided key
 
 **Parameters**
 
--   `key`  
+- `key`
 
 ### delete
 
@@ -1650,7 +1650,7 @@ Delete an entry by its key
 
 **Parameters**
 
--   `key`  
+- `key`
 
 ### enableApp
 
@@ -1658,7 +1658,7 @@ Mark an App as enabled in the store
 
 **Parameters**
 
--   `app` **[App][218]** the app to mark as enabled
+- `app` **[App][218]** the app to mark as enabled
 
 ### disableApp
 
@@ -1666,7 +1666,7 @@ Mark an App as disabled in the store
 
 **Parameters**
 
--   `app` **[App][218]** the app to mark as disabled
+- `app` **[App][218]** the app to mark as disabled
 
 ### enableModule
 
@@ -1674,8 +1674,8 @@ Mark a specific Apps Module as enabled in the store
 
 **Parameters**
 
--   `app`  
--   `module` **[Module][235]** the module to mark as enabled
+- `app`
+- `module` **[Module][235]** the module to mark as enabled
 
 ### disableModule
 
@@ -1683,475 +1683,241 @@ Mark a specific Apps Module as disabled in the store
 
 **Parameters**
 
--   `app`  
--   `module` **[Module][235]** the module to mark as disabled
+- `app`
+- `module` **[Module][235]** the module to mark as disabled
 
 [1]: #securitycontext
-
 [2]: #getapp
-
 [3]: #getcontext
-
 [4]: #generatenewcontext
-
 [5]: #webresourcemodule
-
 [6]: #geturl
-
 [7]: #getresources
-
 [8]: #getcontext-1
-
 [9]: #getweight
-
 [10]: #routemodule
-
 [11]: #getroutes
-
 [12]: #geturl-1
-
 [13]: #authenticationprovidermodule
-
 [14]: #geturl-2
-
 [15]: #getweight-1
-
 [16]: #webhookmodule
-
 [17]: #geturl-3
-
 [18]: #getevents
-
 [19]: #webpagemodule
-
 [20]: #geturl-4
-
 [21]: #apimodule
-
 [22]: #getversion
-
 [23]: #geturl-5
-
 [24]: #webitemmodule
-
 [25]: #geturl-6
-
 [26]: #gettext
-
 [27]: #getlocation
-
 [28]: #gettooltip
-
 [29]: #getweight-2
-
 [30]: #authorizationprovidermodule
-
 [31]: #geturl-7
-
 [32]: #getweight-3
-
 [33]: #webfragmentmodule
-
 [34]: #geturl-8
-
 [35]: #getselector
-
 [36]: #getlocation-1
-
 [37]: #getweight-4
-
 [38]: #module
-
 [39]: #getkey
-
 [40]: #getname
-
 [41]: #gettype
-
 [42]: #getroles
-
 [43]: #getcache
-
 [44]: #iscacheenabled
-
 [45]: #enable
-
 [46]: #disable
-
 [47]: #dockuiapps
-
 [48]: #start
-
 [49]: #shutdown
-
 [50]: #dockuiappsbuilder
-
 [51]: #withstore
-
 [52]: #witheventservice
-
 [53]: #withappservice
-
 [54]: #withwebservice
-
 [55]: #build
-
 [56]: #validate
-
 [57]: #authenticationprovidermoduleloader
-
 [58]: #canloadmoduledescriptor
-
 [59]: #loadmodulefromdescriptor
-
 [60]: #webfragmentmoduleloader
-
 [61]: #canloadmoduledescriptor-1
-
 [62]: #loadmodulefromdescriptor-1
-
 [63]: #webpagemoduleloader
-
 [64]: #canloadmoduledescriptor-2
-
 [65]: #loadmodulefromdescriptor-2
-
 [66]: #webhookmoduleloader
-
 [67]: #canloadmoduledescriptor-3
-
 [68]: #loadmodulefromdescriptor-3
-
 [69]: #cachablemoduleloader
-
 [70]: #getcache-1
-
 [71]: #setcache
-
 [72]: #canloadmodulefromcache
-
 [73]: #loadmodulefromcache
-
 [74]: #urlapploader
-
 [75]: #scanfornewapps
-
 [76]: #stopscanningfornewapps
-
 [77]: #authorizationprovidermoduleloader
-
 [78]: #canloadmoduledescriptor-4
-
 [79]: #loadmodulefromdescriptor-4
-
 [80]: #routemoduleloader
-
 [81]: #canloadmoduledescriptor-5
-
 [82]: #loadmodulefromdescriptor-5
-
 [83]: #webresourcemoduleloader
-
 [84]: #canloadmoduledescriptor-6
-
 [85]: #loadmodulefromdescriptor-6
-
 [86]: #apimoduleloader
-
 [87]: #canloadmoduledescriptor-7
-
 [88]: #loadmodulefromdescriptor-7
-
 [89]: #dockereventsdelegatingapploader
-
 [90]: #isdockerrunning
-
 [91]: #scanfornewapps-1
-
 [92]: #handlecontainerstart
-
 [93]: #handlecontainerstop
-
 [94]: #stopscanningfornewapps-1
-
 [95]: #webitemmoduleloader
-
 [96]: #canloadmoduledescriptor-8
-
 [97]: #loadmodulefromdescriptor-8
-
 [98]: #apploader
-
 [99]: #scanfornewapps-2
-
 [100]: #stopscanningfornewapps-2
-
 [101]: #addapp
-
 [102]: #removeapp
-
 [103]: #getapps
-
 [104]: #getapp-1
-
 [105]: #moduleloader
-
 [106]: #canloadmoduledescriptor-9
-
 [107]: #loadmodulefromdescriptor-9
-
 [108]: #httpclient
-
 [109]: #init
-
 [110]: #send
-
 [111]: #get
-
 [112]: #post
-
 [113]: #transformrequest
-
 [114]: #transformresponse
-
 [115]: #routemoduledescriptor
-
 [116]: #getroutes-1
-
 [117]: #geturl-9
-
 [118]: #apimoduledescriptor
-
 [119]: #getversion-1
-
 [120]: #geturl-10
-
 [121]: #webresourcemoduledescriptor
-
 [122]: #geturl-11
-
 [123]: #getresources-1
-
 [124]: #getcontext-2
-
 [125]: #webhookmoduledescriptor
-
 [126]: #geturl-12
-
 [127]: #getevents-1
-
 [128]: #authenticationprovidermoduledescriptor
-
 [129]: #geturl-13
-
 [130]: #authorizationprovidermoduledescriptor
-
 [131]: #geturl-14
-
 [132]: #webitemmoduledescriptor
-
 [133]: #geturl-15
-
 [134]: #gettext-1
-
 [135]: #getlocation-2
-
 [136]: #gettooltip-1
-
 [137]: #webfragmentmoduledescriptor
-
 [138]: #geturl-16
-
 [139]: #getselector-1
-
 [140]: #getlocation-3
-
 [141]: #webpagemoduledescriptor
-
 [142]: #geturl-17
-
 [143]: #appdescriptor
-
 [144]: #getkey-1
-
 [145]: #geturl-18
-
 [146]: #getname-1
-
 [147]: #getversion-2
-
 [148]: #getdescriptorversion
-
 [149]: #getlogo
-
 [150]: #getauthentication
-
 [151]: #getlifecycleurls
-
 [152]: #getmodules
-
 [153]: #moduledescriptor
-
 [154]: #gettype-1
-
 [155]: #getname-2
-
 [156]: #getkey-2
-
 [157]: #getweight-5
-
 [158]: #getcache-2
-
 [159]: #getroles-1
-
 [160]: #appservice
-
 [161]: #start-1
-
 [162]: #shutdown-1
-
 [163]: #scanfornewapps-3
-
 [164]: #stopscanningfornewapps-3
-
 [165]: #getapps-1
-
 [166]: #getapp-2
-
 [167]: #enableapp
-
 [168]: #disableapp
-
 [169]: #getmodules-1
-
 [170]: #getmodule
-
 [171]: #enablemodule
-
 [172]: #disablemodule
-
 [173]: #apppermission
-
 [174]: #app
-
 [175]: #bootstrap
-
 [176]: #getkey-3
-
 [177]: #getpermission
-
 [178]: #gettype-2
-
 [179]: #geturl-19
-
 [180]: #getuuid
-
 [181]: #getloader
-
 [182]: #getdescriptor
-
 [183]: #geteventservice
-
 [184]: #getmoduleloaders
-
 [185]: #getmodules-2
-
 [186]: #gethttpclient
-
 [187]: #enable-1
-
 [188]: #disable-1
-
 [189]: #loadmodules
-
 [190]: #webservice
-
 [191]: #start-2
-
 [192]: #shutdown-2
-
 [193]: #isrunning
-
 [194]: #eventsservice
-
 [195]: #on
-
-[196]: #addeventlistener
-
-[197]: #removeeventlistener
-
+[196]: #addListener
+[197]: #removeListener
 [198]: #emit
-
 [199]: #lifecycleeventsstrategy
-
 [200]: #setup
-
 [201]: #teardown
-
 [202]: #inmemoryappstore
-
 [203]: #set
-
 [204]: #get-1
-
 [205]: #delete
-
 [206]: #enableapp-1
-
 [207]: #disableapp-1
-
 [208]: #enablemodule-1
-
 [209]: #disablemodule-1
-
 [210]: #appstore
-
 [211]: #set-1
-
 [212]: #get-2
-
 [213]: #delete-1
-
 [214]: #enableapp-2
-
 [215]: #disableapp-2
-
 [216]: #enablemodule-2
-
 [217]: #disablemodule-2
-
 [218]: #app
-
 [219]: https://base.url.of.the.calling.framework.instance
-
 [220]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-
 [221]: #dockuiappsbuilder
-
 [222]: #appstore
-
 [223]: #appservice
-
 [224]: #webservice
-
 [225]: #dockuiapps
-
 [226]: #moduledescriptor
-
 [227]: #appdescriptor
-
 [228]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
-
 [229]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
-
 [230]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
-
 [231]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-
 [232]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/JSON
-
 [233]: #lifecycleeventsstrategy
-
 [234]: #apploader
-
 [235]: #module

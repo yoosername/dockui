@@ -2,16 +2,11 @@
  * @description Log Lifecycle transition state
  * @ignore
  */
-function logAppInstallStarted(payload) {
+function log(payload) {
   "use strict";
-  const app = payload.app;
-  const state = payload.type;
-  console.log(
-    "[LifecycleEventsStrategy] App (" + app.getKey() + ") state is : ",
-    state
-  );
+  console.log("[LifecycleEventsStrategy] ", payload);
 }
 
 module.exports = {
-  logAppInstallStarted
+  log
 };
