@@ -17,32 +17,24 @@ const {
   WEBSERVICE_SHUTDOWN_EVENT,
   URL_APP_LOAD_REQUEST,
   URL_APP_UNLOAD_REQUEST
-} = require("../constants/events");
+} = require("../../constants/events");
 
-const { validateShapes } = require("../util/validate");
+const { validateShapes } = require("../../util/validate");
+const WebService = require("../WebService");
 
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
  *              and associated routes etc.
  */
-class WebService {
+class DefaultWebService extends WebService {
   /**
    * @argument {AppService} appService The AppService for interacting with Apps
    * @argument {EventService} eventService The EventService to use for web events
    */
   constructor(appService, eventService) {
+    super(appService, eventService);
     this.running = false;
-
-    validateShapes([
-      { shape: "AppService", object: appService },
-      { shape: "EventService", object: eventService }
-    ]);
-
-    this.server = null;
     this.expressApp = express();
-    this.appService = appService;
-    this.eventService = eventService;
-
     this.setupMiddleware();
   }
 
@@ -314,4 +306,4 @@ class WebService {
   }
 }
 
-module.exports = WebService;
+module.exports = DefaultWebService;

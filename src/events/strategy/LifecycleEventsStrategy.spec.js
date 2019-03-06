@@ -64,18 +64,24 @@ describe("LifecycleEventsStrategy", function() {
     }).to.not.throw();
   });
 
-  it("should detach the same number of event listeners as have been added during teardown", function() {
-    var addSpy = sinon.spy(mockEventService, "addListener");
-    var removeSpy = sinon.spy(mockEventService, "removeListener");
+  it("should have correct signature", function() {
+    const lifecycleEventsStrategy = new LifecycleEventsStrategy(
+      mockEventService,
+      mockAppStore
+    );
+    expect(lifecycleEventsStrategy.setup).to.be.a("function");
+    expect(lifecycleEventsStrategy.teardown).to.be.a("function");
+  });
 
-    var lifecycleEventsStrategy = new LifecycleEventsStrategy(
+  it("should log a warning if you dont extend the default behaviour", function() {
+    var logSpy = sinon.stub(console, "warn");
+    const lifecycleEventsStrategy = new LifecycleEventsStrategy(
       mockEventService,
       mockAppStore
     );
     lifecycleEventsStrategy.setup();
-    var addedCount = addSpy.callCount;
     lifecycleEventsStrategy.teardown();
-
-    expect(removeSpy).to.be.called.callCount(addedCount);
+    expect(logSpy).to.be.called.callCount(2);
+    logSpy.restore();
   });
 });

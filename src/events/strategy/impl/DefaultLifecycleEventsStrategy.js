@@ -2,30 +2,22 @@ const {
   APP_LOAD_STARTED_EVENT,
   APP_LOAD_COMPLETE_EVENT,
   APP_LOAD_FAILED_EVENT
-} = require("../../constants/events");
-
-const { validateShapes } = require("../../util/validate");
+} = require("../../../constants/events");
 
 const { log } = require("./helper");
 
-//TODO: Make this a NOOP, and extend it in DEFAULt one
+const LifecycleEventsStrategy = require("../LifecycleEventsStrategy");
 
 /**
  * @description Hook to add custom events handler logic into AppService
  */
-class LifecycleEventsStrategy {
+class DefaultLifecycleEventsStrategy extends LifecycleEventsStrategy {
   /**
    * @argument {EventService} eventService - The Event Service to listen to
    * @argument {AppStore} appStore - The persistent state storage to use
    */
   constructor(eventService, appStore) {
-    validateShapes([
-      { shape: "EventService", object: eventService },
-      { shape: "AppStore", object: appStore }
-    ]);
-
-    this.eventService = eventService;
-    this.appStore = appStore;
+    super(eventService, appStore);
   }
 
   /**
@@ -48,4 +40,4 @@ class LifecycleEventsStrategy {
   }
 }
 
-module.exports = LifecycleEventsStrategy;
+module.exports = DefaultLifecycleEventsStrategy;

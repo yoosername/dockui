@@ -9,8 +9,8 @@ const DEFAULT_EVENTS = "memory";
 const DEFAULT_PORT = 8080;
 const DEFAULT_SECRET = "changeme";
 
-const InMemoryStore = require("../store/impl/InMemoryAppStore");
-const InMemoryEventsService = require("../events/impl/InMemoryEventsService");
+const InMemoryAppStore = require("../store/impl/InMemoryAppStore");
+const InMemoryEventService = require("../events/impl/InMemoryEventService");
 const DefaultLifecycleEventsStrategy = require("../events/strategy/impl/DefaultLifecycleEventsStrategy");
 const WebResourceModuleLoader = require("../app/loader/module/impl/WebResourceModuleLoader");
 const WebPageModuleLoader = require("../app/loader/module/impl/WebPageModuleLoader");

@@ -1,14 +1,13 @@
 const EventEmitter = require("events");
-
+const EventService = require("../EventService");
 /**
  * @description Simple native events service
  */
-class EventsService {
+class InMemoryEventService extends EventService {
   constructor() {
+    super();
     this.emitter = new EventEmitter();
   }
-
-  // TODO: Makje this noop and extend it in Impl
 
   /**
    * @description helper for adding an event listener
@@ -47,4 +46,4 @@ class EventsService {
   }
 }
 
-module.exports = EventsService;
+module.exports = InMemoryEventService;

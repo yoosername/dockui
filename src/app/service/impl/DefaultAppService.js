@@ -2,16 +2,10 @@ const {
   APP_SERVICE_STARTING_EVENT,
   APP_SERVICE_STARTED_EVENT,
   APP_SERVICE_SHUTTING_DOWN_EVENT,
-  APP_SERVICE_SHUTDOWN_EVENT,
-  APP_ENABLED_EVENT,
-  APP_DISABLED_EVENT,
-  MODULE_ENABLED_EVENT,
-  MODULE_DISABLED_EVENT
-} = require("../../constants/events");
+  APP_SERVICE_SHUTDOWN_EVENT
+} = require("../../../constants/events");
 
-const { AppServiceValidationError } = require("../../constants/errors");
-
-const { validateShapes } = require("../../util/validate");
+const AppService = require("../AppService");
 
 /**
  * @description Orchestrates
@@ -19,7 +13,7 @@ const { validateShapes } = require("../../util/validate");
  *                triggering events in the EventService based on the LifecycleEventsStrategy and
  *                state persistence via the AppStore
  */
-class AppService {
+class DefaultAppService extends AppService {
   /**
    * @param {Array} appLoaders - Array of {AppLoader} to use for loading {App}s
    * @param {AppStore} appStore - The AppStore to use for framework persistence
@@ -27,37 +21,8 @@ class AppService {
    * @param {EventService} eventService - The EventService to use for framework events
    */
   constructor(appLoaders, appStore, lifecycleEventsStrategy, eventService) {
+    super(appLoaders, appStore, lifecycleEventsStrategy, eventService);
     this._running = false;
-    var lifecycleEventsStrategyInst = lifecycleEventsStrategy;
-
-    try {
-      // if lifecycleEventStrategy is a function then create the instance now
-      if (typeof lifecycleEventsStrategyInst === "function") {
-        lifecycleEventsStrategyInst = new lifecycleEventsStrategyInst(
-          this,
-          eventService,
-          AppStore
-        );
-      }
-
-      // Validate our args using ducktyping utils. (figure out better way to do this later)
-      validateShapes([
-        { shape: "AppLoader", object: appLoaders[0] },
-        { shape: "AppStore", object: appStore },
-        {
-          shape: "LifecycleEventsStrategy",
-          object: lifecycleEventsStrategyInst
-        },
-        { shape: "EventService", object: eventService }
-      ]);
-    } catch (e) {
-      throw new AppServiceValidationError(e);
-    }
-
-    this.appLoaders = appLoaders;
-    this.appStore = appStore;
-    this.eventService = eventService;
-    this.lifecycleEventsStrategy = lifecycleEventsStrategyInst;
   }
 
   /**
@@ -211,4 +176,4 @@ class AppService {
   }
 }
 
-module.exports = AppService;
+module.exports = DefaultAppService;

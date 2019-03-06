@@ -1,14 +1,4 @@
-const {
-  APP_LOAD_STARTED_EVENT,
-  APP_LOAD_COMPLETE_EVENT,
-  APP_LOAD_FAILED_EVENT
-} = require("../../constants/events");
-
 const { validateShapes } = require("../../util/validate");
-
-const { log } = require("./helper");
-
-//TODO: Make this a NOOP, and extend it in DEFAULt one
 
 /**
  * @description Hook to add custom events handler logic into AppService
@@ -32,19 +22,18 @@ class LifecycleEventsStrategy {
    * @description Used to add event listeners and other setup tasks
    */
   setup() {
-    this.eventService.addListener(APP_LOAD_STARTED_EVENT, log);
-    this.eventService.addListener(APP_LOAD_COMPLETE_EVENT, log);
-    this.eventService.addListener(APP_LOAD_FAILED_EVENT, log);
+    console.warn(
+      "[LifecycleEventsStrategy] setup - NoOp implementation - this should be extended by child classes"
+    );
   }
 
   /**
    * @description Used to remove event listeners and other shutdown tasks
    */
   teardown() {
-    // Remove all our listeners.
-    this.eventService.removeListener(APP_LOAD_STARTED_EVENT, log);
-    this.eventService.removeListener(APP_LOAD_COMPLETE_EVENT, log);
-    this.eventService.removeListener(APP_LOAD_FAILED_EVENT, log);
+    console.warn(
+      "[LifecycleEventsStrategy] teardown - NoOp implementation - this should be extended by child classes"
+    );
   }
 }
 
