@@ -1,5 +1,28 @@
-const commander = require("commander");
+#!/usr/bin/env node
 
+const minimist = require("minimist");
+
+const showUsage = logger => {
+  logger.log(`
+    Usage: cli.js <cmd> [<options>]
+    
+    Commands: 
+      apps
+
+    Options: 
+      --help    Show this help message
+  `);
+};
+
+const loadConfig = (config, loaders) => {
+  loaders.forEach(loader => {
+    const loaderConfig = loader.load();
+    config.store = loaderConfig.store ? loaderConfig.store : config.store;
+    config.events = loaderConfig.events ? loaderConfig.events : config.events;
+    config.port = loaderConfig.port ? loaderConfig.port : config.port;
+    config.secret = loaderConfig.secret ? loaderConfig.secret : config.secret;
+  });
+};
 /**
  * the CLI is a bundled utility to allow easy management of DockUI instances from the Commandline
  */
@@ -7,23 +30,15 @@ class CLI {
   /**
    * @description Starts the CLI
    */
-  constructor(...loaders) {
-    this.config = {};
-    loaders.forEach(loader => {
-      const loaderConfig = loader.load();
-      this.config.store = loaderConfig.store
-        ? loaderConfig.store
-        : this.config.store;
-      this.config.events = loaderConfig.events
-        ? loaderConfig.events
-        : this.config.events;
-      this.config.port = loaderConfig.port
-        ? loaderConfig.port
-        : this.config.port;
-      this.config.secret = loaderConfig.secret
-        ? loaderConfig.secret
-        : this.config.secret;
-    });
+  constructor({ configLoaders = [], logger = console } = {}) {
+    this.config = {
+      store: null,
+      events: null,
+      port: null,
+      secret: null
+    };
+    this.logger = logger;
+    configLoaders.length && loadConfig(this.config, configLoaders);
   }
 
   /**
@@ -39,21 +54,25 @@ class CLI {
    */
   parse(args) {
     return new Promise((resolve, reject) => {
-      commander
-        .arguments("<cmd>")
-        .action(() => {
-          resolve(arguments);
-        })
-        .on("--help", () => {
-          resolve("--help");
-        })
-        .on("error", err => {
-          reject(err);
-        });
+      try {
+        this.args = minimist(args);
+      } catch (err) {
+        return reject(err);
+      }
 
-      commander.parse(args);
+      // user specified --help
+      if (this.args && this.args.help) {
+        showUsage(this.logger);
+      }
+
+      resolve(arguments);
     });
   }
+}
+
+// Allow this module to be run directly as a main module
+if (typeof require != "undefined" && require.main === module) {
+  new CLI().parse(process.argv);
 }
 
 module.exports = CLI;

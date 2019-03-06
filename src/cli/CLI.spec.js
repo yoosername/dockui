@@ -1,11 +1,17 @@
 const chai = require("chai");
-const expect = chai.expect;
-const sandbox = require("sinon").createSandbox();
 const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
+const expect = chai.expect;
+const sandbox = require("sinon").createSandbox();
+
+const path = require("path");
+const util = require("util");
+const exec = util.promisify(require("child_process").exec);
 
 var configLoader1 = null;
 var configLoader2 = null;
+var logSpy = null;
+var loggerSpy = null;
 var CLI = require("./CLI");
 var cli = null;
 
@@ -13,7 +19,6 @@ describe("CLI", function() {
   "use strict";
 
   beforeEach(function() {
-    sandbox.spy(console, "log");
     configLoader1 = sandbox.stub().returns({
       load: () => {
         return {
@@ -32,7 +37,12 @@ describe("CLI", function() {
         };
       }
     });
-    cli = new CLI(configLoader1(), configLoader2());
+    logSpy = sandbox.spy();
+    loggerSpy = sandbox.stub().returns({ log: logSpy });
+    cli = new CLI({
+      logger: new loggerSpy(),
+      configLoaders: [configLoader1(), configLoader2()]
+    });
   });
 
   afterEach(function() {
@@ -63,18 +73,22 @@ describe("CLI", function() {
   it("should log usage when --help is passed as Arg", function(done) {
     cli
       .parse(["node", "dockui", "--help"])
-      .then(cmd => {
-        console.log("ERHERIGHIEHGIEGIEHGIEHRIGH");
-        expect(cmd).to.equal("dockui");
-        expect(console.log).to.be.called.callCount(1);
-        expect(console.log.getCall(0).args[0]).to.contain(
-          "Usage: dockui [options] <cmd>"
-        );
+      .then(args => {
+        expect(args[0][1]).to.equal("dockui");
+        expect(logSpy).to.be.called.callCount(1);
+        expect(logSpy.getCall(0).args[0]).to.contain("Usage:");
         done();
       })
       .catch(console.log);
   });
-  // (c) Should work without Configuration with sensible defaults
+
+  // (c) Should log usage when --help is passed when executed as main module
+  it("should log usage when executed as main module", async function() {
+    const file = path.join(__dirname, ".", "CLI.js");
+    const { stdout, stderr } = await exec(`${file} --help`);
+    expect(stderr).to.be.empty;
+    expect(stdout).to.contain("Usage:");
+  });
 
   // (d) Should log to STDOUT (with configurable verbosity)
 
