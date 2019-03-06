@@ -60,8 +60,27 @@ describe("CLI", function() {
   // TODO (v0.0.1-Alpha): These tests
 
   // GENERIC TESTS
-  // (a) Should be configurable by a heirarchy of ConfigLoaders
-  it("should be configurable by a heirarchy of ConfigLoaders", function() {
+  // Should be configurable by passing in a config object
+  it("should be configurable by passing in a config", function() {
+    cli = new CLI();
+    expect(cli.getConfig).to.be.a("function");
+    expect(cli.getConfig().secret).to.equal(null);
+    cli = new CLI({
+      config: {
+        store: "store1",
+        events: "events1",
+        port: "port1",
+        secret: "secret1"
+      }
+    });
+    expect(cli.getConfig().store).to.equal("store1");
+    expect(cli.getConfig().events).to.equal("events1");
+    expect(cli.getConfig().port).to.equal("port1");
+    expect(cli.getConfig().secret).to.equal("secret1");
+  });
+
+  // Should be configurable by passing in a heirarchy of ConfigLoaders
+  it("should be configurable by passing in a heirarchy of ConfigLoaders", function() {
     expect(cli.getConfig).to.be.a("function");
     expect(cli.getConfig().store).to.equal("store2");
     expect(cli.getConfig().events).to.equal("events1");
@@ -69,28 +88,42 @@ describe("CLI", function() {
     expect(cli.getConfig().secret).to.equal("secret1");
   });
 
-  // (b) Should log usage when --help is passed on command line
+  // Should log usage when --help is passed on command line
   it("should log usage when --help is passed as Arg", function(done) {
     cli
       .parse(["node", "dockui", "--help"])
-      .then(args => {
-        expect(args[0][1]).to.equal("dockui");
+      .then(() => {
         expect(logSpy).to.be.called.callCount(1);
-        expect(logSpy.getCall(0).args[0]).to.contain("Usage:");
+        expect(logSpy.getCall(0).args[0]).to.contain("Usage");
         done();
       })
       .catch(console.log);
   });
 
-  // (c) Should log usage when --help is passed when executed as main module
-  it("should log usage when executed as main module", async function() {
+  // Should log usage when --help is passed when executed as main module
+  it("should be able to run as main module with no args", async function() {
     const file = path.join(__dirname, ".", "CLI.js");
-    const { stdout, stderr } = await exec(`${file} --help`);
+    var { stdout, stderr } = await exec(`${file} --help`);
     expect(stderr).to.be.empty;
-    expect(stdout).to.contain("Usage:");
+    expect(stdout).to.contain("Usage");
+    var { stdout, stderr } = await exec(`${file}`);
+    expect(stderr).to.be.empty;
+    expect(stdout).to.contain("Usage");
   });
 
-  // (d) Should log to STDOUT (with configurable verbosity)
+  // Should log to STDOUT (with configurable verbosity)
+  it("should log to STDOUT (with configurable verbosity)", async function() {
+    await cli.parse(["node", "dockui", "--help"]);
+    expect(logSpy.getCall(0).args[0]).to.contain("Log Level:  info");
+    await cli.parse(["node", "dockui", "--help", "-v"]);
+    expect(logSpy.getCall(1).args[0]).to.contain("Log Level:  info");
+    await cli.parse(["node", "dockui", "--help", "-vv"]);
+    expect(logSpy.getCall(2).args[0]).to.contain("Log Level:  warn");
+    await cli.parse(["node", "dockui", "--help", "-vvv"]);
+    expect(logSpy.getCall(3).args[0]).to.contain("Log Level:  error");
+    await cli.parse(["node", "dockui", "--help", "-vvvv"]);
+    expect(logSpy.getCall(4).args[0]).to.contain("Log Level:  debug");
+  });
 
   // COMMAND TESTS
   // Instance Commands to test
@@ -99,6 +132,17 @@ describe("CLI", function() {
   //     - Required security keys etc are accessed via the DB, which in the case of the default is a well defined persistent in memory DB
   //
   //     $ dockui run
+  it("should run an instance of dockui)", async function() {
+    var dockuiStartSpy = sandbox.spy();
+    var dockUIStub = sandbox.stub().returns({
+      start: dockuiStartSpy
+    });
+    cli = new CLI({
+      dockui: new dockUIStub()
+    });
+    await cli.parse(["node", "dockui", "run"]);
+    expect(dockuiStartSpy).to.have.been.called;
+  });
 
   // (3) List state of Loaded Apps
   //

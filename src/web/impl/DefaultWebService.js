@@ -8,8 +8,6 @@ const swaggerOptions = {
   explorer: true
 };
 
-// TODO: Make this a NoOp and makeImpl extend it
-
 const WEBSERVICE_PORT = 3000;
 
 const {

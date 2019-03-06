@@ -13,7 +13,6 @@ const { AppServiceValidationError } = require("../../constants/errors");
 
 const { validateShapes } = require("../../util/validate");
 
-// TODO: Make this a NoOp and the Impl extend it
 /**
  * @description Orchestrates
  *                loading Apps via AppLoaders,
