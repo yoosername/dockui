@@ -18,7 +18,7 @@ This is a **DRAFT** of a _work in progress_ and none of the commands below shoul
 ### Install the CLI
 
 ```bash
-$ sudo npm install -g @dockui/cli
+$ npm install -g https://github.com/yoosername/dockui.git
 ...
 ```
 
