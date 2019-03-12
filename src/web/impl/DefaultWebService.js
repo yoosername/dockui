@@ -56,7 +56,12 @@ class DefaultWebService extends WebService {
     /**
      * Standard BodyParser Middleware
      */
-    this.expressApp.use(bodyParser.json());
+    this.expressApp.use(
+      bodyParser.json({
+        limit: "2000kb"
+      })
+    );
+    this.expressApp.disable("x-powered-by");
     this.expressApp.use(bodyParser.urlencoded({ extended: true }));
     this.expressApp.use(bodyParser.text());
     this.expressApp.use(bodyParser.json({ type: "application/json" }));
@@ -235,6 +240,13 @@ class DefaultWebService extends WebService {
         }
       }
     );
+
+    // in case of an error
+    this.expressApp.on("error", (appErr, appCtx) => {
+      console.error("app error", appErr.stack);
+      console.error("on url", appCtx.req.url);
+      console.error("with headers", appCtx.req.headers);
+    });
   }
 
   /**

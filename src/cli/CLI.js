@@ -173,7 +173,6 @@ class CLI {
 
   /**
    * @description Processes the passed arguments
-   *
    */
   parse(args) {
     return new Promise(async (resolve, reject) => {

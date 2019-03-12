@@ -33,13 +33,14 @@ class DefaultAppService extends AppService {
 
     // If we are not already started
     if (this._running !== true) {
+      // First thing is to setup AppEventLifecycleStrategy
+      // Which allows us to provide custom async handlers for any event.
+      this.lifecycleEventsStrategy.setup();
+
       // Notify listeners that we are starting up
       this.eventService.emit(APPSERVICE_STARTING_EVENT, {
         msg: "App Service Starting"
       });
-
-      // setup AppEventLifecycleStrategy to handle events
-      this.lifecycleEventsStrategy.setup();
 
       // Kick off scanning for new Apps
       this.scanForNewApps();
@@ -70,9 +71,6 @@ class DefaultAppService extends AppService {
       // Tell Loaders to stop loading Apps
       this.stopScanningForNewApps();
 
-      // Teardown event handlers
-      this.lifecycleEventsStrategy.teardown();
-
       // Flag that we are not running
       this._running = false;
 
@@ -80,6 +78,9 @@ class DefaultAppService extends AppService {
       this.eventService.emit(APPSERVICE_SHUTDOWN_EVENT, {
         msg: "App Service Shutdown"
       });
+
+      // Teardown event handlers
+      this.lifecycleEventsStrategy.teardown();
     }
   }
 
