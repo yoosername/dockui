@@ -56,7 +56,15 @@ class DefaultWebService extends WebService {
     /**
      * Standard BodyParser Middleware
      */
-    this.expressApp.use(bodyParser.json());
+    this.expressApp.use(
+      bodyParser.json({
+        limit: "2000kb"
+      })
+    );
+    this.expressApp.use((req, res, next) => {
+      res.removeHeader("x-powered-by");
+      next();
+    });
     this.expressApp.use(bodyParser.urlencoded({ extended: true }));
     this.expressApp.use(bodyParser.text());
     this.expressApp.use(bodyParser.json({ type: "application/json" }));

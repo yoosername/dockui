@@ -64,8 +64,6 @@ describe("CLI", function() {
     expect(CLI).to.be.a("function");
   });
 
-  // TODO (v0.0.1-Alpha): These tests
-
   // GENERIC TESTS
   // Should be configurable by passing in a config object
   it("should be configurable by passing in a config", function() {
@@ -152,6 +150,7 @@ describe("CLI", function() {
     expect(dockuiStartSpy).to.have.been.called;
   });
 
+  // TODO (v0.0.1-Alpha): These tests
   // (3) List state of Loaded Apps
   //
   //     $ dockui apps

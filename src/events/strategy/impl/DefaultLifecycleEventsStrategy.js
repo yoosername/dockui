@@ -29,14 +29,14 @@ class DefaultLifecycleEventsStrategy extends LifecycleEventsStrategy {
    * @description Used to add event listeners and other setup tasks
    */
   setup() {
-    this.eventService.addListener(APPSERVICE_STARTING_EVENT, log);
-    this.eventService.addListener(APPSERVICE_STARTED_EVENT, log);
-    this.eventService.addListener(APPSERVICE_SHUTTING_DOWN_EVENT, log);
-    this.eventService.addListener(APPSERVICE_SHUTDOWN_EVENT, log);
     this.eventService.addListener(WEBSERVICE_STARTING_EVENT, log);
     this.eventService.addListener(WEBSERVICE_STARTED_EVENT, log);
     this.eventService.addListener(WEBSERVICE_SHUTTING_DOWN_EVENT, log);
     this.eventService.addListener(WEBSERVICE_SHUTDOWN_EVENT, log);
+    this.eventService.addListener(APPSERVICE_STARTING_EVENT, log);
+    this.eventService.addListener(APPSERVICE_STARTED_EVENT, log);
+    this.eventService.addListener(APPSERVICE_SHUTTING_DOWN_EVENT, log);
+    this.eventService.addListener(APPSERVICE_SHUTDOWN_EVENT, log);
   }
 
   /**

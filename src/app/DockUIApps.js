@@ -36,12 +36,15 @@ class DockUIApps {
   start() {
     // Add graceful shutdown hook
     const shutdown = () => {
-      console.log("SIGTERM signal received, shutting down");
+      console.log(
+        "SIGTERM signal intercepted - attempting to gracefully shut down"
+      );
       this.shutdown();
       process.exit(0);
     };
     process.on("SIGTERM", shutdown);
     process.on("SIGINT", shutdown);
+    // Start Webservice only if the AppService starts ok
     this.eventService.on(APPSERVICE_STARTED_EVENT, () => {
       this.webService.start();
     });
@@ -52,10 +55,10 @@ class DockUIApps {
    * @description Shutdown App service
    */
   shutdown() {
+    // Shutdown in reverse order.
     this.eventService.on(WEBSERVICE_SHUTDOWN_EVENT, () => {
       this.appService.shutdown();
     });
-    this.eventService.on(APPSERVICE_SHUTDOWN_EVENT, () => {});
     this.webService.shutdown();
   }
 }
