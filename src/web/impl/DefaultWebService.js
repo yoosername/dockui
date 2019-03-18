@@ -61,7 +61,10 @@ class DefaultWebService extends WebService {
         limit: "2000kb"
       })
     );
-    this.expressApp.disable("x-powered-by");
+    this.expressApp.use((req, res, next) => {
+      res.removeHeader("x-powered-by");
+      next();
+    });
     this.expressApp.use(bodyParser.urlencoded({ extended: true }));
     this.expressApp.use(bodyParser.text());
     this.expressApp.use(bodyParser.json({ type: "application/json" }));
@@ -240,13 +243,6 @@ class DefaultWebService extends WebService {
         }
       }
     );
-
-    // in case of an error
-    this.expressApp.on("error", (appErr, appCtx) => {
-      console.error("app error", appErr.stack);
-      console.error("on url", appCtx.req.url);
-      console.error("with headers", appCtx.req.headers);
-    });
   }
 
   /**

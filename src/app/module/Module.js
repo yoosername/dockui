@@ -97,7 +97,7 @@ class Module {
   }
 
   /**
-   * @description default behaviour is to simply send an disabled event to all listeners.
+   * @description default behaviour is to simply send a disabled event to all listeners.
    *              subclasses can extend this behaviour
    */
   disable() {
