@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
-const { DockUIApps } = require("../app/DockUIApps");
+const { DockUIApps } = require("../DockUIApps");
 const LOG_LEVELS = ["info", "warn", "error", "debug"];
 
 const DEFAULT_STORE = "memory";

@@ -65,8 +65,19 @@ describe("App", function() {
     expect(App).to.not.be.undefined;
   });
 
-  it("should be a function", function() {
-    expect(App).to.be.a("function");
+  it("should have correct signature", function() {
+    // TODO: Correct sig
+    // "getKey",
+    // "getName",
+    // "getType",
+    // "getUrl",
+    // "getUUID",
+    // "getPermission",
+    // "getLoader",
+    // "getDescriptor",
+    // "getModules",
+    // "isLoaded",
+    // "isEnabled",
   });
 
   // App should validate arguments

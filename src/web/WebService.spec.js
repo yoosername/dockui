@@ -19,11 +19,8 @@ describe("WebService", function() {
     webService = new WebService(mockAppService, mockEventService);
   });
 
-  it("should be defined and loadable", function() {
+  it("should be defined and a loadable function", function() {
     expect(WebService).to.not.be.undefined;
-  });
-
-  it("should be a function", function() {
     expect(WebService).to.be.a("function");
   });
 

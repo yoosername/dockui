@@ -1,5 +1,3 @@
-const { validateShapes } = require("../util/validate");
-
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
  *              and associated routes etc.
@@ -10,11 +8,7 @@ class WebService {
    * @argument {EventService} eventService The EventService to use for web events
    */
   constructor(appService, eventService) {
-    validateShapes([
-      { shape: "AppService", object: appService },
-      { shape: "EventService", object: eventService }
-    ]);
-
+    // TODO: Validate shapes ( ducktyping style later )
     this.server = null;
     this.appService = appService;
     this.eventService = eventService;

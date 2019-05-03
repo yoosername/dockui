@@ -89,6 +89,25 @@ describe("AppService", function() {
     expect(appService.getApp).to.be.a("function");
     expect(appService.getModules).to.be.a("function");
     expect(appService.getModule).to.be.a("function");
+
+    // TODO, add extra sigs
+    // "getContext",
+    // "start",
+    // "shutdown",
+    // "scanForNewApps",
+    // "stopScanningForNewApps",
+    // "loadApp",
+    // "unloadApp",
+    // "enableApp",
+    // "disableApp",
+    // "getApps",
+    // "getApp",
+    // "loadModule",
+    // "unloadModule",
+    // "getModules",
+    // "getModule",
+    // "enableModule",
+    // "disableModule",
   });
 
   it("should log a warning if you dont extend the default behaviour", function() {
