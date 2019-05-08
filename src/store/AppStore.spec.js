@@ -5,10 +5,6 @@ describe("AppStore", function() {
 
   beforeEach(function() {});
 
-  // TODO: Remove generic store methods as it doesnt seem to add value.
-  // TODO: Add methods to add/update and fetch all known models
-  // TODO: Add methods to search for lists of Models based on some filter.
-
   it("should be defined and loadable", function() {
     expect(AppStore).not.toBeUndefined();
   });
@@ -22,18 +18,22 @@ describe("AppStore", function() {
 
   it("should have correct signature", function() {
     const store = new AppStore();
-    expect(typeof store.get).toBe("function");
-    expect(typeof store.set).toBe("function");
+    expect(typeof store.create).toBe("function");
+    expect(typeof store.read).toBe("function");
+    expect(typeof store.update).toBe("function");
     expect(typeof store.delete).toBe("function");
+    expect(typeof store.find).toBe("function");
   });
 
   it("should log a warning if you dont extend the default behaviour", function() {
     var logSpy = jest.spyOn(console, "warn").mockImplementation();
     const store = new AppStore();
-    store.get();
-    store.set();
+    store.create();
+    store.read();
+    store.update();
     store.delete();
-    expect(logSpy).toHaveBeenCalledTimes(3);
+    store.find();
+    expect(logSpy).toHaveBeenCalledTimes(5);
     logSpy.mockReset();
   });
 });
