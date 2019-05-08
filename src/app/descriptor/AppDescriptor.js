@@ -1,5 +1,3 @@
-const { MalformedAppDescriptorError } = require("../../constants/errors");
-
 /**
  * Loads a descriptor in JSON format into a useable object
  */
@@ -19,7 +17,7 @@ class AppDescriptor {
       !descriptor.authentication ||
       !descriptor.authentication.type
     ) {
-      throw new MalformedAppDescriptorError();
+      throw new Error("Malformed AppDescriptor");
     }
 
     this.name = descriptor.name ? descriptor.name : descriptor.key;

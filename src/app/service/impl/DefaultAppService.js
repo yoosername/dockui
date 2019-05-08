@@ -1,10 +1,3 @@
-const {
-  APPSERVICE_STARTING_EVENT,
-  APPSERVICE_STARTED_EVENT,
-  APPSERVICE_SHUTTING_DOWN_EVENT,
-  APPSERVICE_SHUTDOWN_EVENT
-} = require("../../../constants/events");
-
 const AppService = require("../AppService");
 
 /**
@@ -15,173 +8,234 @@ const AppService = require("../AppService");
  */
 class DefaultAppService extends AppService {
   /**
-   * @param {Array} appLoaders - Array of {AppLoader} to use for loading {App}s
-   * @param {AppStore} appStore - The AppStore to use for framework persistence
-   * @param {LifecycleEventsStrategy} lifecycleEventsStrategy - This is used to customise framework events
-   * @param {EventService} eventService - The EventService to use for framework events
+   * @param {DockUIContext} context - Runtime Context object used to find runtime services.
    */
-  constructor(appLoaders, appStore, lifecycleEventsStrategy, eventService) {
-    super(appLoaders, appStore, lifecycleEventsStrategy, eventService);
+  constructor(context) {
+    super(context);
     this._running = false;
   }
 
   /**
    * @description Initialize and start the AppService
+   * @returns {Promise} Promise which resolves once started
    */
   start() {
-    "use strict";
-
-    // If we are not already started
-    if (this._running !== true) {
-      // First thing is to setup AppEventLifecycleStrategy
-      // Which allows us to provide custom async handlers for any event.
-      this.lifecycleEventsStrategy.setup();
-
-      // Notify listeners that we are starting up
-      this.eventService.emit(APPSERVICE_STARTING_EVENT, {
-        msg: "App Service Starting"
-      });
-
-      // Kick off scanning for new Apps
-      this.scanForNewApps();
-
-      // Flag that we are now running
-      this._running = true;
-
-      // Notify listeners that we have started
-      this.eventService.emit(APPSERVICE_STARTED_EVENT, {
-        msg: "App Service Started"
-      });
-    }
+    // Send local startup event
+    // Make sure TaskManager Running
+    // Make Sure Store Ready
+    // Then Report we are ready
+    // Send local started event
   }
 
   /**
    * @description shutdown AppService gracefully
    */
   shutdown() {
-    "use strict";
-
-    // If we are not already shutdown
-    if (this._running === true) {
-      // Notify listeners that we are shutting down
-      this.eventService.emit(APPSERVICE_SHUTTING_DOWN_EVENT, {
-        msg: "App Service Shutting Down"
-      });
-
-      // Tell Loaders to stop loading Apps
-      this.stopScanningForNewApps();
-
-      // Flag that we are not running
-      this._running = false;
-
-      // Notify listeners that we have shutdown successfully
-      this.eventService.emit(APPSERVICE_SHUTDOWN_EVENT, {
-        msg: "App Service Shutdown"
-      });
-
-      // Teardown event handlers
-      this.lifecycleEventsStrategy.teardown();
-    }
+    // Send shuttingdown event
+    // Send shutdown event
   }
 
   /**
-   * @description Tell each AppLoader to start looking for new Apps
+   * @description Load a single App from remote source
+   * @argument {String} url URL of App descriptor
+   * @argument {String} permission Permission to grant the new App
+   * @returns {Promise} Promise which resolves with new App() throws Error()
    */
-  scanForNewApps() {
-    "use strict";
-    this.appLoaders.forEach(appLoader => {
-      appLoader.scanForNewApps();
-    });
+  loadApp(url, permission) {
+    // Use TaskManager to schedule loading the App
+    // const task = TaskManager.createTask("APP_LOAD", {url, permission});
+    //
+    // Return a promise which resolves once task is complete
+    // return new Promise((resolve,reject)={
+    //   task
+    //     .setTimeout(10000)
+    //     .delayUntil(Date.parse('2020-01-01'))
+    //     .on("error", (error)=>{
+    //       reject(error);
+    //     })
+    //     .on("success", (result)=>{
+    //       const app = this.getApp(result);
+    //       resolve(app);
+    //     })
+    //     .commit();
+    // });
+    //
   }
 
   /**
-   * @description Tell each AppLoader we dont want any more scanning until called again
+   * @description UnLoad an already loaded App
+   * @argument {App} app The App to unload
+   * @returns {Promise} Promise which resolves when app has been loaded.
    */
-  stopScanningForNewApps() {
-    "use strict";
-    this.appLoaders.forEach(appLoader => {
-      appLoader.stopScanningForNewApps();
-    });
+  unLoadApp(app) {
+    // Use TaskManager to schedule unloading the App
+    // const task = TaskManager.createTask("APP_UNLOAD", {app});
+    //
+    // Return a promise which resolves once task is complete
+    // return new Promise((resolve,reject)={
+    //   task
+    //     .on("error", (error)=>{
+    //       reject(error);
+    //     })
+    //     .on("success", (result)=>{
+    //       // Return the original app for chaining
+    //       resolve(app);
+    //     })
+    //     .commit();
+    // });
+    //
   }
 
   /**
-   * @description Get all Apps from all Loaders
+   * @description Enable an already loaded App by its UUID
+   * @argument {App} app The App to enable
+   * @returns {Promise} promise which resolves when app has been enabled
+   */
+  enableApp(app) {
+    // if(app.isEnabled()){
+    //   return Promise.resolve(app);
+    // }
+    // Use TaskManager to schedule enabling the App
+    // const task = TaskManager.createTask("APP_ENABLE", {app});
+    //
+    // Return a promise which resolves once task is complete
+    // return new Promise((resolve,reject)={
+    //   task
+    //     .on("error", (error)=>{
+    //       reject(error);
+    //     })
+    //     .on("success", (result)=>{
+    //       // Return the original app for chaining
+    //       resolve(app);
+    //     })
+    //     .commit();
+    // });
+    //
+  }
+
+  /**
+   * @description Disable an already loaded/enabled App by its UUID
+   * @argument {String} uuid The App UUID to disable
+   * @returns {Promise} Promise which resolves when app has been disabled.
+   */
+  disableApp(uuid) {
+    // if(!app.isEnabled()){
+    //   return Promise.resolve(app);
+    // }
+    // Use TaskManager to schedule disabling the App
+    // const task = TaskManager.createTask("APP_DISABLE", {app});
+    //
+    // Return a promise which resolves once task is complete
+    // return new Promise((resolve,reject)={
+    //   task
+    //     .on("error", (error)=>{
+    //       reject(error);
+    //     })
+    //     .on("success", (result)=>{
+    //       // Return the original app for chaining
+    //       resolve(app);
+    //     })
+    //     .commit();
+    // });
+    //
+  }
+
+  /**
+   * @description Get all Apps that match the filter
    * @argument {Function} filter : filter the list of Apps using this test
+   * @returns {Array} Array of Apps matching filter
    */
   getApps(filter) {
-    "use strict";
-    var allApps = [];
-    this.appLoaders.forEach(appLoader => {
-      allApps.push(appLoader.getApps(filter));
-    });
-    return allApps;
+    //Search the store for all apps
+    // Filter the ones matching the filter
+    // Foreach one return array of new App objects
+    // Or if none empty array
   }
 
   /**
-   * @description Get single App by key
-   * @argument {int} appKey
+   * @description Get a single known App
+   * @argument {Object} partial Partial Object representing the App
+   * @returns {App} Requested App
    */
-  getApp(appKey) {
-    "use strict";
-    var App = null;
-    try {
-      App = this.getApps(App => App.getKey() === appKey)[0];
-    } catch (e) {
-      console.warn(
-        "[AppService] Attempted to locate App (" +
-          appKey +
-          ") but it was not found"
-      );
-    }
-    return App;
+  getApp(partial) {
+    // Lookup App in Store using partial info
+    // If it exists, return new App()
   }
 
   /**
-   * @description Return a single App(s) module(s)
-   * @argument {int} appKey
+   * @description Return array of modules matching a filter object
    * @argument {Function} filter
+   * @returns {Array} Array of Modules matching filter
    */
-  getModules(appKey, filter) {
-    "use strict";
-    var modules = [];
-    var app = this.getApp(appKey);
-    if (app !== null) {
-      modules = app.getModules();
-      if (filter && typeof filter === "function") {
-        modules = modules.filter(filter);
-      }
-    } else {
-      console.warn(
-        "[AppService] Attempted to get modules for App (" +
-          appKey +
-          ") but it was not found - skipping"
-      );
-    }
-    return modules;
+  getModules(filter) {
+    //Search the store for all modules
+    // Filter the ones matching the filter
+    // Foreach one return array of new Module objects
+    // Or if none empty array
   }
 
   /**
    * @description Return a single App(s) module(s)
-   * @argument {int} appKey
-   * @argument {int} moduleKey
+   * @argument {object} partial
+   * @returns {Module} Requested Module
    */
-  getModule(appKey, moduleKey) {
-    "use strict";
-    var module = null;
-    try {
-      module = this.getModules(appKey, module => {
-        return module.getKey() === moduleKey;
-      })[0];
-    } catch (e) {
-      console.warn(
-        "[AppService] Attempted to locate module (" +
-          moduleKey +
-          ") for App (" +
-          appKey +
-          ") but it was not found"
-      );
-    }
-    return module;
+  getModule(partial) {
+    // Lookup App in Store using partial module info
+    // If it exists, return new Module()
+  }
+
+  /**
+   * @description Enable an already loaded Module by an App UUID and module Key
+   * @argument {Module} module
+   * @returns {Promise} Promise which resolves when module has been enabled.
+   */
+  enableModule(module) {
+    // if(module.isEnabled()){
+    //   return Promise.resolve(module);
+    // }
+    // Use TaskManager to schedule enabling the Module
+    // const task = TaskManager.createTask("MODULE_ENABLE", {module});
+    //
+    // Return a promise which resolves once task is complete
+    // return new Promise((resolve,reject)={
+    //   task
+    //     .on("error", (error)=>{
+    //       reject(error);
+    //     })
+    //     .on("success", (result)=>{
+    //       // Return the original app for chaining
+    //       resolve(module);
+    //     })
+    //     .commit();
+    // });
+    //
+  }
+
+  /**
+   * @description Disable an already enabled Module by an App UUID and module Key
+   * @argument {Module} module
+   * @returns {Promise} Promise which resolves when module has been disabled.
+   */
+  disableModule(module) {
+    // if(!module.isEnabled()){
+    //   return Promise.resolve(module);
+    // }
+    // Use TaskManager to schedule enabling the Module
+    // const task = TaskManager.createTask("MODULE_DISABLE", {module});
+    //
+    // Return a promise which resolves once task is complete
+    // return new Promise((resolve,reject)={
+    //   task
+    //     .on("error", (error)=>{
+    //       reject(error);
+    //     })
+    //     .on("success", (result)=>{
+    //       // Return the original app for chaining
+    //       resolve(module);
+    //     })
+    //     .commit();
+    // });
+    //
   }
 }
 

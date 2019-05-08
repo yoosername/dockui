@@ -1,31 +1,8 @@
-const chai = require("chai");
-let should = chai.should();
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-let chaiHttp = require("chai-http");
-chai.use(chaiHttp);
-chai.use(sinonChai);
-var proxyquire = require("proxyquire");
-var EventEmitter = require("events");
+const DefaultWebService = require("./DefaultWebService");
+const request = require("supertest");
 
-const {
-  WEBSERVICE_STARTING_EVENT,
-  WEBSERVICE_STARTED_EVENT,
-  WEBSERVICE_SHUTTING_DOWN_EVENT,
-  WEBSERVICE_SHUTDOWN_EVENT,
-  URL_APP_LOAD_REQUEST
-} = require("../../constants/events");
-
-const { MockAppService } = require("../../util/mocks");
-var mockEventService = null;
-var mockAppService = null;
-var httpServerStub = null;
-var useSpy = null;
-var expressStub = null;
-var DefaultWebService = null;
-var webService = null;
-var getAppsStub = null;
+// Follow example at: https://codeburst.io/lets-build-a-rest-api-with-koa-js-and-test-with-jest-2634c14394d3
+// Intergation test for the management API
 
 const APPS = [
   {
@@ -43,80 +20,24 @@ const APPS = [
 describe("DefaultWebService", function() {
   "use strict";
 
-  beforeEach(function() {
-    mockAppService = new MockAppService();
-    // Custom mockAppService which produces 2 known Apps
-    getAppsStub = sinon.stub(mockAppService, "getApps").returns(APPS);
-    mockEventService = new EventEmitter();
-    mockEventService.setMaxListeners(0);
-    useSpy = sinon.spy();
-    expressStub = sinon.stub().returns({
-      use: useSpy,
-      get: useSpy,
-      post: useSpy,
-      put: useSpy,
-      delete: useSpy
-    });
-    httpServerStub = sinon.stub().returns({
-      listen: (_, cb) => {
-        cb();
-      },
-      close: cb => {
-        cb();
-      }
-    });
-    DefaultWebService = proxyquire("./DefaultWebService", {
-      http: {
-        createServer: httpServerStub
-      },
-      express: expressStub
-    });
-    webService = new DefaultWebService(mockAppService, mockEventService);
-  });
+  beforeEach(function() {});
 
-  afterEach(function() {
-    getAppsStub.restore();
-  });
+  afterEach(function() {});
 
   it("should be defined and loadable", function() {
-    expect(DefaultWebService).to.not.be.undefined;
+    expect(DefaultWebService).not.toBeUndefined();
   });
 
   it("should be a function", function() {
-    expect(DefaultWebService).to.be.a("function");
+    expect(typeof DefaultWebService).toBe("function");
   });
 
   it("should report if its running correctly", function() {
-    expect(webService.isRunning()).to.equal(false);
+    expect(webService.isRunning()).toBe(false);
     webService.start();
-    expect(webService.isRunning()).to.equal(true);
+    expect(webService.isRunning()).toBe(true);
     webService.shutdown();
-    expect(webService.isRunning()).to.equal(false);
-  });
-
-  it("should fire starting events", function(done) {
-    mockEventService.on(WEBSERVICE_STARTING_EVENT, () => {
-      mockEventService.on(WEBSERVICE_STARTED_EVENT, () => {
-        done();
-      });
-    });
-    webService.start();
-  });
-
-  it("should fire shutdown events", function(done) {
-    var count = 0;
-    mockEventService.on(WEBSERVICE_STARTING_EVENT, () => {
-      count++;
-    });
-    mockEventService.on(WEBSERVICE_SHUTTING_DOWN_EVENT, () => {
-      mockEventService.on(WEBSERVICE_SHUTDOWN_EVENT, () => {
-        count++;
-        done();
-      });
-    });
-    webService.start();
-    expect(count).to.equal(1);
-    webService.shutdown();
+    expect(webService.isRunning()).toBe(false);
   });
 
   describe("DockUI Management API", function() {

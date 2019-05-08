@@ -1,5 +1,3 @@
-const { MalformedModuleDescriptorError } = require("../../constants/errors");
-
 /**
  * @description Loads a raw JSON descriptor into a specific ModuleDescriptor object
  */
@@ -9,7 +7,7 @@ class ModuleDescriptor {
    */
   constructor(descriptor) {
     if (!descriptor.type || !descriptor.name || !descriptor.key) {
-      throw new MalformedModuleDescriptorError();
+      throw new Error("Malformed Module Descriptor");
     }
 
     // Minimum Required fields

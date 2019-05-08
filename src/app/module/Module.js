@@ -1,10 +1,3 @@
-const { validateShapes } = require("../../util/validate");
-
-const {
-  MODULE_ENABLED_EVENT,
-  MODULE_DISABLED_EVENT
-} = require("../../constants/events");
-
 /**
  * @description Represents a single Module loaded from a Module Descriptor.
  */
@@ -14,14 +7,7 @@ class Module {
    * @argument {App} descriptor - The module descriptor used to load the module
    */
   constructor(app, descriptor) {
-    // Validate our args using ducktyping utils. (figure out better way to do this later)
-    validateShapes([
-      { shape: "App", object: app },
-      { shape: "ModuleDescriptor", object: descriptor }
-    ]);
-
     this.app = app;
-    this.eventService = app.getEventService();
     this.descriptor = descriptor;
     this.key = descriptor.getKey();
     this.name = descriptor.getName();

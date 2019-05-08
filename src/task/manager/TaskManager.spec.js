@@ -1,36 +1,30 @@
-const chai = require("chai");
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
-
 const TaskManager = require("./TaskManager");
 
 describe("TaskManager", function() {
   "use strict";
 
-  it("should be defined and loadable", function() {
-    expect(TaskManager).to.not.be.undefined;
+  test("should be defined and loadable", function() {
+    expect(TaskManager).not.toBeUndefined();
   });
 
-  it("should be a function", function() {
-    expect(TaskManager).to.be.a("function");
+  test("should be a function", function() {
+    expect(typeof TaskManager).toBe("function");
   });
 
-  it("should have correct signature", function() {
+  test("should have correct signature", function() {
     const taskManager = new TaskManager();
-    expect(taskManager.createTask).to.be.a("function");
-    expect(taskManager.processTasks).to.be.a("function");
-    expect(taskManager.shutdown).to.be.a("function");
+    expect(typeof taskManager.createTask).toBe("function");
+    expect(typeof taskManager.processTasks).toBe("function");
+    expect(typeof taskManager.shutdown).toBe("function");
   });
 
-  it("should log a warning if you dont extend the default behaviour", function() {
-    var logSpy = sinon.stub(console, "warn");
+  test("should log a warning if you dont extend the default behaviour", function() {
+    var logSpy = jest.spyOn(console, "warn").mockImplementation();
     const taskManager = new TaskManager();
     taskManager.createTask();
     taskManager.processTasks();
     taskManager.shutdown();
-    expect(logSpy).to.be.called.callCount(3);
-    logSpy.restore();
+    expect(logSpy).toHaveBeenCalledTimes(3);
+    logSpy.mockRestore();
   });
 });

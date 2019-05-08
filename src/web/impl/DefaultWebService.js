@@ -9,17 +9,6 @@ const swaggerOptions = {
 };
 
 const WEBSERVICE_PORT = 3000;
-
-const {
-  WEBSERVICE_STARTING_EVENT,
-  WEBSERVICE_STARTED_EVENT,
-  WEBSERVICE_SHUTTING_DOWN_EVENT,
-  WEBSERVICE_SHUTDOWN_EVENT,
-  URL_APP_LOAD_REQUEST,
-  URL_APP_UNLOAD_REQUEST
-} = require("../../constants/events");
-
-const { validateShapes } = require("../../util/validate");
 const WebService = require("../WebService");
 
 /**

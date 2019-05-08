@@ -1,31 +1,23 @@
-const chai = require("chai");
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
-
-var CachableModuleLoader = require("./CachableModuleLoader");
+const CachableModuleLoader = require("./CachableModuleLoader");
 
 describe("CachableModuleLoader", function() {
   "use strict";
 
   beforeEach(function() {});
 
-  it("should be defined and loadable", function() {
-    expect(CachableModuleLoader).to.not.be.undefined;
+  test("should be defined and loadable", function() {
+    expect(CachableModuleLoader).not.toBeUndefined();
   });
 
-  it("should be a function", function() {
-    expect(CachableModuleLoader).to.be.a("function");
+  test("should be a function", function() {
+    expect(typeof CachableModuleLoader).toBe("function");
     expect(() => {
       new CachableModuleLoader();
-    }).not.to.throw();
-    expect(new CachableModuleLoader()).to.be.an.instanceOf(
-      CachableModuleLoader
-    );
+    }).not.toThrow();
+    expect(new CachableModuleLoader()).toBeInstanceOf(CachableModuleLoader);
   });
 
-  it("should return from the cache the same as you put into it", function() {
+  test("should return from the cache the same as you put into it", function() {
     const loader = new CachableModuleLoader();
     const descriptor = {
       type: "fakeDescriptor",
@@ -40,6 +32,6 @@ describe("CachableModuleLoader", function() {
     };
     loader.setCache(descriptor, state);
     var cachedState = loader.getCache(descriptor);
-    expect(cachedState).to.eql(state);
+    expect(cachedState).toBe(state);
   });
 });

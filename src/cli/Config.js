@@ -1,5 +1,3 @@
-const { ConfigValidationError } = require("../constants/errors");
-
 /**
  * A Config encapsulates configuration information derived from a DockUI config source
  */

@@ -7,6 +7,10 @@ const uuidv4 = require("uuid/v4");
 
 const AppPermission = require("./permission/AppPermission");
 
+// TODO: Turn App into a plain model with some static helper methods for accessing data
+//       From a particular store etc.
+// Need to be able to serialize and deserialize an App easily
+
 const {
   MockAppStore,
   MockAppDescriptor,

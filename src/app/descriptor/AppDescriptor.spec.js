@@ -1,9 +1,3 @@
-const chai = require("chai");
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
-
 var AppDescriptor = require("./AppDescriptor");
 
 describe("AppDescriptor", function() {
@@ -11,33 +5,33 @@ describe("AppDescriptor", function() {
 
   beforeEach(function() {});
 
-  it("should be defined and loadable", function() {
-    expect(AppDescriptor).to.not.be.undefined;
+  test("should be defined and loadable", function() {
+    expect(AppDescriptor).not.toBeUndefined();
   });
 
-  it("should be a function", function() {
-    expect(AppDescriptor).to.be.a("function");
+  test("should be a function", function() {
+    expect(typeof AppDescriptor).toBe("function");
   });
 
-  it("should validate a correct JSON obj", function() {
+  test("should validate a correct JSON obj", function() {
     expect(() => {
       new AppDescriptor();
-    }).to.throw();
+    }).toThrow();
 
     expect(() => {
       new AppDescriptor(null, null, null);
-    }).to.throw();
+    }).toThrow();
 
     expect(() => {
       new AppDescriptor(undefined, "", false);
-    }).to.throw();
+    }).toThrow();
 
     expect(() => {
       new AppDescriptor({
         key: "AppKey",
         url: "http://bla.bla"
       });
-    }).to.throw();
+    }).toThrow();
 
     expect(() => {
       new AppDescriptor({
@@ -50,7 +44,7 @@ describe("AppDescriptor", function() {
           type: "jwt"
         }
       });
-    }).to.not.throw();
+    }).not.toThrow();
   });
 
   // Methods to Test

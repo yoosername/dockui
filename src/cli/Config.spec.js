@@ -1,6 +1,3 @@
-const chai = require("chai");
-const expect = chai.expect;
-
 var { Config, ConfigBuilder } = require("./Config");
 
 describe("Config", function() {
@@ -8,44 +5,44 @@ describe("Config", function() {
 
   beforeEach(function() {});
 
-  it("should be defined and loadable", function() {
-    expect(Config).to.not.be.undefined;
-    expect(ConfigBuilder).to.not.be.undefined;
+  test("should be defined and loadable", function() {
+    expect(Config).not.toBeUndefined();
+    expect(ConfigBuilder).not.toBeUndefined();
   });
 
-  it("should be a function", function() {
-    expect(Config).to.be.a("function");
-    expect(ConfigBuilder).to.be.a("function");
+  test("should be a function", function() {
+    expect(typeof Config).toBe("function");
+    expect(typeof ConfigBuilder).toBe("function");
   });
 
-  it("Should return a Config.Builder if one isnt passed as arg", function() {
+  test("Should return a Config.Builder if one isnt passed as arg", function() {
     var builder = new Config();
-    expect(builder).to.be.instanceof(ConfigBuilder);
+    expect(builder).toBeInstanceOf(ConfigBuilder);
   });
 
   describe("ConfigBuilder", function() {
     // store
-    it("should be able to set the store", function() {
+    test("should be able to set the store", function() {
       const config = new ConfigBuilder().withStore("file://local.file").build();
-      expect(config.store).to.equal("file://local.file");
+      expect(config.store).toBe("file://local.file");
     });
 
     // events
-    it("should be able to set the events", function() {
+    test("should be able to set the events", function() {
       const config = new ConfigBuilder().withEvents("memory").build();
-      expect(config.events).to.equal("memory");
+      expect(config.events).toBe("memory");
     });
 
     // port
-    it("should be able to set the port", function() {
+    test("should be able to set the port", function() {
       const config = new ConfigBuilder().withPort("8000").build();
-      expect(config.port).to.equal("8000");
+      expect(config.port).toBe("8000");
     });
 
     // secret
-    it("should be able to set the global secret", function() {
+    test("should be able to set the global secret", function() {
       const config = new ConfigBuilder().withSecret("changeme").build();
-      expect(config.secret).to.equal("changeme");
+      expect(config.secret).toBe("changeme");
     });
   });
 });

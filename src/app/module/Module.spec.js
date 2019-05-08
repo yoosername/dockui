@@ -1,59 +1,63 @@
-const chai = require("chai");
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
-
 var Module = require("./Module");
 
-const { MockApp, MockModuleDescriptor } = require("../../util/mocks");
+const App = require("../App");
+const ModuleDescriptor = require("../descriptor/ModuleDescriptor");
 
-var mockApp = null;
-var mockModuleDescriptor = null;
+jest.mock("../App");
+jest.mock("../descriptor/ModuleDescriptor");
+
+var app,
+  descriptor = null;
 
 describe("Module", function() {
   "use strict";
 
   beforeEach(function() {
-    mockApp = new MockApp();
-    mockModuleDescriptor = new MockModuleDescriptor();
+    app = new App();
+    descriptor = new ModuleDescriptor();
+    descriptor.getKey.mockReturnValue("testModuleKey");
+    descriptor.getName.mockReturnValue("testModuleName");
+    descriptor.getType.mockReturnValue("testModuleType");
   });
 
-  it("should be defined and loadable", function() {
-    expect(Module).to.not.be.undefined;
+  test("should be defined and loadable", function() {
+    expect(Module).not.toBeUndefined();
   });
 
-  it("should be a function", function() {
-    expect(Module).to.be.a("function");
+  test("should be a function", function() {
+    expect(typeof Module).toBe("function");
   });
 
-  it("should validate arguments", function() {
+  test("should validate arguments", function() {
     expect(function() {
       new Module();
-    }).to.throw();
+    }).toThrow();
     expect(function() {
       new Module(null, null, null);
-    }).to.throw();
+    }).toThrow();
     expect(function() {
       new Module(undefined, undefined, undefined);
-    }).to.throw();
+    }).toThrow();
     expect(function() {
-      new Module(mockApp, mockApp, "");
-    }).to.throw();
+      new Module(app, app, "");
+    }).toThrow();
     expect(function() {
-      new Module(mockApp, mockModuleDescriptor);
-    }).to.not.throw();
+      new Module(app, descriptor);
+    }).not.toThrow();
   });
 
-  it("should respond with correct Key", function() {
-    var MODULE_KEY = "mockModuleKey";
-    var module = new Module(mockApp, mockModuleDescriptor);
-    expect(module.getKey() === MODULE_KEY).to.equal(true);
+  test("should respond with correct Key", function() {
+    var module = new Module(app, descriptor);
+    expect(module.getKey()).toBe("testModuleKey");
   });
 
-  it("should respond with correct Type", function() {
-    var MODULE_TYPE = "mockModuleType";
-    var module = new Module(mockApp, mockModuleDescriptor);
-    expect(module.getType() === MODULE_TYPE).to.equal(true);
+  test("should respond with correct Name", function() {
+    var module = new Module(app, descriptor);
+    expect(module.getName()).toBe("testModuleName");
+  });
+
+  test("should respond with correct Type", function() {
+    var module = new Module(app, descriptor);
+    expect(module.getType()).toBe("testModuleType");
   });
 });

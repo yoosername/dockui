@@ -1,14 +1,27 @@
+const EventEmitter = require("events");
+
 /**
- * @description Orchestrates
- *                loading Apps via AppLoaders,
- *                triggering events in the EventService based on the LifecycleEventsStrategy and
- *                state persistence via the AppStore
+ * @description Service which provides methods to
+ *                loading/unLoad Apps/Modules from remote sources,
+ *                Finding loaded Apps from DB,
+ *                Enabling/Disabling Apps/Modules,
+ *
  */
-class AppService {
+class AppService extends EventEmitter {
   /**
-   * @param {DockUIContext} context - DockUIContext used to find runtime services.
+   * @param {DockUIContext} context - Runtime Context object used to find runtime services.
    */
   constructor(context) {
+    super();
+    if (
+      !context ||
+      typeof context !== "object" ||
+      context.constructor === Array
+    ) {
+      throw new Error(
+        "AppService should be instantiated with a context object"
+      );
+    }
     this.context = context;
   }
 
@@ -37,26 +50,6 @@ class AppService {
     "use strict";
     console.warn(
       "[AppService] shutdown - NoOp implementation - this should be extended by child classes"
-    );
-  }
-
-  /**
-   * @description Tell each AppLoader to start looking for new Apps
-   */
-  scanForNewApps() {
-    "use strict";
-    console.warn(
-      "[AppService] scanForNewApps - NoOp implementation - this should be extended by child classes"
-    );
-  }
-
-  /**
-   * @description Tell each AppLoader we dont want any more scanning until called again
-   */
-  stopScanningForNewApps() {
-    "use strict";
-    console.warn(
-      "[AppService] stopScanningForNewApps - NoOp implementation - this should be extended by child classes"
     );
   }
 

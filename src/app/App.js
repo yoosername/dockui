@@ -1,5 +1,4 @@
 const uuidv4 = require("uuid/v4");
-const { validateShapes } = require("../util/validate");
 
 /**
  * @description Represents a single App.
@@ -12,7 +11,7 @@ const { validateShapes } = require("../util/validate");
 class App {
   constructor(key, permission, descriptor, enabled = false, uuid = null) {
     // Validate our args using ducktyping utils. (figure out better way to do this later)
-    validateShapes([{ shape: "AppDescriptor", object: descriptor }]);
+    //validateShapes([{ shape: "AppDescriptor", object: descriptor }]);
 
     this.key = key;
     this.permission = permission;
