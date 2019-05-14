@@ -1,4 +1,4 @@
-const DefaultWebService = require("./DefaultWebService");
+const SimpleWebService = require("./SimpleWebService");
 const request = require("supertest");
 
 // Follow example at: https://codeburst.io/lets-build-a-rest-api-with-koa-js-and-test-with-jest-2634c14394d3
@@ -19,7 +19,7 @@ const APPS = [
   }
 ];
 
-describe("DefaultWebService", function() {
+describe("SimpleWebService", function() {
   "use strict";
 
   beforeEach(function() {});
@@ -27,11 +27,11 @@ describe("DefaultWebService", function() {
   afterEach(function() {});
 
   it("should be defined and loadable", function() {
-    expect(DefaultWebService).not.toBeUndefined();
+    expect(SimpleWebService).not.toBeUndefined();
   });
 
   it("should be a function", function() {
-    expect(typeof DefaultWebService).toBe("function");
+    expect(typeof SimpleWebService).toBe("function");
   });
 
   it("should report if its running correctly", function() {
@@ -51,8 +51,8 @@ describe("DefaultWebService", function() {
 
     // List All Apps - GET /api/admin/app
     it("should be able to List all Apps", function(done) {
-      DefaultWebService = require("./DefaultWebService");
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      SimpleWebService = require("./SimpleWebService");
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       // Check REST API returns correct results
       chai
@@ -69,9 +69,9 @@ describe("DefaultWebService", function() {
 
     // Attempt to Load App - POST /api/admin/app
     it("should be able to load a single App", function(done) {
-      DefaultWebService = require("./DefaultWebService");
+      SimpleWebService = require("./SimpleWebService");
       const eventSpy = sinon.spy(mockEventService, "emit");
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       let appRequest = {
         key: "https:/location.of/descriptor.yml",
@@ -97,9 +97,9 @@ describe("DefaultWebService", function() {
 
     // Get single App - GET /api/admin/app/:id
     it("should be able to get a single App", function(done) {
-      DefaultWebService = require("./DefaultWebService");
+      SimpleWebService = require("./SimpleWebService");
       const getAppStub = sinon.stub(mockAppService, "getApp").returns(APPS[1]);
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       // Check REST API returns correct results
       chai
@@ -116,10 +116,10 @@ describe("DefaultWebService", function() {
 
     // Unload App - DELETE /api/admin/app/:id
     it("should be able to unload a single App", function(done) {
-      DefaultWebService = require("./DefaultWebService");
+      SimpleWebService = require("./SimpleWebService");
       const getAppStub = sinon.stub(mockAppService, "getApp").returns(APPS[0]);
       const eventSpy = sinon.spy(mockEventService, "emit");
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       // Check REST API returns correct results
       chai
@@ -141,7 +141,7 @@ describe("DefaultWebService", function() {
 
     // List Apps Modules - GET /api/admin/app/:id/modules
     it("should be able to list a single Apps Modules", function(done) {
-      DefaultWebService = require("./DefaultWebService");
+      SimpleWebService = require("./SimpleWebService");
       const FAKE_MODULES = [
         { key: "module1", name: "Module 1" },
         { key: "module2", name: "Module 2" },
@@ -152,7 +152,7 @@ describe("DefaultWebService", function() {
           return FAKE_MODULES;
         }
       });
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       // Check REST API returns correct results
       chai
@@ -169,7 +169,7 @@ describe("DefaultWebService", function() {
 
     // Enable App - PUT /api/admin/app/:id/enable
     it("should be able to enable an App", function(done) {
-      DefaultWebService = require("./DefaultWebService");
+      SimpleWebService = require("./SimpleWebService");
       const APP_NAME = "Appy";
       const getAppStub = sinon.stub(mockAppService, "getApp").returns({
         enable: () => {},
@@ -177,7 +177,7 @@ describe("DefaultWebService", function() {
           return APP_NAME;
         }
       });
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       // Check REST API returns correct results
       chai
@@ -192,7 +192,7 @@ describe("DefaultWebService", function() {
 
     // Disable App - PUT /api/admin/app/:id/disable
     it("should be able to disable an App", function(done) {
-      DefaultWebService = require("./DefaultWebService");
+      SimpleWebService = require("./SimpleWebService");
       const APP_NAME = "Appy";
       const getAppStub = sinon.stub(mockAppService, "getApp").returns({
         disable: () => {},
@@ -200,7 +200,7 @@ describe("DefaultWebService", function() {
           return APP_NAME;
         }
       });
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       // Check REST API returns correct results
       chai
@@ -215,7 +215,7 @@ describe("DefaultWebService", function() {
 
     // Enable Module - PUT /api/admin/app/:id/modules/:moduleId/enable
     it("should be able to enable a Module", function(done) {
-      DefaultWebService = require("./DefaultWebService");
+      SimpleWebService = require("./SimpleWebService");
       const APP_NAME = "Appy";
       const getAppStub = sinon.stub(mockAppService, "getApp").returns({
         getName: () => {
@@ -230,7 +230,7 @@ describe("DefaultWebService", function() {
           };
         }
       });
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       // Check REST API returns correct results
       chai
@@ -245,7 +245,7 @@ describe("DefaultWebService", function() {
 
     // Disable Module - PUT /api/admin/app/:id/modules/:moduleId/disable
     it("should be able to disable a Module", function(done) {
-      DefaultWebService = require("./DefaultWebService");
+      SimpleWebService = require("./SimpleWebService");
       const APP_NAME = "Appy";
       const getAppStub = sinon.stub(mockAppService, "getApp").returns({
         getName: () => {
@@ -260,7 +260,7 @@ describe("DefaultWebService", function() {
           };
         }
       });
-      webService = new DefaultWebService(mockAppService, mockEventService);
+      webService = new SimpleWebService(mockAppService, mockEventService);
 
       // Check REST API returns correct results
       chai

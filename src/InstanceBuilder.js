@@ -1,17 +1,16 @@
 /**
- * @description Wrapper around App services for easier usage
+ * @description Wrapper around various DockUI App services for easier usage
  */
-class DockUIApps {
+class Instance {
   /**
-   * @argument {DockUIAppsBuilder} builder
-   * @throws DockuiFrameworkError
+   * @argument {InstanceBuilder} builder
    */
   constructor(builder) {
     if (!builder) {
-      return new DockUIAppsBuilder();
+      return new InstanceBuilder();
     }
 
-    this.context = builder.context;
+    this.config = builder.config;
     this.webService = builder.webService;
     this.appService = builder.appService;
     this.appStore = builder.appStore;
@@ -52,11 +51,11 @@ class DockUIApps {
 }
 
 /**
- * @description Builder that generates a DockUIApps instance
+ * @description Builder that generates a DockUI instance
  */
-class DockUIAppsBuilder {
+class InstanceBuilder {
   constructor() {
-    this.context = {};
+    this.config = {};
     this.webService = null;
     this.appService = null;
     this.appStore = null;
@@ -66,11 +65,11 @@ class DockUIAppsBuilder {
   }
 
   /**
-   * @description Use the specified Javascript object as context
-   * @argument {Object} context The context to use
+   * @description Use the specified Config object
+   * @argument {Config} config The Config to use
    */
-  withContext(context) {
-    this.context = context;
+  withConfig(config) {
+    this.config = config;
     return this;
   }
 
@@ -133,12 +132,12 @@ class DockUIAppsBuilder {
    * @returns {DockUIApps} instance of DockUIApps
    */
   build() {
-    const dockUIApps = new DockUIApps(this);
-    return dockUIApps;
+    const instance = new Instance(this);
+    return instance;
   }
 }
 
 module.exports = {
-  DockUIApps: DockUIApps,
-  DockUIAppsBuilder: DockUIAppsBuilder
+  Instance: Instance,
+  InstanceBuilder: InstanceBuilder
 };

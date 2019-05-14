@@ -1,15 +1,16 @@
-const expect = require("chai").expect;
-
 const TaskManagerFactory = require("./TaskManagerFactory");
-const TaskManager = require("../TaskManager");
 
 describe("TaskManagerFactory", function() {
   "use strict";
 
-  it("create should return an instance of TaskManager", function() {
-    const factory = new TaskManagerFactory();
-    const manager = factory.create({});
-    expect(manager).to.not.be.undefined;
-    // Should be type of TaskManager
+  it("should be defined and a loadable function", function() {
+    expect(TaskManagerFactory).not.toBeUndefined();
+    expect(typeof TaskManagerFactory).toBe("object");
+    expect(typeof TaskManagerFactory.create).toBe("function");
+  });
+
+  it("should return a valid TaskManager instance with or without config", function() {
+    const taskManager = TaskManagerFactory.create();
+    expect(typeof taskManager).toBe("function");
   });
 });

@@ -15,7 +15,7 @@ const WebService = require("../WebService");
  * @description Wraps the intialization, configuration and starting/stopping of a web server
  *              and associated routes etc.
  */
-class DefaultWebService extends WebService {
+class SimpleWebService extends WebService {
   /**
    * @argument {AppService} appService The AppService for interacting with Apps
    * @argument {EventService} eventService The EventService to use for web events
@@ -313,4 +313,4 @@ class DefaultWebService extends WebService {
   }
 }
 
-module.exports = DefaultWebService;
+module.exports = SimpleWebService;
