@@ -1,4 +1,3 @@
-
 const ApiModule = require("./src/app/module/impl/ApiModule");
 const ApiModuleLoader = require("./src/app/loader/module/impl/ApiModuleLoader");
 const App = require("./src/app/App");
@@ -18,7 +17,7 @@ const ConfigDefaults = require("./src/config/ConfigDefaults");
 const ConfigEnvLoader = require("./src/config/ConfigEnvLoader");
 const ConfigLoader = require("./src/config/ConfigLoader");
 const DefaultAppService = require("./src/app/service/impl/DefaultAppService");
-const DockUI = require("./src/main/DockUI");
+const DockUI = require("./src/main/Instance");
 const DockerEventsReactor = require("./src/task/reactor/impl/DockerEventsReactor");
 const InMemoryAppStore = require("./src/store/impl/InMemoryAppStore");
 const InstanceBuilder = require("./src/InstanceBuilder");
@@ -48,54 +47,53 @@ const WebhookModule = require("./src/app/module/impl/WebhookModule");
 const WebhookModuleLoader = require("./src/app/loader/module/impl/WebhookModuleLoader");
 const swagger = require("./src/web/impl/admin/swagger");
 
-
 module.exports = {
-InstanceBuilder,
-App,
-AppLoader,
-UrlAppLoader,
-ModuleLoader,
-ApiModuleLoader,
-AuthenticationProviderModuleLoader,
-AuthorizationProviderModuleLoader,
-CachableModuleLoader,
-RouteModuleLoader,
-WebFragmentModuleLoader,
-WebItemModuleLoader,
-WebPageModuleLoader,
-WebResourceModuleLoader,
-WebhookModuleLoader,
-Module,
-ApiModule,
-AuthenticationProviderModule,
-AuthorizationProviderModule,
-RouteModule,
-WebFragmentModule,
-WebItemModule,
-WebPageModule,
-WebResourceModule,
-WebhookModule,
-AppService,
-AppServiceFactory,
-DefaultAppService,
-CLI,
-Config,
-ConfigDefaults,
-ConfigEnvLoader,
-ConfigLoader,
-DockUI,
-AppStore,
-StoreFactory,
-InMemoryAppStore,
-TaskManager,
-TaskManagerFactory,
-SingleNodeTaskManager,
-Reactor,
-DockerEventsReactor,
-TaskWorker,
-AppLoaderTaskWorker,
-WebService,
-WebServiceFactory,
-SimpleWebService,
-swagger,
-}
+  InstanceBuilder,
+  App,
+  AppLoader,
+  UrlAppLoader,
+  ModuleLoader,
+  ApiModuleLoader,
+  AuthenticationProviderModuleLoader,
+  AuthorizationProviderModuleLoader,
+  CachableModuleLoader,
+  RouteModuleLoader,
+  WebFragmentModuleLoader,
+  WebItemModuleLoader,
+  WebPageModuleLoader,
+  WebResourceModuleLoader,
+  WebhookModuleLoader,
+  Module,
+  ApiModule,
+  AuthenticationProviderModule,
+  AuthorizationProviderModule,
+  RouteModule,
+  WebFragmentModule,
+  WebItemModule,
+  WebPageModule,
+  WebResourceModule,
+  WebhookModule,
+  AppService,
+  AppServiceFactory,
+  DefaultAppService,
+  CLI,
+  Config,
+  ConfigDefaults,
+  ConfigEnvLoader,
+  ConfigLoader,
+  DockUI,
+  AppStore,
+  StoreFactory,
+  InMemoryAppStore,
+  TaskManager,
+  TaskManagerFactory,
+  SingleNodeTaskManager,
+  Reactor,
+  DockerEventsReactor,
+  TaskWorker,
+  AppLoaderTaskWorker,
+  WebService,
+  WebServiceFactory,
+  SimpleWebService,
+  swagger
+};

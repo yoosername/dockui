@@ -3,22 +3,22 @@ const WebService = require("./web/WebService");
 const AppStore = require("./store/AppStore");
 const TaskManager = require("./task/manager/TaskManager");
 
-const { DockUIApps, DockUIAppsBuilder } = require("./DockUIApps");
+const { Instance, InstanceBuilder } = require("./Instance");
 
-var appService, webService, appStore, taskManager, dockUIApps;
+var appService, webService, appStore, taskManager, instance;
 
 jest.mock("./app/service/AppService");
 jest.mock("./web/WebService");
 jest.mock("./store/AppStore");
 jest.mock("./task/manager/TaskManager");
 
-describe("DockUIApps", function() {
+describe("InstanceBuilder", function() {
   beforeEach(function() {
     appService = new AppService();
     webService = new WebService();
     appStore = new AppStore();
     taskManager = new TaskManager();
-    dockUIApps = new DockUIApps()
+    instance = new Instance()
       .withContext({})
       .withStore(appStore)
       .withTaskManager(taskManager)
@@ -29,71 +29,71 @@ describe("DockUIApps", function() {
   });
 
   test("it is defined and loadable", () => {
-    expect(DockUIApps).toBeDefined();
-    expect(DockUIAppsBuilder).toBeDefined();
-    expect(typeof DockUIApps).toBe("function");
-    expect(typeof DockUIAppsBuilder).toBe("function");
+    expect(Instance).toBeDefined();
+    expect(InstanceBuilder).toBeDefined();
+    expect(typeof Instance).toBe("function");
+    expect(typeof InstanceBuilder).toBe("function");
   });
 
-  test("it returns a DockUIApps.Builder if one isnt passed as arg", () => {
-    var builder = new DockUIApps();
-    expect(builder).toBeInstanceOf(DockUIAppsBuilder);
+  test("it returns a Instance.Builder if one isnt passed as arg", () => {
+    var builder = new Instance();
+    expect(builder).toBeInstanceOf(InstanceBuilder);
   });
 
   test("it starts required services when start() called", () => {
-    dockUIApps.start();
+    instance.start();
     expect(appService.start).toBeCalled();
     expect(webService.start).toBeCalled();
     expect(taskManager.start).toBeCalled();
   });
 
   test("it stops services when shutdown() called", () => {
-    dockUIApps.start();
-    dockUIApps.shutdown();
+    instance.start();
+    instance.shutdown();
     expect(appService.shutdown).toBeCalled();
     expect(webService.shutdown).toBeCalled();
     expect(taskManager.shutdown).toBeCalled();
   });
 
-  describe("DockUIAppsBuilder", function() {
+  describe("InstanceBuilder", function() {
     test("builder allows us to set the Context", () => {
-      new DockUIAppsBuilder().withContext({});
+      new InstanceBuilder().withContext({});
     });
 
     test("builder allows us to set the WebService", () => {
-      new DockUIAppsBuilder().withWebService(webService);
+      new InstanceBuilder().withWebService(webService);
     });
 
     test("builder allows us to set the AppService", () => {
-      new DockUIAppsBuilder().withAppService(appService);
+      new InstanceBuilder().withAppService(appService);
     });
 
     test("builder allows us to set the Store", () => {
-      new DockUIAppsBuilder().withStore(appStore);
+      new InstanceBuilder().withStore(appStore);
     });
 
     test("builder allows us to set the ModulesLoaders", () => {
-      new DockUIAppsBuilder().withModuleLoaders([]);
+      new InstanceBuilder().withModuleLoaders([]);
     });
 
     test("builder allows us to set the TaskManager", () => {
-      new DockUIAppsBuilder().withTaskManager(taskManager);
+      new InstanceBuilder().withTaskManager(taskManager);
     });
 
     test("builder allows us to set the TaskWorkers", () => {
-      new DockUIAppsBuilder().withTaskWorkers([]);
+      new InstanceBuilder().withTaskWorkers([]);
     });
 
-    test("builder returns a DockUIApps instance when build method is called", () => {
-      const dockuiAppsInstance = new DockUIAppsBuilder()
-        .withContext({})
-        .withStore(appStore)
+    test("builder returns a Instance instance when build method is called", () => {
+      const instance = new InstanceBuilder()
+        .withStore(store)
         .withTaskManager(taskManager)
-        .withModuleLoaders([])
+        .withTaskWorkers([])
+        .withReactors([])
         .withAppService(appService)
         .withWebService(webService)
         .build();
-      expect(dockuiAppsInstance).toBeInstanceOf(DockUIApps);
+      expect(instance).toBeInstanceOf(Instance);
     });
   });
 });

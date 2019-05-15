@@ -1,5 +1,4 @@
 const CachableModuleLoader = require("./CachableModuleLoader");
-const ApiModuleDescriptor = require("../../../descriptor/impl/ApiModuleDescriptor");
 const ApiModule = require("../../../module/impl/ApiModule");
 
 /**
@@ -25,7 +24,6 @@ class ApiModuleLoader extends CachableModuleLoader {
     }
 
     // Nothing in the cache so:
-    var moduleDescriptor = null;
     var apiModule = null;
     var response = false;
     try {

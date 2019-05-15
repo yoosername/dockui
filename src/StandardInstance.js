@@ -11,10 +11,8 @@ const {
   ApiModuleLoader,
   StoreFactory,
   TaskManagerFactory,
-  SimpleAppService,
-  SimpleWebService,
   InstanceBuilder
-} = require("../..");
+} = require("..");
 
 const DEFAULT_CONFIG = {
   store: "memory",
@@ -26,7 +24,7 @@ const DEFAULT_CONFIG = {
  * @description Generate a default Instance of DockUI based on Config choices
  * @return {DockUIInstance} An instance of DockUI
  */
-const generateInstance = () => {
+const generateStandardInstance = () => {
   let config = null;
   let store = null;
   let taskManager = null;
@@ -50,25 +48,26 @@ const generateInstance = () => {
 
   // Get an AppLoader with the ModuleLoaders we want etc
   appLoader = new AppLoader()
-    .withModuleLoader(new WebResourceModuleLoader())
-    .withModuleLoader(new WebPageModuleLoader())
-    .withModuleLoader(new WebItemModuleLoader())
-    .withModuleLoader(new WebhookModuleLoader())
-    .withModuleLoader(new WebFragmentModuleLoader())
-    .withModuleLoader(new RouteModuleLoader())
-    .withModuleLoader(new CachableModuleLoader())
-    .withModuleLoader(new AuthorizationProviderModuleLoader())
-    .withModuleLoader(new AuthenticationProviderModuleLoader())
-    .withModuleLoader(new ApiModuleLoader())
+    .withConfig(config)
+    .withModuleLoader(new WebResourceModuleLoader(config))
+    .withModuleLoader(new WebPageModuleLoader(config))
+    .withModuleLoader(new WebItemModuleLoader(config))
+    .withModuleLoader(new WebhookModuleLoader(config))
+    .withModuleLoader(new WebFragmentModuleLoader(config))
+    .withModuleLoader(new RouteModuleLoader(config))
+    .withModuleLoader(new CachableModuleLoader(config))
+    .withModuleLoader(new AuthorizationProviderModuleLoader(config))
+    .withModuleLoader(new AuthenticationProviderModuleLoader(config))
+    .withModuleLoader(new ApiModuleLoader(config))
     .build();
 
   instance = new InstanceBuilder()
     .withStore(store)
     .withTaskManager(taskManager)
-    .withTaskWorkers([new AppLoadWorker(taskManager, store, appLoader)])
+    .withTaskWorkers([new AppLoadWorker(taskManager, store, appLoader, config)])
     .withReactors([
-      new DockerEventReactor(taskManager, "/var/docker.sock"),
-      new FileSystemReactor(taskManager, "~/dockui/plugins")
+      new DockerEventReactor(taskManager, config),
+      new FileSystemReactor(taskManager, config)
     ])
     .withAppService(appService)
     .withWebService(webService)
@@ -79,6 +78,6 @@ const generateInstance = () => {
 
 var singletonInstance = singletonInstance
   ? singletonInstance
-  : generateInstance();
+  : generateStandardInstance();
 
 module.exports = singletonInstance;

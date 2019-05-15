@@ -1,20 +1,26 @@
 /**
  * @description StoreFactory has a single method .create which generates
- *              a Store instance based on passed in Environment Context
+ *              a Store instance based on passed in Config
  */
 class StoreFactory {
   constructor() {}
 
   /**
    * @async
-   * @description Return new Store based on passed in ctx
-   * @argument {String} ctx The environment context to parse
+   * @description Return new Store based on passed in config
+   * @argument {Config} config The runtime config
    * @return {Store} A instance of a Store
    */
-  create(ctx) {
-    // TODO: Implement logic to return a specific type of store based on env
-    return new require("../impl/InMemoryAppStore");
+  create(config) {
+    // TODO: Load the correct Store implementation based on passed in Config
+    // const store = null;
+    // switch( config.get("store.type") ){
+    //    case "" : store = new InMemoryAppStore(config);
+    //    case "postgres" : store = new PostgressBackedAppStore(config);
+    //    default : store = new InMemoryAppStore(config);
+    // }
+    // return store;
   }
 }
-
-module.exports = StoreFactory;
+let factory = factory ? factory : new StoreFactory();
+module.exports = factory;
