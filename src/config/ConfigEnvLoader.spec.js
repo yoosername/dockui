@@ -1,7 +1,6 @@
 const ConfigEnvLoader = require("./ConfigEnvLoader");
-var configEnvLoader;
 
-const ConfigDefaults = require("./ConfigDefaults");
+let configEnvLoader;
 
 describe("ConfigEnvLoader", function() {
   "use strict";
@@ -19,42 +18,15 @@ describe("ConfigEnvLoader", function() {
   });
 
   // store
-  test("should be able to set the store", function() {
+  test("should get the correct store type from ENV", function() {
+    process.env.DOCKUI_STORE_TYPE = "memory";
     let config = configEnvLoader.load();
-    expect(config.store).toBe(ConfigDefaults.STORE);
-    process.env.DOCKUI_STORE = "redis:server.net:1234";
-    config = configEnvLoader.load();
-    expect(config.store).toBe("redis:server.net:1234");
-    delete process.env.DOCKUI_STORE;
+    expect(config.get("store.type")).toBe("memory");
   });
 
-  // events
-  test("should be able to set the events", function() {
+  test("should get the correct web port from ENV", function() {
+    process.env.DOCKUI_WEB_PORT = "3333";
     let config = configEnvLoader.load();
-    expect(config.events).toBe(ConfigDefaults.EVENTS);
-    process.env.DOCKUI_EVENTS = "rabbitmq::9200/bla";
-    config = configEnvLoader.load();
-    expect(config.events).toBe("rabbitmq::9200/bla");
-    delete process.env.DOCKUI_EVENTS;
-  });
-
-  // port
-  test("should be able to set the port", function() {
-    let config = configEnvLoader.load();
-    expect(config.port).toBe(ConfigDefaults.PORT);
-    process.env.DOCKUI_PORT = "9000";
-    config = configEnvLoader.load();
-    expect(config.port).toBe("9000");
-    delete process.env.DOCKUI_PORT;
-  });
-
-  // secret
-  test("should be able to set the global secret", function() {
-    let config = configEnvLoader.load();
-    expect(config.secret).toBe(ConfigDefaults.SECRET);
-    process.env.DOCKUI_SECRET = "changeme";
-    config = configEnvLoader.load();
-    expect(config.secret).toBe("changeme");
-    delete process.env.DOCKUI_SECRET;
+    expect(config.get("web.port")).toBe("3333");
   });
 });

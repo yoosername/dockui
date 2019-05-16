@@ -1,71 +1,85 @@
 /**
- * A Config encapsulates configuration information derived from a DockUI config source
+ * A Config encapsulates configuration information derived from one or more DockUI config sources
  */
 class Config {
   /**
-   * @argument {ConfigBuilder} builder
-   * @throws ConfigValidationError
+   * @returns {Config} config instance
    */
   constructor(builder) {
-    if (!builder) {
-      return new ConfigBuilder();
-    }
+    // Dont have to use loaders if we want to set data manually
+    this.data = {};
 
-    this.store = builder.store;
-    this.events = builder.events;
-    this.port = builder.port;
-    this.secret = builder.secret;
+    // If there are loaders, then use them
+    if (builder && builder.loaders) {
+      builder.loaders.forEach(loader => {
+        this.copy(loader.load());
+      });
+    }
+  }
+
+  /**
+   * @description Static to retrieve a Config Builder
+   * @returns {ConfigBuilder} config instance
+   * @static
+   */
+  static builder() {
+    return new ConfigBuilder();
+  }
+
+  /**
+   * @description Get the value of a config item by its key or null
+   * @argument {String} key The normalised key of the config setting
+   * @returns {Object} value of passed in key from Config or null
+   */
+  get(key) {
+    return this.data[key] ? this.data[key] : null;
+  }
+
+  /**
+   * @description Retrieve all config entries
+   * @returns {Array} Array of config entries or empty array
+   */
+  getAll() {
+    return Object.assign({}, this.data);
+  }
+
+  /**
+   * @description Set a config item by its key and passed in value
+   * @argument {String} key The normalised key of the config setting
+   * @argument {String} value The value to assign to the key
+   * @returns {Object} value of passed in key from Config or null
+   */
+  set(key, value) {
+    this.data[key] = value;
+  }
+
+  /**
+   * @description Copy the passed in Config over this config overwriting existing values
+   * @argument {Config} config The config to copy over ours
+   */
+  copy(config) {
+    const otherConfig = config.getAll();
+    Object.keys(otherConfig).forEach(key => {
+      this.set(key, otherConfig[key]);
+    });
   }
 }
 
 /**
- * @description Builder that generates a DockUI Config
+ * @description Builder that generates a Config via provided ConfigLoaders
  */
 class ConfigBuilder {
   constructor() {
-    this.store = null;
-    this.events = null;
-    this.port = null;
-    this.secret = null;
+    this.loaders = [];
   }
 
   /**
-   * @description Specifies the Store ( defaults to local file store )
-   * @argument {String} store
+   * @description Specifies a Configloader to use
+   * @argument {ConfigLoader} loader
    * @returns {ConfigBuilder} the current config builder for chaining
    */
-  withStore(store) {
-    this.store = store;
-    return this;
-  }
-
-  /**
-   * @description Specifies the Events/Messaging service to use ( defaults to in memory )
-   * @argument {String} events
-   * @returns {ConfigBuilder} the current config builder for chaining
-   */
-  withEvents(events) {
-    this.events = events;
-    return this;
-  }
-
-  /**
-   * @description Specifies the Web Port to listen on ( defaults to 5000 )
-   * @argument {String} port
-   * @returns {ConfigBuilder} the current config builder for chaining
-   */
-  withPort(port) {
-    this.port = port;
-    return this;
-  }
-
-  /**
-   * @description Specifies the initial root secret (defaults to changeme)
-   * @argument {String} secret
-   * @returns {ConfigBuilder} the current config builder for chaining
-   */
-  withSecret(secret) {
-    this.secret = secret;
+  withConfigLoader(loader) {
+    this.loaders.push(loader);
     return this;
   }
 

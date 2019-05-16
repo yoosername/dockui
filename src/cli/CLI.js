@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
-const { defaultConfig, generateDefaultInstance } = require("../Defaults");
+const { StandardInstance } = require("./");
 const ConfigLoader = require("./ConfigLoader");
 const LOG_LEVELS = ["info", "warn", "error", "debug"];
 
@@ -44,7 +44,7 @@ class CLI {
     this.name = name;
     this.config = config;
     this.logger = logger;
-    this.dockui = dockui ? dockui : generateDefaultInstance(this.config);
+    this.dockui = dockui ? dockui : new StandardInstance();
     if (configLoaders.length) {
       var loadedConfig = ConfigLoader.loadConfig(this.config, configLoaders);
       this.config = loadedConfig;

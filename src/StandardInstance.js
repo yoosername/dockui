@@ -11,18 +11,14 @@ const {
   ApiModuleLoader,
   StoreFactory,
   TaskManagerFactory,
+  AppServiceFactory,
+  WebServiceFactory,
   InstanceBuilder
 } = require("..");
 
-const DEFAULT_CONFIG = {
-  store: "memory",
-  port: 5000,
-  secret: "changeme"
-};
-
 /**
- * @description Generate a default Instance of DockUI based on Config choices
- * @return {DockUIInstance} An instance of DockUI
+ * @description Generate an Instance of DockUI based on standard defaults
+ * @return {Instance} An instance of DockUI
  */
 const generateStandardInstance = () => {
   let config = null;
@@ -35,9 +31,8 @@ const generateStandardInstance = () => {
 
   // Load config
   config = Config.builder()
-    .withDefaults(DEFAULT_CONFIG)
     .withConfigLoader(new EnvConfigLoader())
-    .withConfigLoader(new YamlConfigLoader())
+    //.withConfigLoader(new YamlConfigLoader())
     .build();
 
   // Load correct implementations of required services
@@ -46,7 +41,8 @@ const generateStandardInstance = () => {
   appService = AppServiceFactory.create(config);
   webService = WebServiceFactory.create(config);
 
-  // Get an AppLoader with the ModuleLoaders we want etc
+  // Configure an AppLoader with a standard set of ModuleLoaders
+  // The AppLoader is used by workers to actually fetch and process an App
   appLoader = new AppLoader()
     .withConfig(config)
     .withModuleLoader(new WebResourceModuleLoader(config))
@@ -61,6 +57,7 @@ const generateStandardInstance = () => {
     .withModuleLoader(new ApiModuleLoader(config))
     .build();
 
+  // configure a DockUI instance using our preffered settings
   instance = new InstanceBuilder()
     .withStore(store)
     .withTaskManager(taskManager)
@@ -76,7 +73,8 @@ const generateStandardInstance = () => {
   return instance;
 };
 
-var singletonInstance = singletonInstance
+let singletonInstance;
+singletonInstance = singletonInstance
   ? singletonInstance
   : generateStandardInstance();
 
