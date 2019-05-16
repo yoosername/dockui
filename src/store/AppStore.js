@@ -1,8 +1,16 @@
+const { Config } = require("../config/Config");
+
 /**
  * @description Simple Store for persisting various state objects
  */
 class AppStore {
-  constructor() {}
+  /**
+   * @argument {Config} config Optional runtime config
+   * @returns {AppStore}
+   */
+  constructor(config) {
+    this.config = config ? config : new Config();
+  }
 
   /**
    * @description Store data (using its id or a generated id as unique ref)
