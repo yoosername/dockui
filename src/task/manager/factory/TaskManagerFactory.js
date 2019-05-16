@@ -1,6 +1,9 @@
+const SingleNodeTaskManager = require("../impl/SingleNodeTaskManager");
+const { Config } = require("../../../config/Config");
+
 /**
  * @description TaskManagerFactory has a single method .create which generates
- *              an TaskManager instance based on passed in Config
+ *              a TaskManager instance based on passed in Config
  */
 class TaskManagerFactory {
   constructor() {}
@@ -11,16 +14,17 @@ class TaskManagerFactory {
    * @argument {Config} config The runtime config
    * @return {TaskManager} A instance of a TaskManager
    */
-  create(config) {
-    // TODO: Load the correct TaskManager implementation based on passed in Config
-    // const taskManager = null;
-    // switch( config.get("taskManager.type") ){
-    //    case "" : taskManager = new SimpleTaskManager(config);
-    //    case "clustered" : taskManager = new ClusteredTaskManager(config);
-    //    default : taskManager = new SimpleTaskManager(config);
-    // }
-    // return taskManager;
+  create(config = new Config()) {
+    let taskManager = null;
+    switch (config.get("store.type")) {
+      case "":
+        taskManager = new SingleNodeTaskManager(config);
+      default:
+        taskManager = new SingleNodeTaskManager(config);
+    }
+    return taskManager;
   }
 }
-let factory = factory ? factory : new TaskManagerFactory();
+let factory;
+factory = factory ? factory : new TaskManagerFactory();
 module.exports = factory;

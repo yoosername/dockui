@@ -1,16 +1,13 @@
 const TaskManagerFactory = require("./TaskManagerFactory");
+const TaskManager = require("../TaskManager");
 
 describe("TaskManagerFactory", function() {
   "use strict";
 
-  it("should be defined and a loadable function", function() {
-    expect(TaskManagerFactory).not.toBeUndefined();
-    expect(typeof TaskManagerFactory).toBe("object");
-    expect(typeof TaskManagerFactory.create).toBe("function");
-  });
-
-  it("should return a valid TaskManager instance with or without config", function() {
+  test("create should return an instance of TaskManager", function() {
     const taskManager = TaskManagerFactory.create();
-    expect(typeof taskManager).toBe("function");
+    expect(taskManager).not.toBeUndefined();
+    expect(typeof taskManager).toBe("object");
+    expect(taskManager instanceof TaskManager).toBe(true);
   });
 });

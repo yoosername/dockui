@@ -13,14 +13,13 @@ Generally following the Reliable Queue Pattern here: https://redis.io/commands/r
 ## Example
 
 ```javascript
-const factory = new TaskManagerFactory();
-const manager = factory.create({});
-const worker = await manager.process( async (task)={
+const manager = TaskManagerFactory.create();
+const worker = await manager.process( "queue", async (task)={
     console.log(`Worker with ID ${worker.id} (Master:${manager.isMaster()}) received Task with ID ${task.id}`);
     return true;
 });
-const task = await manager.create({
-    "TaskSpecificKey" : "TaskSpecificValue"
+const task = await manager.create( "queue", {
+    "TaskSpecificPayloadKey" : "TaskSpecificPayloadValue"
 });
 
 // Tell the Worker to wait 10 seconds before failing the Job

@@ -1,3 +1,6 @@
+const EventEmitter = require("events");
+const COMMIT_EVENT_ID = "task:committed";
+
 /**
  * @description TaskManager handles:
  *                           - Task queueing, retries, handling failures
@@ -6,48 +9,55 @@
  *                           - Leadership Election amongst Workers
  *                           - Worker notification / events
  */
-class TaskManager {
-  constructor() {}
+class TaskManager extends EventEmitter {
+  constructor() {
+    super();
+  }
 
   /**
    * @async
    * @description Add a new Task to the Queue for processing
    * @argument {String} type The type of the task
-   * @argument {Object} config The Config specific to the task
+   * @argument {Object} payload The payload of the task
    * @return {Promise} A Promise which should resolve with a new {Task} Object
    * @example
    *
    *  const taskManager = new DefaultTaskManager();
-   *  const task = await taskManager.createTask("app:enable", { id: "f4c33dda-46ca33dd-44c3a3ed-4acc33de"});
+   *  const task = await manager.create( "app:enable", { id: "f4c33dda-46ca33dd-44c3a3ed-4acc33de"});
    *  task
-   *    .withTimeout(10000)
-   *    .withDelayUntil(Date.parse('2020-01-01'))
-   *    .on("success", (result)=>{
+   *    .withTimeout(10000); // wait 10 seconds before failing the Job
+   *    .withDelayUntil(Date.parse('2020-01-01'));// delay this job until the specific Date
+   *    .on("success", (result)=>{ // handle a successfull Task
    *      console.log(`Task with id ${task.id} completed successfully`);
-   *    })
-   *    .commit();
+   *    });
+   *    .on("failure", (error)=>{
+   *      console.log(`Task with id ${task.id} failed with error ${error}`);
+   *    });
+   *    .commit(); // Commit this task ( Queues it )
    */
-  async createTask(type, config) {
+  async create(type, payload) {
     console.warn(
-      "[TaskManager] createTask - NoOp implementation - this should be extended by child classes"
+      "[TaskManager] create - NoOp implementation - this should be extended by child classes"
     );
   }
 
   /**
    * @async
    * @description Register as a Worker to process Jobs ( Can only register once per process )
+   * @argument {String} type The type of tasks to register for (optional)
    * @argument {Function} callback The code to run when a Job has been assigned to this Worker
-   *                               This callback function should be an async function
+   *                               This callback function will receive a Task object and can use
+   *                               The events on the object to notify status
    * @return {Promise} A Promise which should resolve with a fresh {Worker} object
    * @example
    *
-   *  const taskManager = new DefaultTaskManager();
-   *  const worker = await taskManager.processTasks( async (job)={
-   *    console.log(`Worker with ID ${worker.id} (${worker.isMaster()}), received Job ${job.id} for processing`);
-   *    return true;
+   *  const manager = TaskManagerFactory.create();
+   *  const worker = await manager.process( "app:enable", async (task)={
+   *      console.log(`Worker with ID ${worker.id} received Task with ID ${task.id}`);
+   *      return true;
    *  });
    */
-  async processTasks(callback) {
+  async process(type, callback) {
     console.warn(
       "[TaskManager] processTasks - NoOp implementation - this should be extended by child classes"
     );
@@ -75,5 +85,7 @@ class TaskManager {
     );
   }
 }
+
+TaskManager.COMMIT_EVENT_ID = COMMIT_EVENT_ID;
 
 module.exports = TaskManager;
