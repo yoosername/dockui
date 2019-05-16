@@ -5,13 +5,11 @@
 class WebService {
   /**
    * @argument {AppService} appService The AppService for interacting with Apps
-   * @argument {EventService} eventService The EventService to use for web events
+   * @argument {Config} config The Runtime Config
    */
-  constructor(appService, eventService) {
-    // TODO: Validate shapes ( ducktyping style later )
-    this.server = null;
+  constructor(appService, config) {
     this.appService = appService;
-    this.eventService = eventService;
+    this.config = config;
   }
 
   /**
@@ -27,6 +25,7 @@ class WebService {
 
   /**
    * @description initialize and start web server
+   * @async
    */
   start() {
     "use strict";
@@ -38,6 +37,7 @@ class WebService {
 
   /**
    * @description Gracefully shutdown web server
+   * @async
    */
   shutdown() {
     "use strict";
@@ -69,13 +69,13 @@ class WebService {
   }
 
   /**
-   * @description Helper to get the passed in EventService
-   * @returns {EventService} the EventService
+   * @description Helper to get the passed in Rutime Config
+   * @returns {Config} the Config
    */
-  getEventService() {
+  getConfig() {
     "use strict";
     console.warn(
-      "[WebService] getEventService - NoOp implementation - this should be extended by child classes"
+      "[WebService] getConfig - NoOp implementation - this should be extended by child classes"
     );
   }
 }

@@ -1,3 +1,5 @@
+const SimpleKoaWebService = require("../impl/SimpleKoaWebService");
+
 /**
  * @description WebServiceFactory has a single method .create which generates
  *              an WebService instance based on passed in Config
@@ -11,16 +13,19 @@ class WebServiceFactory {
    * @argument {Config} config The runtime config
    * @return {WebService} A instance of a WebService
    */
-  create(config) {
-    // TODO: Load the correct WebService implementation based on passed in Config
-    // const webService = null;
-    // switch( config.get("webService.type") ){
-    //    case "" : webService = new SimpleWebService(config);
-    //    case "management" : webService = new ManagementOnlyWebService(config);
-    //    default : webService = new SimpleWebService(config);
-    // }
-    // return webService;
+  create(appService, config) {
+    let webService = null;
+    if (!config) return new SimpleKoaWebService(appService, config);
+    switch (config.get("webService.type")) {
+      case "":
+        webService = new SimpleKoaWebService(appService, config);
+      //case "management" : webService = new ManagementOnlyWebService(appService, config);
+      default:
+        webService = new SimpleKoaWebService(appService, config);
+    }
+    return webService;
   }
 }
-let factory = factory ? factory : new WebServiceFactory();
+let factory;
+factory = factory ? factory : new WebServiceFactory();
 module.exports = factory;
