@@ -2,17 +2,13 @@
 
 ## AppLoader
 
-> An AppLoader uses Module Loaders to create an App from a source URL, or String descriptor
+> An AppLoader (with optional Module Loaders) returns an App from a source (e.g. URL, or String)
 
 ### API
 
-#### load(url)
+#### load()
 
-Loads descriptor by retriving the descriptor from URL then parsing it
-
-#### load(descriptor)
-
-Loads descriptor string using Module loaders to parse each module section
+Overload this method to provide App loading functionality
 
 ## ModuleLoader
 

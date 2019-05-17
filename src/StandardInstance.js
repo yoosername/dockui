@@ -13,6 +13,7 @@ const {
   TaskManagerFactory,
   AppServiceFactory,
   WebServiceFactory,
+  AppLoader,
   InstanceBuilder
 } = require("..");
 
