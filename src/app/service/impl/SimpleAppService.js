@@ -1,4 +1,6 @@
 const AppService = require("../AppService");
+const App = require("../../App");
+const Module = require("../../module/Module");
 const Task = require("../../../task/Task");
 
 /**
@@ -152,12 +154,16 @@ class SimpleAppService extends AppService {
    * @argument {Function} filter : filter the list of Apps using this test
    * @returns {Array} Array of Apps matching filter
    */
-  getApps(filter) {
+  async getApps(filter) {
     // Search Store for all known Apps
-    return new Promise(async (resolve, reject) => {
-      let apps = [];
+    return new Promise((resolve, reject) => {
+      let json,
+        apps = [];
       try {
-        apps = await this.store.find(filter);
+        json = this.store.find(filter);
+        json.forEach(app => {
+          apps.push(new App(app));
+        });
         resolve(apps);
       } catch (e) {
         reject(e);
@@ -170,9 +176,17 @@ class SimpleAppService extends AppService {
    * @argument {Object} partial Partial Object representing the App
    * @returns {App} Requested App
    */
-  getApp(partial) {
-    // Lookup App in Store using partial info
-    // If it exists, return new App()
+  async getApp(partial) {
+    return new Promise((resolve, reject) => {
+      let json, app;
+      try {
+        json = this.store.read(partial);
+        app = new App(json);
+        resolve(app);
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   /**
@@ -181,10 +195,20 @@ class SimpleAppService extends AppService {
    * @returns {Array} Array of Modules matching filter
    */
   getModules(filter) {
-    //Search the store for all modules
-    // Filter the ones matching the filter
-    // Foreach one return array of new Module objects
-    // Or if none empty array
+    // Search Store for all known Apps
+    return new Promise((resolve, reject) => {
+      let json,
+        modules = [];
+      try {
+        json = this.store.find(filter);
+        json.forEach(module => {
+          modules.push(new Module(module));
+        });
+        resolve(modules);
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   /**
@@ -193,8 +217,16 @@ class SimpleAppService extends AppService {
    * @returns {Module} Requested Module
    */
   getModule(partial) {
-    // Lookup App in Store using partial module info
-    // If it exists, return new Module()
+    return new Promise((resolve, reject) => {
+      let json, module;
+      try {
+        json = this.store.read(partial);
+        module = new Module(json);
+        resolve(module);
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   /**
@@ -203,25 +235,26 @@ class SimpleAppService extends AppService {
    * @returns {Promise} Promise which resolves when module has been enabled.
    */
   enableModule(module) {
-    // if(module.isEnabled()){
-    //   return Promise.resolve(module);
-    // }
-    // Use TaskManager to schedule enabling the Module
-    // const task = TaskManager.createTask("MODULE_ENABLE", {module});
-    //
-    // Return a promise which resolves once task is complete
-    // return new Promise((resolve,reject)={
-    //   task
-    //     .on("error", (error)=>{
-    //       reject(error);
-    //     })
-    //     .on("success", (result)=>{
-    //       // Return the original app for chaining
-    //       resolve(module);
-    //     })
-    //     .commit();
-    // });
-    //
+    // Resolve immediately if App is enabled
+    if (module.isEnabled()) {
+      return Promise.resolve(module);
+    }
+    // Use TaskManager to schedule enabling the App
+    return new Promise(async (resolve, reject) => {
+      const task = await this.taskManager.create(
+        Task.types.MODULE_ENABLE,
+        module
+      );
+      // Schedule it immediately
+      task
+        .on("error", error => {
+          reject(error);
+        })
+        .on("success", data => {
+          resolve(data);
+        })
+        .commit();
+    });
   }
 
   /**
@@ -230,25 +263,26 @@ class SimpleAppService extends AppService {
    * @returns {Promise} Promise which resolves when module has been disabled.
    */
   disableModule(module) {
-    // if(!module.isEnabled()){
-    //   return Promise.resolve(module);
-    // }
-    // Use TaskManager to schedule enabling the Module
-    // const task = TaskManager.createTask("MODULE_DISABLE", {module});
-    //
-    // Return a promise which resolves once task is complete
-    // return new Promise((resolve,reject)={
-    //   task
-    //     .on("error", (error)=>{
-    //       reject(error);
-    //     })
-    //     .on("success", (result)=>{
-    //       // Return the original app for chaining
-    //       resolve(module);
-    //     })
-    //     .commit();
-    // });
-    //
+    // Resolve immediately if App is enabled
+    if (!module.isEnabled()) {
+      return Promise.resolve(module);
+    }
+    // Use TaskManager to schedule enabling the App
+    return new Promise(async (resolve, reject) => {
+      const task = await this.taskManager.create(
+        Task.types.MODULE_DISABLE,
+        module
+      );
+      // Schedule it immediately
+      task
+        .on("error", error => {
+          reject(error);
+        })
+        .on("success", data => {
+          resolve(data);
+        })
+        .commit();
+    });
   }
 }
 
