@@ -1,3 +1,6 @@
+const SimpleAppService = require("../impl/SimpleAppService");
+const { Config } = require("../../../config/Config");
+
 /**
  * @description AppServiceFactory has a single method .create which generates
  *              an AppService instance based on passed in Config
@@ -7,20 +10,23 @@ class AppServiceFactory {
 
   /**
    * @async
-   * @description Return new AppService based on passed in config
+   * @description Return new WebService based on passed in config
+   * @argument {TaskManager} taskManager Used by Appstore for tasking
+   * @argument {AppStore} store Used by Appstore for rerieving persisted state
    * @argument {Config} config The runtime config
    * @return {AppService} A instance of a AppService
    */
-  create(config) {
-    // TODO: Load the correct AppService implementation based on passed in Config
-    // const appService = null;
-    // switch( config.get("appService.type") ){
-    //    case "" : appService = new DefaultAppService(config);
-    //    case "readOnly" : appService = new ReadOnlyAppService(config);
-    //    default : appService = new DefaultAppService(config);
-    // }
-    // return appService;
+  create(taskManager, store, config = new Config()) {
+    let appService = null;
+    switch (config.get("appService.type")) {
+      case "simple":
+        appService = new SimpleAppService(taskManager, store, config);
+      default:
+        appService = new SimpleAppService(taskManager, store, config);
+    }
+    return appService;
   }
 }
-let factory = factory ? factory : new AppServiceFactory();
+let factory;
+factory = factory ? factory : new AppServiceFactory();
 module.exports = factory;

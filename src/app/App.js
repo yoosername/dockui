@@ -7,16 +7,16 @@ const Module = require("./module/Module");
  */
 class App {
   constructor({
-    uuid = uuidv4(),
-    key = uuid,
-    name = uuid,
+    id = uuidv4(),
+    key = id,
+    name = id,
     url = null,
     type = App.types.STATIC,
     enabled = false,
     modules = [],
     permission = App.permissions.READ
   } = {}) {
-    this.uuid = uuid;
+    this.id = id;
     this.key = key;
     this.name = name;
     this.url = url;
@@ -38,10 +38,10 @@ class App {
 
   /**
    * @description Return the uniquely generated framework identifier of this App instance
-   * @returns {String} UUID
+   * @returns {String} id
    */
-  getUUID() {
-    return this.uuid;
+  getId() {
+    return this.id;
   }
 
   /**
@@ -109,6 +109,27 @@ class App {
       return module.getKey() === key;
     });
     return filtered[0];
+  }
+
+  /**
+   * @description Helper to return a serialized version of this App for storage/transport
+   * @returns {JSON} A Pure JSON representation of the App
+   */
+  toJSON() {
+    const json = {
+      id: this.id,
+      key: this.key,
+      name: this.name,
+      url: this.url,
+      type: this.type,
+      enabled: this.enabled,
+      permission: this.permission,
+      modules: []
+    };
+    this.modules.forEach(module => {
+      json.modules.push(module.toJSON());
+    });
+    return json;
   }
 }
 

@@ -38,7 +38,7 @@ describe("Task", function() {
     let task = new Task()
       .withTimeout(10000)
       .withDelayUntil(new Date())
-      .on(Task.COMMIT_EVENT_ID, () => {
+      .on(Task.events.COMMIT_EVENT, () => {
         done();
       })
       .commit();

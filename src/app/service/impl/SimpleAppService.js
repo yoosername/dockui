@@ -1,38 +1,54 @@
 const AppService = require("../AppService");
+const Task = require("../../../task/Task");
 
 /**
- * @description Orchestrates
- *                loading Apps via AppLoaders,
- *                triggering events in the EventService based on the LifecycleEventsStrategy and
- *                state persistence via the AppStore
+ * @description This SimpleAppService performs the following functionality:
+ *              - loads state from the passedin store
+ *              - Uses passedin TaskManager to schedule modifications to the system
+ *              - refreshes its state by listening to events on the TaskManager and associated Tasks.
  */
-class DefaultAppService extends AppService {
+class SimpleAppService extends AppService {
   /**
-   * @param {DockUIContext} context - Runtime Context object used to find runtime services.
+   * @param {TaskManager} taskManager - TaskManager is used to orchestrate changes to the system.
+   * @param {AppStore} store - Store is used for loading persisted state.
+   * @param {Config} config - The runtime config
    */
-  constructor(context) {
-    super(context);
+  constructor(taskManager, store, config) {
+    super(taskManager, store, config);
     this._running = false;
   }
 
   /**
-   * @description Initialize and start the AppService
+   * @description Return if the AppStore is currently running or not
+   * @returns {Boolean} true if the appStore is running or false if not
+   */
+  isRunning() {
+    return this._running;
+  }
+
+  /**
+   * @async
+   * @description Initialize and start the AppService (and if necessary required services)
    * @returns {Promise} Promise which resolves once started
    */
   start() {
-    // Send local startup event
-    // Make sure TaskManager Running
-    // Make Sure Store Ready
-    // Then Report we are ready
-    // Send local started event
+    return new Promise(async (resolve, reject) => {
+      await this.taskManager.start();
+      this._running = true;
+      this.emit(AppService.SERVICE_STARTED_EVENT);
+      resolve();
+    });
   }
 
   /**
    * @description shutdown AppService gracefully
    */
   shutdown() {
-    // Send shuttingdown event
-    // Send shutdown event
+    return new Promise(async (resolve, reject) => {
+      this._running = false;
+      this.emit(AppService.SERVICE_SHUTDOWN_EVENT);
+      resolve();
+    });
   }
 
   /**
@@ -43,23 +59,21 @@ class DefaultAppService extends AppService {
    */
   loadApp(url, permission) {
     // Use TaskManager to schedule loading the App
-    // const task = TaskManager.createTask("APP_LOAD", {url, permission});
-    //
-    // Return a promise which resolves once task is complete
-    // return new Promise((resolve,reject)={
-    //   task
-    //     .setTimeout(10000)
-    //     .delayUntil(Date.parse('2020-01-01'))
-    //     .on("error", (error)=>{
-    //       reject(error);
-    //     })
-    //     .on("success", (result)=>{
-    //       const app = this.getApp(result);
-    //       resolve(app);
-    //     })
-    //     .commit();
-    // });
-    //
+    return new Promise(async (resolve, reject) => {
+      const task = await this.taskManager.create(Task.types.APP_LOAD, {
+        url: url,
+        permission: permission
+      });
+      // Schedule it immediately
+      task
+        .on("error", error => {
+          reject(error);
+        })
+        .on("success", data => {
+          resolve(data);
+        })
+        .commit();
+    });
   }
 
   /**
@@ -69,75 +83,68 @@ class DefaultAppService extends AppService {
    */
   unLoadApp(app) {
     // Use TaskManager to schedule unloading the App
-    // const task = TaskManager.createTask("APP_UNLOAD", {app});
-    //
-    // Return a promise which resolves once task is complete
-    // return new Promise((resolve,reject)={
-    //   task
-    //     .on("error", (error)=>{
-    //       reject(error);
-    //     })
-    //     .on("success", (result)=>{
-    //       // Return the original app for chaining
-    //       resolve(app);
-    //     })
-    //     .commit();
-    // });
-    //
+    return new Promise(async (resolve, reject) => {
+      const task = await this.taskManager.create(Task.types.APP_UNLOAD, app);
+      // Schedule it immediately
+      task
+        .on("error", error => {
+          reject(error);
+        })
+        .on("success", data => {
+          resolve(data);
+        })
+        .commit();
+    });
   }
 
   /**
-   * @description Enable an already loaded App by its UUID
+   * @description Enable an already loaded App
    * @argument {App} app The App to enable
    * @returns {Promise} promise which resolves when app has been enabled
    */
   enableApp(app) {
-    // if(app.isEnabled()){
-    //   return Promise.resolve(app);
-    // }
+    // Resolve immediately if App is enabled
+    if (app.isEnabled()) {
+      return Promise.resolve(app);
+    }
     // Use TaskManager to schedule enabling the App
-    // const task = TaskManager.createTask("APP_ENABLE", {app});
-    //
-    // Return a promise which resolves once task is complete
-    // return new Promise((resolve,reject)={
-    //   task
-    //     .on("error", (error)=>{
-    //       reject(error);
-    //     })
-    //     .on("success", (result)=>{
-    //       // Return the original app for chaining
-    //       resolve(app);
-    //     })
-    //     .commit();
-    // });
-    //
+    return new Promise(async (resolve, reject) => {
+      const task = await this.taskManager.create(Task.types.APP_ENABLE, app);
+      // Schedule it immediately
+      task
+        .on("error", error => {
+          reject(error);
+        })
+        .on("success", data => {
+          resolve(data);
+        })
+        .commit();
+    });
   }
 
   /**
-   * @description Disable an already loaded/enabled App by its UUID
-   * @argument {String} uuid The App UUID to disable
+   * @description Disable an already loaded/enabled App
+   * @argument {App} app The App to disable
    * @returns {Promise} Promise which resolves when app has been disabled.
    */
-  disableApp(uuid) {
-    // if(!app.isEnabled()){
-    //   return Promise.resolve(app);
-    // }
-    // Use TaskManager to schedule disabling the App
-    // const task = TaskManager.createTask("APP_DISABLE", {app});
-    //
-    // Return a promise which resolves once task is complete
-    // return new Promise((resolve,reject)={
-    //   task
-    //     .on("error", (error)=>{
-    //       reject(error);
-    //     })
-    //     .on("success", (result)=>{
-    //       // Return the original app for chaining
-    //       resolve(app);
-    //     })
-    //     .commit();
-    // });
-    //
+  disableApp(app) {
+    // Resolve immediately if App is enabled
+    if (!app.isEnabled()) {
+      return Promise.resolve(app);
+    }
+    // Use TaskManager to schedule enabling the App
+    return new Promise(async (resolve, reject) => {
+      const task = await this.taskManager.create(Task.types.APP_DISABLE, app);
+      // Schedule it immediately
+      task
+        .on("error", error => {
+          reject(error);
+        })
+        .on("success", data => {
+          resolve(data);
+        })
+        .commit();
+    });
   }
 
   /**
@@ -146,10 +153,16 @@ class DefaultAppService extends AppService {
    * @returns {Array} Array of Apps matching filter
    */
   getApps(filter) {
-    //Search the store for all apps
-    // Filter the ones matching the filter
-    // Foreach one return array of new App objects
-    // Or if none empty array
+    // Search Store for all known Apps
+    return new Promise(async (resolve, reject) => {
+      let apps = [];
+      try {
+        apps = await this.store.find(filter);
+        resolve(apps);
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   /**
@@ -239,4 +252,4 @@ class DefaultAppService extends AppService {
   }
 }
 
-module.exports = DefaultAppService;
+module.exports = SimpleAppService;

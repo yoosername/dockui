@@ -38,8 +38,8 @@ const generateStandardInstance = () => {
   // Load correct implementations of required services
   store = StoreFactory.create(config);
   taskManager = TaskManagerFactory.create(config);
-  appService = AppServiceFactory.create(config);
-  webService = WebServiceFactory.create(config);
+  appService = AppServiceFactory.create(taskManager, store, config);
+  webService = WebServiceFactory.create(appService, config);
 
   // Configure an AppLoader with a standard set of ModuleLoaders
   // The AppLoader is used by workers to actually fetch and process an App

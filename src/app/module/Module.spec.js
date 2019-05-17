@@ -1,63 +1,50 @@
-var Module = require("./Module");
+const uuidv4 = require("uuid/v4");
+const Module = require("./Module");
 
-const App = require("../App");
-const ModuleDescriptor = require("../descriptor/ModuleDescriptor");
-
-jest.mock("../App");
-jest.mock("../descriptor/ModuleDescriptor");
-
-var app,
-  descriptor = null;
-
-describe("Module", function() {
+describe("App", function() {
   "use strict";
 
-  beforeEach(function() {
-    app = new App();
-    descriptor = new ModuleDescriptor();
-    descriptor.getKey.mockReturnValue("testModuleKey");
-    descriptor.getName.mockReturnValue("testModuleName");
-    descriptor.getType.mockReturnValue("testModuleType");
-  });
+  beforeEach(function() {});
+
+  afterEach(function() {});
 
   test("should be defined and loadable", function() {
     expect(Module).not.toBeUndefined();
-  });
-
-  test("should be a function", function() {
     expect(typeof Module).toBe("function");
   });
 
-  test("should validate arguments", function() {
-    expect(function() {
-      new Module();
-    }).toThrow();
-    expect(function() {
-      new Module(null, null, null);
-    }).toThrow();
-    expect(function() {
-      new Module(undefined, undefined, undefined);
-    }).toThrow();
-    expect(function() {
-      new Module(app, app, "");
-    }).toThrow();
-    expect(function() {
-      new Module(app, descriptor);
-    }).not.toThrow();
+  test("should have correct signature", function() {
+    const module = new Module();
+    expect(typeof module.getId).toBe("function");
+    expect(typeof module.getKey).toBe("function");
+    expect(typeof module.getName).toBe("function");
+    expect(typeof module.getType).toBe("function");
+    expect(typeof module.isEnabled).toBe("function");
+    expect(typeof module.getRoles).toBe("function");
+    expect(typeof module.getCache).toBe("function");
+    expect(typeof module.isCacheEnabled).toBe("function");
   });
 
-  test("should respond with correct Key", function() {
-    var module = new Module(app, descriptor);
-    expect(module.getKey()).toBe("testModuleKey");
+  test("getKey should return correct key", function() {
+    const model = {
+      key: "testKey"
+    };
+    const module = new Module(model);
+    expect(module.getKey()).toEqual(model.key);
   });
 
-  test("should respond with correct Name", function() {
-    var module = new Module(app, descriptor);
-    expect(module.getName()).toBe("testModuleName");
-  });
-
-  test("should respond with correct Type", function() {
-    var module = new Module(app, descriptor);
-    expect(module.getType()).toBe("testModuleType");
+  // Test getModules(filter)
+  test("should return correct JSON when toJSON called", function() {
+    const model = {
+      cache: { policy: "disabled" },
+      enabled: false,
+      id: "0d4e56de-846c-4245-9489-0ec1bbe7f65a",
+      key: "0d4e56de-846c-4245-9489-0ec1bbe7f65a",
+      name: "0d4e56de-846c-4245-9489-0ec1bbe7f65a",
+      roles: [],
+      type: "generic"
+    };
+    const module = new Module(model);
+    expect(module.toJSON()).toEqual(model);
   });
 });

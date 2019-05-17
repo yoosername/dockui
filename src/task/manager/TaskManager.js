@@ -1,5 +1,5 @@
 const EventEmitter = require("events");
-const COMMIT_EVENT_ID = "task:committed";
+const COMMIT_EVENT = "task:committed";
 
 /**
  * @description TaskManager handles:
@@ -86,6 +86,12 @@ class TaskManager extends EventEmitter {
   }
 }
 
-TaskManager.COMMIT_EVENT_ID = COMMIT_EVENT_ID;
+/**
+ * @static
+ * @description Represents common DockUI Task Events
+ */
+TaskManager.events = Object.freeze({
+  COMMIT_EVENT: COMMIT_EVENT
+});
 
 module.exports = TaskManager;

@@ -1,5 +1,6 @@
 const uuidv4 = require("uuid/v4");
 const App = require("./App");
+const Module = require("./module/Module");
 
 jest.mock("./module/Module");
 
@@ -21,23 +22,29 @@ describe("App", function() {
     expect(typeof app.getName).toBe("function");
     expect(typeof app.getType).toBe("function");
     expect(typeof app.getUrl).toBe("function");
-    expect(typeof app.getUUID).toBe("function");
+    expect(typeof app.getId).toBe("function");
     expect(typeof app.getPermission).toBe("function");
     expect(typeof app.getModules).toBe("function");
     expect(typeof app.isEnabled).toBe("function");
   });
 
-  // App should validate arguments
   test("should allow intantiation with zero args", function() {
     expect(() => {
       new App();
     }).not.toThrow();
   });
 
-  // TODO: Turn App into a plain model
-  // TODO: Ensure ability to serialize and deserialize an App easily
-  // TODO: Add static utility methods to model to:
-  //  - create, read, find
+  test("should serializ correctly", function() {
+    const module1 = new Module();
+    const module2 = new Module();
+    const modules = [module1, module2];
+    const serlializedModules = [module1.toJSON(), module2.toJSON()];
+    const app = new App({
+      modules: modules
+    });
+    const output = app.toJSON();
+    expect(output.modules).toEqual(serlializedModules);
+  });
 
   describe("Methods", function() {
     var mockApp;

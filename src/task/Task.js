@@ -1,7 +1,7 @@
 const EventEmitter = require("events");
-const COMMIT_EVENT_ID = "task:committed";
-const SUCCESS_EVENT_ID = "task:success";
-const ERROR_EVENT_ID = "task:error";
+const COMMIT_EVENT = "task:committed";
+const SUCCESS_EVENT = "task:success";
+const ERROR_EVENT = "task:error";
 const uuidv4 = require("uuid/v4");
 
 /**
@@ -73,12 +73,29 @@ class Task extends EventEmitter {
    * @description Helper to trigger commit event
    */
   commit() {
-    this.emit(COMMIT_EVENT_ID, this);
+    this.emit(Task.events.COMMIT_EVENT, this);
   }
 }
 
-Task.COMMIT_EVENT_ID = COMMIT_EVENT_ID;
-Task.SUCCESS_EVENT_ID = SUCCESS_EVENT_ID;
-Task.ERROR_EVENT_ID = ERROR_EVENT_ID;
+/**
+ * @static
+ * @description Represents common DockUI Task Events
+ */
+Task.events = Object.freeze({
+  COMMIT_EVENT: COMMIT_EVENT,
+  SUCCESS_EVENT: SUCCESS_EVENT,
+  ERROR_EVENT: ERROR_EVENT
+});
+
+/**
+ * @static
+ * @description Represents common DockUI Task Types
+ */
+Task.types = Object.freeze({
+  APP_LOAD: "APP_LOAD",
+  APP_UNLOAD: "APP_UNLOAD",
+  APP_ENABLE: "APP_ENABLE",
+  APP_DISABLE: "APP_DISABLE"
+});
 
 module.exports = Task;

@@ -26,7 +26,7 @@ class SingleNodeTaskManager extends TaskManager {
    */
   commit(task) {
     this.queue.push(task);
-    this.emit(TaskManager.COMMIT_EVENT_ID, task);
+    this.emit(TaskManager.events.COMMIT_EVENT, task);
   }
 
   /**
@@ -93,7 +93,7 @@ class SingleNodeTaskManager extends TaskManager {
   async create(type, payload) {
     return new Promise((resolve, reject) => {
       const task = new Task(type, payload);
-      task.on(Task.COMMIT_EVENT_ID, () => {
+      task.on(Task.events.COMMIT_EVENT, () => {
         this.commit(task);
       });
       resolve(task);

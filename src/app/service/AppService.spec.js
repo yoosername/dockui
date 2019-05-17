@@ -24,32 +24,6 @@ describe("AppService", function() {
     expect(typeof AppService).toBe("function");
   });
 
-  test("should throw if not instantiated with single context object", function() {
-    var undefined;
-
-    expect(() => {
-      new AppService(null);
-    }).toThrow();
-    expect(() => {
-      new AppService(null, null, null);
-    }).toThrow();
-    expect(() => {
-      new AppService();
-    }).toThrow();
-    expect(() => {
-      new AppService("string");
-    }).toThrow();
-    expect(() => {
-      new AppService(undefined);
-    }).toThrow();
-    expect(() => {
-      new AppService([]);
-    }).toThrow();
-    expect(() => {
-      new AppService({});
-    }).not.toThrow();
-  });
-
   test("should have correct signature", function() {
     const appService = new AppService(store, taskManager);
     expect(typeof appService.start).toBe("function");
@@ -66,6 +40,27 @@ describe("AppService", function() {
     expect(typeof appService.getModule).toBe("function");
     expect(typeof appService.enableModule).toBe("function");
     expect(typeof appService.disableModule).toBe("function");
+  });
+
+  test("should log a warning if you dont extend the default behaviour", function() {
+    var logSpy = jest.spyOn(console, "warn").mockImplementation();
+    const appService = new AppService();
+    appService.start();
+    appService.shutdown();
+    appService.loadApp();
+    appService.unLoadApp();
+    appService.enableApp();
+    appService.disableApp();
+    appService.getApps();
+    appService.getApp();
+    appService.loadModule();
+    appService.unLoadModule();
+    appService.getModules();
+    appService.getModule();
+    appService.enableModule();
+    appService.disableModule();
+    expect(logSpy).toHaveBeenCalledTimes(14);
+    logSpy.mockRestore();
   });
 
   test("should extend event Emmitter", function(done) {

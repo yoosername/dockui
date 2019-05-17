@@ -1,5 +1,6 @@
 const EventEmitter = require("events");
-
+const SERVICE_STARTED_EVENT = "appService:started";
+const SERVICE_SHUTDOWN_EVENT = "appService:shutdown";
 /**
  * @description Service which provides methods to
  *                loading/unLoad Apps/Modules from remote sources,
@@ -9,28 +10,39 @@ const EventEmitter = require("events");
  */
 class AppService extends EventEmitter {
   /**
-   * @param {DockUIContext} context - Runtime Context object used to find runtime services.
+   * @param {TaskManager} taskManager - TaskManager is used to orchestrate changes to the system.
+   * @param {AppStore} store - Store is used for loading persisted state.
+   * @param {Config} config - The runtime config
    */
-  constructor(context) {
+  constructor(taskManager, store, config) {
     super();
-    if (
-      !context ||
-      typeof context !== "object" ||
-      context.constructor === Array
-    ) {
-      throw new Error(
-        "AppService should be instantiated with a context object"
-      );
-    }
-    this.context = context;
+    this.taskManager = taskManager;
+    this.store = store;
+    this.config = config;
   }
 
   /**
-   * @description Get the runtime DockUIContext for this instance
+   * @description Get the configured taskManager
    */
-  getContext() {
+  getTaskManager() {
     "use strict";
-    return this.context;
+    return this.taskManager;
+  }
+
+  /**
+   * @description Get the configured AppStore
+   */
+  getStore() {
+    "use strict";
+    return this.store;
+  }
+
+  /**
+   * @description Get the runtime config used by this AppService
+   */
+  getConfig() {
+    "use strict";
+    return this.config;
   }
 
   /**
@@ -191,5 +203,8 @@ class AppService extends EventEmitter {
     );
   }
 }
+
+AppService.SERVICE_STARTED_EVENT = SERVICE_STARTED_EVENT;
+AppService.SERVICE_SHUTDOWN_EVENT = SERVICE_SHUTDOWN_EVENT;
 
 module.exports = AppService;
