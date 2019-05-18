@@ -1,7 +1,7 @@
 const uuidv4 = require("uuid/v4");
 const Module = require("./Module");
 
-describe("App", function() {
+describe("Module", function() {
   "use strict";
 
   beforeEach(function() {});
