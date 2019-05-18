@@ -17,7 +17,7 @@ class ApiModule extends Module {
    * @description The URL of the API relative to the App Url
    */
   getUrl() {
-    return this.getUrl;
+    return this.url;
   }
 
   /**

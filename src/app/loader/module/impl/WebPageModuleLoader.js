@@ -30,8 +30,8 @@ class WebPageModuleLoader extends ModuleLoader {
         // Get initial shape from the descriptor
         const shape = {
           type: descriptor.type,
-          key: descriptor.key,
           name: descriptor.name,
+          key: descriptor.key,
           url: descriptor.url,
           cache: descriptor.cache,
           roles: descriptor.roles
