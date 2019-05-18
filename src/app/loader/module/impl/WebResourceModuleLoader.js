@@ -22,7 +22,7 @@ class WebResourceModuleLoader extends ModuleLoader {
 
   /**
    * @description Create and return a new Module from the descriptor
-   * @argument {AppDescriptor} descriptor The AppDescriptor to load
+   * @argument {Object} descriptor The Module Descriptor to test
    */
   loadModuleFromDescriptor(descriptor) {
     return new Promise(async (resolve, reject) => {
