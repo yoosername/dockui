@@ -5,21 +5,12 @@ const Module = require("../Module");
  */
 class ApiModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
-
-    this.version = descriptor.version;
-    this.url = descriptor.url;
-  }
-
-  /**
-   * @description The version of the API
-   */
-  getVersion() {
-    return this.version;
+  constructor({ url = null, version = "1.0.0" } = {}) {
+    super(arguments);
+    this.url = url;
+    this.version = version;
   }
 
   /**
@@ -28,6 +19,15 @@ class ApiModule extends Module {
   getUrl() {
     return this.getUrl;
   }
+
+  /**
+   * @description The version of the API
+   */
+  getVersion() {
+    return this.version;
+  }
 }
+
+ApiModule.DESCRIPTOR_TYPE = "Api";
 
 module.exports = ApiModule;

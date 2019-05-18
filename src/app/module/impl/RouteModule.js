@@ -5,14 +5,12 @@ const Module = require("../Module");
  */
 class RouteModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
-
-    this.routes = descriptor.routes;
-    this.url = descriptor.url;
+  constructor({ url = null, routes = [] } = {}) {
+    super(arguments);
+    this.url = url;
+    this.routes = routes;
   }
 
   /**
@@ -29,5 +27,7 @@ class RouteModule extends Module {
     return this.url;
   }
 }
+
+RouteModule.DESCRIPTOR_TYPE = "Route";
 
 module.exports = RouteModule;

@@ -5,21 +5,19 @@ const Module = require("../Module");
  */
 class AuthorizationProviderModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
-
-    this.url = descriptor.url;
-    this.weight = descriptor.weight;
+  constructor({ url = null, weight = "10" } = {}) {
+    super(arguments);
+    this.url = url;
+    this.weight = weight;
   }
 
   /**
    * @description The URL of the Provider relative to the App Url
    */
   getUrl() {
-    return this.getUrl;
+    return this.url;
   }
 
   /**
@@ -30,5 +28,7 @@ class AuthorizationProviderModule extends Module {
     return this.weight;
   }
 }
+
+AuthorizationProviderModule.DESCRIPTOR_TYPE = "AuthorizationProvider";
 
 module.exports = AuthorizationProviderModule;

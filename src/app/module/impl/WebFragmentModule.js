@@ -5,23 +5,26 @@ const Module = require("../Module");
  */
 class WebFragmentModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
-
-    this.url = descriptor.url;
-    this.selector = descriptor.selector;
-    this.location = descriptor.location;
-    this.weight = descriptor.weight;
+  constructor({
+    url = null,
+    selector = "",
+    location = null,
+    weight = "10"
+  } = {}) {
+    super(arguments);
+    this.url = url;
+    this.selector = selector;
+    this.location = location;
+    this.weight = weight;
   }
 
   /**
    * @description The URL of the API relative to the App Url
    */
   getUrl() {
-    return this.getUrl;
+    return this.url;
   }
 
   /**
@@ -29,7 +32,7 @@ class WebFragmentModule extends Module {
    *              from the HTML retrieved from getURL()
    */
   getSelector() {
-    return this.version;
+    return this.selector;
   }
 
   /**
@@ -47,5 +50,7 @@ class WebFragmentModule extends Module {
     return this.weight;
   }
 }
+
+WebFragmentModule.DESCRIPTOR_TYPE = "WebFragment";
 
 module.exports = WebFragmentModule;
