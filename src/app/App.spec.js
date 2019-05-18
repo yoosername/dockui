@@ -22,6 +22,13 @@ describe("App", function() {
     expect(typeof app.getName).toBe("function");
     expect(typeof app.getType).toBe("function");
     expect(typeof app.getUrl).toBe("function");
+    expect(typeof app.getDescription).toBe("function");
+    expect(typeof app.getVersion).toBe("function");
+    expect(typeof app.getDescriptorVersion).toBe("function");
+    expect(typeof app.getIcon).toBe("function");
+    expect(typeof app.getBuild).toBe("function");
+    expect(typeof app.getLifecycle).toBe("function");
+    expect(typeof app.getAuthentication).toBe("function");
     expect(typeof app.getId).toBe("function");
     expect(typeof app.getPermission).toBe("function");
     expect(typeof app.getModules).toBe("function");

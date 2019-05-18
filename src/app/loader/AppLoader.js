@@ -1,4 +1,11 @@
-const Config = require("../../config/Config");
+const { Config } = require("../../config/Config");
+const App = require("../App");
+const request = require("request");
+
+const defaultFetcher = async url => {
+  const data = await request.get(url);
+  return data;
+};
 
 /**
  * @description Encapsulates an external App and its Descriptor to be loaded
@@ -19,9 +26,47 @@ class AppLoader {
    * @async
    * @description Asyncronously load an App from a remote descriptor by its URL
    * @argument {String} url URL of the App Descriptor
+   * @argument {String} permission Permission we wish to grant the App
+   * @argument {Object} fetcher Function which takes a URL and returns content as a String
    */
-  load(url) {
-    // 1: Check availability
+  load(url, permission, fetcher = defaultFetcher) {
+    return new Promise(async (resolve, reject) => {
+      const descriptor = await fetcher(url);
+      if (descriptor) {
+        // Get initial shape from the fetched descriptor
+        const shape = {
+          key: descriptor.key,
+          name: descriptor.name,
+          url: url,
+          type: descriptor.type,
+          description: descriptor.description,
+          version: descriptor.version,
+          descriptorVersion: descriptor.descriptorVersion,
+          icon: descriptor.icon,
+          build: descriptor.build,
+          lifecycle: descriptor.lifecycle,
+          authentication: descriptor.authentication,
+          permission: permission,
+          modules: []
+        };
+        // If there are any modules defined, see if any moduleLoaders can handle them
+        if (descriptor.modules) {
+          descriptor.modules.forEach(module => {
+            for (var loader in this.loaders) {
+              if (this.loaders[loader].canLoadModuleDescriptor(module)) {
+                shape.modules.push(
+                  this.loaders[loader].loadModuleFromDescriptor(module)
+                );
+                break;
+              }
+            }
+          });
+        }
+        // Create an App from the shape and return it
+        const app = new App(shape);
+        resolve(app);
+      }
+    });
     // 2: Performing Security Handshake
     // 3: Loading each module using passed in ModuleLoaders
     // 4: Resolves with the loaded App object

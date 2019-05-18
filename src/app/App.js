@@ -1,6 +1,8 @@
 const uuidv4 = require("uuid/v4");
 const Module = require("./module/Module");
 
+const DEFAULT_APP_VERSION = "1.0.0";
+const DEFAULT_DESCRIPTOR_VERSION = "1.0.0";
 /**
  * @description Represents a single App.
  * @argument {Object} data - Existing App data
@@ -12,6 +14,13 @@ class App {
     name = id,
     url = null,
     type = App.types.STATIC,
+    description = id,
+    version = DEFAULT_APP_VERSION,
+    descriptorVersion = DEFAULT_DESCRIPTOR_VERSION,
+    icon = null,
+    build = null,
+    lifecycle = null,
+    authentication = App.auth.JWT,
     enabled = false,
     modules = [],
     permission = App.permissions.READ
@@ -21,7 +30,14 @@ class App {
     this.name = name;
     this.url = url;
     this.type = type;
-    this.enabled = enabled;
+    (this.description = description),
+      (this.version = version),
+      (this.descriptorVersion = descriptorVersion),
+      (this.icon = icon),
+      (this.build = build),
+      (this.lifecycle = lifecycle),
+      (this.authentication = authentication),
+      (this.enabled = enabled);
     this.modules = modules.map(module => {
       return new Module(module);
     });
@@ -78,7 +94,74 @@ class App {
    * @example App.types.DYNAMIC
    */
   getType() {
-    return this.type();
+    return this.type;
+  }
+
+  /**
+   * @description Return the description of this App
+   * @returns {String} description
+   */
+  getDescription() {
+    return this.description;
+  }
+
+  /**
+   * @description Return the version of this App
+   * @returns {String} version
+   */
+  getVersion() {
+    return this.version;
+  }
+
+  /**
+   * @description Return the descriptor version of the descriptor that this App was loaded from
+   * @returns {String} version
+   */
+  getDescriptorVersion() {
+    return this.descriptorVersion;
+  }
+
+  /**
+   * @description Return (optional) build instructions for this App
+   *              - If there are build instructions the App Load worker may choose to
+   *              - delegate a task for building the source first
+   * @returns {Array} Array of Build instructions
+   */
+  getBuild() {
+    return this.build;
+  }
+
+  /**
+   * @description Return lifecycle callback URLs of the App
+   * @returns {Object} dictionary of lifecycle callback URLs
+   */
+  getLifecycle() {
+    return this.lifecycle;
+  }
+
+  /**
+   * @description Return Authentication type specified in the App desriptor
+   * @returns {String} Auth type (e.g. App.auth.JWT...)
+   */
+  getAuthentication() {
+    return this.authentication;
+  }
+
+  /**
+   * @description Return (optional) build instructions for this App
+   *              - this is used by the loader to e.g. build an App from source as opposed to direct serve
+   * @returns {Array} Array of Build instructions
+   */
+  getBuild() {
+    return this.build;
+  }
+
+  /**
+   * @description Return the relative URL to the apps Icon
+   * @returns {String} url of App icon
+   */
+  getIcon() {
+    return this.icon;
   }
 
   /**
@@ -117,11 +200,17 @@ class App {
    */
   toJSON() {
     const json = {
-      id: this.id,
       key: this.key,
       name: this.name,
       url: this.url,
       type: this.type,
+      description: this.description,
+      version: this.version,
+      descriptorVersion: this.descriptorVersion,
+      icon: this.icon,
+      build: this.build,
+      lifecycle: this.lifecycle,
+      authentication: this.authentication,
       enabled: this.enabled,
       permission: this.permission,
       modules: []
@@ -140,6 +229,14 @@ class App {
 App.types = Object.freeze({
   STATIC: "STATIC",
   DYNAMIC: "DYNAMIC"
+});
+
+/**
+ * @static
+ * @description Represents the available auth mechanisms for connecting with the App
+ */
+App.auth = Object.freeze({
+  JWT: "JWT"
 });
 
 /**

@@ -62,3 +62,4 @@ typings/
 
 # Mac image thumbs
 .DS_Store
+src/web/impl/test.js
