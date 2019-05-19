@@ -46,7 +46,7 @@ class CLI {
           .withConfigLoader(new ConfigEnvLoader())
           .build();
     this.logger = logger;
-    this.instance = instance ? instance : new StandardInstance(this.config);
+    this.instance = instance ? instance : StandardInstance(this.config);
   }
 
   /**
@@ -86,7 +86,11 @@ class CLI {
 
       // Run Command
       if (this.args._[2] === "run") {
-        await this.instance.start();
+        try {
+          await this.instance.start();
+        } catch (err) {
+          return reject(err);
+        }
         return resolve();
       }
 

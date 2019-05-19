@@ -1,24 +1,22 @@
-const {
-  WebResourceModuleLoader,
-  WebPageModuleLoader,
-  WebItemModuleLoader,
-  WebhookModuleLoader,
-  WebFragmentModuleLoader,
-  RouteModuleLoader,
-  AuthorizationProviderModuleLoader,
-  AuthenticationProviderModuleLoader,
-  ApiModuleLoader,
-  StoreFactory,
-  TaskManagerFactory,
-  AppServiceFactory,
-  WebServiceFactory,
-  AppLoader,
-  AppLoadWorker,
-  AppStateWorker,
-  Instance,
-  Config,
-  ConfigEnvLoader
-} = require("..");
+const WebResourceModuleLoader = require("./app/loader/module/impl/WebResourceModuleLoader");
+const WebPageModuleLoader = require("./app/loader/module/impl/WebPageModuleLoader");
+const WebItemModuleLoader = require("./app/loader/module/impl/WebItemModuleLoader");
+const WebhookModuleLoader = require("./app/loader/module/impl/WebhookModuleLoader");
+const WebFragmentModuleLoader = require("./app/loader/module/impl/WebFragmentModuleLoader");
+const RouteModuleLoader = require("./app/loader/module/impl/RouteModuleLoader");
+const AuthorizationProviderModuleLoader = require("./app/loader/module/impl/AuthorizationProviderModuleLoader");
+const AuthenticationProviderModuleLoader = require("./app/loader/module/impl/AuthenticationProviderModuleLoader");
+const ApiModuleLoader = require("./app/loader/module/impl/ApiModuleLoader");
+const StoreFactory = require("./store/factory/StoreFactory");
+const TaskManagerFactory = require("./task/manager/factory/TaskManagerFactory");
+const AppServiceFactory = require("./app/service/factory/AppServiceFactory");
+const WebServiceFactory = require("./web/factory/WebServiceFactory");
+const AppLoader = require("./app/loader/AppLoader");
+const AppLoadWorker = require("./task/worker/impl/AppLoadWorker");
+const AppStateWorker = require("./task/worker/impl/AppStateWorker");
+const { Instance } = require("./Instance");
+const { Config } = require("./config/Config");
+const ConfigEnvLoader = require("./config/ConfigEnvLoader");
 
 /**
  * @description Generate an Instance of DockUI based on standard defaults

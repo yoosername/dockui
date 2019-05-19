@@ -15,9 +15,9 @@ const CLI = require("./src/cli/CLI");
 const { Config } = require("./src/config/Config");
 const ConfigEnvLoader = require("./src/config/ConfigEnvLoader");
 const ConfigLoader = require("./src/config/ConfigLoader");
+const DockerEventsReactor = require("./src/task/reactor/impl/DockerEventsReactor");
 const InMemoryAppStore = require("./src/store/impl/InMemoryAppStore");
 const { Instance } = require("./src/Instance");
-const StandardInstance = require("./src/StandardInstance");
 const Module = require("./src/app/module/Module");
 const ModuleLoader = require("./src/app/loader/module/ModuleLoader");
 const Reactor = require("./src/task/reactor/Reactor");
@@ -26,6 +26,7 @@ const RouteModuleLoader = require("./src/app/loader/module/impl/RouteModuleLoade
 const SimpleAppService = require("./src/app/service/impl/SimpleAppService");
 const SimpleKoaWebService = require("./src/web/impl/SimpleKoaWebService");
 const SingleNodeTaskManager = require("./src/task/manager/impl/SingleNodeTaskManager");
+const StandardInstance = require("./src/StandardInstance");
 const StoreFactory = require("./src/store/factory/StoreFactory");
 const Task = require("./src/task/Task");
 const TaskManager = require("./src/task/manager/TaskManager");
@@ -84,6 +85,7 @@ module.exports = {
   TaskManagerFactory,
   SingleNodeTaskManager,
   Reactor,
+  DockerEventsReactor,
   TaskWorker,
   AppLoadWorker,
   AppStateWorker,

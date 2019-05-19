@@ -7,4 +7,10 @@ describe("StandardInstance", function() {
     expect(StandardInstance).toBeDefined();
     expect(typeof StandardInstance).toBe("function");
   });
+
+  test("it produces a standard instance properly", () => {
+    expect(() => {
+      StandardInstance();
+    }).not.toThrow();
+  });
 });
