@@ -17,7 +17,6 @@ describe("WebService", function() {
     expect(typeof webService.shutdown).toBe("function");
     expect(typeof webService.isRunning).toBe("function");
     expect(typeof webService.getAppService).toBe("function");
-    expect(typeof webService.getEventService).toBe("function");
   });
 
   it("should log a warning if you dont extend the default behaviour", function() {
@@ -28,8 +27,7 @@ describe("WebService", function() {
     webService.shutdown();
     webService.isRunning();
     webService.getAppService();
-    webService.getEventService();
-    expect(logSpy).toHaveBeenCalledTimes(6);
+    expect(logSpy).toHaveBeenCalledTimes(5);
     logSpy.mockRestore();
   });
 });
