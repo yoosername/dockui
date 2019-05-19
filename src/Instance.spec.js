@@ -2,6 +2,7 @@ const AppService = require("./app/service/AppService");
 const WebService = require("./web/WebService");
 const AppStore = require("./store/AppStore");
 const TaskManager = require("./task/manager/TaskManager");
+const { Config } = require("./config/Config");
 
 const { Instance, InstanceBuilder } = require("./Instance");
 
@@ -11,18 +12,21 @@ jest.mock("./app/service/AppService");
 jest.mock("./web/WebService");
 jest.mock("./store/AppStore");
 jest.mock("./task/manager/TaskManager");
+jest.mock("./config/Config");
 
-describe("InstanceBuilder", function() {
+describe("Instance", function() {
   beforeEach(function() {
+    config = new Config();
     appService = new AppService();
     webService = new WebService();
     appStore = new AppStore();
     taskManager = new TaskManager();
     instance = new Instance()
-      .withContext({})
+      .withConfig(config)
       .withStore(appStore)
       .withTaskManager(taskManager)
-      .withModuleLoaders([])
+      .withTaskWorkers([])
+      .withReactors([])
       .withAppService(appService)
       .withWebService(webService)
       .build();
@@ -57,7 +61,7 @@ describe("InstanceBuilder", function() {
 
   describe("InstanceBuilder", function() {
     test("builder allows us to set the Context", () => {
-      new InstanceBuilder().withContext({});
+      new InstanceBuilder().withConfig({});
     });
 
     test("builder allows us to set the WebService", () => {
@@ -72,8 +76,8 @@ describe("InstanceBuilder", function() {
       new InstanceBuilder().withStore(appStore);
     });
 
-    test("builder allows us to set the ModulesLoaders", () => {
-      new InstanceBuilder().withModuleLoaders([]);
+    test("builder allows us to set the Reactors", () => {
+      new InstanceBuilder().withReactors([]);
     });
 
     test("builder allows us to set the TaskManager", () => {
@@ -86,7 +90,7 @@ describe("InstanceBuilder", function() {
 
     test("builder returns a Instance instance when build method is called", () => {
       const instance = new InstanceBuilder()
-        .withStore(store)
+        .withStore(appStore)
         .withTaskManager(taskManager)
         .withTaskWorkers([])
         .withReactors([])

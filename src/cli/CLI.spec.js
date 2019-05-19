@@ -1,13 +1,9 @@
 const CLI = require("./CLI");
-const ConfigLoader = require("./ConfigLoader");
-const { DockUIApps } = require("../DockUIApps");
-const { defaultConfig } = require("../Defaults");
+const { Instance } = require("../Instance");
 
-jest.mock("./ConfigLoader");
-jest.mock("../DockUIApps");
+jest.mock("../Instance");
 
-var configLoader1 = null;
-var configLoader2 = null;
+var config = null;
 var logSpy,
   warnSpy,
   debugSpy = null;
@@ -17,25 +13,10 @@ describe("CLI", function() {
   "use strict";
 
   beforeEach(function() {
-    configLoader1 = new ConfigLoader();
-    configLoader1.load.mockImplementation(() => {
-      return {
-        store: "store1",
-        port: "port1",
-        secret: "secret1"
-      };
-    });
-
-    configLoader2 = new ConfigLoader();
-    configLoader2.load.mockImplementation(() => {
-      return {
-        store: "store2",
-        port: "port2"
-      };
-    });
+    config = new Config();
+    config.set("store.type", "memory");
+    config.set("web.port", "1234");
     logSpy = jest.spyOn(console, "log").mockImplementation();
-    //warnSpy = jest.spyOn(console, "warn").mockImplementation();
-    //debugSpy = jest.spyOn(global.console, "debug").mockImplementation();
   });
 
   afterEach(function() {
@@ -55,37 +36,12 @@ describe("CLI", function() {
   // GENERIC TESTS
   // Should be configurable by passing in a config object
   test("should be configurable by passing in a config", function() {
-    cli = new CLI({ dockui: new DockUIApps() });
-    expect(typeof cli.getConfig).toBe("function");
-    expect(cli.getConfig().secret).toBe(defaultConfig.secret);
     cli = new CLI({
-      dockui: new DockUIApps(),
-      config: {
-        store: "store1",
-        events: "events1",
-        port: "port1",
-        secret: "secret1"
-      }
+      instance: new Instance(),
+      config: config
     });
-    expect(cli.getConfig().store).toBe("store1");
-    expect(cli.getConfig().events).toBe("events1");
-    expect(cli.getConfig().port).toBe("port1");
-    expect(cli.getConfig().secret).toBe("secret1");
-  });
-
-  // Should be configurable by passing in a heirarchy of ConfigLoaders
-  test("should be configurable by passing in a heirarchy of ConfigLoaders", function() {
-    ConfigLoader.loadConfig = jest.fn(() => {
-      return Object.assign(configLoader1.load(), configLoader2.load());
-    });
-    cli = new CLI({
-      dockui: new DockUIApps(),
-      configLoaders: [configLoader1, configLoader2]
-    });
-    expect(typeof cli.getConfig).toBe("function");
-    expect(cli.getConfig().store).toBe("store2");
-    expect(cli.getConfig().port).toBe("port2");
-    expect(cli.getConfig().secret).toBe("secret1");
+    expect(cli.getConfig().get("store.type")).toBe("memory");
+    expect(cli.getConfig().get("web.port")).toBe("1234");
   });
 
   // Should log usage when --help is passed on command line
@@ -135,13 +91,13 @@ describe("CLI", function() {
   //
   //     $ dockui run
   test("should run an instance of dockui)", async function() {
-    const dockuiApps = new DockUIApps();
-    expect(dockuiApps.start).not.toHaveBeenCalled();
+    const instance = new Instance();
+    expect(instance.start).not.toHaveBeenCalled();
     cli = new CLI({
-      dockui: dockuiApps
+      instance: instance
     });
     await cli.parse(["node", "dockui", "run"]);
-    expect(dockuiApps.start).toHaveBeenCalled();
+    expect(instance.start).toHaveBeenCalled();
   });
 
   // TODO (v0.0.1-Alpha): These tests

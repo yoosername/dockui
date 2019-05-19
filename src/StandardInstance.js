@@ -5,7 +5,6 @@ const {
   WebhookModuleLoader,
   WebFragmentModuleLoader,
   RouteModuleLoader,
-  CachableModuleLoader,
   AuthorizationProviderModuleLoader,
   AuthenticationProviderModuleLoader,
   ApiModuleLoader,
@@ -14,14 +13,18 @@ const {
   AppServiceFactory,
   WebServiceFactory,
   AppLoader,
-  InstanceBuilder
+  AppLoadWorker,
+  AppStateWorker,
+  Instance,
+  Config,
+  ConfigEnvLoader
 } = require("..");
 
 /**
  * @description Generate an Instance of DockUI based on standard defaults
  * @return {Instance} An instance of DockUI
  */
-const generateStandardInstance = () => {
+const generateStandardInstance = cnf => {
   let config = null;
   let store = null;
   let taskManager = null;
@@ -30,11 +33,15 @@ const generateStandardInstance = () => {
   let appLoader = null;
   let instance = null;
 
-  // Load config
-  config = Config.builder()
-    .withConfigLoader(new EnvConfigLoader())
-    //.withConfigLoader(new YamlConfigLoader())
-    .build();
+  // Load config if wasnt passed in
+  if (!cnf) {
+    config = Config.builder()
+      .withConfigLoader(new ConfigEnvLoader())
+      //.withConfigLoader(new YamlConfigLoader())
+      .build();
+  } else {
+    config = cnf;
+  }
 
   // Load correct implementations of required services
   store = StoreFactory.create(config);
@@ -52,24 +59,20 @@ const generateStandardInstance = () => {
     .withModuleLoader(new WebhookModuleLoader(config))
     .withModuleLoader(new WebFragmentModuleLoader(config))
     .withModuleLoader(new RouteModuleLoader(config))
-    .withModuleLoader(new CachableModuleLoader(config))
     .withModuleLoader(new AuthorizationProviderModuleLoader(config))
     .withModuleLoader(new AuthenticationProviderModuleLoader(config))
     .withModuleLoader(new ApiModuleLoader(config))
     .build();
 
-  // configure a DockUI instance using our preffered settings
-  instance = new InstanceBuilder()
+  // configure a DockUI instance using our preferred settings
+  instance = new Instance()
     .withStore(store)
     .withTaskManager(taskManager)
     .withTaskWorkers([
       new AppLoadWorker(taskManager, store, appLoader, config),
       new AppStateWorker(taskManager, store, appLoader, config)
     ])
-    .withReactors([
-      new DockerEventReactor(taskManager, config),
-      new FileSystemReactor(taskManager, config)
-    ])
+    //.withReactors([new DockerEventsReactor(taskManager, config)])
     .withAppService(appService)
     .withWebService(webService)
     .build();

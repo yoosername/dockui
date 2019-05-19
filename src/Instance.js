@@ -14,9 +14,9 @@ class Instance {
     this.webService = builder.webService;
     this.appService = builder.appService;
     this.appStore = builder.appStore;
-    this.moduleLoaders = builder.moduleLoaders;
     this.taskManager = builder.taskManager;
     this.taskWorkers = builder.taskWorkers;
+    this.reactors = builder.reactors;
   }
 
   /**
@@ -56,12 +56,12 @@ class Instance {
 class InstanceBuilder {
   constructor() {
     this.config = {};
-    this.webService = null;
-    this.appService = null;
     this.appStore = null;
-    this.moduleLoaders = [];
     this.taskManager = null;
     this.taskWorkers = [];
+    this.reactors = [];
+    this.webService = null;
+    this.appService = null;
   }
 
   /**
@@ -74,38 +74,11 @@ class InstanceBuilder {
   }
 
   /**
-   * @description Use the specified WebService
-   * @argument {WebService} webService the WebService to use
-   */
-  withWebService(webService) {
-    this.webService = webService;
-    return this;
-  }
-
-  /**
-   * @description Use the specified AppService
-   * @argument {AppService} appService The AppService to use
-   */
-  withAppService(appService) {
-    this.appService = appService;
-    return this;
-  }
-
-  /**
    * @description Use the specified AppStore
    * @argument {AppStore} appStore The AppStore to use
    */
   withStore(appStore) {
     this.appStore = appStore;
-    return this;
-  }
-
-  /**
-   * @description Use the specified ModuleLoaders
-   * @argument {Array} moduleLoaders The ModuleLoaders to use
-   */
-  withModuleLoaders(moduleLoaders) {
-    this.moduleLoaders = moduleLoaders;
     return this;
   }
 
@@ -124,6 +97,33 @@ class InstanceBuilder {
    */
   withTaskWorkers(taskWorkers) {
     this.taskWorkers = taskWorkers;
+    return this;
+  }
+
+  /**
+   * @description Use the specified Reactors
+   * @argument {Array} reactors The Reactors to use
+   */
+  withReactors(reactors) {
+    this.reactors = reactors;
+    return this;
+  }
+
+  /**
+   * @description Use the specified WebService
+   * @argument {WebService} webService the WebService to use
+   */
+  withWebService(webService) {
+    this.webService = webService;
+    return this;
+  }
+
+  /**
+   * @description Use the specified AppService
+   * @argument {AppService} appService The AppService to use
+   */
+  withAppService(appService) {
+    this.appService = appService;
     return this;
   }
 

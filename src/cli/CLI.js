@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
-const { StandardInstance } = require("./");
-const ConfigLoader = require("./ConfigLoader");
+const { Config, ConfigEnvLoader } = require("../..");
+const StandardInstance = require("../StandardInstance");
 const LOG_LEVELS = ["info", "warn", "error", "debug"];
 
 const showUsage = ({
-  name = "cli.js",
+  name = "CLI.js",
   logger = console,
   logLevel = "info"
 }) => {
@@ -36,19 +36,18 @@ class CLI {
    */
   constructor({
     name = "cli.js",
-    dockui = null,
-    config = defaultConfig,
-    configLoaders = [],
+    instance = null,
+    config = null,
     logger = console
   } = {}) {
     this.name = name;
-    this.config = config;
+    this.config = config
+      ? config
+      : Config.builder()
+          .withConfigLoader(new ConfigEnvLoader())
+          .build();
     this.logger = logger;
-    this.dockui = dockui ? dockui : new StandardInstance();
-    if (configLoaders.length) {
-      var loadedConfig = ConfigLoader.loadConfig(this.config, configLoaders);
-      this.config = loadedConfig;
-    }
+    this.instance = instance ? instance : new StandardInstance(this.config);
   }
 
   /**
