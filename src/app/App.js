@@ -224,6 +224,16 @@ class App {
 
 /**
  * @static
+ * @description Represents the available states of the App
+ */
+App.states = Object.freeze({
+  LOADED: "LOADED", // When App is first loaded but not yet enabled
+  ENABLED: "ENABLED", // When an App has been enabled through the management interface
+  DISABLED: "DISABLED" // When an App is loaded but specifically disabled
+});
+
+/**
+ * @static
  * @description Represents the available types of the App
  */
 App.types = Object.freeze({

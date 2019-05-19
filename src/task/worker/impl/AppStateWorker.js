@@ -1,13 +1,12 @@
-const Task = require("../../../task/Task");
+const App = require("../../../app/App");
+const Task = require("../../Task");
 
 /**
- * @description Worker which responds to App Load requests by processing the descriptor
- *              and attempting to:
- *              1: Load App using AppLoader
- *              2: Save App state to Store
- *              3: Close Task as success
+ * @description Worker which responds to App enable/disable tasks
+ *              1: Save new App state to Store
+ *              2: Close Task as success
  */
-class AppLoadWorker {
+class AppStateWorker {
   /**
    * @argument {TaskManager} taskManager The taskManager this worker should register with for new tasks
    * @argument {AppStore} store The store to use for persisting any data
@@ -16,7 +15,8 @@ class AppLoadWorker {
    */
   constructor(taskManager, store, appLoader, config) {
     this.taskManager = taskManager;
-    this.worker = null;
+    this.worker1 = null;
+    this.worker2 = null;
     this.store = store;
     this.appLoader = appLoader;
     this.config = config;
@@ -71,26 +71,24 @@ class AppLoadWorker {
     "use strict";
     return new Promise(async (resolve, reject) => {
       const payload = task.getPayload();
-      const url = payload && payload.url ? payload.url : null;
+      const app = payload && payload.app ? payload.app : null;
 
       // Make sure there is a URL to load
-      if (!url) {
-        let errMsg = `Task with id(${task.getId()}) is missing a url in the payload`;
-        task.emit(Task.events.ERROR_EVENT, errMsg);
-        return reject(new Error(errMsg));
-      }
-      // Try to load the App from the URL
-      const app = await this.appLoader.load(url);
       if (!app) {
-        let errMsg = `Task(${task.getId()}) : Error loading App from URL : ${url}`;
+        let errMsg = `Task with id(${task.getId()}) is missing an app in the payload`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
+      // Toggle disable or enable based on payload
+      const appData = app.toJSON();
+      appData.enabled =
+        payload.state && payload.state === App.states.DISABLED ? false : true;
+      const updatedApp = new App(appData);
       // Save it to the Store
-      await this.store.create(app);
+      await this.store.update(appData.id, updatedApp);
 
       // Close off the task
-      task.emit(Task.events.SUCCESS_EVENT, app);
+      task.emit(Task.events.SUCCESS_EVENT, updatedApp);
       resolve();
     });
   }
@@ -106,8 +104,14 @@ class AppLoadWorker {
     this._running = true;
     return new Promise(async (resolve, reject) => {
       const taskManager = this.taskManager;
-      this.worker = await taskManager.process(
-        Task.types.APP_LOAD,
+      this.worker1 = await taskManager.process(
+        Task.types.APP_ENABLE,
+        async task => {
+          await this.processTask(task);
+        }
+      );
+      this.worker2 = await taskManager.process(
+        Task.types.APP_DISABLE,
         async task => {
           await this.processTask(task);
         }
@@ -125,14 +129,18 @@ class AppLoadWorker {
       return Promise.resolve();
     }
     return new Promise(async (resolve, reject) => {
-      if (this.worker && this.worker.close) {
-        await this.worker.close();
+      if (this.worker1 && this.worker1.close) {
+        await this.worker1.close();
       }
-      this.worker = null;
+      this.worker1 = null;
+      if (this.worker2 && this.worker2.close) {
+        await this.worker2.close();
+      }
+      this.worker2 = null;
       this._running = false;
       resolve();
     });
   }
 }
 
-module.exports = AppLoadWorker;
+module.exports = AppStateWorker;
