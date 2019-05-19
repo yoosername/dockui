@@ -118,11 +118,15 @@ class SingleNodeTaskManager extends TaskManager {
    */
   async process(type, callback) {
     return new Promise((resolve, reject) => {
+      const id = uuidv4();
       const worker = {
-        id: uuidv4(),
+        id: id,
         type: type,
         working: false,
-        process: callback
+        process: callback,
+        close: () => {
+          this.workers = this.workers.filter(w => w.id !== id);
+        }
       };
       this.workers.push(worker);
       resolve(worker);

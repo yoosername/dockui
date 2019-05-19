@@ -38,6 +38,18 @@ describe("SingleNodeTaskManager", function() {
     }, 500);
   });
 
+  test("should be able to close a worker", async () => {
+    const taskManager = new SingleNodeTaskManager();
+    expect(taskManager.getWorkers().length).toEqual(0);
+    const worker = await taskManager.process("type1", async task => {});
+    const worker2 = await taskManager.process("type1", async task => {});
+    expect(taskManager.getWorkers().length).toEqual(2);
+    worker2.close();
+    expect(taskManager.getWorkers().length).toEqual(1);
+    worker.close();
+    expect(taskManager.getWorkers().length).toEqual(0);
+  });
+
   test("should be able to assign worker to a task with certain type", async () => {});
   test("should be able to emit events on task from worker", async () => {});
   test("should be able to remove worker", async () => {});

@@ -62,7 +62,10 @@ const generateStandardInstance = () => {
   instance = new InstanceBuilder()
     .withStore(store)
     .withTaskManager(taskManager)
-    .withTaskWorkers([new AppLoadWorker(taskManager, store, appLoader, config)])
+    .withTaskWorkers([
+      new AppLoadWorker(taskManager, store, appLoader, config),
+      new AppStateWorker(taskManager, store, appLoader, config)
+    ])
     .withReactors([
       new DockerEventReactor(taskManager, config),
       new FileSystemReactor(taskManager, config)
