@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
-const { Config, ConfigEnvLoader } = require("../..");
-const StandardInstance = require("../StandardInstance");
+const { Config, ConfigEnvLoader, StandardInstance } = require("../..");
 const LOG_LEVELS = ["info", "warn", "error", "debug"];
 
 const showUsage = ({
@@ -87,7 +86,7 @@ class CLI {
 
       // Run Command
       if (this.args._[2] === "run") {
-        await this.dockui.start();
+        await this.instance.start();
         return resolve();
       }
 

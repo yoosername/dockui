@@ -1,13 +1,14 @@
 const CLI = require("./CLI");
 const { Instance } = require("../Instance");
+const { Config } = require("../..");
 
 jest.mock("../Instance");
 
-var config = null;
-var logSpy,
+let config = null;
+let logSpy,
   warnSpy,
   debugSpy = null;
-var cli = null;
+let cli = null;
 
 describe("CLI", function() {
   "use strict";

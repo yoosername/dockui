@@ -17,6 +17,7 @@ const ConfigEnvLoader = require("./src/config/ConfigEnvLoader");
 const ConfigLoader = require("./src/config/ConfigLoader");
 const InMemoryAppStore = require("./src/store/impl/InMemoryAppStore");
 const { Instance } = require("./src/Instance");
+const StandardInstance = require("./src/StandardInstance");
 const Module = require("./src/app/module/Module");
 const ModuleLoader = require("./src/app/loader/module/ModuleLoader");
 const Reactor = require("./src/task/reactor/Reactor");
@@ -45,6 +46,7 @@ const WebhookModuleLoader = require("./src/app/loader/module/impl/WebhookModuleL
 
 module.exports = {
   Instance,
+  StandardInstance,
   App,
   AppLoader,
   ModuleLoader,

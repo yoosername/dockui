@@ -80,9 +80,4 @@ const generateStandardInstance = cnf => {
   return instance;
 };
 
-let singletonInstance;
-singletonInstance = singletonInstance
-  ? singletonInstance
-  : generateStandardInstance();
-
-module.exports = singletonInstance;
+module.exports = generateStandardInstance;

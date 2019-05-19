@@ -5,6 +5,6 @@ describe("StandardInstance", function() {
 
   test("it is defined and loadable", () => {
     expect(StandardInstance).toBeDefined();
-    expect(typeof StandardInstance).toBe("object");
+    expect(typeof StandardInstance).toBe("function");
   });
 });
