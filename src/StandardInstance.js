@@ -16,7 +16,7 @@ const AppLoadWorker = require("./task/worker/impl/AppLoadWorker");
 const AppStateWorker = require("./task/worker/impl/AppStateWorker");
 const { Instance } = require("./Instance");
 const { Config } = require("./config/Config");
-const ConfigEnvLoader = require("./config/ConfigEnvLoader");
+const ConfigEnvLoader = require("./config/loader/impl/ConfigEnvLoader");
 
 /**
  * @description Generate an Instance of DockUI based on standard defaults

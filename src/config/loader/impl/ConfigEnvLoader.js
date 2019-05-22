@@ -1,5 +1,5 @@
-const ConfigLoader = require("./ConfigLoader");
-const { Config } = require("./Config");
+const ConfigLoader = require("../ConfigLoader");
+const { Config } = require("../../Config");
 
 /**
  * Loads Config from Environment into a Config object
