@@ -20,11 +20,7 @@ class SimpleKoaWebService extends WebService {
   constructor({ appService, config = new Config(), logger } = {}) {
     super({ appService, config });
     this.running = false;
-    this.port = config
-      ? config.get("web.port")
-      : process.env.PORT
-      ? process.env.PORT
-      : DEFAULT_PORT;
+    this.port = config ? config.get("web.port") : DEFAULT_PORT;
     this.logger = logger;
     this.webApp = new Koa();
     this.router = new Router();
@@ -272,13 +268,18 @@ class SimpleKoaWebService extends WebService {
       // Start App if not already
       if (!this.server && !this.isRunning()) {
         try {
-          this.server = await this.webApp.listen(this.port).on("error", err => {
-            console.error(err);
-          });
+          this.server = await this.webApp
+            .listen(this.getPort())
+            .on("error", err => {
+              this.logger.error("Web Service encountered an error: %o", err);
+            });
           this.running = true;
-          this.logger.info("Web Service has started");
+          this.logger.info(
+            "Web Service has started on port %d",
+            this.getPort()
+          );
         } catch (e) {
-          reject(e);
+          return reject(e);
         }
       }
       // Emit local started event
@@ -315,7 +316,7 @@ class SimpleKoaWebService extends WebService {
    */
   getPort() {
     "use strict";
-    return parseInt(this.port, 10);
+    return this.port;
   }
 
   /**

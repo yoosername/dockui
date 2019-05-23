@@ -55,7 +55,7 @@ class CLI {
           .withConfigLoader(new ConfigEnvLoader())
           .build();
     this.logger = logger;
-    this.instance = instance ? instance : StandardInstance(this.config);
+    this.instance = instance ? instance : StandardInstance(...arguments);
   }
 
   /**
@@ -111,7 +111,9 @@ class CLI {
   }
 }
 
-// Allow this module to be run directly as a main module
+/**
+ * Allow this module to be run directly as a main module
+ */
 (async () => {
   if (typeof require != "undefined" && require.main === module) {
     try {
@@ -119,7 +121,7 @@ class CLI {
         .withConfigLoader(new ConfigEnvLoader())
         .build();
       const logger = new Logger(config);
-      await new CLI({ name: "dockui", logger }).parse(process.argv);
+      await new CLI({ name: "dockui", config, logger }).parse(process.argv);
     } catch (e) {
       console.log(e);
     }
