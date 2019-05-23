@@ -37,10 +37,21 @@ class Config {
 
   /**
    * @description Retrieve all config entries
+   * @argument {String} strFilter if specified then only entries starting with this strFilter will be returned
    * @returns {Array} Array of config entries or empty array
    */
-  getAll() {
-    return Object.assign({}, this.data);
+  getAll(strFilter) {
+    const allData = Object.assign({}, this.data);
+    if (!strFilter) {
+      return allData;
+    }
+    const filteredData = {};
+    for (var key in allData) {
+      if (key.startsWith(strFilter)) {
+        filteredData[key] = allData[key];
+      }
+    }
+    return filteredData;
   }
 
   /**
@@ -51,6 +62,7 @@ class Config {
    */
   set(key, value) {
     this.data[key] = value;
+    return this;
   }
 
   /**
@@ -62,6 +74,31 @@ class Config {
     Object.keys(otherConfig).forEach(key => {
       this.set(key, otherConfig[key]);
     });
+    return this;
+  }
+
+  /**
+   * @description Return a copy of the current config
+   * @returns {Config} a copy of this same config
+   */
+  clone() {
+    return new Config().load(this.getAll());
+  }
+
+  /**
+   * @description Load all keys in bulk
+   * @argument {Object} data The existing data to load
+   * @returns {Config} this same config with the newly loaded data.
+   */
+  load(data) {
+    if (data && data instanceof Config) {
+      this.copy(data);
+    } else {
+      for (var key in data) {
+        this.data[key] = data[key];
+      }
+    }
+    return this;
   }
 }
 
