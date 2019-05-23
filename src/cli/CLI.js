@@ -100,8 +100,14 @@ class CLI {
 }
 
 // Allow this module to be run directly as a main module
-if (typeof require != "undefined" && require.main === module) {
-  new CLI({ name: "dockui" }).parse(process.argv);
-}
+(async () => {
+  if (typeof require != "undefined" && require.main === module) {
+    try {
+      await new CLI({ name: "dockui" }).parse(process.argv);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+})();
 
 module.exports = CLI;

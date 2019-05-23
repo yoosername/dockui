@@ -17,9 +17,13 @@ class StoreFactory {
   create({ config = new Config() } = {}) {
     let store = null;
     switch (config.get("store.type")) {
-      case "":
-        store = new InMemoryAppStore({ config });
-      //case "postgres" : store = new PostgresBackedAppStore(config);
+      case "memory":
+        try {
+          store = new InMemoryAppStore({ config });
+        } catch (e) {
+          console.log(e);
+        }
+        break;
       default:
         store = new InMemoryAppStore({ config });
     }

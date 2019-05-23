@@ -14,15 +14,19 @@ class WebServiceFactory {
    * @argument {Config} config The runtime config
    * @return {WebService} A instance of a WebService
    */
-  create({ appService, config = new Config() } = {}) {
+  create({ appService, config = new Config(), logger } = {}) {
     let webService = null;
-    if (!config) return new SimpleKoaWebService({ appService, config });
+    let WebService = null;
     switch (config.get("webService.type")) {
       case "":
-        webService = new SimpleKoaWebService({ appService, config });
-      //case "management" : webService = new ManagementOnlyWebService(appService, config);
+        WebService = SimpleKoaWebService;
       default:
-        webService = new SimpleKoaWebService({ appService, config });
+        WebService = SimpleKoaWebService;
+    }
+    try {
+      webService = new WebService({ appService, config, logger });
+    } catch (e) {
+      logger.error("Error creating WebService: %o", e);
     }
     return webService;
   }

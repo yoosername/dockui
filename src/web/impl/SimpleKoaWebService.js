@@ -17,7 +17,7 @@ class SimpleKoaWebService extends WebService {
    * @argument {AppService} appService The AppService for interacting with Apps
    * @argument {Config} config The optional runtime Config
    */
-  constructor({ appService, config = new Config() } = {}) {
+  constructor({ appService, config = new Config(), logger } = {}) {
     super({ appService, config });
     this.running = false;
     this.port = config
@@ -25,6 +25,7 @@ class SimpleKoaWebService extends WebService {
       : process.env.PORT
       ? process.env.PORT
       : DEFAULT_PORT;
+    this.logger = logger;
     this.webApp = new Koa();
     this.router = new Router();
     this.server = null;
@@ -261,6 +262,7 @@ class SimpleKoaWebService extends WebService {
             console.error(err);
           });
           this.running = true;
+          this.logger.info("Web Service has started");
         } catch (e) {
           reject(e);
         }

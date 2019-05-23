@@ -15,8 +15,9 @@ class SimpleAppService extends AppService {
    * @param {AppStore} store - Store is used for loading persisted state.
    * @param {Config} config - The runtime config
    */
-  constructor({ taskManager, store, config } = {}) {
-    super(taskManager, store, config);
+  constructor({ taskManager, store, config, logger } = {}) {
+    super(taskManager, store, config, logger);
+    this.logger = logger;
     this._running = false;
   }
 
@@ -37,6 +38,7 @@ class SimpleAppService extends AppService {
     return new Promise(async (resolve, reject) => {
       await this.taskManager.start();
       this._running = true;
+      this.logger.info("App Service has started");
       this.emit(AppService.SERVICE_STARTED_EVENT);
       resolve();
     });

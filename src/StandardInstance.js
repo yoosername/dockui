@@ -47,7 +47,7 @@ const generateStandardInstance = cnf => {
   }
 
   // Get a Logger to use
-  context.logger = LoggerFactory.create(context);
+  logger = context.logger = LoggerFactory.create(context);
 
   // Load correct implementations of required services
   context.store = StoreFactory.create(context);
@@ -72,12 +72,12 @@ const generateStandardInstance = cnf => {
 
   // configure a DockUI instance using our preferred settings
   instance = new Instance()
-    .withStore(store)
-    .withTaskManager(taskManager)
+    .withStore(context.store)
+    .withTaskManager(context.taskManager)
     .withTaskWorkers([new AppLoadWorker(context), new AppStateWorker(context)])
     //.withReactors([new DockerEventsReactor(taskManager, config)])
-    .withAppService(appService)
-    .withWebService(webService)
+    .withAppService(context.appService)
+    .withWebService(context.webService)
     .build();
 
   return instance;
