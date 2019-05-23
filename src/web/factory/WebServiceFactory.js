@@ -1,5 +1,6 @@
 const SimpleKoaWebService = require("../impl/SimpleKoaWebService");
 const { Config } = require("../../config/Config");
+const Logger = require("../../log/Logger");
 
 /**
  * @description WebServiceFactory has a single method .create which generates
@@ -14,7 +15,11 @@ class WebServiceFactory {
    * @argument {Config} config The runtime config
    * @return {WebService} A instance of a WebService
    */
-  create({ appService, config = new Config(), logger } = {}) {
+  create({
+    appService,
+    config = new Config(),
+    logger = new Logger(config)
+  } = {}) {
     let webService = null;
     let WebService = null;
     switch (config.get("webService.type")) {
