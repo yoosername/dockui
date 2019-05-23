@@ -52,6 +52,7 @@ class SimpleKoaWebService extends WebService {
         ctx.status = err.status || 500;
         ctx.body = err.message;
         ctx.app.emit("error", err, ctx);
+        this.logger.error("error %o %o", err, ctx);
       }
     });
 
@@ -64,6 +65,8 @@ class SimpleKoaWebService extends WebService {
      * Simple Health Endpoint
      */
     router.get("/health", async ctx => {
+      this.logger.debug("[GET] /health %o", ctx.params);
+      this.logger.silly("[GET] /health %o %o", ctx.params, ctx.headers);
       ctx.body = { status: "running" };
     });
 
@@ -71,6 +74,12 @@ class SimpleKoaWebService extends WebService {
      * Raw Swagger API static JSON
      */
     router.get("/api/swagger.json", async ctx => {
+      this.logger.debug("[GET] /api/swagger.json %o", ctx.params);
+      this.logger.silly(
+        "[GET] /api/swagger.json %o %o",
+        ctx.params,
+        ctx.headers
+      );
       ctx.body = swaggerDocument;
     });
 
@@ -85,9 +94,14 @@ class SimpleKoaWebService extends WebService {
      */
     // List all Apps
     router.get("/api/admin/app", async ctx => {
+      this.logger.debug("[GET] /api/admin/app %o", ctx.params);
+      this.logger.silly("[GET] /api/admin/app %o %o", ctx.params, ctx.headers);
       if (this.appService && typeof this.appService.getApps === "function") {
         ctx.body = this.appService.getApps();
       } else {
+        this.logger.error(
+          "[GET] /api/admin/app - Cannot communicate with AppService"
+        );
         throw new Error("Cannot communicate with AppService");
       }
     });

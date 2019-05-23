@@ -5,15 +5,11 @@ const { combine, timestamp, splat, simple, printf, colorize } = format;
 
 const upperCaseLevel = printf((info, opts) => {
   info.level = info.level.toUpperCase();
-  const { level, message, service, timestamp, ...rest } = info;
-  for (var item in message) {
-    message[item] = JSON.stringify(message[item]);
-  }
   return info;
 });
 const dockuiLogFormat = printf(
   ({ level, message, service, timestamp, ...rest }) => {
-    return `[${timestamp}][${service}][${level}] : ${message} ${rest}`;
+    return `[${timestamp}][${service}][${level}] : ${message}`;
   }
 );
 /**
@@ -34,7 +30,7 @@ class WinstonLogger extends Logger {
     }
 
     this._logger = createLogger({
-      level: "info",
+      level: "debug",
       format: combine(
         timestamp(),
         upperCaseLevel,
