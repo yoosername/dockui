@@ -14,13 +14,13 @@ class LoggerFactory {
    * @argument {Config} config The runtime config
    * @return {Store} A instance of a Logger
    */
-  create(config = new Config()) {
+  create({ config = new Config() } = {}) {
     let logger = null;
     switch (config.get("logger.type")) {
       case "":
-        logger = new WinstonLogger(config);
+        logger = new WinstonLogger({ config });
       default:
-        logger = new WinstonLogger(config);
+        logger = new WinstonLogger({ config });
     }
     return logger;
   }

@@ -32,13 +32,13 @@ describe("SimpleAppService", () => {
   });
 
   test("should be a function", async () => {
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     expect(typeof SimpleAppService).toBe("function");
     expect(appService instanceof AppService).toBe(true);
   });
 
   test("should have correct signature", async () => {
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     expect(typeof appService.start).toBe("function");
     expect(typeof appService.shutdown).toBe("function");
     expect(typeof appService.loadApp).toBe("function");
@@ -56,21 +56,21 @@ describe("SimpleAppService", () => {
   });
 
   test("start should return promise that resolves when appService is ready", async () => {
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     expect(appService.isRunning()).toEqual(false);
     await appService.start();
     expect(appService.isRunning()).toEqual(true);
   });
 
   test("start should also start the taskManager if it isnt already", async () => {
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     expect(taskManager.start).not.toHaveBeenCalled();
     await appService.start();
     expect(taskManager.start).toHaveBeenCalled();
   });
 
   test("shutdown should return promise that resolves when appService has stopped", async () => {
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     expect(appService.isRunning()).toEqual(false);
     await appService.start();
     expect(appService.isRunning()).toEqual(true);
@@ -80,7 +80,7 @@ describe("SimpleAppService", () => {
 
   test("should load an app by delegating to taskManager", () => {
     // Test that appService calls TaskManager.create("APP_LOAD"
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const urlParam = "http://fake.url/descriptor.yml";
     const permissionParam = App.permissions.READ;
     appService.loadApp(urlParam, permissionParam);
@@ -92,7 +92,7 @@ describe("SimpleAppService", () => {
 
   test("should unload an app by delegating to taskManager", async () => {
     // Test that appService calls TaskManager.create("APP_LOAD"
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const app = new App();
     appService.unLoadApp(app);
     expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_UNLOAD, app);
@@ -100,7 +100,7 @@ describe("SimpleAppService", () => {
 
   test("should enable an app by delegating to taskManager", async () => {
     // Test that appService calls TaskManager.create("APP_LOAD"
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const app = new App();
     // Create Task if App isnt already enabled.
     appService.enableApp(app);
@@ -116,7 +116,7 @@ describe("SimpleAppService", () => {
 
   test("should disable an app by delegating to taskManager", async () => {
     // Test that appService calls TaskManager.create("APP_LOAD"
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const app = new App();
     expect(taskManager.create).toHaveBeenCalledTimes(0);
     // Dont Create Task if App is already disabled.
@@ -141,7 +141,7 @@ describe("SimpleAppService", () => {
     const testApps = [app1, app2];
     const testAppsJSON = [app1.toJSON(), app2.toJSON()];
     store.find.mockReturnValue(testAppsJSON);
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const apps = await appService.getApps("fakenews");
     expect(store.find).toHaveBeenCalledWith("fakenews");
     expect(apps.length).toEqual(2);
@@ -151,7 +151,7 @@ describe("SimpleAppService", () => {
     const store = new Store();
     const app = new App();
     store.read.mockReturnValue(app.toJSON());
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const foundApp = await appService.getApp("fakenews");
     expect(store.read).toHaveBeenCalledWith("fakenews");
   });
@@ -163,7 +163,7 @@ describe("SimpleAppService", () => {
     const testModules = [module1, module2];
     const testModulesJSON = [module1.toJSON(), module2.toJSON()];
     store.find.mockReturnValue(testModulesJSON);
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const modules = await appService.getModules("blabla");
     expect(store.find).toHaveBeenCalledWith("blabla");
     expect(modules.length).toEqual(2);
@@ -173,14 +173,14 @@ describe("SimpleAppService", () => {
     const store = new Store();
     const module = new Module();
     store.read.mockReturnValue(module.toJSON());
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const foundModule = await appService.getModule("blabla");
     expect(store.read).toHaveBeenCalledWith("blabla");
   });
 
   test("should enable a module by delegating to taskManager", async () => {
     // Test that appService calls TaskManager.create("MODULE_LOAD"
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const module = new Module();
     // Create Task if App isnt already enabled.
     appService.enableModule(module);
@@ -198,7 +198,7 @@ describe("SimpleAppService", () => {
   });
 
   test("should disable a module by delegating to taskManager", async () => {
-    const appService = new SimpleAppService(taskManager, store);
+    const appService = new SimpleAppService({ taskManager, store });
     const module = new Module();
     expect(taskManager.create).toHaveBeenCalledTimes(0);
     // Dont Create Task if module is already disabled.

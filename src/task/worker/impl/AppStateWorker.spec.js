@@ -22,27 +22,37 @@ describe("AppStateWorker", function() {
   });
 
   test("should register with the taskmanager when start is called", async () => {
-    const manager = new TaskManager();
+    const taskManager = new TaskManager();
     const store = new AppStore();
-    const loader = new AppLoader();
+    const appLoader = new AppLoader();
     const config = new Config();
-    const worker = new AppStateWorker(manager, store, loader, config);
+    const worker = new AppStateWorker({
+      taskManager,
+      store,
+      appLoader,
+      config
+    });
     expect(worker.isRunning()).toBe(false);
     await worker.start();
     expect(worker.isRunning()).toBe(true);
-    expect(manager.process).toHaveBeenCalledTimes(2);
+    expect(taskManager.process).toHaveBeenCalledTimes(2);
     await worker.shutdown();
     expect(worker.isRunning()).toBe(false);
   });
 
   test("should call store to modify state", async () => {
-    const manager = new TaskManager();
+    const taskManager = new TaskManager();
     const store = new AppStore();
-    const loader = new AppLoader();
+    const appLoader = new AppLoader();
     const fakeApp = new App();
-    loader.load.mockResolvedValue(fakeApp);
+    appLoader.load.mockResolvedValue(fakeApp);
     const config = new Config();
-    const worker = new AppStateWorker(manager, store, loader, config);
+    const worker = new AppStateWorker({
+      taskManager,
+      store,
+      appLoader,
+      config
+    });
     const testPayload = { app: fakeApp, state: App.states.ENABLED };
     const task = new Task();
     task.getPayload.mockReturnValue(testPayload);

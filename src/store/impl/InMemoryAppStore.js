@@ -1,4 +1,5 @@
 const AppStore = require("../AppStore");
+const { Config } = require("../../config/Config");
 const APP_STATE_KEY_PREFIX = "APP_STATE_";
 
 /**
@@ -9,7 +10,7 @@ class InMemoryAppStore extends AppStore {
    * @argument {Config} config Optional runtime config
    * @returns {AppStore}
    */
-  constructor(config) {
+  constructor({ config = new Config() } = {}) {
     super(config);
     this.data = {};
   }

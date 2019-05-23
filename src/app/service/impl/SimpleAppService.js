@@ -15,7 +15,7 @@ class SimpleAppService extends AppService {
    * @param {AppStore} store - Store is used for loading persisted state.
    * @param {Config} config - The runtime config
    */
-  constructor(taskManager, store, config) {
+  constructor({ taskManager, store, config } = {}) {
     super(taskManager, store, config);
     this._running = false;
   }

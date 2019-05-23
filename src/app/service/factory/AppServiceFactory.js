@@ -16,13 +16,13 @@ class AppServiceFactory {
    * @argument {Config} config The runtime config
    * @return {AppService} A instance of a AppService
    */
-  create(taskManager, store, config = new Config()) {
+  create({ taskManager, store, config = new Config() } = {}) {
     let appService = null;
     switch (config.get("appService.type")) {
       case "simple":
-        appService = new SimpleAppService(taskManager, store, config);
+        appService = new SimpleAppService({ taskManager, store, config });
       default:
-        appService = new SimpleAppService(taskManager, store, config);
+        appService = new SimpleAppService({ taskManager, store, config });
     }
     return appService;
   }

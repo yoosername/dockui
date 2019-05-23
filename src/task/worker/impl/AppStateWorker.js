@@ -1,5 +1,6 @@
 const App = require("../../../app/App");
 const Task = require("../../Task");
+const { Config } = require("../../../config/Config");
 
 /**
  * @description Worker which responds to App enable/disable tasks
@@ -13,7 +14,7 @@ class AppStateWorker {
    * @argument {AppLoader} appLoader use this appLoader to fetch an App from a URL
    * @argument {Config} config Optional Runtime config
    */
-  constructor(taskManager, store, appLoader, config) {
+  constructor({ taskManager, store, appLoader, config = new Config() } = {}) {
     this.taskManager = taskManager;
     this.worker1 = null;
     this.worker2 = null;

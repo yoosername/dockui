@@ -24,7 +24,7 @@ class WinstonLogger extends Logger {
    * @argument {Object} config instance of Config() or raw config data
    * @returns {Logger} logger instance
    */
-  constructor(config = new Config()) {
+  constructor({ config = new Config() } = {}) {
     super(config);
     if (config instanceof Config) {
       this.config = config;
@@ -108,7 +108,7 @@ class WinstonLogger extends Logger {
    * @description Create a new logger which overrides certain data
    * @argument {...Object} overrides data to override
    */
-  child(config) {
+  child({ config = new Config() } = {}) {
     const newConfig = this.config.clone().load(config);
     return new Logger(newConfig);
   }

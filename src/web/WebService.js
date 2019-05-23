@@ -1,3 +1,5 @@
+const { Config } = require("../config/Config");
+
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
  *              and associated routes etc.
@@ -7,7 +9,7 @@ class WebService {
    * @argument {AppService} appService The AppService for interacting with Apps
    * @argument {Config} config The Runtime Config
    */
-  constructor(appService, config) {
+  constructor({ appService, config = new Config() } = {}) {
     this.appService = appService;
     this.config = config;
   }

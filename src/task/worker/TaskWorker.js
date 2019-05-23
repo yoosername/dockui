@@ -1,9 +1,11 @@
+const { Config } = require("../../config/Config");
+
 /**
  * @description TaskWorkers listen to TaskManager queue for certain types of task
  *              and process them when requested
  */
 class TaskWorker {
-  constructor(taskManager) {
+  constructor({ taskManager, config = new Config() } = {}) {
     this.taskManager = taskManager;
   }
 

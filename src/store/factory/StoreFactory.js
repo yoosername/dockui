@@ -14,14 +14,14 @@ class StoreFactory {
    * @argument {Config} config The runtime config
    * @return {Store} A instance of a Store
    */
-  create(config = new Config()) {
+  create({ config = new Config() } = {}) {
     let store = null;
     switch (config.get("store.type")) {
       case "":
-        store = new InMemoryAppStore(config);
+        store = new InMemoryAppStore({ config });
       //case "postgres" : store = new PostgresBackedAppStore(config);
       default:
-        store = new InMemoryAppStore(config);
+        store = new InMemoryAppStore({ config });
     }
     return store;
   }

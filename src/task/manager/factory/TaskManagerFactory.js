@@ -14,13 +14,13 @@ class TaskManagerFactory {
    * @argument {Config} config The runtime config
    * @return {TaskManager} A instance of a TaskManager
    */
-  create(config = new Config()) {
+  create({ config = new Config() } = {}) {
     let taskManager = null;
     switch (config.get("store.type")) {
       case "":
-        taskManager = new SingleNodeTaskManager(config);
+        taskManager = new SingleNodeTaskManager({ config });
       default:
-        taskManager = new SingleNodeTaskManager(config);
+        taskManager = new SingleNodeTaskManager({ config });
     }
     return taskManager;
   }

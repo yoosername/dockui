@@ -1,4 +1,5 @@
 const Task = require("../../../task/Task");
+const { Config } = require("../../../config/Config");
 
 /**
  * @description Worker which responds to App Load requests by processing the descriptor
@@ -14,7 +15,7 @@ class AppLoadWorker {
    * @argument {AppLoader} appLoader use this appLoader to fetch an App from a URL
    * @argument {Config} config Optional Runtime config
    */
-  constructor(taskManager, store, appLoader, config) {
+  constructor({ taskManager, store, appLoader, config = new Config() } = {}) {
     this.taskManager = taskManager;
     this.worker = null;
     this.store = store;

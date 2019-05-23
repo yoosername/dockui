@@ -69,7 +69,11 @@ describe("AppLoader", function() {
     const TEST_URL = "http://some.url";
     const testFetcher = jest.fn().mockReturnValue(TEST_APP_DESCRIPTOR);
     const permission = App.permissions.READ;
-    const app = await appLoader.load(TEST_URL, permission, testFetcher);
+    const app = await appLoader.load({
+      url: TEST_URL,
+      permission,
+      fetcher: testFetcher
+    });
     expect(app instanceof App).toBe(true);
     expect(app.getKey()).toBe(TEST_APP_DESCRIPTOR.key);
     expect(app.getDescription()).toBe(TEST_APP_DESCRIPTOR.description);
@@ -84,7 +88,11 @@ describe("AppLoader", function() {
     const TEST_URL = "http://some.url";
     const testFetcher = jest.fn().mockReturnValue(TEST_APP_DESCRIPTOR);
     const permission = App.permissions.READ;
-    const app = await appLoader.load(TEST_URL, permission, testFetcher);
+    const app = await appLoader.load({
+      url: TEST_URL,
+      permission,
+      fetcher: testFetcher
+    });
     expect(app.getModules().length).toBe(3);
   });
 

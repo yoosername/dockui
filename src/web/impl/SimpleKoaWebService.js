@@ -6,6 +6,7 @@ const helmet = require("koa-helmet");
 const swaggerDocument = require("./swagger/swagger.json");
 const DEFAULT_PORT = 3000;
 const WebService = require("../WebService");
+const { Config } = require("../../config/Config");
 
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
@@ -16,8 +17,8 @@ class SimpleKoaWebService extends WebService {
    * @argument {AppService} appService The AppService for interacting with Apps
    * @argument {Config} config The optional runtime Config
    */
-  constructor(appService, config) {
-    super(appService, config);
+  constructor({ appService, config = new Config() } = {}) {
+    super({ appService, config });
     this.running = false;
     this.port = config
       ? config.get("web.port")

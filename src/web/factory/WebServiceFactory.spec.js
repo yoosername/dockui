@@ -24,12 +24,12 @@ describe("WebServiceFactory", function() {
   });
 
   test("should return a valid WebService instance with or without config", function() {
-    const webService = WebServiceFactory.create(appService);
+    const webService = WebServiceFactory.create({ appService });
     expect(typeof webService).toBe("object");
   });
 
   test("should return a SimpleWebService by default", function() {
-    const webService = WebServiceFactory.create(appService, config);
+    const webService = WebServiceFactory.create({ appService, config });
     expect(webService instanceof SimpleKoaWebService).toBe(true);
   });
 });

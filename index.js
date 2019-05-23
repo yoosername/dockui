@@ -18,6 +18,8 @@ const ConfigLoader = require("./src/config/loader/ConfigLoader");
 const DockerEventsReactor = require("./src/task/reactor/impl/DockerEventsReactor");
 const InMemoryAppStore = require("./src/store/impl/InMemoryAppStore");
 const { Instance } = require("./src/Instance");
+const Logger = require("./src/log/Logger");
+const LoggerFactory = require("./src/log/factory/LoggerFactory");
 const Module = require("./src/app/module/Module");
 const ModuleLoader = require("./src/app/loader/module/ModuleLoader");
 const Reactor = require("./src/task/reactor/Reactor");
@@ -44,6 +46,7 @@ const WebService = require("./src/web/WebService");
 const WebServiceFactory = require("./src/web/factory/WebServiceFactory");
 const WebhookModule = require("./src/app/module/impl/WebhookModule");
 const WebhookModuleLoader = require("./src/app/loader/module/impl/WebhookModuleLoader");
+const WinstonLogger = require("./src/log/impl/WinstonLogger");
 
 module.exports = {
   Instance,
@@ -75,8 +78,11 @@ module.exports = {
   SimpleAppService,
   CLI,
   Config,
-  ConfigEnvLoader,
   ConfigLoader,
+  ConfigEnvLoader,
+  Logger,
+  LoggerFactory,
+  WinstonLogger,
   AppStore,
   StoreFactory,
   InMemoryAppStore,

@@ -9,7 +9,7 @@ const QUEUE_PROCESSING_INTERVAL = 200;
  * @description Default TaskManager single node, multi process DockUI instances
  */
 class SingleNodeTaskManager extends TaskManager {
-  constructor(config = new Config()) {
+  constructor({ config = new Config() } = {}) {
     super(config);
     this.queue = [];
     this.inProgressQueue = [];

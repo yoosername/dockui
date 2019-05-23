@@ -17,6 +17,7 @@ const AppStateWorker = require("./task/worker/impl/AppStateWorker");
 const { Instance } = require("./Instance");
 const { Config } = require("./config/Config");
 const ConfigEnvLoader = require("./config/loader/impl/ConfigEnvLoader");
+const LoggerFactory = require("./log/factory/LoggerFactory");
 
 /**
  * @description Generate an Instance of DockUI based on standard defaults
@@ -24,6 +25,7 @@ const ConfigEnvLoader = require("./config/loader/impl/ConfigEnvLoader");
  */
 const generateStandardInstance = cnf => {
   let config = null;
+  let logger = null;
   let store = null;
   let taskManager = null;
   let appService = null;
@@ -31,45 +33,48 @@ const generateStandardInstance = cnf => {
   let appLoader = null;
   let instance = null;
 
+  // Use a simple context for passing our services around
+  const context = {};
+
   // Load config if wasnt passed in
   if (!cnf) {
-    config = Config.builder()
+    context.config = Config.builder()
       .withConfigLoader(new ConfigEnvLoader())
       //.withConfigLoader(new YamlConfigLoader())
       .build();
   } else {
-    config = cnf;
+    context.config = cnf;
   }
 
+  // Get a Logger to use
+  context.logger = LoggerFactory.create(context);
+
   // Load correct implementations of required services
-  store = StoreFactory.create(config);
-  taskManager = TaskManagerFactory.create(config);
-  appService = AppServiceFactory.create(taskManager, store, config);
-  webService = WebServiceFactory.create(appService, config);
+  context.store = StoreFactory.create(context);
+  context.taskManager = TaskManagerFactory.create(context);
+  context.appService = AppServiceFactory.create(context);
+  context.webService = WebServiceFactory.create(context);
 
   // Configure an AppLoader with a standard set of ModuleLoaders
   // The AppLoader is used by workers to actually fetch and process an App
-  appLoader = new AppLoader()
+  context.appLoader = new AppLoader()
     .withConfig(config)
-    .withModuleLoader(new WebResourceModuleLoader(config))
-    .withModuleLoader(new WebPageModuleLoader(config))
-    .withModuleLoader(new WebItemModuleLoader(config))
-    .withModuleLoader(new WebhookModuleLoader(config))
-    .withModuleLoader(new WebFragmentModuleLoader(config))
-    .withModuleLoader(new RouteModuleLoader(config))
-    .withModuleLoader(new AuthorizationProviderModuleLoader(config))
-    .withModuleLoader(new AuthenticationProviderModuleLoader(config))
-    .withModuleLoader(new ApiModuleLoader(config))
+    .withModuleLoader(new WebResourceModuleLoader(context))
+    .withModuleLoader(new WebPageModuleLoader(context))
+    .withModuleLoader(new WebItemModuleLoader(context))
+    .withModuleLoader(new WebhookModuleLoader(context))
+    .withModuleLoader(new WebFragmentModuleLoader(context))
+    .withModuleLoader(new RouteModuleLoader(context))
+    .withModuleLoader(new AuthorizationProviderModuleLoader(context))
+    .withModuleLoader(new AuthenticationProviderModuleLoader(context))
+    .withModuleLoader(new ApiModuleLoader(context))
     .build();
 
   // configure a DockUI instance using our preferred settings
   instance = new Instance()
     .withStore(store)
     .withTaskManager(taskManager)
-    .withTaskWorkers([
-      new AppLoadWorker(taskManager, store, appLoader, config),
-      new AppStateWorker(taskManager, store, appLoader, config)
-    ])
+    .withTaskWorkers([new AppLoadWorker(context), new AppStateWorker(context)])
     //.withReactors([new DockerEventsReactor(taskManager, config)])
     .withAppService(appService)
     .withWebService(webService)

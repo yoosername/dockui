@@ -29,7 +29,7 @@ class AppLoader {
    * @argument {String} permission Permission we wish to grant the App
    * @argument {Object} fetcher Function which takes a URL and returns content as a String
    */
-  load(url, permission, fetcher = defaultFetcher) {
+  load({ url, permission, fetcher = defaultFetcher }) {
     return new Promise(async (resolve, reject) => {
       const descriptor = await fetcher(url);
       if (descriptor) {

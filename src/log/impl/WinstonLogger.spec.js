@@ -39,10 +39,10 @@ describe("WinstonLogger", function() {
     const config = new Config();
     config.set("testKey", "testVal");
     config.set("testKey2", "testVal2");
-    const logger = new WinstonLogger(config);
+    const logger = new WinstonLogger({ config });
     const config2 = new Config();
     config2.set("testKey2", "modified");
-    const loggerChild = logger.child(config2);
+    const loggerChild = logger.child({ config: config2 });
     expect(loggerChild.config.getAll()).toEqual(
       Object.assign(config.getAll(), config2.getAll())
     );
@@ -51,7 +51,7 @@ describe("WinstonLogger", function() {
   test("Should be able to log info, warn, error,verbose,debug,silly messages", function() {
     const old = console.error;
     console.error = jest.fn().mockImplementation();
-    const logger = new WinstonLogger(config);
+    const logger = new WinstonLogger({ config });
     logger._logger.clear();
     const infoSpy = jest.spyOn(logger._logger, "info");
     const warnSpy = jest.spyOn(logger._logger, "warn");

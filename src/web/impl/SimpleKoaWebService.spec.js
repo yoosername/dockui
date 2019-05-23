@@ -1,5 +1,6 @@
 const SimpleKoaWebService = require("./SimpleKoaWebService");
 const AppService = require("../../app/service/AppService");
+const { Config } = require("../../config/Config");
 const request = require("supertest");
 
 jest.mock("../../app/service/AppService");
@@ -43,6 +44,7 @@ const setupTestAppService = () => {
 // Follow example at: https://codeburst.io/lets-build-a-rest-api-with-koa-js-and-test-with-jest-2634c14394d3
 let webService = null;
 let appService = null;
+let config = null;
 
 describe("SimpleKoaWebService", function() {
   "use strict";
@@ -50,8 +52,8 @@ describe("SimpleKoaWebService", function() {
   beforeEach(async () => {
     process.env.PORT = 3000;
     appService = setupTestAppService();
-
-    webService = new SimpleKoaWebService(appService);
+    config = new Config();
+    webService = new SimpleKoaWebService({ appService, config });
     await webService.start();
   });
 
@@ -133,11 +135,9 @@ describe("SimpleKoaWebService", function() {
     });
 
     test("should return 500 if AppService not running", async () => {
-      process.env.PORT = 3333;
       console.error = jest.fn().mockImplementation();
       const webServiceWithoutAppService = new SimpleKoaWebService();
       await webServiceWithoutAppService.start();
-      expect(webServiceWithoutAppService.getPort()).toEqual(3333);
       const response = await request(
         webServiceWithoutAppService.getServer()
       ).get("/api/admin/app");
