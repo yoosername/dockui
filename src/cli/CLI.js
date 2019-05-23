@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
-const { Config, ConfigEnvLoader, StandardInstance } = require("../..");
-const LOG_LEVELS = ["info", "warn", "error", "debug"];
+const { Config, ConfigEnvLoader, StandardInstance, Logger } = require("../..");
 
 const showUsage = ({
   name = "CLI.js",
-  logger = console,
-  logLevel = "info"
+  logLevel = "info",
+  logger = console
 }) => {
   logger.log(`
   Usage
@@ -24,6 +23,16 @@ const showUsage = ({
   Info
     Log Level:  ${logLevel}
   `);
+};
+
+const getLogLevel = code => {
+  const levels = Logger.levels;
+  for (var level in levels) {
+    if (levels[level] === code) {
+      return level;
+    }
+  }
+  return Logger.levels.error;
 };
 
 /**
@@ -70,8 +79,11 @@ class CLI {
       }
 
       // Set LogLevel
-      if (this.args.v && this.args.v.length > 0) {
-        this.logLevel = LOG_LEVELS[this.args.v.length - 1];
+      if (typeof this.args.v === "string") {
+        this.logLevel = getLogLevel(0);
+      }
+      if (this.args.v instanceof Array && this.args.v.length > 0) {
+        this.logLevel = getLogLevel(this.args.v.length - 1);
       }
 
       // user specified --help, show usage
@@ -103,7 +115,11 @@ class CLI {
 (async () => {
   if (typeof require != "undefined" && require.main === module) {
     try {
-      await new CLI({ name: "dockui" }).parse(process.argv);
+      const config = Config.builder()
+        .withConfigLoader(new ConfigEnvLoader())
+        .build();
+      const logger = new Logger(config);
+      await new CLI({ name: "dockui", logger }).parse(process.argv);
     } catch (e) {
       console.log(e);
     }

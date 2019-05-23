@@ -20,42 +20,37 @@ const ConfigEnvLoader = require("./config/loader/impl/ConfigEnvLoader");
 const LoggerFactory = require("./log/factory/LoggerFactory");
 
 /**
- * @description Generate an Instance of DockUI based on standard defaults
+ * @description Generate an Instance of DockUI based on sensible defaults
  * @return {Instance} An instance of DockUI
  */
-const generateStandardInstance = cnf => {
-  let config = null;
-  let logger = null;
-  let store = null;
-  let taskManager = null;
-  let appService = null;
-  let webService = null;
-  let appLoader = null;
+module.exports = generateStandardInstance = ({
+  config = new Config()
+} = {}) => {
   let instance = null;
 
-  // Use a simple context for passing our services around
+  // Use a simple context object for passing our services around
   const context = {};
 
-  // Load config if wasnt passed in
-  if (!cnf) {
+  // Load config from ENV if wasnt passed in
+  if (!config) {
     context.config = Config.builder()
       .withConfigLoader(new ConfigEnvLoader())
       //.withConfigLoader(new YamlConfigLoader())
       .build();
   } else {
-    context.config = cnf;
+    context.config = config;
   }
 
-  // Get a Logger to use
-  logger = context.logger = LoggerFactory.create(context);
+  // Get a Logger to use if one wasnt passed in
+  context.logger = LoggerFactory.create(context);
 
-  // Load correct implementations of required services
+  // Load correct implementations of required services (created based on the config)
   context.store = StoreFactory.create(context);
   context.taskManager = TaskManagerFactory.create(context);
   context.appService = AppServiceFactory.create(context);
   context.webService = WebServiceFactory.create(context);
 
-  // Configure an AppLoader with a standard set of ModuleLoaders
+  // Configure an AppLoader with a common set of ModuleLoaders
   // The AppLoader is used by workers to actually fetch and process an App
   context.appLoader = new AppLoader()
     .withConfig(config)
@@ -82,5 +77,3 @@ const generateStandardInstance = cnf => {
 
   return instance;
 };
-
-module.exports = generateStandardInstance;

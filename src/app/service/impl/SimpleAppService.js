@@ -2,6 +2,7 @@ const AppService = require("../AppService");
 const App = require("../../App");
 const Module = require("../../module/Module");
 const Task = require("../../../task/Task");
+const Logger = require("../../../log/Logger");
 
 /**
  * @description This SimpleAppService performs the following functionality:
@@ -15,7 +16,7 @@ class SimpleAppService extends AppService {
    * @param {AppStore} store - Store is used for loading persisted state.
    * @param {Config} config - The runtime config
    */
-  constructor({ taskManager, store, config, logger } = {}) {
+  constructor({ taskManager, store, config, logger = new Logger() } = {}) {
     super(taskManager, store, config, logger);
     this.logger = logger;
     this._running = false;
@@ -36,7 +37,13 @@ class SimpleAppService extends AppService {
    */
   start() {
     return new Promise(async (resolve, reject) => {
-      await this.taskManager.start();
+      try {
+        await this.taskManager.start();
+      } catch (e) {
+        const error = "There was a problem starting the TaskManager";
+        this.logger.error(error);
+        reject(new Error(error));
+      }
       this._running = true;
       this.logger.info("App Service has started");
       this.emit(AppService.SERVICE_STARTED_EVENT);
@@ -64,19 +71,30 @@ class SimpleAppService extends AppService {
   loadApp(url, permission) {
     // Use TaskManager to schedule loading the App
     return new Promise(async (resolve, reject) => {
-      const task = await this.taskManager.create(Task.types.APP_LOAD, {
-        url: url,
-        permission: permission
-      });
+      let task;
+      try {
+        task = await this.taskManager.create(Task.types.APP_LOAD, {
+          url: url,
+          permission: permission
+        });
+      } catch (err) {
+        this.logger.error("Error creating task %o", err);
+        return reject(err);
+      }
       // Schedule it immediately
-      task
-        .on("error", error => {
-          reject(error);
-        })
-        .on("success", data => {
-          resolve(data);
-        })
-        .commit();
+      try {
+        task
+          .on("error", error => {
+            reject(error);
+          })
+          .on("success", data => {
+            resolve(data);
+          })
+          .commit();
+      } catch (err) {
+        this.logger.error("Error could not commit task %o", err);
+        return reject(new Error("Error commiting task"));
+      }
     });
   }
 
@@ -88,16 +106,27 @@ class SimpleAppService extends AppService {
   unLoadApp(app) {
     // Use TaskManager to schedule unloading the App
     return new Promise(async (resolve, reject) => {
-      const task = await this.taskManager.create(Task.types.APP_UNLOAD, app);
+      let task;
+      try {
+        task = await this.taskManager.create(Task.types.APP_UNLOAD, app);
+      } catch (err) {
+        this.logger.error("Error creating task %o", err);
+        return reject(err);
+      }
       // Schedule it immediately
-      task
-        .on("error", error => {
-          reject(error);
-        })
-        .on("success", data => {
-          resolve(data);
-        })
-        .commit();
+      try {
+        task
+          .on("error", error => {
+            reject(error);
+          })
+          .on("success", data => {
+            resolve(data);
+          })
+          .commit();
+      } catch (err) {
+        this.logger.error("Error could not commit task %o", err);
+        return reject(new Error("Error commiting task"));
+      }
     });
   }
 
@@ -113,16 +142,27 @@ class SimpleAppService extends AppService {
     }
     // Use TaskManager to schedule enabling the App
     return new Promise(async (resolve, reject) => {
-      const task = await this.taskManager.create(Task.types.APP_ENABLE, app);
+      let task;
+      try {
+        task = await this.taskManager.create(Task.types.APP_ENABLE, app);
+      } catch (err) {
+        this.logger.error("Error creating task %o", err);
+        return reject(err);
+      }
       // Schedule it immediately
-      task
-        .on("error", error => {
-          reject(error);
-        })
-        .on("success", data => {
-          resolve(data);
-        })
-        .commit();
+      try {
+        task
+          .on("error", error => {
+            reject(error);
+          })
+          .on("success", data => {
+            resolve(data);
+          })
+          .commit();
+      } catch (err) {
+        this.logger.error("Error could not commit task %o", err);
+        return reject(new Error("Error commiting task"));
+      }
     });
   }
 
@@ -138,16 +178,27 @@ class SimpleAppService extends AppService {
     }
     // Use TaskManager to schedule enabling the App
     return new Promise(async (resolve, reject) => {
-      const task = await this.taskManager.create(Task.types.APP_DISABLE, app);
+      let task;
+      try {
+        task = await this.taskManager.create(Task.types.APP_DISABLE, app);
+      } catch (err) {
+        this.logger.error("Error creating task %o", err);
+        return reject(err);
+      }
       // Schedule it immediately
-      task
-        .on("error", error => {
-          reject(error);
-        })
-        .on("success", data => {
-          resolve(data);
-        })
-        .commit();
+      try {
+        task
+          .on("error", error => {
+            reject(error);
+          })
+          .on("success", data => {
+            resolve(data);
+          })
+          .commit();
+      } catch (err) {
+        this.logger.error("Error could not commit task %o", err);
+        return reject(new Error("Error commiting task"));
+      }
     });
   }
 
@@ -243,19 +294,27 @@ class SimpleAppService extends AppService {
     }
     // Use TaskManager to schedule enabling the App
     return new Promise(async (resolve, reject) => {
-      const task = await this.taskManager.create(
-        Task.types.MODULE_ENABLE,
-        module
-      );
+      let task;
+      try {
+        task = await this.taskManager.create(Task.types.MODULE_ENABLE, module);
+      } catch (err) {
+        this.logger.error("Error creating task %o", err);
+        return reject(err);
+      }
       // Schedule it immediately
-      task
-        .on("error", error => {
-          reject(error);
-        })
-        .on("success", data => {
-          resolve(data);
-        })
-        .commit();
+      try {
+        task
+          .on("error", error => {
+            reject(error);
+          })
+          .on("success", data => {
+            resolve(data);
+          })
+          .commit();
+      } catch (err) {
+        this.logger.error("Error could not commit task %o", err);
+        return reject(new Error("Error commiting task"));
+      }
     });
   }
 
@@ -271,19 +330,28 @@ class SimpleAppService extends AppService {
     }
     // Use TaskManager to schedule enabling the App
     return new Promise(async (resolve, reject) => {
-      const task = await this.taskManager.create(
-        Task.types.MODULE_DISABLE,
-        module
-      );
+      let task;
+      try {
+        task = await this.taskManager.create(Task.types.MODULE_DISABLE, module);
+      } catch (err) {
+        this.logger.error("Error creating task %o", err);
+        return reject(err);
+      }
+
       // Schedule it immediately
-      task
-        .on("error", error => {
-          reject(error);
-        })
-        .on("success", data => {
-          resolve(data);
-        })
-        .commit();
+      try {
+        task
+          .on("error", error => {
+            reject(error);
+          })
+          .on("success", data => {
+            resolve(data);
+          })
+          .commit();
+      } catch (err) {
+        this.logger.error("Error could not commit task %o", err);
+        return reject(new Error("Error commiting task"));
+      }
     });
   }
 }

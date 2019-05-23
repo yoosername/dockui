@@ -58,14 +58,18 @@ describe("SimpleAppService", () => {
   test("start should return promise that resolves when appService is ready", async () => {
     const appService = new SimpleAppService({ taskManager, store });
     expect(appService.isRunning()).toEqual(false);
-    await appService.start();
+    try {
+      await appService.start();
+    } catch (e) {}
     expect(appService.isRunning()).toEqual(true);
   });
 
   test("start should also start the taskManager if it isnt already", async () => {
     const appService = new SimpleAppService({ taskManager, store });
     expect(taskManager.start).not.toHaveBeenCalled();
-    await appService.start();
+    try {
+      await appService.start();
+    } catch (e) {}
     expect(taskManager.start).toHaveBeenCalled();
   });
 
@@ -78,12 +82,15 @@ describe("SimpleAppService", () => {
     expect(appService.isRunning()).toEqual(false);
   });
 
-  test("should load an app by delegating to taskManager", () => {
+  test("should load an app by delegating to taskManager", async () => {
     // Test that appService calls TaskManager.create("APP_LOAD"
     const appService = new SimpleAppService({ taskManager, store });
     const urlParam = "http://fake.url/descriptor.yml";
     const permissionParam = App.permissions.READ;
-    appService.loadApp(urlParam, permissionParam);
+    try {
+      await appService.loadApp(urlParam, permissionParam);
+    } catch (e) {}
+
     expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_LOAD, {
       permission: permissionParam,
       url: urlParam
@@ -94,7 +101,9 @@ describe("SimpleAppService", () => {
     // Test that appService calls TaskManager.create("APP_LOAD"
     const appService = new SimpleAppService({ taskManager, store });
     const app = new App();
-    appService.unLoadApp(app);
+    try {
+      await appService.unLoadApp(app);
+    } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_UNLOAD, app);
   });
 
@@ -103,14 +112,18 @@ describe("SimpleAppService", () => {
     const appService = new SimpleAppService({ taskManager, store });
     const app = new App();
     // Create Task if App isnt already enabled.
-    appService.enableApp(app);
+    try {
+      await appService.enableApp(app);
+    } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_ENABLE, app);
     expect(taskManager.create).toHaveBeenCalledTimes(1);
     // Dont create Task if App is already enabled.
     app.isEnabled.mockImplementation(() => {
       return true;
     });
-    appService.enableApp(app);
+    try {
+      await appService.enableApp(app);
+    } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledTimes(1);
   });
 
@@ -120,13 +133,17 @@ describe("SimpleAppService", () => {
     const app = new App();
     expect(taskManager.create).toHaveBeenCalledTimes(0);
     // Dont Create Task if App is already disabled.
-    appService.disableApp(app);
+    try {
+      await appService.disableApp(app);
+    } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledTimes(0);
     // Create Task if App is enabled.
     app.isEnabled.mockImplementation(() => {
       return true;
     });
-    appService.disableApp(app);
+    try {
+      await appService.disableApp(app);
+    } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledTimes(1);
     expect(taskManager.create).toHaveBeenCalledWith(
       Task.types.APP_DISABLE,
@@ -174,7 +191,10 @@ describe("SimpleAppService", () => {
     const module = new Module();
     store.read.mockReturnValue(module.toJSON());
     const appService = new SimpleAppService({ taskManager, store });
-    const foundModule = await appService.getModule("blabla");
+    let foundModule;
+    try {
+      foundModule = await appService.getModule("blabla");
+    } catch (e) {}
     expect(store.read).toHaveBeenCalledWith("blabla");
   });
 
@@ -183,7 +203,10 @@ describe("SimpleAppService", () => {
     const appService = new SimpleAppService({ taskManager, store });
     const module = new Module();
     // Create Task if App isnt already enabled.
-    appService.enableModule(module);
+    try {
+      await appService.enableModule(module);
+    } catch (e) {}
+
     expect(taskManager.create).toHaveBeenCalledWith(
       Task.types.MODULE_ENABLE,
       module
@@ -193,7 +216,9 @@ describe("SimpleAppService", () => {
     module.isEnabled.mockImplementation(() => {
       return true;
     });
-    appService.enableModule(module);
+    try {
+      await appService.enableModule(module);
+    } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledTimes(1);
   });
 
@@ -202,13 +227,18 @@ describe("SimpleAppService", () => {
     const module = new Module();
     expect(taskManager.create).toHaveBeenCalledTimes(0);
     // Dont Create Task if module is already disabled.
-    appService.disableModule(module);
+    try {
+      await appService.disableModule(module);
+    } catch (e) {}
+
     expect(taskManager.create).toHaveBeenCalledTimes(0);
     // Create Task if App is enabled.
     module.isEnabled.mockImplementation(() => {
       return true;
     });
-    appService.disableModule(module);
+    try {
+      await appService.disableModule(module);
+    } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledTimes(1);
     expect(taskManager.create).toHaveBeenCalledWith(
       Task.types.MODULE_DISABLE,
