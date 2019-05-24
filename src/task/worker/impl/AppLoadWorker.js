@@ -1,5 +1,7 @@
 const Task = require("../../../task/Task");
+const TaskWorker = require("../../../task/worker/TaskWorker");
 const { Config } = require("../../../config/Config");
+const Logger = require("../../../log/Logger");
 
 /**
  * @description Worker which responds to App Load requests by processing the descriptor
@@ -8,19 +10,28 @@ const { Config } = require("../../../config/Config");
  *              2: Save App state to Store
  *              3: Close Task as success
  */
-class AppLoadWorker {
+class AppLoadWorker extends TaskWorker {
   /**
    * @argument {TaskManager} taskManager The taskManager this worker should register with for new tasks
    * @argument {AppStore} store The store to use for persisting any data
    * @argument {AppLoader} appLoader use this appLoader to fetch an App from a URL
    * @argument {Config} config Optional Runtime config
+   * @argument {Logger} logger Optional Runtime Logger
    */
-  constructor({ taskManager, store, appLoader, config = new Config() } = {}) {
+  constructor({
+    taskManager,
+    store,
+    appLoader,
+    config = new Config(),
+    logger = new Logger(config)
+  } = {}) {
+    super(...arguments);
     this.taskManager = taskManager;
     this.worker = null;
     this.store = store;
     this.appLoader = appLoader;
     this.config = config;
+    this.logger = logger;
     this._running = false;
   }
 
@@ -107,13 +118,22 @@ class AppLoadWorker {
     this._running = true;
     return new Promise(async (resolve, reject) => {
       const taskManager = this.taskManager;
-      this.worker = await taskManager.process(
-        Task.types.APP_LOAD,
-        async task => {
-          await this.processTask(task);
-        }
-      );
-      resolve();
+      try {
+        this.worker = await taskManager.process(
+          Task.types.APP_LOAD,
+          async task => {
+            await this.processTask(task);
+          }
+        );
+        this.logger.info(
+          "AppLoad Worker [%s] has started and is ready to process tasks",
+          this.worker.id
+        );
+        resolve();
+      } catch (err) {
+        this.logger.error("AppLoad Worker failed to start %o", err);
+        reject();
+      }
     });
   }
 

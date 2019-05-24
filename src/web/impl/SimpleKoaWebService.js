@@ -57,6 +57,14 @@ class SimpleKoaWebService extends WebService {
       }
     });
 
+    /*
+     * Global Debug Logging
+     */
+    app.use(async (ctx, next) => {
+      this.logger.debug("[%s] %o", ctx.method, ctx.originalUrl);
+      await next();
+    });
+
     /**
      * Apply common security headers using Helmet
      */
@@ -66,8 +74,6 @@ class SimpleKoaWebService extends WebService {
      * Simple Health Endpoint
      */
     router.get("/health", async ctx => {
-      this.logger.debug("[GET] /health %o", ctx.params);
-      this.logger.silly("[GET] /health %o %o", ctx.params, ctx.headers);
       ctx.body = { status: "running" };
     });
 
@@ -75,12 +81,6 @@ class SimpleKoaWebService extends WebService {
      * Raw Swagger API static JSON
      */
     router.get("/api/swagger.json", async ctx => {
-      this.logger.debug("[GET] /api/swagger.json %o", ctx.params);
-      this.logger.silly(
-        "[GET] /api/swagger.json %o %o",
-        ctx.params,
-        ctx.headers
-      );
       ctx.body = swaggerDocument;
     });
 
@@ -95,14 +95,10 @@ class SimpleKoaWebService extends WebService {
      */
     // List all Apps
     router.get("/api/admin/app", async ctx => {
-      this.logger.debug("[GET] /api/admin/app %o", ctx.params);
-      this.logger.silly("[GET] /api/admin/app %o %o", ctx.params, ctx.headers);
       if (this.appService && typeof this.appService.getApps === "function") {
         ctx.body = this.appService.getApps();
       } else {
-        this.logger.error(
-          "[GET] /api/admin/app - Cannot communicate with AppService"
-        );
+        this.logger.error("Cannot communicate with AppService");
         throw new Error("Cannot communicate with AppService");
       }
     });
@@ -284,6 +280,7 @@ class SimpleKoaWebService extends WebService {
             this.getPort()
           );
         } catch (e) {
+          this.logger.error("Web Service didnt start: %o", e);
           return reject(e);
         }
       }

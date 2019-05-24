@@ -33,7 +33,9 @@ describe("AppStateWorker", function() {
       config
     });
     expect(worker.isRunning()).toBe(false);
-    await worker.start();
+    try {
+      await worker.start();
+    } catch (e) {}
     expect(worker.isRunning()).toBe(true);
     expect(taskManager.process).toHaveBeenCalledTimes(2);
     await worker.shutdown();

@@ -11,6 +11,7 @@ class Instance {
     }
 
     this.config = builder.config;
+    this.logger = builder.logger ? builder.logger : console;
     this.webService = builder.webService;
     this.appService = builder.appService;
     this.appStore = builder.appStore;
@@ -25,7 +26,7 @@ class Instance {
   async start() {
     // Add graceful shutdown hook
     const shutdown = () => {
-      console.log(
+      this.logger.log(
         "SIGTERM signal intercepted - attempting to gracefully shut down"
       );
       this.shutdown();
@@ -34,19 +35,33 @@ class Instance {
     process.on("SIGTERM", shutdown);
     process.on("SIGINT", shutdown);
 
-    this.appService.start();
-    this.taskManager.start();
-    this.webService.start();
+    try {
+      await this.appService.start();
+      await this.taskManager.start();
+      this.taskWorkers.forEach(async worker => {
+        await worker.start();
+      });
+      await this.webService.start();
+    } catch (e) {
+      this.logger.error("Error starting DockUI : %o", err);
+    }
   }
 
   /**
    * @description Shutdown App service
    */
   async shutdown() {
-    // Shutdown in reverse order.
-    this.webService.shutdown();
-    this.taskManager.shutdown();
-    this.appService.shutdown();
+    try {
+      // Shutdown in reverse order.
+      await this.webService.shutdown();
+      this.taskWorkers.forEach(async worker => {
+        await worker.shutdown();
+      });
+      await this.taskManager.shutdown();
+      await this.appService.shutdown();
+    } catch (e) {
+      this.logger.error("Error starting DockUI : %o", err);
+    }
   }
 }
 
@@ -56,6 +71,7 @@ class Instance {
 class InstanceBuilder {
   constructor() {
     this.config = {};
+    this.logger = null;
     this.appStore = null;
     this.taskManager = null;
     this.taskWorkers = [];
@@ -70,6 +86,15 @@ class InstanceBuilder {
    */
   withConfig(config) {
     this.config = config;
+    return this;
+  }
+
+  /**
+   * @description Use the specified Logger object
+   * @argument {Logger} logger The Logger to use
+   */
+  withLogger(logger) {
+    this.logger = logger;
     return this;
   }
 

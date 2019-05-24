@@ -4,6 +4,7 @@ const AppStore = require("../../../store/AppStore");
 const App = require("../../../app/App");
 const AppLoader = require("../../../app/loader/AppLoader");
 const { Config } = require("../../../config/Config");
+const Logger = require("../../../log/Logger");
 
 jest.mock("../../manager/TaskManager");
 jest.mock("../../Task");
@@ -25,10 +26,15 @@ describe("AppLoadWorker", function() {
     const taskManager = new TaskManager();
     const store = new AppStore();
     const appLoader = new AppLoader();
-    const config = new Config();
-    const worker = new AppLoadWorker({ taskManager, store, appLoader, config });
+    const worker = new AppLoadWorker({
+      taskManager,
+      store,
+      appLoader
+    });
     expect(worker.isRunning()).toBe(false);
-    await worker.start();
+    try {
+      await worker.start();
+    } catch (e) {}
     expect(worker.isRunning()).toBe(true);
     expect(taskManager.process).toHaveBeenCalledTimes(1);
     await worker.shutdown();

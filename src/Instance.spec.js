@@ -18,9 +18,17 @@ describe("Instance", function() {
   beforeEach(function() {
     config = new Config();
     appService = new AppService();
+    appService.start = jest.fn().mockImplementation(() => Promise.resolve());
+    appService.shutdown = jest.fn().mockImplementation(() => Promise.resolve());
     webService = new WebService();
+    webService.start = jest.fn().mockImplementation(() => Promise.resolve());
+    webService.shutdown = jest.fn().mockImplementation(() => Promise.resolve());
     appStore = new AppStore();
     taskManager = new TaskManager();
+    taskManager.start = jest.fn().mockImplementation(() => Promise.resolve());
+    taskManager.shutdown = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
     instance = new Instance()
       .withConfig(config)
       .withStore(appStore)
@@ -44,19 +52,19 @@ describe("Instance", function() {
     expect(builder).toBeInstanceOf(InstanceBuilder);
   });
 
-  test("it starts required services when start() called", () => {
-    instance.start();
-    expect(appService.start).toBeCalled();
-    expect(webService.start).toBeCalled();
-    expect(taskManager.start).toBeCalled();
+  test("it starts required services when start() called", async () => {
+    await instance.start();
+    expect(appService.start).toHaveBeenCalled();
+    expect(taskManager.start).toHaveBeenCalled();
+    expect(webService.start).toHaveBeenCalled();
   });
 
-  test("it stops services when shutdown() called", () => {
-    instance.start();
-    instance.shutdown();
-    expect(appService.shutdown).toBeCalled();
-    expect(webService.shutdown).toBeCalled();
-    expect(taskManager.shutdown).toBeCalled();
+  test("it stops services when shutdown() called", async () => {
+    await instance.start();
+    await instance.shutdown();
+    expect(appService.shutdown).toHaveBeenCalled();
+    expect(webService.shutdown).toHaveBeenCalled();
+    expect(taskManager.shutdown).toHaveBeenCalled();
   });
 
   describe("InstanceBuilder", function() {
