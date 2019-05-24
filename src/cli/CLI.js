@@ -121,7 +121,7 @@ class CLI {
         .withConfigLoader(new ConfigEnvLoader())
         .build();
       const logger = new Logger(config);
-      await new CLI({ name: "dockui", config, logger }).parse(process.argv);
+      await new CLI({ name: "dockui", config }).parse(process.argv);
     } catch (e) {
       console.log(e);
     }
