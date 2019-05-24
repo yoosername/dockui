@@ -2,6 +2,7 @@ const TaskManager = require("../TaskManager");
 const Task = require("../../Task");
 const uuidv4 = require("uuid/v4");
 const { Config } = require("../../../config/Config");
+const Logger = require("../../../log/Logger");
 
 const QUEUE_PROCESSING_INTERVAL = 200;
 
@@ -9,8 +10,10 @@ const QUEUE_PROCESSING_INTERVAL = 200;
  * @description Default TaskManager single node, multi process DockUI instances
  */
 class SingleNodeTaskManager extends TaskManager {
-  constructor({ config = new Config() } = {}) {
-    super(config);
+  constructor({ config = new Config(), logger = new Logger(config) } = {}) {
+    super(...arguments);
+    this.config = config;
+    this.logger = logger;
     this.queue = [];
     this.inProgressQueue = [];
     this.successQueue = [];
@@ -163,6 +166,7 @@ class SingleNodeTaskManager extends TaskManager {
    * @description Process the current queue
    */
   processQueue() {
+    this.logger.silly("Reading Task Queue");
     if (this.getWorkers().length > 0) {
       if (this.getQueued().length > 0) {
         this.getWorkers().forEach(worker => {
@@ -197,6 +201,8 @@ class SingleNodeTaskManager extends TaskManager {
         this.processQueue.bind(this),
         QUEUE_PROCESSING_INTERVAL
       );
+      this.logger.info("Task Manager has started");
+      this.emit(TaskManager.events.TASKMANAGER_STARTED_EVENT);
       resolve();
     });
   }
@@ -209,6 +215,8 @@ class SingleNodeTaskManager extends TaskManager {
   async shutdown() {
     return new Promise((resolve, reject) => {
       clearInterval(this.running);
+      this.logger.info("Task Manager has shutdown");
+      this.emit(TaskManager.events.TASKMANAGER_SHUTDOWN_EVENT);
       resolve();
     });
   }

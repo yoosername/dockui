@@ -1,4 +1,6 @@
 const EventEmitter = require("events");
+const TASKMANAGER_STARTED_EVENT = "taskManager:started";
+const TASKMANAGER_SHUTDOWN_EVENT = "taskManager:shutdown";
 const COMMIT_EVENT = "task:committed";
 
 /**
@@ -91,6 +93,8 @@ class TaskManager extends EventEmitter {
  * @description Represents common DockUI Task Events
  */
 TaskManager.events = Object.freeze({
+  TASKMANAGER_STARTED_EVENT: TASKMANAGER_STARTED_EVENT,
+  TASKMANAGER_SHUTDOWN_EVENT: TASKMANAGER_SHUTDOWN_EVENT,
   COMMIT_EVENT: COMMIT_EVENT
 });
 

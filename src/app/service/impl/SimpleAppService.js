@@ -2,6 +2,7 @@ const AppService = require("../AppService");
 const App = require("../../App");
 const Module = require("../../module/Module");
 const Task = require("../../../task/Task");
+const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
 
 /**
@@ -15,8 +16,14 @@ class SimpleAppService extends AppService {
    * @param {TaskManager} taskManager - TaskManager is used to orchestrate changes to the system.
    * @param {AppStore} store - Store is used for loading persisted state.
    * @param {Config} config - The runtime config
+   * @param {Logger} logger - optional passed in Logger instance
    */
-  constructor({ taskManager, store, config, logger = new Logger() } = {}) {
+  constructor({
+    taskManager,
+    store,
+    config = new Config(),
+    logger = new Logger(config)
+  } = {}) {
     super(taskManager, store, config, logger);
     this.logger = logger;
     this._running = false;
@@ -77,6 +84,11 @@ class SimpleAppService extends AppService {
           url: url,
           permission: permission
         });
+        this.logger.info(
+          "App Load requested url=%s, permission=%s",
+          url,
+          permission
+        );
       } catch (err) {
         this.logger.error("Error creating task %o", err);
         return reject(err);
@@ -85,9 +97,11 @@ class SimpleAppService extends AppService {
       try {
         task
           .on("error", error => {
+            this.logger.error("App Load failed with error: %o", error);
             reject(error);
           })
           .on("success", data => {
+            this.logger.info("App Load reported success : %o", data);
             resolve(data);
           })
           .commit();

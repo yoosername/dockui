@@ -1,5 +1,6 @@
 const SimpleAppService = require("../impl/SimpleAppService");
 const { Config } = require("../../../config/Config");
+const Logger = require("../../../log/Logger");
 
 /**
  * @description AppServiceFactory has a single method .create which generates
@@ -16,7 +17,12 @@ class AppServiceFactory {
    * @argument {Config} config The runtime config
    * @return {AppService} A instance of a AppService
    */
-  create({ taskManager, store, config = new Config(), logger } = {}) {
+  create({
+    taskManager,
+    store,
+    config = new Config(),
+    logger = new Logger(config)
+  } = {}) {
     let appService = null;
     let AppService = null;
     switch (config.get("appService.type")) {
