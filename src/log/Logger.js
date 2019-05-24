@@ -8,13 +8,22 @@ class Logger {
    * @argument {Object} config instance of Config() or raw config data
    * @returns {Logger} logger instance
    */
-  constructor(config = new Config()) {
+  constructor({ config = new Config(), parent = null } = {}) {
     if (config instanceof Config) {
       this.config = config;
     }
     if (typeof config === "object" && Object.keys(config).length) {
       this.config = new Config().load(config);
     }
+    this.parent = parent;
+  }
+
+  /**
+   * @description Returns this Loggers parent if there is one or null
+   * @return {Logger} parent Logger or null
+   */
+  getParent() {
+    return this.parent;
   }
 
   /**
@@ -78,8 +87,9 @@ class Logger {
    * @argument {...Object} overrides data to override
    */
   child(config) {
-    const newConfig = this.config.clone().load(config);
-    return new Logger(newConfig);
+    const clonedConfig = this.config.clone();
+    const newConfig = clonedConfig.load(config);
+    return new Logger({ config: newConfig, parent: this });
   }
 }
 

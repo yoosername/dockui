@@ -37,7 +37,7 @@ describe("Config", function() {
     const config = new Config();
     config.set("testKey", "testVal");
     config.set("testKey2", "testVal2");
-    const logger = new Logger(config);
+    const logger = new Logger({ config });
     const config2 = new Config();
     config2.set("testKey2", "modified");
     const loggerChild = logger.child(config2);

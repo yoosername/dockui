@@ -20,8 +20,8 @@ class WinstonLogger extends Logger {
    * @argument {Object} config instance of Config() or raw config data
    * @returns {Logger} logger instance
    */
-  constructor({ config = new Config() } = {}) {
-    super(config);
+  constructor({ config = new Config(), parent = null } = {}) {
+    super(...arguments);
     if (config instanceof Config) {
       this.config = config;
     }
@@ -29,19 +29,27 @@ class WinstonLogger extends Logger {
       this.config = new Config().load(config);
     }
 
-    this._logger = createLogger({
-      level: "debug",
-      format: combine(
-        timestamp(),
-        upperCaseLevel,
-        splat(),
-        simple(),
-        colorize({ all: true }),
-        dockuiLogFormat
-      ),
-      defaultMeta: { service: "main" },
-      transports: [new transports.Console()]
-    });
+    const loggerServiceName = this.config.get("service.name");
+
+    if (!this.getParent()) {
+      this._logger = createLogger({
+        level: "debug",
+        format: combine(
+          timestamp(),
+          upperCaseLevel,
+          splat(),
+          simple(),
+          colorize({ all: true }),
+          dockuiLogFormat
+        ),
+        defaultMeta: { service: "main" },
+        transports: [new transports.Console()]
+      });
+    } else {
+      this._logger = this.getParent()._logger.child({
+        service: loggerServiceName
+      });
+    }
   }
 
   /**
@@ -106,7 +114,7 @@ class WinstonLogger extends Logger {
    */
   child({ config = new Config() } = {}) {
     const newConfig = this.config.clone().load(config);
-    return new Logger(newConfig);
+    return new WinstonLogger({ config: newConfig, parent: this });
   }
 }
 

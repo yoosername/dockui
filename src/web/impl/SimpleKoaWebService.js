@@ -26,7 +26,7 @@ class SimpleKoaWebService extends WebService {
     super(...arguments);
     this.running = false;
     this.port = config ? config.get("web.port") : DEFAULT_PORT;
-    this.logger = logger;
+    this.logger = logger.child({ "service.name": "WebService" });
     this.webApp = new Koa();
     this.router = new Router();
     this.server = null;
@@ -95,9 +95,9 @@ class SimpleKoaWebService extends WebService {
      */
     // List all Apps
     router.get("/api/admin/app", async ctx => {
-      if (this.appService && typeof this.appService.getApps === "function") {
+      try {
         ctx.body = this.appService.getApps();
-      } else {
+      } catch (err) {
         this.logger.error("Cannot communicate with AppService");
         throw new Error("Cannot communicate with AppService");
       }

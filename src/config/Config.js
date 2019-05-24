@@ -82,7 +82,9 @@ class Config {
    * @returns {Config} a copy of this same config
    */
   clone() {
-    return new Config().load(this.getAll());
+    const config = new Config();
+    config.load(this.getAll());
+    return config;
   }
 
   /**
