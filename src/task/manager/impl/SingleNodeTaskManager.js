@@ -13,7 +13,7 @@ class SingleNodeTaskManager extends TaskManager {
   constructor({ config = new Config(), logger = new Logger(config) } = {}) {
     super(...arguments);
     this.config = config;
-    this.logger = logger;
+    this.logger = logger.child({ config: { "service.name": "TaskManager" } });
     this.queue = [];
     this.inProgressQueue = [];
     this.successQueue = [];

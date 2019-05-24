@@ -9,7 +9,6 @@ jest.mock("../../manager/TaskManager");
 jest.mock("../../Task");
 jest.mock("../../../store/AppStore");
 jest.mock("../../../app/loader/AppLoader");
-jest.mock("../../../config/Config");
 
 const AppStateWorker = require("./AppStateWorker");
 

@@ -70,6 +70,7 @@ class SimpleKoaWebService extends WebService {
      * Apply common security headers using Helmet
      */
     app.use(helmet());
+    this.logger.debug("Configured common security headers");
 
     /**
      * Simple Health Endpoint
@@ -77,6 +78,7 @@ class SimpleKoaWebService extends WebService {
     router.get("/health", async ctx => {
       ctx.body = { status: "running" };
     });
+    this.logger.debug("Configured /health endpoint");
 
     /**
      * Raw Swagger API static JSON
@@ -257,6 +259,7 @@ class SimpleKoaWebService extends WebService {
     //   }
     // });
 
+    this.logger.debug("Configured Management routes");
     app.use(router.routes());
     app.use(router.allowedMethods());
   }

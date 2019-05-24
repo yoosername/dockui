@@ -9,12 +9,7 @@ class Logger {
    * @returns {Logger} logger instance
    */
   constructor({ config = new Config(), parent = null } = {}) {
-    if (config instanceof Config) {
-      this.config = config;
-    }
-    if (typeof config === "object" && Object.keys(config).length) {
-      this.config = new Config().load(config);
-    }
+    this.config = config;
     this.parent = parent;
   }
 
@@ -94,9 +89,8 @@ class Logger {
    * @description Create a new logger which overrides certain data
    * @argument {...Object} overrides data to override
    */
-  child(config) {
-    const clonedConfig = this.config.clone();
-    const newConfig = clonedConfig.load(config);
+  child({ config = new Config() } = {}) {
+    const newConfig = this.config.clone().load(config);
     return new Logger({ config: newConfig, parent: this });
   }
 }

@@ -40,7 +40,7 @@ describe("Config", function() {
     const logger = new Logger({ config });
     const config2 = new Config();
     config2.set("testKey2", "modified");
-    const loggerChild = logger.child(config2);
+    const loggerChild = logger.child({ config: config2 });
     expect(loggerChild.config.getAll()).toEqual(
       Object.assign(config.getAll(), config2.getAll())
     );

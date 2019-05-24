@@ -1,7 +1,6 @@
 const WinstonLogger = require("./WinstonLogger");
 const { Config } = require("../../config/Config");
 const Logger = require("../Logger");
-const winston = require("winston");
 let config = null;
 
 describe("WinstonLogger", function() {

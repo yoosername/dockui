@@ -31,7 +31,7 @@ class AppLoadWorker extends TaskWorker {
     this.store = store;
     this.appLoader = appLoader;
     this.config = config;
-    this.logger = logger;
+    this.logger = logger.child({ config: { "service.name": "AppLoadWorker" } });
     this._running = false;
   }
 
