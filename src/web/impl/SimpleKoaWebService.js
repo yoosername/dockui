@@ -23,7 +23,7 @@ class SimpleKoaWebService extends WebService {
     config = new Config(),
     logger = new Logger(config)
   } = {}) {
-    super({ appService, config });
+    super(...arguments);
     this.running = false;
     this.port = config ? config.get("web.port") : DEFAULT_PORT;
     this.logger = logger;

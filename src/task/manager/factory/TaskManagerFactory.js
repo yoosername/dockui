@@ -1,5 +1,6 @@
 const SingleNodeTaskManager = require("../impl/SingleNodeTaskManager");
 const { Config } = require("../../../config/Config");
+const Logger = require("../../../log/Logger");
 
 /**
  * @description TaskManagerFactory has a single method .create which generates
@@ -14,15 +15,17 @@ class TaskManagerFactory {
    * @argument {Config} config The runtime config
    * @return {TaskManager} A instance of a TaskManager
    */
-  create({ config = new Config() } = {}) {
-    let taskManager = null;
-    switch (config.get("store.type")) {
-      case "":
-        taskManager = new SingleNodeTaskManager({ config });
+  create({ config = new Config(), logger = new Logger(config) } = {}) {
+    let instance = null;
+    let TaskManager = null;
+    switch (config.get("taskManager.type")) {
+      case "simple":
+        TaskManager = SingleNodeTaskManager;
       default:
-        taskManager = new SingleNodeTaskManager({ config });
+        TaskManager = SingleNodeTaskManager;
     }
-    return taskManager;
+    instance = new TaskManager({ config, logger });
+    return instance;
   }
 }
 let factory;

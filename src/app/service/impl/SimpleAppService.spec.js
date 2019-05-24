@@ -64,15 +64,6 @@ describe("SimpleAppService", () => {
     expect(appService.isRunning()).toEqual(true);
   });
 
-  test("start should also start the taskManager if it isnt already", async () => {
-    const appService = new SimpleAppService({ taskManager, store });
-    expect(taskManager.start).not.toHaveBeenCalled();
-    try {
-      await appService.start();
-    } catch (e) {}
-    expect(taskManager.start).toHaveBeenCalled();
-  });
-
   test("shutdown should return promise that resolves when appService has stopped", async () => {
     const appService = new SimpleAppService({ taskManager, store });
     expect(appService.isRunning()).toEqual(false);

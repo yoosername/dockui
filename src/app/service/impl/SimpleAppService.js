@@ -44,13 +44,6 @@ class SimpleAppService extends AppService {
    */
   start() {
     return new Promise(async (resolve, reject) => {
-      try {
-        await this.taskManager.start();
-      } catch (e) {
-        const error = "There was a problem starting the TaskManager";
-        this.logger.error(error);
-        reject(new Error(error));
-      }
       this._running = true;
       this.logger.info("App Service has started");
       this.emit(AppService.SERVICE_STARTED_EVENT);
