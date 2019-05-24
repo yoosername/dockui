@@ -126,12 +126,12 @@ class AppLoadWorker extends TaskWorker {
           }
         );
         this.logger.info(
-          "AppLoad Worker [%s] has started and is ready to process tasks",
+          "Task Worker (AppLoad) [%s] has started and is ready to process tasks",
           this.worker.id
         );
         resolve();
       } catch (err) {
-        this.logger.error("AppLoad Worker failed to start %o", err);
+        this.logger.error("Task Worker (AppLoad) failed to start %o", err);
         reject();
       }
     });

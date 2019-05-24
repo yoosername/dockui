@@ -22,16 +22,11 @@ class WinstonLogger extends Logger {
    */
   constructor({ config = new Config(), parent = null } = {}) {
     super(...arguments);
-    if (config instanceof Config) {
-      this.config = config;
-    }
-    if (typeof config === "object" && Object.keys(config).length) {
-      this.config = new Config().load(config);
-    }
-
-    const loggerServiceName = this.config.get("service.name");
-
-    if (!this.getParent()) {
+    this.config = config;
+    this.parent = parent;
+    const loggerServiceName = this.config.get("service.name") || "main";
+    // If we have a parent then get a winston child logger instead.
+    try {
       this._logger = createLogger({
         level: "debug",
         format: combine(
@@ -39,16 +34,17 @@ class WinstonLogger extends Logger {
           upperCaseLevel,
           splat(),
           simple(),
-          colorize({ all: true }),
+          colorize({ all: false }),
           dockuiLogFormat
         ),
-        defaultMeta: { service: "main" },
+        defaultMeta: { service: loggerServiceName },
         transports: [new transports.Console()]
       });
-    } else {
-      this._logger = this.getParent()._logger.child({
-        service: loggerServiceName
-      });
+    } catch (err) {
+      console.log(
+        "There was an error configuring logging for service [%s]",
+        loggerServiceName
+      );
     }
   }
 

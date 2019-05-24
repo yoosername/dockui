@@ -124,11 +124,11 @@ class AppStateWorker extends TaskWorker {
           }
         );
         this.logger.info(
-          "AppState Worker (handles enable) [%s] has started and is ready to process tasks",
+          "TaskWorker (AppEnable) [%s] has started and is ready to process tasks",
           this.worker1.id
         );
       } catch (err) {
-        this.logger.error("AppLoad Worker failed to start %o", err);
+        this.logger.error("TaskWorker (AppEnable) failed to start %o", err);
         reject();
       }
       // Register a Disable Worker
@@ -140,11 +140,11 @@ class AppStateWorker extends TaskWorker {
           }
         );
         this.logger.info(
-          "AppState Worker (handles disable) [%s] has started and is ready to process tasks",
+          "TaskWorker (AppDisable) [%s] has started and is ready to process tasks",
           this.worker2.id
         );
       } catch (err) {
-        this.logger.error("AppLoad Worker failed to start %o", err);
+        this.logger.error("TaskWorker (AppDisable) failed to start %o", err);
         reject();
       }
       resolve();

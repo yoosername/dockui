@@ -19,6 +19,14 @@ class Logger {
   }
 
   /**
+   * @description Returns this Loggers config
+   * @return {Config} the config
+   */
+  getConfig() {
+    return this.config;
+  }
+
+  /**
    * @description Returns this Loggers parent if there is one or null
    * @return {Logger} parent Logger or null
    */

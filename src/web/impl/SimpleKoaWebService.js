@@ -25,8 +25,9 @@ class SimpleKoaWebService extends WebService {
   } = {}) {
     super(...arguments);
     this.running = false;
+    this.config = config;
     this.port = config ? config.get("web.port") : DEFAULT_PORT;
-    this.logger = logger.child({ "service.name": "WebService" });
+    this.logger = logger.child({ config: { "service.name": "WebService" } });
     this.webApp = new Koa();
     this.router = new Router();
     this.server = null;
