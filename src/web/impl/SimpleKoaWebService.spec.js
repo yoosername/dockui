@@ -50,7 +50,7 @@ describe("SimpleKoaWebService", function() {
   "use strict";
 
   beforeEach(async () => {
-    process.env.PORT = 3000;
+    process.env.DOCKUI_WEB_PORT = 3000;
     appService = setupTestAppService();
     config = new Config();
     webService = new SimpleKoaWebService({ appService, config });
