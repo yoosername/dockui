@@ -31,7 +31,6 @@ class SimpleKoaWebService extends WebService {
     this.webApp = new Koa();
     this.router = new Router();
     this.server = null;
-    this.setupMiddleware();
   }
 
   /**
@@ -262,6 +261,7 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured Management routes");
     app.use(router.routes());
     app.use(router.allowedMethods());
+    this.middleWareConfigured = true;
   }
 
   /**
@@ -270,6 +270,11 @@ class SimpleKoaWebService extends WebService {
   async start() {
     "use strict";
     return new Promise(async (resolve, reject) => {
+      // First setup the middleware
+      if (!this.middleWareConfigured) {
+        this.setupMiddleware();
+      }
+
       // Start App if not already
       if (!this.server && !this.isRunning()) {
         try {
