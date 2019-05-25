@@ -1,3 +1,6 @@
+const Logger = require("./log/Logger");
+const { Config } = require("./config/Config");
+
 /**
  * @description Wrapper around various DockUI App services for easier usage
  */
@@ -10,8 +13,8 @@ class Instance {
       return new InstanceBuilder();
     }
 
-    this.config = builder.config;
-    this.logger = builder.logger ? builder.logger : console;
+    this.config = builder.config ? builder.config : new Config();
+    this.logger = builder.logger ? builder.logger : new Logger(this.config);
     this.webService = builder.webService;
     this.appService = builder.appService;
     this.appStore = builder.appStore;
@@ -84,7 +87,7 @@ class InstanceBuilder {
    * @description Use the specified Config object
    * @argument {Config} config The Config to use
    */
-  withConfig(config) {
+  withConfig(config = new Config()) {
     this.config = config;
     return this;
   }
@@ -93,7 +96,7 @@ class InstanceBuilder {
    * @description Use the specified Logger object
    * @argument {Logger} logger The Logger to use
    */
-  withLogger(logger) {
+  withLogger(logger = new Logger()) {
     this.logger = logger;
     return this;
   }

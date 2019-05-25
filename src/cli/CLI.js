@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
-const { Config, ConfigEnvLoader, StandardInstance, Logger } = require("../..");
+const {
+  Config,
+  ConfigEnvLoader,
+  StandardInstance,
+  LoggerFactory,
+  Logger
+} = require("../..");
 
 const showUsage = ({
   name = "CLI.js",
@@ -120,8 +126,8 @@ class CLI {
       const config = Config.builder()
         .withConfigLoader(new ConfigEnvLoader())
         .build();
-      const logger = new Logger(config);
-      await new CLI({ name: "dockui", config }).parse(process.argv);
+      const logger = console;
+      await new CLI({ name: "dockui", config, logger }).parse(process.argv);
     } catch (e) {
       console.log(e);
     }

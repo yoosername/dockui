@@ -53,8 +53,10 @@ describe("SimpleKoaWebService", function() {
     process.env.DOCKUI_WEB_PORT = 3000;
     appService = setupTestAppService();
     config = new Config();
-    webService = new SimpleKoaWebService({ appService, config });
-    await webService.start();
+    try {
+      webService = new SimpleKoaWebService({ appService, config });
+      await webService.start();
+    } catch (e) {}
   });
 
   afterEach(async () => {

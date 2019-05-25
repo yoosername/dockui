@@ -20,6 +20,20 @@ const ConfigEnvLoader = require("./config/loader/impl/ConfigEnvLoader");
 const LoggerFactory = require("./log/factory/LoggerFactory");
 
 /**
+ * @description Helper to output runtime settings
+ */
+const logInitSettings = ({ config, logger }) => {
+  config = config.getAll();
+  logger.debug("--------------------------------");
+  logger.debug("- CONFIGURATION                -");
+  logger.debug("--------------------------------");
+  for (var item in config) {
+    logger.debug("%s = %s", item, config[item]);
+  }
+  logger.debug("--------------------------------");
+};
+
+/**
  * @description Generate an Instance of DockUI based on sensible defaults
  * @return {Instance} An instance of DockUI
  */
@@ -66,7 +80,11 @@ module.exports = generateStandardInstance = ({
     .build();
 
   // configure a DockUI instance using our preferred settings
+  // Provide some output on the state of the current instance
+  logInitSettings(context);
+
   instance = new Instance()
+    .withConfig(context.config)
     .withStore(context.store)
     .withTaskManager(context.taskManager)
     .withTaskWorkers([new AppLoadWorker(context), new AppStateWorker(context)])
