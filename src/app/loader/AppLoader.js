@@ -3,7 +3,12 @@ const App = require("../App");
 const request = require("request");
 
 const defaultFetcher = async url => {
-  const data = await request.get(url);
+  const data = {};
+  try {
+    data = await request.get(url);
+  } catch (e) {
+    throw new Error(`Error fetching Descriptor from URL(${url}) : ${e}`);
+  }
   return data;
 };
 

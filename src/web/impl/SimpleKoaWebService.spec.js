@@ -142,7 +142,7 @@ describe("SimpleKoaWebService", function() {
       await webServiceWithoutAppService.start();
       const response = await request(
         webServiceWithoutAppService.getServer()
-      ).get("/api/admin/app");
+      ).get("/api/manage/app");
       expect(response.status).toEqual(500);
       await webServiceWithoutAppService.shutdown();
     });
@@ -150,7 +150,7 @@ describe("SimpleKoaWebService", function() {
     //List All Apps - GET /api/admin/app
     test("should be able to List all Apps", async () => {
       const response = await request(webService.getServer()).get(
-        "/api/admin/app"
+        "/api/manage/app"
       );
       expect(typeof appService.getApps).toBe("function");
       expect(response.status).toEqual(200);

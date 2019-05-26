@@ -25,7 +25,7 @@ class SimpleAppService extends AppService {
     logger = new Logger(config)
   } = {}) {
     super(taskManager, store, config, logger);
-    this.logger = logger;
+    this.logger = logger.child({ config: { "service.name": "AppService" } });
     this._running = false;
   }
 
@@ -72,16 +72,16 @@ class SimpleAppService extends AppService {
     // Use TaskManager to schedule loading the App
     return new Promise(async (resolve, reject) => {
       let task;
+      this.logger.info(
+        "APP LOAD has been requested, creating a task for it (url=%s, permission=%s)",
+        url,
+        permission
+      );
       try {
         task = await this.taskManager.create(Task.types.APP_LOAD, {
           url: url,
           permission: permission
         });
-        this.logger.info(
-          "App Load requested url=%s, permission=%s",
-          url,
-          permission
-        );
       } catch (err) {
         this.logger.error("Error creating task %o", err);
         return reject(err);

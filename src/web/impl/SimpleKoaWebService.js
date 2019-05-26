@@ -3,6 +3,7 @@ const Router = require("koa-router");
 const serve = require("koa-static");
 const mount = require("koa-mount");
 const helmet = require("koa-helmet");
+const bodyParser = require("koa-bodyparser");
 const swaggerDocument = require("./swagger/swagger.json");
 const DEFAULT_PORT = 3000;
 const WebService = require("../WebService");
@@ -72,6 +73,11 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured common security headers");
 
     /**
+     * Add a body parser
+     */
+    app.use(bodyParser());
+
+    /**
      * Simple Health Endpoint
      */
     router.get("/health", async ctx => {
@@ -96,7 +102,7 @@ class SimpleKoaWebService extends WebService {
      * DockUI Management Routes
      */
     // List all Apps
-    router.get("/api/admin/app", async ctx => {
+    router.get("/api/manage/app", async ctx => {
       try {
         ctx.body = this.appService.getApps();
       } catch (err) {
@@ -105,17 +111,18 @@ class SimpleKoaWebService extends WebService {
       }
     });
 
-    // // Load a new App (or pass App Key or UUID to Reload an existing one )
-    // router.post("/api/admin/app", (req, res) => {
-    //   let newRequest = {
-    //     requestId: uuidv4(),
-    //     url: req.body.url,
-    //     permission: req.body.permission
-    //   };
-    //   if (req.body.uuid) newRequest.uuid = req.body.uuid;
-    //   this.eventService.emit(URL_APP_LOAD_REQUEST, newRequest);
-    //   res.json(newRequest);
-    // });
+    // Load a new App (or pass App Key or UUID to Reload an existing one )
+    router.post("/api/manage/app", async ctx => {
+      const body = ctx.request.body;
+      const { url, permission } = body;
+      try {
+        const app = await this.appService.loadApp(url, permission);
+        ctx.body = app.toJSON();
+      } catch (err) {
+        this.logger.error("Cannot communicate with AppService");
+        throw new Error("Cannot communicate with AppService");
+      }
+    });
 
     // // get a single App by uuid or key
     // router.get("/api/admin/app/:id", (req, res) => {

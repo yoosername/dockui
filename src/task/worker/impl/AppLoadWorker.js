@@ -82,28 +82,58 @@ class AppLoadWorker extends TaskWorker {
   processTask(task) {
     "use strict";
     return new Promise(async (resolve, reject) => {
-      const payload = task.getPayload();
-      const url = payload && payload.url ? payload.url : null;
+      let payload,
+        url,
+        permission,
+        app,
+        errors = 0,
+        errMsg;
+
+      try {
+        payload = task.getPayload();
+        let { url, permission } = payload;
+      } catch (e) {}
 
       // Make sure there is a URL to load
       if (!url) {
         let errMsg = `Task with id(${task.getId()}) is missing a url in the payload`;
+        errors++;
+      }
+
+      // Make sure there is a Permission set
+      if (!permission) {
+        let errMsg = `Task with id(${task.getId()}) is missing a permission in the payload`;
+        errors++;
+      }
+
+      // Stop here if errors
+      if (errors) {
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
+
       // Try to load the App from the URL
-      const app = await this.appLoader.load(url);
-      if (!app) {
+      try {
+        let app = await this.appLoader.load(url);
+      } catch (e) {
+        task.emit(
+          Task.events.ERROR_EVENT,
+          `Task(${task.getId()}) : There was a problem loading the App descriptor from url(${url}) : ${e}`
+        );
+        return reject(new Error(errMsg));
+      }
+
+      if (app) {
+        // Save it to the Store
+        await this.store.create(app);
+        // Close off the task
+        task.emit(Task.events.SUCCESS_EVENT, app);
+        return resolve(app);
+      } else {
         let errMsg = `Task(${task.getId()}) : Error loading App from URL : ${url}`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
-      // Save it to the Store
-      await this.store.create(app);
-
-      // Close off the task
-      task.emit(Task.events.SUCCESS_EVENT, app);
-      resolve();
     });
   }
 
@@ -122,7 +152,9 @@ class AppLoadWorker extends TaskWorker {
         this.worker = await taskManager.process(
           Task.types.APP_LOAD,
           async task => {
-            await this.processTask(task);
+            try {
+              await this.processTask(task);
+            } catch (e) {}
           }
         );
         this.logger.info(

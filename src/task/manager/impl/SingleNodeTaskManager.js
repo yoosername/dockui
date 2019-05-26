@@ -4,7 +4,7 @@ const uuidv4 = require("uuid/v4");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
 
-const QUEUE_PROCESSING_INTERVAL = 200;
+const QUEUE_PROCESSING_INTERVAL = 4000;
 
 /**
  * @description Default TaskManager single node, multi process DockUI instances
@@ -28,6 +28,7 @@ class SingleNodeTaskManager extends TaskManager {
    * @argument {Task} task The task to commit for processing
    */
   commit(task) {
+    this.logger.debug("Committed task with id %s", task.getId());
     this.queue.push(task);
     this.emit(TaskManager.events.COMMIT_EVENT, task);
   }
@@ -99,6 +100,10 @@ class SingleNodeTaskManager extends TaskManager {
       task.on(Task.events.COMMIT_EVENT, () => {
         this.commit(task);
       });
+      this.logger.debug(
+        "Generated new task of type=%s, wont process until it has been comitted",
+        type
+      );
       resolve(task);
     });
   }
@@ -132,6 +137,11 @@ class SingleNodeTaskManager extends TaskManager {
         }
       };
       this.workers.push(worker);
+      this.logger.debug(
+        "Registered worker with id=%s for tasks of type=%s",
+        id,
+        type
+      );
       resolve(worker);
     });
   }
@@ -142,16 +152,38 @@ class SingleNodeTaskManager extends TaskManager {
    */
   getNextQueuedTask(worker) {
     const task = this.getQueued().shift();
-    this.inProgressQueue.push(task);
+    if (task) {
+      this.logger.verbose(
+        "Worker(%s) has started work on Task(id=%s)",
+        worker.id,
+        task.getId()
+      );
+      this.inProgressQueue.push(task);
+      this.logger.verbose(
+        "Worker(%s) migrated Task(id=%s) into Queue(InProgress)",
+        worker.id,
+        task.getId()
+      );
+    }
     return task;
   }
 
   /**
-   * @description Move Task from InProgress queue to successfull queue
+   * @description Move Task from InProgress queue to successful queue
    */
   inProgressToSuccessful(task) {
     // pop task out of inProgress queue
+    this.inProgressQueue = this.inProgressQueue.filter(
+      (value, index, array) => {
+        return value !== task;
+      }
+    );
     // add it to the successul queue
+    this.successQueue.push(task);
+    this.logger.verbose(
+      "Promoted task with id %s, from in progress to successful",
+      task.getId()
+    );
   }
 
   /**
@@ -159,29 +191,59 @@ class SingleNodeTaskManager extends TaskManager {
    */
   inProgressToFailed(task) {
     // pop task out of inProgress queue
+    this.inProgressQueue = this.inProgressQueue.filter(
+      (value, index, array) => {
+        return value !== task;
+      }
+    );
     // add it to the failed queue
+    this.failedQueue.push(task);
+    this.logger.verbose(
+      "Promoted task with id %s, from in progress to failed",
+      task.getId()
+    );
   }
 
   /**
    * @description Process the current queue
    */
   processQueue() {
-    this.logger.silly("Reading Task Queue");
+    this.logger.verbose("Checking queue for new tasks");
     if (this.getWorkers().length > 0) {
       if (this.getQueued().length > 0) {
-        this.getWorkers().forEach(worker => {
+        this.getWorkers().forEach(async worker => {
           if (!worker.working) {
-            const task = this.getNextQueuedTask(worker);
-            task.on(Task.SUCCESS_EVENT_ID, response => {
-              worker.working = false;
-              this.inProgressToSuccessful(task);
-            });
-            task.on(Task.ERROR_EVENT_ID, response => {
-              worker.working = false;
-              this.inProgressToFailed(task);
-            });
             worker.working = true;
-            worker.process(task);
+            const task = this.getNextQueuedTask(worker);
+
+            // If something to work on then do it.
+            if (task) {
+              this.logger.verbose(
+                "Worker (id=%s) is processing Task(id=%s)",
+                worker.id,
+                task.getId()
+              );
+              task.on(Task.events.SUCCESS_EVENT, response => {
+                this.inProgressToSuccessful(task);
+                worker.working = false;
+              });
+              task.on(Task.events.ERROR_EVENT, response => {
+                this.logger.verbose("%o", response);
+                this.inProgressToFailed(task);
+                worker.working = false;
+              });
+
+              try {
+                await worker.process(task);
+              } catch (e) {
+                this.logger.debug(
+                  "Worker (id=%s) failed to process Task(id=%s) : %o",
+                  worker.id,
+                  task.getId(),
+                  e
+                );
+              }
+            }
           }
         });
       }
