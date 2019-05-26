@@ -200,6 +200,7 @@ class App {
    */
   toJSON() {
     const json = {
+      id: this.id,
       key: this.key,
       name: this.name,
       url: this.url,

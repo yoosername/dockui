@@ -62,7 +62,11 @@ class InMemoryAppStore extends AppStore {
   find(filter) {
     const found = [];
     Object.keys(this.data).forEach(key => {
-      if (filter(this.data[key])) {
+      if (filter) {
+        if (filter(this.data[key])) {
+          found.push(this.data[key]);
+        }
+      } else {
         found.push(this.data[key]);
       }
     });

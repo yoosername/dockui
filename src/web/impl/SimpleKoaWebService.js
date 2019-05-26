@@ -43,6 +43,7 @@ class SimpleKoaWebService extends WebService {
     const app = this.webApp;
     const router = this.router;
     const swaggerUIStaticMount = new Koa();
+    const demoMount = new Koa();
 
     /**
      * Global error handler
@@ -86,6 +87,12 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured /health endpoint");
 
     /**
+     * Built in DEMO App Descriptor
+     */
+    demoMount.use(serve(__dirname + "/static/demo"));
+    app.use(mount("/demo", demoMount));
+
+    /**
      * Raw Swagger API static JSON
      */
     router.get("/api/swagger.json", async ctx => {
@@ -104,7 +111,8 @@ class SimpleKoaWebService extends WebService {
     // List all Apps
     router.get("/api/manage/app", async ctx => {
       try {
-        ctx.body = this.appService.getApps();
+        const apps = await this.appService.getApps();
+        ctx.body = apps;
       } catch (err) {
         this.logger.error("Cannot communicate with AppService");
         throw new Error("Cannot communicate with AppService");

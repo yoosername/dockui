@@ -1,0 +1,105 @@
+key: dockui-demo-app
+name: DockUI Demo App
+url: http://localhost:3000/demo
+type: dynamic
+description: This is a demo App showing of the various features of the DockUI framework
+version: 1.0.0
+descriptorVersion: 1.0.0
+icon: "/images/logo.png"
+lifecycle:
+  - loaded: /loaded
+authentication:
+  - type: jwt
+modules:
+  - type: Route
+    name: Example Route
+    key: example-route
+    routes:
+      - /*
+    url: /apps/dockui-demo-app/modules/example-webpage$1
+    weight: 0
+  - type: AuthenticationProvider
+    name: Authentication Provider
+    key: example-authentication-provider
+    url: /authenticate
+    cache:
+      policy: disabled
+    weight: 1
+  - type: AuthorizationProvider
+    name: Example Authorization Provider
+    key: example-authorization-provider
+    url: /authorize
+    weight: 5
+    cache:
+      policy: enabled
+      expire: 6000
+  - type: WebItem
+    name: Example Webitem
+    key: example-webitem
+    url: /example/relative/url
+    text: Example Webitem
+    location: example.home.header.links
+    tooltip: This is a Tooltip (Hint)
+    weight: 10
+    cache:
+      policy: enabled
+      expire: 0
+  - type: WebFragment
+    name: Example fragment
+    key: example-fragment
+    url: /fragments/example.html
+    selector: "#example-fragment-selector"
+    location: example.home.footer
+    weight: 10
+    cache:
+      policy: enabled
+      expire: 0
+    roles:
+      - EVERYONE
+  - type: WebResource
+    name: Example webresource
+    key: example-webresource
+    url: /static
+    resources:
+      - type: js
+        path: js/example.javascript.js
+      - type: css
+        path: css/example.style.css
+    context: example.resources.context
+    weight: 100
+    cache:
+      policy: enabled
+      expire: 0
+    roles:
+      - UNAUTHENTICATED
+      - EVERYONE
+  - type: WebPage
+    name: Example Webpage
+    key: example-webpage
+    url: /pages/example.html
+    cache:
+      policy: disabled
+    roles:
+      - UNAUTHENTICATED
+      - EVERYONE
+  - type: WebPage
+    name: Example Webpage that starts life disabled
+    key: example-disabled-webpage
+    url: /pages/example2.html
+    enabled: false
+  - type: Api
+    name: Example API
+    key: example-rest-api-endpoint
+    version: 1.0
+    url: /rest/api/1.0/
+    cache:
+      policy: enabled
+      expire: 6000
+    roles:
+      - EVERYONE
+  - type: Webhook
+    name: Webhook
+    key: example-webhook
+    url: /hook
+    events:
+      - app:enabled

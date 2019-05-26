@@ -89,11 +89,11 @@ class SimpleAppService extends AppService {
       // Schedule it immediately
       try {
         task
-          .on("error", error => {
+          .on(Task.events.ERROR_EVENT, error => {
             this.logger.error("App Load failed with error: %o", error);
             reject(error);
           })
-          .on("success", data => {
+          .on(Task.events.SUCCESS_EVENT, data => {
             this.logger.info("App Load reported success : %o", data);
             resolve(data);
           })
@@ -123,10 +123,10 @@ class SimpleAppService extends AppService {
       // Schedule it immediately
       try {
         task
-          .on("error", error => {
+          .on(Task.events.ERROR_EVENT, error => {
             reject(error);
           })
-          .on("success", data => {
+          .on(Task.events.SUCCESS_EVENT, data => {
             resolve(data);
           })
           .commit();
@@ -159,10 +159,10 @@ class SimpleAppService extends AppService {
       // Schedule it immediately
       try {
         task
-          .on("error", error => {
+          .on(Task.events.ERROR_EVENT, error => {
             reject(error);
           })
-          .on("success", data => {
+          .on(Task.events.SUCCESS_EVENT, data => {
             resolve(data);
           })
           .commit();
@@ -195,10 +195,10 @@ class SimpleAppService extends AppService {
       // Schedule it immediately
       try {
         task
-          .on("error", error => {
+          .on(Task.events.ERROR_EVENT, error => {
             reject(error);
           })
-          .on("success", data => {
+          .on(Task.events.SUCCESS_EVENT, data => {
             resolve(data);
           })
           .commit();
@@ -311,10 +311,10 @@ class SimpleAppService extends AppService {
       // Schedule it immediately
       try {
         task
-          .on("error", error => {
+          .on(Task.events.ERROR_EVENT, error => {
             reject(error);
           })
-          .on("success", data => {
+          .on(Task.events.SUCCESS_EVENT, data => {
             resolve(data);
           })
           .commit();
@@ -348,10 +348,10 @@ class SimpleAppService extends AppService {
       // Schedule it immediately
       try {
         task
-          .on("error", error => {
+          .on(Task.events.ERROR_EVENT, error => {
             reject(error);
           })
-          .on("success", data => {
+          .on(Task.events.SUCCESS_EVENT, data => {
             resolve(data);
           })
           .commit();

@@ -82,55 +82,55 @@ class AppLoadWorker extends TaskWorker {
   processTask(task) {
     "use strict";
     return new Promise(async (resolve, reject) => {
-      let payload,
-        url,
-        permission,
-        app,
-        errors = 0,
-        errMsg;
+      let payload;
+      let url;
+      let permission;
+      let app;
+      let errors = [];
 
       try {
         payload = task.getPayload();
-        let { url, permission } = payload;
+        url = payload.url;
+        permission = payload.permission;
       } catch (e) {}
 
       // Make sure there is a URL to load
       if (!url) {
-        let errMsg = `Task with id(${task.getId()}) is missing a url in the payload`;
-        errors++;
+        errors.push(
+          `Task with id(${task.getId()}) is missing a url in the payload`
+        );
       }
 
       // Make sure there is a Permission set
       if (!permission) {
-        let errMsg = `Task with id(${task.getId()}) is missing a permission in the payload`;
-        errors++;
+        errors.push(
+          `Task with id(${task.getId()}) is missing a permission in the payload`
+        );
       }
 
       // Stop here if errors
-      if (errors) {
-        task.emit(Task.events.ERROR_EVENT, errMsg);
-        return reject(new Error(errMsg));
+      if (errors && errors.length > 0) {
+        task.emit(Task.events.ERROR_EVENT, errors);
+        return reject(new Error(errors));
       }
 
       // Try to load the App from the URL
       try {
-        let app = await this.appLoader.load(url);
+        app = await this.appLoader.load({ url, permission });
       } catch (e) {
-        task.emit(
-          Task.events.ERROR_EVENT,
-          `Task(${task.getId()}) : There was a problem loading the App descriptor from url(${url}) : ${e}`
-        );
+        let errMsg = `Task(${task.getId()}) : There was a problem loading the App descriptor from url(${url}) : ${e}`;
+        task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
 
-      if (app) {
+      try {
         // Save it to the Store
         await this.store.create(app);
         // Close off the task
         task.emit(Task.events.SUCCESS_EVENT, app);
         return resolve(app);
-      } else {
-        let errMsg = `Task(${task.getId()}) : Error loading App from URL : ${url}`;
+      } catch (e) {
+        let errMsg = `Task(${task.getId()}) : Error loading App from URL : ${url}, error : ${e}`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }

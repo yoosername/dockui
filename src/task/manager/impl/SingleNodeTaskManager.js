@@ -227,8 +227,11 @@ class SingleNodeTaskManager extends TaskManager {
                 this.inProgressToSuccessful(task);
                 worker.working = false;
               });
-              task.on(Task.events.ERROR_EVENT, response => {
-                this.logger.verbose("%o", response);
+              task.on(Task.events.ERROR_EVENT, err => {
+                this.logger.verbose(
+                  "Worker rejected Task with error:  %o",
+                  err
+                );
                 this.inProgressToFailed(task);
                 worker.working = false;
               });

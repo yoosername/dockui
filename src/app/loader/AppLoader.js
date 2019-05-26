@@ -1,9 +1,10 @@
 const { Config } = require("../../config/Config");
 const App = require("../App");
-const request = require("request");
+const request = require("request-promise-native");
+const yaml = require("js-yaml");
 
 const defaultFetcher = async url => {
-  const data = {};
+  let data = {};
   try {
     data = await request.get(url);
   } catch (e) {
@@ -36,40 +37,59 @@ class AppLoader {
    */
   load({ url, permission, fetcher = defaultFetcher }) {
     return new Promise(async (resolve, reject) => {
-      const descriptor = await fetcher(url);
-      if (descriptor) {
-        // Get initial shape from the fetched descriptor
-        const shape = {
-          key: descriptor.key,
-          name: descriptor.name,
-          url: url,
-          type: descriptor.type,
-          description: descriptor.description,
-          version: descriptor.version,
-          descriptorVersion: descriptor.descriptorVersion,
-          icon: descriptor.icon,
-          build: descriptor.build,
-          lifecycle: descriptor.lifecycle,
-          authentication: descriptor.authentication,
-          permission: permission,
-          modules: []
-        };
-        // If there are any modules defined, see if any moduleLoaders can handle them
-        if (descriptor.modules) {
-          descriptor.modules.forEach(module => {
-            for (var loader in this.loaders) {
-              if (this.loaders[loader].canLoadModuleDescriptor(module)) {
-                shape.modules.push(
-                  this.loaders[loader].loadModuleFromDescriptor(module)
-                );
-                break;
+      let preParsed, descriptor;
+      // Use the fetcher to fetch the descriptor file
+      try {
+        preParsed = await fetcher(url);
+      } catch (err) {
+        console.log(err);
+      }
+
+      // Turn the YAML into JSON
+      try {
+        descriptor = yaml.safeLoad(preParsed);
+      } catch (e) {
+        console.log(e);
+      }
+
+      // If we got the descriptor ok
+      try {
+        if (descriptor && descriptor.key) {
+          // Get initial shape from the fetched descriptor
+          const shape = {
+            key: descriptor.key,
+            name: descriptor.name,
+            url: url,
+            type: descriptor.type,
+            description: descriptor.description,
+            version: descriptor.version,
+            descriptorVersion: descriptor.descriptorVersion,
+            icon: descriptor.icon,
+            build: descriptor.build,
+            lifecycle: descriptor.lifecycle,
+            authentication: descriptor.authentication,
+            permission: permission,
+            modules: []
+          };
+          // If there are any modules defined, see if any moduleLoaders can handle them
+          if (descriptor.modules) {
+            descriptor.modules.forEach(module => {
+              for (var loader in this.loaders) {
+                if (this.loaders[loader].canLoadModuleDescriptor(module)) {
+                  shape.modules.push(
+                    this.loaders[loader].loadModuleFromDescriptor(module)
+                  );
+                  break;
+                }
               }
-            }
-          });
+            });
+          }
+          // Create an App from the shape and return it
+          const app = new App(shape);
+          resolve(app);
         }
-        // Create an App from the shape and return it
-        const app = new App(shape);
-        resolve(app);
+      } catch (err) {
+        reject(err);
       }
     });
     // 2: Performing Security Handshake
