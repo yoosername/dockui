@@ -125,7 +125,7 @@ class SimpleKoaWebService extends WebService {
       const { url, permission } = body;
       try {
         const app = await this.appService.loadApp(url, permission);
-        ctx.body = app.toJSON();
+        ctx.body = app;
       } catch (err) {
         this.logger.error("Cannot communicate with AppService");
         throw new Error("Cannot communicate with AppService");

@@ -67,16 +67,17 @@ describe("AppLoader", function() {
   test("should Load a Descriptor file from URL", async () => {
     const appLoader = new AppLoader().build();
     const TEST_URL = "http://some.url";
-    const testFetcher = jest.fn().mockReturnValue(TEST_APP_DESCRIPTOR);
+    const returnedApp = new App();
+    const testFetcher = jest.fn().mockResolvedValue(returnedApp.toJSON());
     const permission = App.permissions.READ;
     const app = await appLoader.load({
       url: TEST_URL,
-      permission,
+      permission: permission,
       fetcher: testFetcher
     });
     expect(app instanceof App).toBe(true);
-    expect(app.getKey()).toBe(TEST_APP_DESCRIPTOR.key);
-    expect(app.getDescription()).toBe(TEST_APP_DESCRIPTOR.description);
+    expect(app.getKey()).toBe(returnedApp.getKey());
+    expect(app.getDescription()).toBe(returnedApp.getDescription());
   });
 
   // App should have as many modules as valid ModuleLoaders

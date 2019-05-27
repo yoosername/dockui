@@ -38,7 +38,8 @@ const logInitSettings = ({ config, logger }) => {
  * @return {Instance} An instance of DockUI
  */
 module.exports = generateStandardInstance = ({
-  config = new Config()
+  config = new Config(),
+  logger = null
 } = {}) => {
   let instance = null;
 
@@ -56,7 +57,7 @@ module.exports = generateStandardInstance = ({
   }
 
   // Get a Logger to use if one wasnt passed in
-  context.logger = LoggerFactory.create(context);
+  context.logger = logger !== null ? logger : LoggerFactory.create(context);
 
   // Load correct implementations of required services (created based on the config)
   context.store = StoreFactory.create(context);

@@ -28,16 +28,23 @@ var TEST_APPS = [
   }
 ];
 
+const TEST_LOADED_APP = {
+  key: "testApp5",
+  loaded: "true",
+  enabled: "false"
+};
+
+const TEST_SINGLE_APP = {
+  key: "testApp6",
+  loaded: "true",
+  enabled: "false"
+};
+
 const setupTestAppService = () => {
   const base = new AppService();
-  base.getApps = jest.fn(() => {
-    return TEST_APPS;
-  });
-  base.getApp = jest.fn(app => {
-    return TEST_APPS.filter(i => {
-      return app.key === i.key;
-    });
-  });
+  base.getApps.mockResolvedValue(TEST_APPS);
+  base.getApp.mockResolvedValue(TEST_SINGLE_APP);
+  base.loadApp.mockResolvedValue(TEST_LOADED_APP);
   return base;
 };
 
@@ -50,13 +57,15 @@ describe("SimpleKoaWebService", function() {
   "use strict";
 
   beforeEach(async () => {
-    process.env.DOCKUI_WEB_PORT = 3000;
+    process.env.DOCKUI_WEB_PORT = 10000;
     appService = setupTestAppService();
     config = new Config();
     try {
       webService = new SimpleKoaWebService({ appService, config });
       await webService.start();
-    } catch (e) {}
+    } catch (e) {
+      console.error("couldnt start webService : ", e);
+    }
   });
 
   afterEach(async () => {
@@ -152,12 +161,21 @@ describe("SimpleKoaWebService", function() {
       const response = await request(webService.getServer()).get(
         "/api/manage/app"
       );
-      expect(typeof appService.getApps).toBe("function");
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_APPS);
     });
 
     //   // Attempt to Load App - POST /api/admin/app
+    test("should be able to Load an App", async () => {
+      const body = { url: "/demo/demo.app.yml", permission: "read" };
+      const response = await request(webService.getServer())
+        .post("/api/manage/app")
+        .send(body)
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json");
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_LOADED_APP);
+    });
     //   test("should be able to load a single App", function(done) {
     //     SimpleWebService = require("./SimpleWebService");
     //     const eventSpy = sinon.spy(mockEventService, "emit");

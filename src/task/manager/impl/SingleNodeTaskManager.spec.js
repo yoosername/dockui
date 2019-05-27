@@ -28,14 +28,12 @@ describe("SingleNodeTaskManager", function() {
     const task1 = await taskManager.create("type1", { key: "key1" });
     const worker = await taskManager.process("type1", async task => {
       expect(task).toBe(task1);
+      taskManager.shutdown();
       done();
     });
     expect(taskManager.getWorkers().length).toEqual(1);
     await taskManager.start();
     task1.commit();
-    setTimeout(async () => {
-      taskManager.shutdown();
-    }, 500);
   });
 
   test("should be able to close a worker", async () => {

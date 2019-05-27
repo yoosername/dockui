@@ -48,7 +48,7 @@ describe("AppLoadWorker", function() {
     appLoader.load.mockResolvedValue(fakeApp);
     const config = new Config();
     const worker = new AppLoadWorker({ taskManager, store, appLoader, config });
-    const testPayload = { url: "testURL" };
+    const testPayload = { url: "testURL", permission: "read" };
     const task = new Task();
     task.getPayload.mockReturnValue(testPayload);
     await worker.processTask(task);

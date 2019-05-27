@@ -13,6 +13,16 @@ const defaultFetcher = async url => {
   return data;
 };
 
+const isJson = json => {
+  var str = json.toString();
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
+
 /**
  * @description Encapsulates an external App and its Descriptor to be loaded
  */
@@ -37,22 +47,24 @@ class AppLoader {
    */
   load({ url, permission, fetcher = defaultFetcher }) {
     return new Promise(async (resolve, reject) => {
-      let preParsed, descriptor;
+      let original, descriptor;
       // Use the fetcher to fetch the descriptor file
       try {
-        preParsed = await fetcher(url);
+        descriptor = await fetcher(url);
       } catch (err) {
-        console.log(err);
+        throw new Error(err);
       }
 
-      // Turn the YAML into JSON
-      try {
-        descriptor = yaml.safeLoad(preParsed);
-      } catch (e) {
-        console.log(e);
+      // If not JSON already then turn the YAML into JSON
+      if (!typeof descriptor === "object" || !descriptor.key) {
+        try {
+          descriptor = yaml.safeLoad(descriptor);
+        } catch (e) {
+          throw new Error(e);
+        }
       }
 
-      // If we got the descriptor ok
+      // If we got the descriptor ok then create App from it
       try {
         if (descriptor && descriptor.key) {
           // Get initial shape from the fetched descriptor
@@ -71,6 +83,7 @@ class AppLoader {
             permission: permission,
             modules: []
           };
+
           // If there are any modules defined, see if any moduleLoaders can handle them
           if (descriptor.modules) {
             descriptor.modules.forEach(module => {
@@ -84,12 +97,13 @@ class AppLoader {
               }
             });
           }
+
           // Create an App from the shape and return it
           const app = new App(shape);
           resolve(app);
         }
       } catch (err) {
-        reject(err);
+        reject(new Error(err));
       }
     });
     // 2: Performing Security Handshake
