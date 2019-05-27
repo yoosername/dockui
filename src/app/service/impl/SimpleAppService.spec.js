@@ -158,7 +158,7 @@ describe("SimpleAppService", () => {
   test("should get a single app from the store", async () => {
     const store = new Store();
     const app = new App();
-    store.read.mockReturnValue(app.toJSON());
+    store.read.mockReturnValue({ id: "fakenews" });
     const appService = new SimpleAppService({ taskManager, store });
     const foundApp = await appService.getApp("fakenews");
     expect(store.read).toHaveBeenCalledWith("fakenews");

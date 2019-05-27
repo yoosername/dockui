@@ -94,7 +94,11 @@ class SimpleAppService extends AppService {
             reject(error);
           })
           .on(Task.events.SUCCESS_EVENT, data => {
-            this.logger.info("App Load reported success : %o", data);
+            this.logger.info(
+              "App Loaded successfully with App (id=%s, key=%s)",
+              data.getId(),
+              data.getKey()
+            );
             resolve(data);
           })
           .commit();
@@ -233,14 +237,15 @@ class SimpleAppService extends AppService {
 
   /**
    * @description Get a single known App
-   * @argument {Object} partial Partial Object representing the App
+   * @argument {Object} id The ID of the App
    * @returns {App} Requested App
    */
-  async getApp(partial) {
+  async getApp(id) {
     return new Promise((resolve, reject) => {
       let json, app;
       try {
-        json = this.store.read(partial);
+        json = this.store.read(id);
+        if (!json) throw new Error("App (id=" + id + ") doesnt exist");
         app = new App(json);
         resolve(app);
       } catch (e) {

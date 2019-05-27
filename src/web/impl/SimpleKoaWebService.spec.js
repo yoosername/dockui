@@ -139,6 +139,11 @@ describe("SimpleKoaWebService", function() {
       );
     });
 
+    test("should redirect if missing traliing slash", async () => {
+      const response = await request(webService.getServer()).get("/api");
+      expect(response.status).toEqual(301);
+    });
+
     test("should serve Swagger UI @ /api/", async () => {
       const response = await request(webService.getServer()).get("/api/");
       expect(response.status).toEqual(200);
@@ -151,7 +156,7 @@ describe("SimpleKoaWebService", function() {
       await webServiceWithoutAppService.start();
       const response = await request(
         webServiceWithoutAppService.getServer()
-      ).get("/api/manage/app");
+      ).get("/api/manage/app/");
       expect(response.status).toEqual(500);
       await webServiceWithoutAppService.shutdown();
     });
@@ -159,7 +164,7 @@ describe("SimpleKoaWebService", function() {
     //List All Apps - GET /api/admin/app
     test("should be able to List all Apps", async () => {
       const response = await request(webService.getServer()).get(
-        "/api/manage/app"
+        "/api/manage/app/"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_APPS);
@@ -169,7 +174,7 @@ describe("SimpleKoaWebService", function() {
     test("should be able to Load an App", async () => {
       const body = { url: "/demo/demo.app.yml", permission: "read" };
       const response = await request(webService.getServer())
-        .post("/api/manage/app")
+        .post("/api/manage/app/")
         .send(body)
         .set("Content-Type", "application/json")
         .set("Accept", "application/json");

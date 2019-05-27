@@ -4,6 +4,7 @@ const serve = require("koa-static");
 const mount = require("koa-mount");
 const helmet = require("koa-helmet");
 const bodyParser = require("koa-bodyparser");
+const addTrailingSlashes = require("koa-add-trailing-slashes");
 const swaggerDocument = require("./swagger/swagger.json");
 const DEFAULT_PORT = 3000;
 const WebService = require("../WebService");
@@ -44,6 +45,11 @@ class SimpleKoaWebService extends WebService {
     const router = this.router;
     const swaggerUIStaticMount = new Koa();
     const demoMount = new Koa();
+
+    /**
+     * Add missing trailing slashes
+     */
+    app.use(addTrailingSlashes());
 
     /**
      * Global error handler
@@ -108,35 +114,22 @@ class SimpleKoaWebService extends WebService {
     /**
      * DockUI Management Routes
      */
-    // List all Apps
-    router.get("/api/manage/app", async ctx => {
-      try {
-        const apps = await this.appService.getApps();
-        ctx.body = apps;
-      } catch (err) {
-        this.logger.error("Cannot communicate with AppService");
-        throw new Error("Cannot communicate with AppService");
-      }
-    });
 
-    // Load a new App (or pass App Key or UUID to Reload an existing one )
+    // Load a new App
     router.post("/api/manage/app", async ctx => {
       const body = ctx.request.body;
       const { url, permission } = body;
-      try {
-        const app = await this.appService.loadApp(url, permission);
-        ctx.body = app;
-      } catch (err) {
-        this.logger.error("Cannot communicate with AppService");
-        throw new Error("Cannot communicate with AppService");
-      }
+      ctx.body = await this.appService.loadApp(url, permission);
     });
 
-    // // get a single App by uuid or key
-    // router.get("/api/admin/app/:id", (req, res) => {
-    //   const id = req.params.id;
-    //   res.json(this.appService.getApp(id));
-    // });
+    // List all Apps
+    router.get("/api/manage/app/:id*", async ctx => {
+      if (ctx.params.id && ctx.params.id !== "") {
+        ctx.body = await this.appService.getApp(ctx.params.id);
+      } else {
+        ctx.body = await this.appService.getApps();
+      }
+    });
 
     // // UnLoad an existing App
     // router.delete("/api/admin/app/:id", (req, res) => {

@@ -40,6 +40,7 @@
     "events": "^1.1.1",
     "js-yaml": "^3.13.1",
     "koa": "^2.7.0",
+    "koa-add-trailing-slashes": "^2.0.1",
     "koa-bodyparser": "^4.2.1",
     "koa-helmet": "^4.1.0",
     "koa-json": "^2.0.2",
