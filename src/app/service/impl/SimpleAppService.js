@@ -118,8 +118,14 @@ class SimpleAppService extends AppService {
     // Use TaskManager to schedule unloading the App
     return new Promise(async (resolve, reject) => {
       let task;
+      this.logger.info(
+        "APP UNLOAD has been requested, creating a task for it (id=%s)",
+        app.getId()
+      );
       try {
-        task = await this.taskManager.create(Task.types.APP_UNLOAD, app);
+        task = await this.taskManager.create(Task.types.APP_UNLOAD, {
+          app: app
+        });
       } catch (err) {
         this.logger.error("Error creating task %o", err);
         return reject(err);
@@ -128,9 +134,15 @@ class SimpleAppService extends AppService {
       try {
         task
           .on(Task.events.ERROR_EVENT, error => {
+            this.logger.error("App UnLoad failed with error: %o", error);
             reject(error);
           })
           .on(Task.events.SUCCESS_EVENT, data => {
+            this.logger.info(
+              "App UnLoaded successfully (id=%s, key=%s)",
+              data.getId(),
+              data.getKey()
+            );
             resolve(data);
           })
           .commit();

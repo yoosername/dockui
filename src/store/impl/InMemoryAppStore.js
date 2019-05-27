@@ -2,6 +2,9 @@ const AppStore = require("../AppStore");
 const { Config } = require("../../config/Config");
 const APP_STATE_KEY_PREFIX = "APP_STATE_";
 
+const filter = (obj, predicate) =>
+  Object.fromEntries(Object.entries(obj).filter(predicate));
+
 /**
  * @description Simple Store for persisting App/AppModule state to memory
  */
@@ -48,10 +51,12 @@ class InMemoryAppStore extends AppStore {
    * @argument {String} id The id of the object to delete
    */
   delete(id) {
-    var data = this.data[id];
-    this.data[id] = null;
-    delete this.data[id];
-    return data;
+    const item = this.read(id);
+    if (item) {
+      this.data[id] = null;
+      delete this.data[id];
+    }
+    return item;
   }
 
   /**

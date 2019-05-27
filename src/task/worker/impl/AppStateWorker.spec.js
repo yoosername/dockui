@@ -57,7 +57,7 @@ describe("AppStateWorker", function() {
     const testPayload = { app: fakeApp, state: App.states.ENABLED };
     const task = new Task();
     task.getPayload.mockReturnValue(testPayload);
-    await worker.processTask(task);
+    await worker.processTask(task, worker);
     expect(task.emit).toHaveBeenCalledTimes(1);
     expect(store.update).toHaveBeenCalledTimes(1);
   });

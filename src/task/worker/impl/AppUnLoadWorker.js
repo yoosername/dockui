@@ -1,27 +1,25 @@
-const Task = require("../../../task/Task");
-const TaskWorker = require("../../../task/worker/TaskWorker");
+const Task = require("../../Task");
+const TaskWorker = require("../TaskWorker");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
 
 /**
- * @description Worker which responds to App Load requests by processing the descriptor
+ * @description Worker which responds to App UnLoad requests by processing the descriptor
  *              and attempting to:
  *              1: Load App using AppLoader
  *              2: Save App state to Store
  *              3: Close Task as success
  */
-class AppLoadWorker extends TaskWorker {
+class AppUnLoadWorker extends TaskWorker {
   /**
    * @argument {TaskManager} taskManager The taskManager this worker should register with for new tasks
    * @argument {AppStore} store The store to use for persisting any data
-   * @argument {AppLoader} appLoader use this appLoader to fetch an App from a URL
    * @argument {Config} config Optional Runtime config
    * @argument {Logger} logger Optional Runtime Logger
    */
   constructor({
     taskManager,
     store,
-    appLoader,
     config = new Config(),
     logger = new Logger(config)
   } = {}) {
@@ -29,9 +27,10 @@ class AppLoadWorker extends TaskWorker {
     this.taskManager = taskManager;
     this.worker = null;
     this.store = store;
-    this.appLoader = appLoader;
     this.config = config;
-    this.logger = logger.child({ config: { "service.name": "AppLoadWorker" } });
+    this.logger = logger.child({
+      config: { "service.name": "AppUnLoadWorker" }
+    });
     this._running = false;
   }
 
@@ -49,14 +48,6 @@ class AppLoadWorker extends TaskWorker {
   getStore() {
     "use strict";
     return this.store;
-  }
-
-  /**
-   * @description Return the AppLoader we are using
-   */
-  getAppLoader() {
-    "use strict";
-    return this.appLoader;
   }
 
   /**
@@ -83,31 +74,20 @@ class AppLoadWorker extends TaskWorker {
     "use strict";
     return new Promise(async (resolve, reject) => {
       let payload;
-      let url;
-      let permission;
       let app;
       let errors = [];
 
       try {
         payload = task.getPayload();
-        url = payload.url;
-        permission = payload.permission;
+        app = payload.app;
       } catch (e) {}
 
       // Make sure there is a URL to load
-      if (!url) {
+      if (!app) {
         errors.push(
-          `Task with id(${task.getId()}) is missing a url in the payload`
+          `Task with id(${task.getId()}) is missing an app in the payload`
         );
       }
-
-      // Make sure there is a Permission set
-      if (!permission) {
-        errors.push(
-          `Task with id(${task.getId()}) is missing a permission in the payload`
-        );
-      }
-
       // Stop here if errors
       if (errors && errors.length > 0) {
         task.emit(Task.events.ERROR_EVENT, errors);
@@ -115,30 +95,20 @@ class AppLoadWorker extends TaskWorker {
       }
 
       this.logger.debug(
-        "Worker (id=%s) is processing Task(id=%s) to load (%s) with permission (%s)",
+        "Worker (id=%s) is processing Task(id=%s) to unload app(%s)",
         worker.id,
         task.getId(),
-        url,
-        permission
+        app.getKey()
       );
 
-      // Try to load the App from the URL
       try {
-        app = await this.appLoader.load({ url, permission });
-      } catch (e) {
-        let errMsg = `Task(${task.getId()}) : There was a problem loading the App descriptor from url(${url}) : ${e}`;
-        task.emit(Task.events.ERROR_EVENT, errMsg);
-        return reject(new Error(errMsg));
-      }
-
-      try {
-        // Save it to the Store
-        this.store.create(app);
+        // Delete it from the Store
+        this.store.delete(app.getId());
         // Close off the task
         task.emit(Task.events.SUCCESS_EVENT, app);
         return resolve(app);
       } catch (e) {
-        let errMsg = `Task(${task.getId()}) : Error loading App from URL : ${url}, error : ${e}`;
+        let errMsg = `Task(${task.getId()}) : Error unLoading App (id=${app.getId()})`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
@@ -158,7 +128,7 @@ class AppLoadWorker extends TaskWorker {
       const taskManager = this.taskManager;
       try {
         this.worker = await taskManager.process(
-          Task.types.APP_LOAD,
+          Task.types.APP_UNLOAD,
           async task => {
             try {
               await this.processTask(task, this.worker);
@@ -166,12 +136,12 @@ class AppLoadWorker extends TaskWorker {
           }
         );
         this.logger.info(
-          "Task Worker (AppLoad) [%s] has started and is ready to process tasks",
+          "Task Worker (AppUnLoad) [%s] has started and is ready to process tasks",
           this.worker.id
         );
         resolve();
       } catch (err) {
-        this.logger.error("Task Worker (AppLoad) failed to start %o", err);
+        this.logger.error("Task Worker (AppUnLoad) failed to start %o", err);
         reject();
       }
     });
@@ -196,4 +166,4 @@ class AppLoadWorker extends TaskWorker {
   }
 }
 
-module.exports = AppLoadWorker;
+module.exports = AppUnLoadWorker;

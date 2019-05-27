@@ -95,7 +95,9 @@ describe("SimpleAppService", () => {
     try {
       await appService.unLoadApp(app);
     } catch (e) {}
-    expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_UNLOAD, app);
+    expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_UNLOAD, {
+      app
+    });
   });
 
   test("should enable an app by delegating to taskManager", async () => {

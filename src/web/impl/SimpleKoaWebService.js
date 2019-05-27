@@ -122,7 +122,7 @@ class SimpleKoaWebService extends WebService {
       ctx.body = await this.appService.loadApp(url, permission);
     });
 
-    // List all Apps
+    // List all Apps ( or return a single app )
     router.get("/api/manage/app/:id*", async ctx => {
       if (ctx.params.id && ctx.params.id !== "") {
         ctx.body = await this.appService.getApp(ctx.params.id);
@@ -131,7 +131,12 @@ class SimpleKoaWebService extends WebService {
       }
     });
 
-    // // UnLoad an existing App
+    // UnLoad an existing App
+    router.delete("/api/manage/app/:id", async ctx => {
+      if (!ctx.params.id) throw new Error("Missing param (id)");
+      const app = await this.appService.getApp(ctx.params.id);
+      ctx.body = await this.appService.unLoadApp(app);
+    });
     // router.delete("/api/admin/app/:id", (req, res) => {
     //   const id = req.params.id;
     //   // Check it exists first

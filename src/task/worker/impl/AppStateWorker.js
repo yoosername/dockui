@@ -80,11 +80,17 @@ class AppStateWorker extends TaskWorker {
    * @description Process a Single Task when called by the taskManager
    * @argument {Task} task The task to be processed
    */
-  processTask(task) {
+  processTask(task, worker) {
     "use strict";
     return new Promise(async (resolve, reject) => {
       const payload = task.getPayload();
       const app = payload && payload.app ? payload.app : null;
+      this.logger.info(
+        "Worker (id=%s) is processing Task(id=%s) with payload(%o)",
+        worker.id,
+        task.getId(),
+        payload
+      );
 
       // Make sure there is a URL to load
       if (!app) {
@@ -122,7 +128,7 @@ class AppStateWorker extends TaskWorker {
         this.worker1 = await taskManager.process(
           Task.types.APP_ENABLE,
           async task => {
-            await this.processTask(task);
+            await this.processTask(task, this.worker1);
           }
         );
         this.logger.info(
@@ -138,7 +144,7 @@ class AppStateWorker extends TaskWorker {
         this.worker2 = await taskManager.process(
           Task.types.APP_DISABLE,
           async task => {
-            await this.processTask(task);
+            await this.processTask(task, this.worker2);
           }
         );
         this.logger.info(
