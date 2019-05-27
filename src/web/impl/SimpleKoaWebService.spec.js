@@ -40,11 +40,18 @@ const TEST_SINGLE_APP = {
   enabled: "false"
 };
 
+const TEST_DELETED_APP = {
+  key: "deleted",
+  loaded: "false",
+  enabled: "false"
+};
+
 const setupTestAppService = () => {
   const base = new AppService();
   base.getApps.mockResolvedValue(TEST_APPS);
   base.getApp.mockResolvedValue(TEST_SINGLE_APP);
   base.loadApp.mockResolvedValue(TEST_LOADED_APP);
+  base.unLoadApp.mockResolvedValue(TEST_DELETED_APP);
   return base;
 };
 
@@ -170,6 +177,14 @@ describe("SimpleKoaWebService", function() {
       expect(response.body).toEqual(TEST_APPS);
     });
 
+    test("should be able to show a single App", async () => {
+      const response = await request(webService.getServer()).get(
+        "/api/manage/app/12345"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_SINGLE_APP);
+    });
+
     //   // Attempt to Load App - POST /api/admin/app
     test("should be able to Load an App", async () => {
       const body = { url: "/demo/demo.app.yml", permission: "read" };
@@ -181,32 +196,15 @@ describe("SimpleKoaWebService", function() {
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_LOADED_APP);
     });
-    //   test("should be able to load a single App", function(done) {
-    //     SimpleWebService = require("./SimpleWebService");
-    //     const eventSpy = sinon.spy(mockEventService, "emit");
-    //     webService = new SimpleWebService(mockAppService, mockEventService);
 
-    //     let appRequest = {
-    //       key: "https:/location.of/descriptor.yml",
-    //       permission: "READ"
-    //     };
-    //     chai
-    //       .request(webService.getExpressApp())
-    //       .post("/api/admin/app")
-    //       .send(appRequest)
-    //       .end((err, res) => {
-    //         expect(mockEventService.emit).to.have.been.calledOnce;
-    //         expect(mockEventService.emit.getCall(0).args[1].requestId).to.be.not
-    //           .null;
-    //         var requestId = mockEventService.emit.getCall(0).args[1].requestId;
-    //         res.should.have.status(200);
-    //         res.body.should.be.a("object");
-    //         res.body.should.have.property("requestId");
-    //         res.body.requestId.should.equal(requestId);
-    //         eventSpy.restore();
-    //         done();
-    //       });
-    //   });
+    test("should be able to UnLoad an App", async () => {
+      const response = await request(webService.getServer())
+        .delete("/api/manage/app/some_id")
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json");
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_DELETED_APP);
+    });
 
     //   // Get single App - GET /api/admin/app/:id
     //   test("should be able to get a single App", function(done) {
