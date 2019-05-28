@@ -132,8 +132,12 @@ class AppLoadWorker extends TaskWorker {
       }
 
       try {
-        // Save it to the Store
+        // Save App to Store
         this.store.create(app);
+        app.getModules().forEach(module => {
+          // And each module seperately for easy lookup
+          this.store.create(module);
+        });
         // Close off the task
         task.emit(Task.events.SUCCESS_EVENT, app);
         return resolve(app);

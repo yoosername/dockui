@@ -226,20 +226,26 @@ class SimpleAppService extends AppService {
   }
 
   /**
-   * @description Get all Apps that match the filter
-   * @argument {Function} filter : filter the list of Apps using this test
-   * @returns {Array} Array of Apps matching filter
+   * @description Get all Apps that match the predicate
+   * @argument {Function} predicate : filter the list of Apps using this test
+   * @returns {Array} Array of Apps matching predicate
    */
-  async getApps(filter) {
+  async getApps(predicate) {
     // Search Store for all known Apps
     return new Promise((resolve, reject) => {
-      let json,
-        apps = [];
+      let raw = [],
+        apps = [],
+        filtered = [];
       try {
-        json = this.store.find(filter);
-        json.forEach(app => {
-          apps.push(new App(app));
-        });
+        raw = this.store.find(doc => doc.docType === App.DOCTYPE);
+        if (predicate && typeof predicate === "function") {
+          filtered = raw.filter(predicate);
+          filtered.forEach(app => {
+            apps.push(new App(app));
+          });
+        } else {
+          apps = raw;
+        }
         resolve(apps);
       } catch (e) {
         reject(e);
@@ -268,19 +274,25 @@ class SimpleAppService extends AppService {
 
   /**
    * @description Return array of modules matching a filter object
-   * @argument {Function} filter
+   * @argument {Function} predicate Function returning truthy value to test  objects in the store against
    * @returns {Array} Array of Modules matching filter
    */
-  getModules(filter) {
+  getModules(predicate) {
     // Search Store for all known Apps
     return new Promise((resolve, reject) => {
-      let json,
-        modules = [];
+      let raw = [],
+        modules = [],
+        filtered = [];
       try {
-        json = this.store.find(filter);
-        json.forEach(module => {
-          modules.push(new Module(module));
-        });
+        raw = this.store.find(doc => doc.docType === Module.DOCTYPE);
+        if (predicate && typeof predicate === "function") {
+          filtered = raw.filter(predicate);
+          filtered.forEach(module => {
+            modules.push(new Module(module));
+          });
+        } else {
+          modules = raw;
+        }
         resolve(modules);
       } catch (e) {
         reject(e);
@@ -290,14 +302,15 @@ class SimpleAppService extends AppService {
 
   /**
    * @description Return a single App(s) module(s)
-   * @argument {object} partial
+   * @argument {String} id The unique id of the Module
    * @returns {Module} Requested Module
    */
-  getModule(partial) {
+  getModule(id) {
     return new Promise((resolve, reject) => {
       let json, module;
       try {
-        json = this.store.read(partial);
+        json = this.store.read(id);
+        if (!json) throw new Error("Module (id=" + id + ") doesnt exist");
         module = new Module(json);
         resolve(module);
       } catch (e) {

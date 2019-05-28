@@ -152,8 +152,11 @@ describe("SimpleAppService", () => {
     const testAppsJSON = [app1.toJSON(), app2.toJSON()];
     store.find.mockReturnValue(testAppsJSON);
     const appService = new SimpleAppService({ taskManager, store });
-    const apps = await appService.getApps("fakenews");
-    expect(store.find).toHaveBeenCalledWith("fakenews");
+    const predicate = () => {
+      return true;
+    };
+    const apps = await appService.getApps(predicate);
+    expect(store.find).toHaveBeenCalledTimes(1);
     expect(apps.length).toEqual(2);
   });
 
@@ -174,8 +177,11 @@ describe("SimpleAppService", () => {
     const testModulesJSON = [module1.toJSON(), module2.toJSON()];
     store.find.mockReturnValue(testModulesJSON);
     const appService = new SimpleAppService({ taskManager, store });
-    const modules = await appService.getModules("blabla");
-    expect(store.find).toHaveBeenCalledWith("blabla");
+    const predicate = m => {
+      return true;
+    };
+    const modules = await appService.getModules(predicate);
+    expect(store.find).toHaveBeenCalledTimes(1);
     expect(modules.length).toEqual(2);
   });
 

@@ -49,7 +49,7 @@ class SimpleKoaWebService extends WebService {
     /**
      * Add missing trailing slashes
      */
-    app.use(addTrailingSlashes());
+    //app.use(addTrailingSlashes());
 
     /**
      * Global error handler
@@ -137,24 +137,15 @@ class SimpleKoaWebService extends WebService {
       const app = await this.appService.getApp(ctx.params.id);
       ctx.body = await this.appService.unLoadApp(app);
     });
-    // router.delete("/api/admin/app/:id", (req, res) => {
-    //   const id = req.params.id;
-    //   // Check it exists first
-    //   if (!this.appService.getApp(id)) {
-    //     return res.status(404).json({
-    //       code: 404,
-    //       type: "unknown_app_error",
-    //       message: "Cannot find App with the provided UUID or Key"
-    //     });
-    //   }
 
-    //   let newRequest = {
-    //     requestId: uuidv4(),
-    //     uuid: req.param.id
-    //   };
-    //   this.eventService.emit(URL_APP_UNLOAD_REQUEST, newRequest);
-    //   res.json(newRequest);
-    // });
+    // List all of a single Apps Modules ( or return a single module )
+    router.get("/api/manage/module/:moduleId*", async ctx => {
+      if (ctx.params.moduleId && ctx.params.moduleId !== "") {
+        ctx.body = await this.appService.getModule(ctx.params.moduleId);
+      } else {
+        ctx.body = await this.appService.getModules();
+      }
+    });
 
     // // get a single Apps modules
     // router.get("/api/admin/app/:id/modules", (req, res) => {

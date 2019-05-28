@@ -146,10 +146,10 @@ describe("SimpleKoaWebService", function() {
       );
     });
 
-    test("should redirect if missing traliing slash", async () => {
-      const response = await request(webService.getServer()).get("/api");
-      expect(response.status).toEqual(301);
-    });
+    // test("should redirect if missing traliing slash", async () => {
+    //   const response = await request(webService.getServer()).get("/api");
+    //   expect(response.status).toEqual(301);
+    // });
 
     test("should serve Swagger UI @ /api/", async () => {
       const response = await request(webService.getServer()).get("/api/");

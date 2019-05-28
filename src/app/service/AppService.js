@@ -111,9 +111,9 @@ class AppService extends EventEmitter {
 
   /**
    * @description Get all Apps from all Loaders
-   * @argument {Function} filter : filter the list of Apps using this test
+   * @argument {Function} predicate : filter the list of Apps using a truthy function
    */
-  getApps(filter) {
+  getApps(predicate) {
     "use strict";
     console.warn(
       "[AppService] getApps - NoOp implementation - this should be extended by child classes"

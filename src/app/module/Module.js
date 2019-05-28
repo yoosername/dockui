@@ -14,7 +14,8 @@ class Module {
     type = "generic",
     enabled = false,
     cache = { policy: "disabled" },
-    roles = []
+    roles = [],
+    appId = null
   } = {}) {
     this.id = id;
     this.key = key;
@@ -23,6 +24,8 @@ class Module {
     this.enabled = enabled;
     this.cache = cache;
     this.roles = roles;
+    this.docType = Module.DOCTYPE;
+    this.appId = appId;
   }
 
   /**
@@ -86,21 +89,36 @@ class Module {
   }
 
   /**
+   * @description The ID of the App this Module belongs to
+   */
+  getAppId() {
+    return this.appId;
+  }
+
+  /**
    * @description Helper to return a serialized version of this Module for storage/transport
    * @returns {JSON} A Pure JSON representation of the Module
    */
   toJSON() {
     const json = {
+      docType: this.docType,
       id: this.id,
       key: this.key,
       name: this.name,
       type: this.type,
       enabled: this.enabled,
       cache: this.cache,
-      roles: this.roles
+      roles: this.roles,
+      appId: this.appId
     };
     return json;
   }
 }
+
+/**
+ * @static
+ * @description Represents the docType for use when persisting
+ */
+Module.DOCTYPE = "MODULE";
 
 module.exports = Module;

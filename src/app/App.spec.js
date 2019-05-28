@@ -71,7 +71,7 @@ describe("App", function() {
       expect(mockApp.getKey()).toBe(TEST_KEY);
     });
 
-    // Test getModules(filter)
+    // Test getModules(predicate)
     test("should return filtered Array of modules via getModules", function() {
       const app = new App();
       app.modules = [{ key: "m1" }, { key: "m2" }, { key: "m3" }];

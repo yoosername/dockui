@@ -60,22 +60,21 @@ class InMemoryAppStore extends AppStore {
   }
 
   /**
-   * @description find objects that match the passed in filter
-   * @argument {Object} filter The filter object containing keys that should match
+   * @description find objects that match the passed in predicate
+   * @argument {Object} predicate Truthy function which tests for a match
    * @returns {Array} Array of matching objects
    */
-  find(filter) {
+  find(predicate) {
     const found = [];
-    Object.keys(this.data).forEach(key => {
-      if (filter) {
-        if (filter(this.data[key])) {
+    if (predicate && typeof predicate === "function") {
+      Object.keys(this.data).forEach(key => {
+        if (predicate(this.data[key])) {
           found.push(this.data[key]);
         }
-      } else {
-        found.push(this.data[key]);
-      }
-    });
-    return found;
+      });
+      return found;
+    }
+    return this.data;
   }
 }
 

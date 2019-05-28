@@ -54,11 +54,11 @@ class AppStore {
   }
 
   /**
-   * @description find objects that match the passed in filter
-   * @argument {Object} filter The filter object containing keys that should match
+   * @description find objects that match the passed in predicate
+   * @argument {Object} predicate A function which should return a truthy value if object should be included in result
    * @returns {Array} Array of matching objects
    */
-  find(filter) {
+  find(predicate) {
     console.warn(
       "[AppStore] find - NoOp implementation - this should be extended by child classes"
     );

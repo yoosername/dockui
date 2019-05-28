@@ -33,7 +33,7 @@ describe("Module", function() {
     expect(module.getKey()).toEqual(model.key);
   });
 
-  // Test getModules(filter)
+  // Test getModules(predicate)
   test("should return correct JSON when toJSON called", function() {
     const model = {
       cache: { policy: "disabled" },
@@ -42,7 +42,9 @@ describe("Module", function() {
       key: "0d4e56de-846c-4245-9489-0ec1bbe7f65a",
       name: "0d4e56de-846c-4245-9489-0ec1bbe7f65a",
       roles: [],
-      type: "generic"
+      type: "generic",
+      docType: Module.DOCTYPE,
+      appId: null
     };
     const module = new Module(model);
     expect(module.toJSON()).toEqual(model);

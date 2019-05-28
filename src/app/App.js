@@ -39,9 +39,12 @@ class App {
       (this.authentication = authentication),
       (this.enabled = enabled);
     this.modules = modules.map(module => {
+      // Set the appId as we must have an Id by now
+      module.appId = this.id;
       return new Module(module);
     });
     this.permission = permission;
+    this.docType = App.DOCTYPE;
   }
 
   /**
@@ -173,14 +176,14 @@ class App {
   }
 
   /**
-   * @description Return all the modules that have been loaded (optionally filtered)
+   * @description Return all the modules that have been loaded (optionally filtered using truthy predicate)
    * @returns {Array} Array of Module
    */
-  getModules(filter) {
-    if (!filter) {
+  getModules(predicate) {
+    if (!predicate) {
       return this.modules;
     }
-    return this.modules.filter(filter);
+    return this.modules.filter(predicate);
   }
 
   /**
@@ -200,6 +203,7 @@ class App {
    */
   toJSON() {
     const json = {
+      docType: this.docType,
       id: this.id,
       key: this.key,
       name: this.name,
@@ -241,6 +245,12 @@ App.types = Object.freeze({
   STATIC: "STATIC",
   DYNAMIC: "DYNAMIC"
 });
+
+/**
+ * @static
+ * @description Represents the docType for use when persisting
+ */
+App.DOCTYPE = "APP";
 
 /**
  * @static
