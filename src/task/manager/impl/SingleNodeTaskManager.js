@@ -217,9 +217,8 @@ class SingleNodeTaskManager extends TaskManager {
    * @description Process the current queue
    */
   processQueue() {
-    this.logger.verbose("Checking queue for new tasks");
     this.logger.verbose(
-      "Available workers: %o",
+      "Checking queue for new tasks (Available workers: %o)",
       this.getWorkers()
         .map(w => w.type)
         .join(",")

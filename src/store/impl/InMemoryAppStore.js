@@ -1,9 +1,5 @@
 const AppStore = require("../AppStore");
 const { Config } = require("../../config/Config");
-const APP_STATE_KEY_PREFIX = "APP_STATE_";
-
-const filter = (obj, predicate) =>
-  Object.fromEntries(Object.entries(obj).filter(predicate));
 
 /**
  * @description Simple Store for persisting App/AppModule state to memory

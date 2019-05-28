@@ -63,7 +63,7 @@ class SimpleAppService extends AppService {
   }
 
   /**
-   * @description Load a single App from remote source
+   * @description Load a single App from remote source (delegates to TaskManager for async operation)
    * @argument {String} url URL of App descriptor
    * @argument {String} permission Permission to grant the new App
    * @returns {Promise} Promise which resolves with new App() throws Error()
@@ -110,7 +110,7 @@ class SimpleAppService extends AppService {
   }
 
   /**
-   * @description UnLoad an already loaded App
+   * @description UnLoad an already loaded App (delegates to TaskManager for async operation)
    * @argument {App} app The App to unload
    * @returns {Promise} Promise which resolves when app has been loaded.
    */
@@ -154,7 +154,7 @@ class SimpleAppService extends AppService {
   }
 
   /**
-   * @description Enable an already loaded App
+   * @description Enable an already loaded App (delegates to TaskManager for async operation)
    * @argument {App} app The App to enable
    * @returns {Promise} promise which resolves when app has been enabled
    */
@@ -190,7 +190,7 @@ class SimpleAppService extends AppService {
   }
 
   /**
-   * @description Disable an already loaded/enabled App
+   * @description Disable an already loaded/enabled App (delegates to TaskManager for async operation)
    * @argument {App} app The App to disable
    * @returns {Promise} Promise which resolves when app has been disabled.
    */
@@ -260,11 +260,24 @@ class SimpleAppService extends AppService {
    */
   async getApp(id) {
     return new Promise((resolve, reject) => {
-      let json, app;
+      let doc, app;
       try {
-        json = this.store.read(id);
-        if (!json) throw new Error("App (id=" + id + ") doesnt exist");
-        app = new App(json);
+        // Find the app in the store
+        doc = this.store.read(id);
+        if (!doc)
+          throw new Error("App (id=" + id + ") doesnt exist in the store");
+
+        // Hydrate the module data from their individual stored instances as that is the information which
+        // is updated on a per module basis etc.
+        if (doc.modules && doc.modules.length) {
+          doc.modules = doc.modules.map((cur, idx, arr) => {
+            return this.store.read(cur.id);
+          });
+        }
+
+        // Return a new Instance of App from the data
+        app = new App(doc);
+
         resolve(app);
       } catch (e) {
         reject(e);
