@@ -58,8 +58,9 @@ class SimpleKoaWebService extends WebService {
       try {
         await next();
       } catch (err) {
-        ctx.status = err.status || 500;
-        ctx.body = err.message;
+        const status = err.status || 500;
+        ctx.status = status;
+        ctx.body = { error: { status: status, message: err.message } };
         ctx.app.emit("error", err, ctx);
         this.logger.error("error %o %o", err, ctx);
       }
@@ -138,7 +139,7 @@ class SimpleKoaWebService extends WebService {
       ctx.body = await this.appService.unLoadApp(app);
     });
 
-    // List all of a single Apps Modules ( or return a single module )
+    // List all Modules ( or return a single Module by id )
     router.get("/api/manage/module/:moduleId*", async ctx => {
       if (ctx.params.moduleId && ctx.params.moduleId !== "") {
         ctx.body = await this.appService.getModule(ctx.params.moduleId);
@@ -147,120 +148,33 @@ class SimpleKoaWebService extends WebService {
       }
     });
 
-    // // get a single Apps modules
-    // router.get("/api/admin/app/:id/modules", (req, res) => {
-    //   const id = req.params.id;
-    //   const app = this.appService.getApp(id);
-    //   if (app) {
-    //     res.json(app.getModules());
-    //   } else {
-    //     res.status(404).json({
-    //       code: 404,
-    //       type: "unknown_app_error",
-    //       message: "Cannot find App with the provided UUID or Key"
-    //     });
-    //   }
-    // });
+    // Enable an existing App
+    router.put("/api/manage/app/:id/enable", async ctx => {
+      if (!ctx.params.id) throw new Error("Missing param (id)");
+      const app = await this.appService.getApp(ctx.params.id);
+      ctx.body = await this.appService.enableApp(app);
+    });
 
-    // // Enable an App
-    // router.put("/api/admin/app/:id/enable", (req, res) => {
-    //   const id = req.params.id;
-    //   const app = this.appService.getApp(id);
-    //   if (app) {
-    //     app.enable();
-    //     res.status(200).json({
-    //       code: 200,
-    //       type: "app_enabled",
-    //       message: `Enabled App ${app.getName()} successfully`
-    //     });
-    //   } else {
-    //     res.status(404).json({
-    //       code: 404,
-    //       type: "unknown_app_error",
-    //       message: "Cannot find App with the provided UUID or Key"
-    //     });
-    //   }
-    // });
+    // Disable an existing App
+    router.put("/api/manage/app/:id/disable", async ctx => {
+      if (!ctx.params.id) throw new Error("Missing param (id)");
+      const app = await this.appService.getApp(ctx.params.id);
+      ctx.body = await this.appService.disableApp(app);
+    });
 
-    // // Disable an App
-    // router.put("/api/admin/app/:id/disable", (req, res) => {
-    //   const id = req.params.id;
-    //   const app = this.appService.getApp(id);
-    //   if (app) {
-    //     app.disable();
-    //     res.status(200).json({
-    //       code: 200,
-    //       type: "app_disabled",
-    //       message: `Disabled App ${app.getName()} successfully`
-    //     });
-    //   } else {
-    //     res.status(404).json({
-    //       code: 404,
-    //       type: "unknown_app_error",
-    //       message: "Cannot find App with the provided UUID or Key"
-    //     });
-    //   }
-    // });
+    // Enable an existing Module
+    router.put("/api/manage/module/:id/enable", async ctx => {
+      if (!ctx.params.id) throw new Error("Missing param (id)");
+      const module = await this.appService.getModule(ctx.params.id);
+      ctx.body = await this.appService.enableModule(module);
+    });
 
-    // // Enable a Module
-    // router.put("/api/admin/app/:id/modules/:moduleId/enable", (req, res) => {
-    //   const id = req.params.id;
-    //   const moduleId = req.params.moduleId;
-    //   const app = this.appService.getApp(id);
-    //   if (app) {
-    //     const module = app.getModule(moduleId);
-    //     if (module) {
-    //       module.enable();
-    //       res.status(200).json({
-    //         code: 200,
-    //         type: "app_enabled",
-    //         message: `Enabled Module ${module.getName()} in App ${app.getName()} successfully`
-    //       });
-    //     } else {
-    //       res.status(404).json({
-    //         code: 404,
-    //         type: "unknown_module_error",
-    //         message: "Cannot find Module with the provided UUID or Key"
-    //       });
-    //     }
-    //   } else {
-    //     res.status(404).json({
-    //       code: 404,
-    //       type: "unknown_app_error",
-    //       message: "Cannot find App with the provided UUID or Key"
-    //     });
-    //   }
-    // });
-
-    // // Disable a Module
-    // router.put("/api/admin/app/:id/modules/:moduleId/disable", (req, res) => {
-    //   const id = req.params.id;
-    //   const moduleId = req.params.moduleId;
-    //   const app = this.appService.getApp(id);
-    //   if (app) {
-    //     const module = app.getModule(moduleId);
-    //     if (module) {
-    //       module.disable();
-    //       res.status(200).json({
-    //         code: 200,
-    //         type: "app_disabled",
-    //         message: `Disabled Module ${module.getName()} in App ${app.getName()} successfully`
-    //       });
-    //     } else {
-    //       res.status(404).json({
-    //         code: 404,
-    //         type: "unknown_module_error",
-    //         message: "Cannot find Module with the provided UUID or Key"
-    //       });
-    //     }
-    //   } else {
-    //     res.status(404).json({
-    //       code: 404,
-    //       type: "unknown_app_error",
-    //       message: "Cannot find App with the provided UUID or Key"
-    //     });
-    //   }
-    // });
+    // Disable an existing Module
+    router.put("/api/manage/module/:id/disable", async ctx => {
+      if (!ctx.params.id) throw new Error("Missing param (id)");
+      const module = await this.appService.getModule(ctx.params.id);
+      ctx.body = await this.appService.disableModule(module);
+    });
 
     this.logger.debug("Configured Management routes");
     app.use(router.routes());

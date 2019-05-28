@@ -108,7 +108,9 @@ describe("SimpleAppService", () => {
     try {
       await appService.enableApp(app);
     } catch (e) {}
-    expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_ENABLE, app);
+    expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_ENABLE, {
+      app: app
+    });
     expect(taskManager.create).toHaveBeenCalledTimes(1);
     // Dont create Task if App is already enabled.
     app.isEnabled.mockImplementation(() => {
@@ -138,10 +140,9 @@ describe("SimpleAppService", () => {
       await appService.disableApp(app);
     } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledTimes(1);
-    expect(taskManager.create).toHaveBeenCalledWith(
-      Task.types.APP_DISABLE,
-      app
-    );
+    expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_DISABLE, {
+      app: app
+    });
   });
 
   test("should get all known apps from the store (with optional filter)", async () => {
@@ -206,10 +207,9 @@ describe("SimpleAppService", () => {
       await appService.enableModule(module);
     } catch (e) {}
 
-    expect(taskManager.create).toHaveBeenCalledWith(
-      Task.types.MODULE_ENABLE,
-      module
-    );
+    expect(taskManager.create).toHaveBeenCalledWith(Task.types.MODULE_ENABLE, {
+      module: module
+    });
     expect(taskManager.create).toHaveBeenCalledTimes(1);
     // Dont create Task if App is already enabled.
     module.isEnabled.mockImplementation(() => {
@@ -239,9 +239,8 @@ describe("SimpleAppService", () => {
       await appService.disableModule(module);
     } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledTimes(1);
-    expect(taskManager.create).toHaveBeenCalledWith(
-      Task.types.MODULE_DISABLE,
-      module
-    );
+    expect(taskManager.create).toHaveBeenCalledWith(Task.types.MODULE_DISABLE, {
+      module: module
+    });
   });
 });

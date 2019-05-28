@@ -167,7 +167,9 @@ class SimpleAppService extends AppService {
     return new Promise(async (resolve, reject) => {
       let task;
       try {
-        task = await this.taskManager.create(Task.types.APP_ENABLE, app);
+        task = await this.taskManager.create(Task.types.APP_ENABLE, {
+          app: app
+        });
       } catch (err) {
         this.logger.error("Error creating task %o", err);
         return reject(err);
@@ -203,7 +205,9 @@ class SimpleAppService extends AppService {
     return new Promise(async (resolve, reject) => {
       let task;
       try {
-        task = await this.taskManager.create(Task.types.APP_DISABLE, app);
+        task = await this.taskManager.create(Task.types.APP_DISABLE, {
+          app: app
+        });
       } catch (err) {
         this.logger.error("Error creating task %o", err);
         return reject(err);
@@ -346,7 +350,9 @@ class SimpleAppService extends AppService {
     return new Promise(async (resolve, reject) => {
       let task;
       try {
-        task = await this.taskManager.create(Task.types.MODULE_ENABLE, module);
+        task = await this.taskManager.create(Task.types.MODULE_ENABLE, {
+          module: module
+        });
       } catch (err) {
         this.logger.error("Error creating task %o", err);
         return reject(err);
@@ -382,7 +388,9 @@ class SimpleAppService extends AppService {
     return new Promise(async (resolve, reject) => {
       let task;
       try {
-        task = await this.taskManager.create(Task.types.MODULE_DISABLE, module);
+        task = await this.taskManager.create(Task.types.MODULE_DISABLE, {
+          module: module
+        });
       } catch (err) {
         this.logger.error("Error creating task %o", err);
         return reject(err);

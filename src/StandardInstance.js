@@ -15,6 +15,7 @@ const AppLoader = require("./app/loader/AppLoader");
 const AppLoadWorker = require("./task/worker/impl/AppLoadWorker");
 const AppUnLoadWorker = require("./task/worker/impl/AppUnLoadWorker");
 const AppStateWorker = require("./task/worker/impl/AppStateWorker");
+const ModuleStateWorker = require("./task/worker/impl/ModuleStateWorker");
 const { Instance } = require("./Instance");
 const { Config } = require("./config/Config");
 const ConfigEnvLoader = require("./config/loader/impl/ConfigEnvLoader");
@@ -92,7 +93,8 @@ module.exports = generateStandardInstance = ({
     .withTaskWorkers([
       new AppLoadWorker(context),
       new AppUnLoadWorker(context),
-      new AppStateWorker(context)
+      new AppStateWorker(context),
+      new ModuleStateWorker(context)
     ])
     //.withReactors([new DockerEventsReactor(taskManager, config)])
     .withAppService(context.appService)

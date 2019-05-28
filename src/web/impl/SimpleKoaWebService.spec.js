@@ -54,10 +54,14 @@ const setupTestAppService = () => {
   const base = new AppService();
   base.getApps.mockResolvedValue(TEST_APPS);
   base.getApp.mockResolvedValue(TEST_SINGLE_APP);
+  base.enableApp.mockResolvedValue(TEST_SINGLE_APP);
+  base.disableApp.mockResolvedValue(TEST_SINGLE_APP);
   base.loadApp.mockResolvedValue(TEST_LOADED_APP);
   base.unLoadApp.mockResolvedValue(TEST_DELETED_APP);
   base.getModules.mockResolvedValue(TEST_MODULES);
   base.getModule.mockResolvedValue(TEST_SINGLE_MODULE);
+  base.enableModule.mockResolvedValue(TEST_SINGLE_MODULE);
+  base.disableModule.mockResolvedValue(TEST_SINGLE_MODULE);
   return base;
 };
 
@@ -229,111 +233,37 @@ describe("SimpleKoaWebService", function() {
       expect(response.body).toEqual(TEST_SINGLE_MODULE);
     });
 
-    //   // Enable App - PUT /api/admin/app/:id/enable
-    //   test("should be able to enable an App", function(done) {
-    //     SimpleWebService = require("./SimpleWebService");
-    //     const APP_NAME = "Appy";
-    //     const getAppStub = sinon.stub(mockAppService, "getApp").returns({
-    //       enable: () => {},
-    //       getName: () => {
-    //         return APP_NAME;
-    //       }
-    //     });
-    //     webService = new SimpleWebService(mockAppService, mockEventService);
+    test("should be able to enable an App", async () => {
+      const response = await request(webService.getServer()).put(
+        "/api/manage/app/12345/enable"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_SINGLE_APP);
+    });
 
-    //     // Check REST API returns correct results
-    //     chai
-    //       .request(webService.getExpressApp())
-    //       .put("/api/admin/app/app1/enable")
-    //       .end((err, res) => {
-    //         res.should.have.status(200);
-    //         getAppStub.restore();
-    //         done();
-    //       });
-    //   });
+    test("should be able to disable an App", async () => {
+      const response = await request(webService.getServer()).put(
+        "/api/manage/app/12345/disable"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_SINGLE_APP);
+    });
 
-    //   // Disable App - PUT /api/admin/app/:id/disable
-    //   test("should be able to disable an App", function(done) {
-    //     SimpleWebService = require("./SimpleWebService");
-    //     const APP_NAME = "Appy";
-    //     const getAppStub = sinon.stub(mockAppService, "getApp").returns({
-    //       disable: () => {},
-    //       getName: () => {
-    //         return APP_NAME;
-    //       }
-    //     });
-    //     webService = new SimpleWebService(mockAppService, mockEventService);
+    test("should be able to enable a Module", async () => {
+      const response = await request(webService.getServer()).put(
+        "/api/manage/module/12345/enable"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_SINGLE_MODULE);
+    });
 
-    //     // Check REST API returns correct results
-    //     chai
-    //       .request(webService.getExpressApp())
-    //       .put("/api/admin/app/app1/disable")
-    //       .end((err, res) => {
-    //         res.should.have.status(200);
-    //         getAppStub.restore();
-    //         done();
-    //       });
-    //   });
-
-    //   // Enable Module - PUT /api/admin/app/:id/modules/:moduleId/enable
-    //   test("should be able to enable a Module", function(done) {
-    //     SimpleWebService = require("./SimpleWebService");
-    //     const APP_NAME = "Appy";
-    //     const getAppStub = sinon.stub(mockAppService, "getApp").returns({
-    //       getName: () => {
-    //         return APP_NAME;
-    //       },
-    //       getModule: () => {
-    //         return {
-    //           getName: () => {
-    //             return APP_NAME;
-    //           },
-    //           enable: () => {}
-    //         };
-    //       }
-    //     });
-    //     webService = new SimpleWebService(mockAppService, mockEventService);
-
-    //     // Check REST API returns correct results
-    //     chai
-    //       .request(webService.getExpressApp())
-    //       .put("/api/admin/app/app1/modules/module1/enable")
-    //       .end((err, res) => {
-    //         res.should.have.status(200);
-    //         getAppStub.restore();
-    //         done();
-    //       });
-    //   });
-
-    //   // Disable Module - PUT /api/admin/app/:id/modules/:moduleId/disable
-    //   test("should be able to disable a Module", function(done) {
-    //     SimpleWebService = require("./SimpleWebService");
-    //     const APP_NAME = "Appy";
-    //     const getAppStub = sinon.stub(mockAppService, "getApp").returns({
-    //       getName: () => {
-    //         return APP_NAME;
-    //       },
-    //       getModule: () => {
-    //         return {
-    //           getName: () => {
-    //             return APP_NAME;
-    //           },
-    //           disable: () => {}
-    //         };
-    //       }
-    //     });
-    //     webService = new SimpleWebService(mockAppService, mockEventService);
-
-    //     // Check REST API returns correct results
-    //     chai
-    //       .request(webService.getExpressApp())
-    //       .put("/api/admin/app/app1/modules/module1/disable")
-    //       .end((err, res) => {
-    //         res.should.have.status(200);
-    //         getAppStub.restore();
-    //         done();
-    //       });
-    //   });
+    test("should be able to disable a Module", async () => {
+      const response = await request(webService.getServer()).put(
+        "/api/manage/module/12345/disable"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_SINGLE_MODULE);
+    });
   });
 
   // TODO (v0.0.2-Alpha):
