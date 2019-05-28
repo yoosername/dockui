@@ -116,6 +116,13 @@ class SimpleKoaWebService extends WebService {
      * DockUI Management Routes
      */
 
+    // If Json incudes a DocType then we can auto add a self href into the JSON.
+    // app.use(async (ctx, next) => {
+    //   await next();
+    //   console.log(ctx.body.docType);
+    //   ctx.body = Object.assign(ctx.body, { _self: "cheese" });
+    // });
+
     // Load a new App
     router.post("/api/manage/app", async ctx => {
       const body = ctx.request.body;
@@ -179,6 +186,12 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured Management routes");
     app.use(router.routes());
     app.use(router.allowedMethods());
+
+    // Show a 404 JSON based error for any unknown routes
+    app.use(ctx => {
+      ctx.throw(404); // throw 404s after all routers try to route this request
+    });
+
     this.middleWareConfigured = true;
   }
 
