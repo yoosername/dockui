@@ -5,11 +5,15 @@ const request = require("supertest");
 
 jest.mock("../../app/service/AppService");
 
+var TEST_MODULES = [{ key: "1" }, { key: "2" }];
+var TEST_SINGLE_MODULE = { key: "im-a-key" };
+
 var TEST_APPS = [
   {
     key: "testApp1",
     loaded: "true",
-    enabled: "true"
+    enabled: "true",
+    modules: TEST_MODULES
   },
   {
     key: "testApp2",
@@ -52,6 +56,8 @@ const setupTestAppService = () => {
   base.getApp.mockResolvedValue(TEST_SINGLE_APP);
   base.loadApp.mockResolvedValue(TEST_LOADED_APP);
   base.unLoadApp.mockResolvedValue(TEST_DELETED_APP);
+  base.getModules.mockResolvedValue(TEST_MODULES);
+  base.getModule.mockResolvedValue(TEST_SINGLE_MODULE);
   return base;
 };
 
@@ -168,7 +174,7 @@ describe("SimpleKoaWebService", function() {
       await webServiceWithoutAppService.shutdown();
     });
 
-    //List All Apps - GET /api/admin/app
+    //List All Apps - GET /api/manage/app
     test("should be able to List all Apps", async () => {
       const response = await request(webService.getServer()).get(
         "/api/manage/app/"
@@ -185,7 +191,7 @@ describe("SimpleKoaWebService", function() {
       expect(response.body).toEqual(TEST_SINGLE_APP);
     });
 
-    //   // Attempt to Load App - POST /api/admin/app
+    //   // Attempt to Load App - POST /api/manage/app
     test("should be able to Load an App", async () => {
       const body = { url: "/demo/demo.app.yml", permission: "read" };
       const response = await request(webService.getServer())
@@ -206,77 +212,22 @@ describe("SimpleKoaWebService", function() {
       expect(response.body).toEqual(TEST_DELETED_APP);
     });
 
-    //   // Get single App - GET /api/admin/app/:id
-    //   test("should be able to get a single App", function(done) {
-    //     SimpleWebService = require("./SimpleWebService");
-    //     const getAppStub = sinon.stub(mockAppService, "getApp").returns(APPS[1]);
-    //     webService = new SimpleWebService(mockAppService, mockEventService);
+    //List Apps Modules - GET /api/manage/module
+    test("should be able to List all Modules", async () => {
+      const response = await request(webService.getServer()).get(
+        "/api/manage/module/"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_MODULES);
+    });
 
-    //     // Check REST API returns correct results
-    //     chai
-    //       .request(webService.getExpressApp())
-    //       .get("/api/admin/app/app2")
-    //       .end((err, res) => {
-    //         res.should.have.status(200);
-    //         res.body.should.be.a("object");
-    //         res.body.should.eql(APPS[1]);
-    //         getAppStub.restore();
-    //         done();
-    //       });
-    //   });
-
-    //   // Unload App - DELETE /api/admin/app/:id
-    //   test("should be able to unload a single App", function(done) {
-    //     SimpleWebService = require("./SimpleWebService");
-    //     const getAppStub = sinon.stub(mockAppService, "getApp").returns(APPS[0]);
-    //     const eventSpy = sinon.spy(mockEventService, "emit");
-    //     webService = new SimpleWebService(mockAppService, mockEventService);
-
-    //     // Check REST API returns correct results
-    //     chai
-    //       .request(webService.getExpressApp())
-    //       .delete("/api/admin/app/app1")
-    //       .end((err, res) => {
-    //         expect(mockEventService.emit).to.have.been.calledOnce;
-    //         expect(mockEventService.emit.getCall(0).args[1].requestId).to.be.not
-    //           .null;
-    //         var requestId = mockEventService.emit.getCall(0).args[1].requestId;
-    //         res.should.have.status(200);
-    //         res.body.should.be.a("object");
-    //         res.body.should.have.property("requestId");
-    //         res.body.requestId.should.equal(requestId);
-    //         eventSpy.restore();
-    //         done();
-    //       });
-    //   });
-
-    //   // List Apps Modules - GET /api/admin/app/:id/modules
-    //   test("should be able to list a single Apps Modules", function(done) {
-    //     SimpleWebService = require("./SimpleWebService");
-    //     const FAKE_MODULES = [
-    //       { key: "module1", name: "Module 1" },
-    //       { key: "module2", name: "Module 2" },
-    //       { key: "module3", name: "Module 3" }
-    //     ];
-    //     const getAppStub = sinon.stub(mockAppService, "getApp").returns({
-    //       getModules: () => {
-    //         return FAKE_MODULES;
-    //       }
-    //     });
-    //     webService = new SimpleWebService(mockAppService, mockEventService);
-
-    //     // Check REST API returns correct results
-    //     chai
-    //       .request(webService.getExpressApp())
-    //       .get("/api/admin/app/app1/modules")
-    //       .end((err, res) => {
-    //         res.should.have.status(200);
-    //         res.body.should.be.an("array");
-    //         res.body.should.eql(FAKE_MODULES);
-    //         getAppStub.restore();
-    //         done();
-    //       });
-    //   });
+    test("should be able to show a single Module", async () => {
+      const response = await request(webService.getServer()).get(
+        "/api/manage/module/12345"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_SINGLE_MODULE);
+    });
 
     //   // Enable App - PUT /api/admin/app/:id/enable
     //   test("should be able to enable an App", function(done) {
