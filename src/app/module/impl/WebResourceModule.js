@@ -14,7 +14,8 @@ class WebResourceModule extends Module {
     context = DEFAULT_CONTEXT,
     weight = "10"
   } = {}) {
-    super(arguments);
+    super(...arguments);
+    this.type = WebResourceModule.DESCRIPTOR_TYPE;
     this.url = url;
     this.resources = resources;
     this.context = context;
@@ -52,6 +53,21 @@ class WebResourceModule extends Module {
    */
   getWeight() {
     return this.weight;
+  }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      resources: this.resources,
+      context: this.context,
+      weight: this.weight,
+      type: this.type
+    });
+    return json;
   }
 }
 

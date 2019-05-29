@@ -187,6 +187,11 @@ class SimpleKoaWebService extends WebService {
     app.use(router.routes());
     app.use(router.allowedMethods());
 
+    app.use(async (ctx, next) => {
+      ctx.body = Object.assign(ctx.body, { _self: "cheese" });
+      await next();
+    });
+
     // Show a 404 JSON based error for any unknown routes
     app.use(ctx => {
       ctx.throw(404); // throw 404s after all routers try to route this request

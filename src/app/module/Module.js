@@ -12,7 +12,9 @@ class Module {
     key = id,
     name = id,
     type = "generic",
-    enabled = false,
+    // Modules default to enabled, but only the enabled Modules will become
+    // fully enabled if the parent app is enabled by an admin
+    enabled = true,
     cache = { policy: "disabled" },
     roles = [],
     appId = null
@@ -93,6 +95,13 @@ class Module {
    */
   getAppId() {
     return this.appId;
+  }
+
+  /**
+   * @description Set the appId that this Module belongs to.
+   */
+  setAppId(appId) {
+    return (this.appId = appId);
   }
 
   /**

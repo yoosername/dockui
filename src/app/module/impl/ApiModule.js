@@ -8,8 +8,9 @@ class ApiModule extends Module {
    * @argument {Object} data - Existing Module data
    */
   constructor({ url = null, version = "1.0.0" } = {}) {
-    super(arguments);
+    super(...arguments);
     this.url = url;
+    this.type = ApiModule.DESCRIPTOR_TYPE;
     this.version = version;
   }
 
@@ -25,6 +26,19 @@ class ApiModule extends Module {
    */
   getVersion() {
     return this.version;
+  }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      version: this.version,
+      type: this.type
+    });
+    return json;
   }
 }
 

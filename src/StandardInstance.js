@@ -70,7 +70,8 @@ module.exports = generateStandardInstance = ({
   // Configure an AppLoader with a common set of ModuleLoaders
   // The AppLoader is used by workers to actually fetch and process an App
   context.appLoader = new AppLoader()
-    .withConfig(config)
+    .withConfig(context.config)
+    .withLogger(context.logger)
     .withModuleLoader(new WebResourceModuleLoader(context))
     .withModuleLoader(new WebPageModuleLoader(context))
     .withModuleLoader(new WebItemModuleLoader(context))

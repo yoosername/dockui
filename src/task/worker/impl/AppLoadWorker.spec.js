@@ -8,6 +8,7 @@ const Logger = require("../../../log/Logger");
 
 jest.mock("../../manager/TaskManager");
 jest.mock("../../Task");
+jest.mock("../../../app/App");
 jest.mock("../../../store/AppStore");
 jest.mock("../../../app/loader/AppLoader");
 
@@ -45,6 +46,10 @@ describe("AppLoadWorker", function() {
     const store = new AppStore();
     const appLoader = new AppLoader();
     const fakeApp = new App();
+    fakeApp.getModules.mockReturnValue([
+      { key: "module1" },
+      { key: "module2" }
+    ]);
     appLoader.load.mockResolvedValue(fakeApp);
     const config = new Config();
     const worker = new AppLoadWorker({ taskManager, store, appLoader, config });
@@ -54,6 +59,7 @@ describe("AppLoadWorker", function() {
     await worker.processTask(task, worker);
     expect(task.emit).toHaveBeenCalledTimes(1);
     expect(appLoader.load).toHaveBeenCalledTimes(1);
-    expect(store.create).toHaveBeenCalledTimes(1);
+    // Store should have been called once for app and once for each module totalling three times
+    expect(store.create).toHaveBeenCalledTimes(3);
   });
 });

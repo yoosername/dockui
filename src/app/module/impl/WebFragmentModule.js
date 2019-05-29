@@ -13,7 +13,8 @@ class WebFragmentModule extends Module {
     location = null,
     weight = "10"
   } = {}) {
-    super(arguments);
+    super(...arguments);
+    this.type = WebFragmentModule.DESCRIPTOR_TYPE;
     this.url = url;
     this.selector = selector;
     this.location = location;
@@ -48,6 +49,21 @@ class WebFragmentModule extends Module {
    */
   getWeight() {
     return this.weight;
+  }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      selector: this.selector,
+      location: this.location,
+      weight: this.weight,
+      type: this.type
+    });
+    return json;
   }
 }
 

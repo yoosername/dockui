@@ -150,6 +150,10 @@ class SingleNodeTaskManager extends TaskManager {
    * @description Grab Task from queue, add to inProgress and return
    * @argument {Object} worker The worker which wants to process the task
    */
+  // TODO: Potentially Use a generator function to return next Task. Use it every process cycle
+  //       and while 'done' !== true attempt to pair with worker
+  //       So for each item in queue, find a worker and task it, or skip
+  //       Check the timeout on the task and if its gone move Task to timeout queue
   getNextQueuedTask(worker) {
     let task = null;
 
@@ -171,7 +175,7 @@ class SingleNodeTaskManager extends TaskManager {
     });
     // add it to the in progress queue
     this.inProgressQueue.push(task);
-    this.logger.verbose(
+    this.logger.debug(
       "Promoted task with id %s, from queue to in progress",
       task.getId()
     );
@@ -189,7 +193,7 @@ class SingleNodeTaskManager extends TaskManager {
     );
     // add it to the successul queue
     this.successQueue.push(task);
-    this.logger.verbose(
+    this.logger.debug(
       "Promoted task with id %s, from in progress to successful",
       task.getId()
     );
@@ -207,7 +211,7 @@ class SingleNodeTaskManager extends TaskManager {
     );
     // add it to the failed queue
     this.failedQueue.push(task);
-    this.logger.verbose(
+    this.logger.debug(
       "Promoted task with id %s, from in progress to failed",
       task.getId()
     );
@@ -232,7 +236,7 @@ class SingleNodeTaskManager extends TaskManager {
             if (task) {
               // Mark that we are busy
               worker.working = true;
-              this.logger.verbose(
+              this.logger.debug(
                 "Worker(%s) has started work on Task(id=%s)",
                 worker.id,
                 task.getId()

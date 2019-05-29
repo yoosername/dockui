@@ -6,6 +6,7 @@ const { Config } = require("../../../config/Config");
 
 jest.mock("../../manager/TaskManager");
 jest.mock("../../Task");
+jest.mock("../../../app/App");
 jest.mock("../../../store/AppStore");
 
 const AppStateWorker = require("./AppStateWorker");
@@ -41,6 +42,7 @@ describe("AppStateWorker", function() {
     const taskManager = new TaskManager();
     const store = new AppStore();
     const fakeApp = new App();
+    fakeApp.toJSON.mockReturnValue({ enabled: false });
     const config = new Config();
     const worker = new AppStateWorker({
       taskManager,

@@ -25,7 +25,7 @@ class ApiModuleLoader extends ModuleLoader {
    * @argument {Object} descriptor The Module Descriptor to test
    */
   loadModuleFromDescriptor(descriptor) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (descriptor && typeof descriptor === "object") {
         // Get initial shape from the descriptor
         const shape = {

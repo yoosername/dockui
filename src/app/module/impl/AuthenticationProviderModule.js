@@ -8,7 +8,8 @@ class AuthenticationProviderModule extends Module {
    * @argument {Object} data - Existing Module data
    */
   constructor({ url = null, weight = "10" } = {}) {
-    super(arguments);
+    super(...arguments);
+    this.type = AuthenticationProviderModule.DESCRIPTOR_TYPE;
     this.url = url;
     this.weight = weight;
   }
@@ -26,6 +27,19 @@ class AuthenticationProviderModule extends Module {
    */
   getWeight() {
     return this.weight;
+  }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      weight: this.weight,
+      type: this.type
+    });
+    return json;
   }
 }
 

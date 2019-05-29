@@ -46,9 +46,8 @@ describe("App", function() {
     const module2 = new Module();
     const modules = [module1, module2];
     const serlializedModules = [module1.toJSON(), module2.toJSON()];
-    const app = new App({
-      modules: modules
-    });
+    const app = new App();
+    app.setModules(modules);
     const output = app.toJSON();
     expect(output.modules).toEqual(serlializedModules);
   });

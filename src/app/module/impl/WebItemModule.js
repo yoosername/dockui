@@ -14,7 +14,8 @@ class WebItemModule extends Module {
     tooltip = "",
     weight = "10"
   } = {}) {
-    super(arguments);
+    super(...arguments);
+    this.type = WebItemModule.DESCRIPTOR_TYPE;
     this.url = url;
     this.text = text;
     this.location = location;
@@ -56,6 +57,22 @@ class WebItemModule extends Module {
    */
   getWeight() {
     return this.weight;
+  }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      text: this.text,
+      location: this.location,
+      tooltip: this.tooltip,
+      weight: this.weight,
+      type: this.type
+    });
+    return json;
   }
 }
 

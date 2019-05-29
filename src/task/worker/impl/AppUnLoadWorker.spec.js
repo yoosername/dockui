@@ -7,6 +7,7 @@ const Logger = require("../../../log/Logger");
 
 jest.mock("../../manager/TaskManager");
 jest.mock("../../Task");
+jest.mock("../../../app/App");
 jest.mock("../../../store/AppStore");
 
 const AppUnLoadWorker = require("./AppUnLoadWorker");
@@ -36,10 +37,11 @@ describe("AppUnLoadWorker", function() {
     expect(worker.isRunning()).toBe(false);
   });
 
-  test("should call appLoader and store", async () => {
+  test("should call store", async () => {
     const taskManager = new TaskManager();
     const store = new AppStore();
     const fakeApp = new App();
+    fakeApp.getModules = jest.fn().mockReturnValue([]);
     const config = new Config();
     const worker = new AppUnLoadWorker({
       taskManager,

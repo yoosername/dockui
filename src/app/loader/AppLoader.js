@@ -1,5 +1,6 @@
 const { Config } = require("../../config/Config");
 const App = require("../App");
+const Logger = require("../../log/Logger");
 const request = require("request-promise-native");
 const yaml = require("js-yaml");
 
@@ -35,6 +36,9 @@ class AppLoader {
       return new AppLoaderBuilder();
     }
     this.config = builder.config;
+    this.logger = builder.logger.child({
+      config: { "service.name": "AppLoader" }
+    });
     this.loaders = builder.loaders;
   }
 
@@ -49,6 +53,7 @@ class AppLoader {
     return new Promise(async (resolve, reject) => {
       let original, descriptor;
       // Use the fetcher to fetch the descriptor file
+      this.logger.debug("Fetching Descriptor from (url=%s)", url);
       try {
         descriptor = await fetcher(url);
       } catch (err) {
@@ -57,6 +62,9 @@ class AppLoader {
 
       // If not JSON already then turn the YAML into JSON
       if (!typeof descriptor === "object" || !descriptor.key) {
+        this.logger.debug(
+          "Descriptor may be YAML, attemting to convert it to JSON"
+        );
         try {
           descriptor = yaml.safeLoad(descriptor);
         } catch (e) {
@@ -67,6 +75,7 @@ class AppLoader {
       // If we got the descriptor ok then create App from it
       try {
         if (descriptor && descriptor.key) {
+          this.logger.debug("Descriptor fetched/converted successfully");
           // Get initial shape from the fetched descriptor
           const shape = {
             key: descriptor.key,
@@ -84,22 +93,47 @@ class AppLoader {
             modules: []
           };
 
-          // If there are any modules defined, see if any moduleLoaders can handle them
+          // Create an App from the shape
+          const app = new App(shape);
+          let modules = [];
+
+          // If there are any modules defined
           if (descriptor.modules) {
-            descriptor.modules.forEach(module => {
-              for (var loader in this.loaders) {
-                if (this.loaders[loader].canLoadModuleDescriptor(module)) {
-                  shape.modules.push(
-                    this.loaders[loader].loadModuleFromDescriptor(module)
+            this.logger.debug(
+              "Attempting to Load (%s) modules for App(key=%s)",
+              descriptor.modules.length,
+              shape.key
+            );
+            // For Each Module - Get the descriptor
+            for (let index = 0; index < descriptor.modules.length; index++) {
+              const moduleDescriptor = descriptor.modules[index];
+              // For Each Module Loader - get the loader
+              for (let idx = 0; idx < this.loaders.length; idx++) {
+                const loader = this.loaders[idx];
+                // Test if it can load the module descriptor
+                if (loader.canLoadModuleDescriptor(moduleDescriptor)) {
+                  this.logger.debug(
+                    "Loader (type=%s) can load this Module Descriptor(key=%s)",
+                    loader.constructor.name,
+                    moduleDescriptor.key
                   );
+                  // And if it can create the Module using the Loader
+                  const module = await loader.loadModuleFromDescriptor(
+                    moduleDescriptor
+                  );
+                  // Add it to the ones we will link to the App
+                  modules.push(module);
+                  // And continue to the next Module
                   break;
                 }
               }
-            });
+            }
           }
 
-          // Create an App from the shape and return it
-          const app = new App(shape);
+          // Now set the apps modules
+          app.setModules(modules);
+
+          // Resolve with the new App
           resolve(app);
         }
       } catch (err) {
@@ -118,6 +152,7 @@ class AppLoader {
 class AppLoaderBuilder {
   constructor() {
     this.config = new Config();
+    this.logger = new Logger(this.config);
     this.loaders = [];
   }
 
@@ -127,6 +162,15 @@ class AppLoaderBuilder {
    */
   withConfig(config) {
     this.config = config;
+    return this;
+  }
+
+  /**
+   * @description Use the specified Logger
+   * @argument {Logger} logger The Logger to use
+   */
+  withLogger(logger) {
+    this.logger = logger;
     return this;
   }
 

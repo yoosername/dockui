@@ -38,11 +38,7 @@ class App {
       (this.lifecycle = lifecycle),
       (this.authentication = authentication),
       (this.enabled = enabled);
-    this.modules = modules.map(module => {
-      // Set the appId as we must have an Id by now
-      module.appId = this.id;
-      return new Module(module);
-    });
+    this.modules = this.setModules(modules);
     this.permission = permission;
     this.docType = App.DOCTYPE;
   }
@@ -177,6 +173,7 @@ class App {
 
   /**
    * @description Return all the modules that have been loaded (optionally filtered using truthy predicate)
+   * @argument {Function} predicate A function returning a truthy value
    * @returns {Array} Array of Module
    */
   getModules(predicate) {
@@ -184,6 +181,24 @@ class App {
       return this.modules;
     }
     return this.modules.filter(predicate);
+  }
+
+  /**
+   * @description Set the modules associated with this App. Overwrites any existing Modules
+   * @argument {Array[Module]} modules An Array of Modules to add to this App
+   * @returns {Array} Array of Module
+   */
+  setModules(modules) {
+    this.modules = modules.map(module => {
+      let instance = module;
+      // If its not a Module instance make it one first
+      if (!instance instanceof Module) {
+        instance = new Module(instance);
+      }
+      // Set the AppId to this App
+      instance.setAppId(this.getId());
+      return instance;
+    });
   }
 
   /**
