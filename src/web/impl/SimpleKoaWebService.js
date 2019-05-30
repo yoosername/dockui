@@ -190,6 +190,26 @@ class SimpleKoaWebService extends WebService {
       ctx.body = await this.appService.disableModule(module);
     });
 
+    /**
+     * API Gateway
+     **/
+    // '/app' is the base context for Api Gateway
+    // 1: Middleware to provide caching
+    // 1: Middleware to redirect client if the path matches any known module provided routes
+    // 2: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
+    // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
+    // 5: Middleware to authenticate a user if PDP requires it
+    // 6: '/app/page' Route for Pages (fetch page using app defined auth ((e.g. JWT)))
+    //   a: Middleware to strip resources from page and add to ctx.resources
+    //   b: Middleware to check if Page needs decoration and replacing page with decorated one
+    //   c: Middleware to add module provided resources to ctx.resources
+    //   d: Middleware to combine ctx.resources back in to page
+    //   e: Middleware to inject PageFragments into page
+    // 7: '/app/resource' Route for Serving Static Resources (CSS, JS)
+    //   - direct reverse proxy
+    // 8: '/app/api' Route for Apis
+    //   - direct reverse proxy
+
     this.logger.debug("Configured Management routes");
     app.use(router.routes());
     app.use(router.allowedMethods());
