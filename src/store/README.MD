@@ -5,7 +5,7 @@
 ### Example
 
 ```javascript
-const config = new ConfigENVLoader();
+const config = new EnvConfigLoader();
 const factory = new StoreFactory();
 const store = factory.create(config);
 const itemId = await store.create({ something: "nothing" });

@@ -102,6 +102,25 @@ class Config {
     }
     return this;
   }
+
+  /**
+   * @description Returns all config as Hash of DOCKUI ENV vars (such that it can be piped into another instance)
+   * @returns {Config} this same config with the newly loaded data.
+   */
+  toEnv(prefix) {
+    const env = {};
+    prefix = prefix ? prefix.toUpperCase() + "_" : "";
+    for (var key in this.data) {
+      const envKey =
+        prefix +
+        key
+          .split(".")
+          .join("_")
+          .toUpperCase();
+      env[envKey] = this.data[key];
+    }
+    return env;
+  }
 }
 
 /**

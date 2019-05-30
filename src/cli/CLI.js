@@ -3,7 +3,7 @@
 const minimist = require("minimist");
 const {
   Config,
-  ConfigEnvLoader,
+  EnvConfigLoader,
   StandardInstance,
   LoggerFactory,
   Logger
@@ -42,6 +42,16 @@ const getLogLevel = code => {
 };
 
 /**
+ * @description Helper to output runtime settings
+ */
+const logEnvironment = ({ config, screen }) => {
+  const all = config.toEnv("dockui");
+  for (var item in all) {
+    screen.log(item + "=" + all[item]);
+  }
+};
+
+/**
  * the CLI allows simpler management of DockUI instances from the Commandline
  */
 class CLI {
@@ -59,7 +69,7 @@ class CLI {
     this.config = config
       ? config
       : Config.builder()
-          .withConfigLoader(new ConfigEnvLoader())
+          .withConfigLoader(new EnvConfigLoader())
           .build();
     this.screen = screen;
     this.logger = logger;
@@ -104,6 +114,16 @@ class CLI {
         return resolve(showUsage(this));
       }
 
+      // Env Command
+      if (this.args._[2] === "env") {
+        try {
+          logEnvironment(this);
+        } catch (err) {
+          return reject(err);
+        }
+        return resolve();
+      }
+
       // Run Command
       if (this.args._[2] === "run") {
         try {
@@ -126,7 +146,7 @@ class CLI {
   if (typeof require != "undefined" && require.main === module) {
     try {
       const config = Config.builder()
-        .withConfigLoader(new ConfigEnvLoader())
+        .withConfigLoader(new EnvConfigLoader())
         .build();
       const logger = LoggerFactory.create(config);
       await new CLI({ name: "dockui", config, logger, screen: console }).parse(

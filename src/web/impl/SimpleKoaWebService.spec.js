@@ -266,6 +266,8 @@ describe("SimpleKoaWebService", function() {
     });
   });
 
+  // TODO - Add a test for switching between https and http based on ENV
+
   // TODO (v0.0.2-Alpha):
   // Implement the concept of a URN for subject, resource
   // Implement the concept of action

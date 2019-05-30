@@ -13,7 +13,7 @@ const AuthorizationProviderModule = require("./src/app/module/impl/Authorization
 const AuthorizationProviderModuleLoader = require("./src/app/loader/module/impl/AuthorizationProviderModuleLoader");
 const CLI = require("./src/cli/CLI");
 const { Config } = require("./src/config/Config");
-const ConfigEnvLoader = require("./src/config/loader/impl/ConfigEnvLoader");
+const EnvConfigLoader = require("./src/config/loader/impl/EnvConfigLoader");
 const ConfigLoader = require("./src/config/loader/ConfigLoader");
 const DockerEventsReactor = require("./src/task/reactor/impl/DockerEventsReactor");
 const InMemoryAppStore = require("./src/store/impl/InMemoryAppStore");
@@ -79,7 +79,7 @@ module.exports = {
   CLI,
   Config,
   ConfigLoader,
-  ConfigEnvLoader,
+  EnvConfigLoader,
   Logger,
   LoggerFactory,
   WinstonLogger,

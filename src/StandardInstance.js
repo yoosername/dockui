@@ -18,22 +18,8 @@ const AppStateWorker = require("./task/worker/impl/AppStateWorker");
 const ModuleStateWorker = require("./task/worker/impl/ModuleStateWorker");
 const { Instance } = require("./Instance");
 const { Config } = require("./config/Config");
-const ConfigEnvLoader = require("./config/loader/impl/ConfigEnvLoader");
+const EnvConfigLoader = require("./config/loader/impl/EnvConfigLoader");
 const LoggerFactory = require("./log/factory/LoggerFactory");
-
-/**
- * @description Helper to output runtime settings
- */
-const logInitSettings = ({ config, logger }) => {
-  config = config.getAll();
-  logger.debug("--------------------------------");
-  logger.debug("- CONFIGURATION                -");
-  logger.debug("--------------------------------");
-  for (var item in config) {
-    logger.debug("%s = %s", item, config[item]);
-  }
-  logger.debug("--------------------------------");
-};
 
 /**
  * @description Generate an Instance of DockUI based on sensible defaults
@@ -51,7 +37,7 @@ module.exports = generateStandardInstance = ({
   // Load config from ENV if wasnt passed in
   if (!config) {
     context.config = Config.builder()
-      .withConfigLoader(new ConfigEnvLoader())
+      .withConfigLoader(new EnvConfigLoader())
       //.withConfigLoader(new YamlConfigLoader())
       .build();
   } else {
@@ -82,10 +68,6 @@ module.exports = generateStandardInstance = ({
     .withModuleLoader(new AuthenticationProviderModuleLoader(context))
     .withModuleLoader(new ApiModuleLoader(context))
     .build();
-
-  // configure a DockUI instance using our preferred settings
-  // Provide some output on the state of the current instance
-  logInitSettings(context);
 
   instance = new Instance()
     .withConfig(context.config)
