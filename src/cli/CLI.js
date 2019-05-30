@@ -23,8 +23,9 @@ const showUsage = ({
     --verbosity, -v  Increment the logging verbosity
 
   Examples
-    $ ${name} run
-    $ ${name} -vvv apps
+    $ ${name} run           Start instance
+    $ ${name} env           Output config ( merged from all sources ) 
+    $ ${name} app
   
   Info
     Log Level:  ${logLevel}

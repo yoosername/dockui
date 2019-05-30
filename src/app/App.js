@@ -38,7 +38,7 @@ class App {
       (this.lifecycle = lifecycle),
       (this.authentication = authentication),
       (this.enabled = enabled);
-    this.modules = this.setModules(modules);
+    this.setModules(modules);
     this.permission = permission;
     this.docType = App.DOCTYPE;
   }
@@ -189,16 +189,18 @@ class App {
    * @returns {Array} Array of Module
    */
   setModules(modules) {
-    this.modules = modules.map(module => {
+    const actualModules = modules.map(module => {
       let instance = module;
       // If its not a Module instance make it one first
-      if (!instance instanceof Module) {
+      if (!(instance instanceof Module)) {
         instance = new Module(instance);
       }
       // Set the AppId to this App
       instance.setAppId(this.getId());
       return instance;
     });
+
+    this.modules = actualModules;
   }
 
   /**
@@ -235,9 +237,11 @@ class App {
       permission: this.permission,
       modules: []
     };
-    this.modules.forEach(module => {
-      json.modules.push(module.toJSON());
-    });
+    if (this.modules && this.modules.length && this.modules.length > 0) {
+      this.modules.forEach(module => {
+        json.modules.push(module.toJSON());
+      });
+    }
     return json;
   }
 }

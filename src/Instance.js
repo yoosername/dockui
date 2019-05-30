@@ -45,8 +45,10 @@ class Instance {
         await worker.start();
       });
       await this.webService.start();
-    } catch (e) {
-      this.logger.error("Error starting DockUI : %o", err);
+    } catch (err) {
+      await this.logger.error("Error starting DockUI : %o", err);
+      // Die here if we failed. We need every service.
+      process.exit(1);
     }
   }
 

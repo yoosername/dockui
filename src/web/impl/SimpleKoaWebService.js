@@ -5,13 +5,17 @@ const serve = require("koa-static");
 const mount = require("koa-mount");
 const helmet = require("koa-helmet");
 const bodyParser = require("koa-bodyparser");
+//const ratelimit = require('koa-ratelimit');
 const https = require("https");
 const swaggerDocument = require("./swagger/swagger.json");
-const DEFAULT_PORT = 3000;
 const WebService = require("../WebService");
 const { Config } = require("../../config/Config");
 const Logger = require("../../log/Logger");
 
+const DEFAULT_SCHEME = "http";
+const DEFAULT_PORT = 3000;
+const SSL_CERT_CONFIG_KEY = "web.ssl.cert";
+const SSL_KEY_CONFIG_KEY = "web.ssl.key";
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
  *              and associated routes etc.
@@ -29,6 +33,7 @@ class SimpleKoaWebService extends WebService {
     super(...arguments);
     this.running = false;
     this.config = config;
+    this.scheme = config ? config.get("web.scheme") : DEFAULT_SCHEME;
     this.port = config ? config.get("web.port") : DEFAULT_PORT;
     this.logger = logger.child({ config: { "service.name": "WebService" } });
     this.webApp = new Koa();
@@ -75,6 +80,11 @@ class SimpleKoaWebService extends WebService {
      */
     app.use(helmet());
     this.logger.debug("Configured common security headers");
+
+    /**
+     * Add Rate limiting to prevent simple DOS issues
+     */
+    //app.use(ratelimit());
 
     /**
      * Add a body parser
@@ -129,7 +139,8 @@ class SimpleKoaWebService extends WebService {
     // List all Apps ( or return a single app )
     router.get("/api/manage/app/:id*", async ctx => {
       if (ctx.params.id && ctx.params.id !== "") {
-        ctx.body = await this.appService.getApp(ctx.params.id);
+        const app = await this.appService.getApp(ctx.params.id);
+        ctx.body = app;
       } else {
         ctx.body = await this.appService.getApps();
       }
@@ -183,10 +194,11 @@ class SimpleKoaWebService extends WebService {
     app.use(router.routes());
     app.use(router.allowedMethods());
 
-    app.use(async (ctx, next) => {
-      ctx.body = Object.assign(ctx.body, { _self: "cheese" });
-      await next();
-    });
+    // Add self links
+    // app.use(async (ctx, next) => {
+    //   ctx.body = Object.assign(ctx.body, { _self: "cheese" });
+    //   await next();
+    // });
 
     // Show a 404 JSON based error for any unknown routes
     app.use(ctx => {
@@ -210,12 +222,19 @@ class SimpleKoaWebService extends WebService {
       // Start App if not already
       if (!this.server && !this.isRunning()) {
         try {
-          if (this.config.get("web.scheme") === "https") {
+          if (this.scheme === "https") {
+            const cert = this.config.get(SSL_CERT_CONFIG_KEY);
+            const key = this.config.get(SSL_KEY_CONFIG_KEY);
+            if (!cert || !key) {
+              throw new Error(
+                "Cannot start webservice on https, Missing cert and key"
+              );
+            }
             this.server = await https
               .createServer(
                 {
-                  key: fs.readFileSync("server.key"),
-                  cert: fs.readFileSync("server.cert"),
+                  cert: fs.readFileSync(cert),
+                  key: fs.readFileSync(key),
                   ciphers: [
                     "ECDHE-RSA-AES128-SHA256",
                     "DHE-RSA-AES128-SHA256",
@@ -239,12 +258,13 @@ class SimpleKoaWebService extends WebService {
           // Set that we are running and log success
           this.running = true;
           this.logger.info(
-            "Web Service has started on port %d",
+            "Web Service has started at %s://localhost:%d/",
+            this.scheme,
             this.getPort()
           );
         } catch (e) {
           this.logger.error("Web Service didnt start: %o", e);
-          return reject(e);
+          reject(e);
         }
       }
       // Emit local started event
