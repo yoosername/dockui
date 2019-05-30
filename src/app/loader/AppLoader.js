@@ -1,15 +1,18 @@
+const fs = require("fs");
 const { Config } = require("../../config/Config");
 const App = require("../App");
 const Logger = require("../../log/Logger");
 const request = require("request-promise-native");
 const yaml = require("js-yaml");
 
-const defaultFetcher = async url => {
+const defaultFetcher = async options => {
   let data = {};
   try {
-    data = await request.get(url);
+    data = await request(options);
   } catch (e) {
-    throw new Error(`Error fetching Descriptor from URL(${url}) : ${e}`);
+    throw new Error(
+      `Error fetching Descriptor with options(${options}) Error: ${e}`
+    );
   }
   return data;
 };
@@ -51,11 +54,24 @@ class AppLoader {
    */
   load({ url, permission, fetcher = defaultFetcher }) {
     return new Promise(async (resolve, reject) => {
-      let original, descriptor;
+      let descriptor;
+      let options = { method: "GET", uri: url };
       // Use the fetcher to fetch the descriptor file
       this.logger.debug("Fetching Descriptor from (url=%s)", url);
       try {
-        descriptor = await fetcher(url);
+        if (url.startsWith("https")) {
+          const cert = this.config.get("web.ssl.cert");
+          const key = this.config.get("web.ssl.key");
+          if (cert && cert !== "" && (key && key !== "")) {
+            options.cert = fs.readFileSync(this.config.get("web.ssl.cert"));
+            options.key = fs.readFileSync(this.config.get("web.ssl.key"));
+          } else {
+            throw new Error(
+              "In order to load a Https URL you must provide a cert, key in the config"
+            );
+          }
+        }
+        descriptor = await fetcher(options);
       } catch (err) {
         throw new Error(err);
       }

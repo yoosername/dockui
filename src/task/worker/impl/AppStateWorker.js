@@ -89,12 +89,29 @@ class AppStateWorker extends TaskWorker {
       }
       // Toggle disable or enable based on payload
       const appData = app.toJSON();
-      appData.enabled =
-        task.getType() === Task.types.APP_DISABLE ? false : true;
-      const updatedApp = new App(appData);
+      let updatedApp;
+      try {
+        appData.enabled =
+          task.getType() === Task.types.APP_DISABLE ? false : true;
+        updatedApp = new App(appData);
+      } catch (e) {
+        let errMsg = `Task(${task.getId()}) : Error Modifying state for app : ${
+          appData.id
+        }, Error: ${e}`;
+        task.emit(Task.events.ERROR_EVENT, errMsg);
+        return reject(new Error(errMsg));
+      }
 
       // Save it to the Store
-      await this.store.update(appData.id, updatedApp);
+      try {
+        await this.store.update(appData.id, updatedApp);
+      } catch (e) {
+        let errMsg = `Task(${task.getId()}) : Error Saving state for app : ${
+          appData.id
+        }, Error: ${e}`;
+        task.emit(Task.events.ERROR_EVENT, errMsg);
+        return reject(new Error(errMsg));
+      }
 
       // Close off the task
       task.emit(Task.events.SUCCESS_EVENT, updatedApp);

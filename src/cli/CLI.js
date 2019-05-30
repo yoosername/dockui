@@ -12,9 +12,9 @@ const {
 const showUsage = ({
   name = "CLI.js",
   logLevel = "info",
-  logger = console
+  screen = console
 }) => {
-  logger.log(`
+  screen.log(`
   Usage
     $ ${name} <cmd>
 
@@ -52,7 +52,8 @@ class CLI {
     name = "cli.js",
     instance = null,
     config = null,
-    logger = console
+    screen = console,
+    logger = screen
   } = {}) {
     this.name = name;
     this.config = config
@@ -60,6 +61,7 @@ class CLI {
       : Config.builder()
           .withConfigLoader(new ConfigEnvLoader())
           .build();
+    this.screen = screen;
     this.logger = logger;
     this.instance = instance ? instance : StandardInstance(...arguments);
   }
@@ -127,7 +129,9 @@ class CLI {
         .withConfigLoader(new ConfigEnvLoader())
         .build();
       const logger = LoggerFactory.create(config);
-      await new CLI({ name: "dockui", config, logger }).parse(process.argv);
+      await new CLI({ name: "dockui", config, logger, screen: console }).parse(
+        process.argv
+      );
     } catch (e) {
       console.log(e);
     }

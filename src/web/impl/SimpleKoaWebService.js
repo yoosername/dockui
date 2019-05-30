@@ -1,10 +1,11 @@
+const fs = require("fs");
 const Koa = require("koa");
 const Router = require("koa-router");
 const serve = require("koa-static");
 const mount = require("koa-mount");
 const helmet = require("koa-helmet");
 const bodyParser = require("koa-bodyparser");
-const addTrailingSlashes = require("koa-add-trailing-slashes");
+const https = require("https");
 const swaggerDocument = require("./swagger/swagger.json");
 const DEFAULT_PORT = 3000;
 const WebService = require("../WebService");
@@ -45,11 +46,6 @@ class SimpleKoaWebService extends WebService {
     const router = this.router;
     const swaggerUIStaticMount = new Koa();
     const demoMount = new Koa();
-
-    /**
-     * Add missing trailing slashes
-     */
-    //app.use(addTrailingSlashes());
 
     /**
      * Global error handler
@@ -214,11 +210,33 @@ class SimpleKoaWebService extends WebService {
       // Start App if not already
       if (!this.server && !this.isRunning()) {
         try {
-          this.server = await this.webApp
-            .listen(this.getPort())
-            .on("error", err => {
-              this.logger.error("Web Service encountered an error: %o", err);
-            });
+          if (this.config.get("web.scheme") === "https") {
+            this.server = await https
+              .createServer(
+                {
+                  key: fs.readFileSync("server.key"),
+                  cert: fs.readFileSync("server.cert"),
+                  ciphers: [
+                    "ECDHE-RSA-AES128-SHA256",
+                    "DHE-RSA-AES128-SHA256",
+                    "AES128-GCM-SHA256",
+                    "RC4",
+                    "HIGH",
+                    "!MD5",
+                    "!aNULL"
+                  ].join(":")
+                },
+                this.webApp.callback()
+              )
+              .listen(this.getPort());
+          } else {
+            this.server = await this.webApp.listen(this.getPort());
+          }
+          // Add error event handler
+          this.server.on("error", err => {
+            this.logger.error("Web Service encountered an error: %o", err);
+          });
+          // Set that we are running and log success
           this.running = true;
           this.logger.info(
             "Web Service has started on port %d",

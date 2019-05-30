@@ -7,10 +7,7 @@ jest.mock("../Instance");
 jest.mock("../log/Logger");
 
 let config = null;
-let logger = null;
-let logSpy,
-  warnSpy,
-  debugSpy = null;
+let voidConsole = null;
 let cli = null;
 
 describe("CLI", function() {
@@ -20,15 +17,10 @@ describe("CLI", function() {
     config = new Config();
     config.set("store.type", "memory");
     config.set("web.port", "1234");
-    logger = new Logger();
-    //logSpy = jest.spyOn(console, "log").mockImplementation();
+    voidConsole = { log: jest.fn().mockImplementation() };
   });
 
-  afterEach(function() {
-    //logSpy.mockRestore();
-    //warnSpy.mockReset();
-    //debugSpy.mockReset();
-  });
+  afterEach(function() {});
 
   test("should be defined and loadable", function() {
     expect(CLI).not.toBeUndefined();
@@ -54,14 +46,14 @@ describe("CLI", function() {
     cli = new CLI({
       instance: new Instance(),
       config: config,
-      logger
+      screen: voidConsole
     });
-    expect(logger.log).not.toHaveBeenCalled();
+    expect(voidConsole.log).not.toHaveBeenCalled();
     return cli
       .parse(["node", "dockui", "--help"])
       .then(() => {
-        expect(logger.log).toHaveBeenCalled();
-        expect(logger.log.mock.calls[0][0]).toContain("Usage");
+        expect(voidConsole.log).toHaveBeenCalled();
+        expect(voidConsole.log.mock.calls[0][0]).toContain("Usage");
         done();
       })
       .catch(console.log);
@@ -83,23 +75,23 @@ describe("CLI", function() {
     cli = new CLI({
       instance: new Instance(),
       config: config,
-      logger
+      screen: voidConsole
     });
-    expect(logger.log).not.toHaveBeenCalled();
+    expect(voidConsole.log).not.toHaveBeenCalled();
     await cli.parse(["node", "dockui", "--help"]);
-    expect(logger.log.mock.calls[0][0]).toContain("Log Level:  info");
+    expect(voidConsole.log.mock.calls[0][0]).toContain("Log Level:  info");
     await cli.parse(["node", "dockui", "--help", "-v"]);
-    expect(logger.log.mock.calls[1][0]).toContain("Log Level:  error");
+    expect(voidConsole.log.mock.calls[1][0]).toContain("Log Level:  error");
     await cli.parse(["node", "dockui", "--help", "-vv"]);
-    expect(logger.log.mock.calls[2][0]).toContain("Log Level:  warn");
+    expect(voidConsole.log.mock.calls[2][0]).toContain("Log Level:  warn");
     await cli.parse(["node", "dockui", "--help", "-vvv"]);
-    expect(logger.log.mock.calls[3][0]).toContain("Log Level:  info");
+    expect(voidConsole.log.mock.calls[3][0]).toContain("Log Level:  info");
     await cli.parse(["node", "dockui", "--help", "-vvvv"]);
-    expect(logger.log.mock.calls[4][0]).toContain("Log Level:  verbose");
+    expect(voidConsole.log.mock.calls[4][0]).toContain("Log Level:  verbose");
     await cli.parse(["node", "dockui", "--help", "-vvvvv"]);
-    expect(logger.log.mock.calls[5][0]).toContain("Log Level:  debug");
+    expect(voidConsole.log.mock.calls[5][0]).toContain("Log Level:  debug");
     await cli.parse(["node", "dockui", "--help", "-vvvvvv"]);
-    expect(logger.log.mock.calls[6][0]).toContain("Log Level:  silly");
+    expect(voidConsole.log.mock.calls[6][0]).toContain("Log Level:  silly");
   });
 
   // COMMAND TESTS
