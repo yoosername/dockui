@@ -1,21 +1,39 @@
 const fs = require("fs");
 const Koa = require("koa");
 const Router = require("koa-router");
-const serve = require("koa-static");
-const mount = require("koa-mount");
-const helmet = require("koa-helmet");
-const bodyParser = require("koa-bodyparser");
-//const ratelimit = require('koa-ratelimit');
 const https = require("https");
 const swaggerDocument = require("./swagger/swagger.json");
 const WebService = require("../WebService");
 const { Config } = require("../../config/Config");
 const Logger = require("../../log/Logger");
 
+// Third party Middleware
+const serve = require("koa-static");
+const mount = require("koa-mount");
+const helmet = require("koa-helmet");
+const bodyParser = require("koa-bodyparser");
+//const ratelimit = require('koa-ratelimit');
+
+// Custom Middleware
+const indexRedirector = require("./middleware/indexRedirector");
+const cacheHandler = require("./middleware/cacheHandler");
+const routeHandler = require("./middleware/routeHandler");
+const idamDecorator = require("./middleware/idamDecorator");
+const policyDecisionPoint = require("./middleware/policyDecisionPoint");
+const authenticationHandler = require("./middleware/authenticationHandler");
+const fetchPage = require("./middleware/fetchPage");
+const addResourcesToContext = require("./middleware/addResourcesToContext");
+const addResourcesFromContext = require("./middleware/addResourcesFromContext");
+const decoratePage = require("./middleware/decoratePage");
+const addPageFragments = require("./middleware/addPageFragments");
+const addPageItems = require("./middleware/addPageItems");
+
+// Defaults
 const DEFAULT_SCHEME = "http";
 const DEFAULT_PORT = 3000;
 const SSL_CERT_CONFIG_KEY = "web.ssl.cert";
 const SSL_KEY_CONFIG_KEY = "web.ssl.key";
+
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
  *              and associated routes etc.
@@ -51,6 +69,10 @@ class SimpleKoaWebService extends WebService {
     const router = this.router;
     const swaggerUIStaticMount = new Koa();
     const demoMount = new Koa();
+    const appGateway = new Koa();
+    const pageProxy = new Koa();
+    const apiProxy = new Koa();
+    const resourceProxy = new Koa();
 
     /**
      * Global error handler
@@ -63,7 +85,14 @@ class SimpleKoaWebService extends WebService {
         ctx.status = status;
         ctx.body = { error: { status: status, message: err.message } };
         ctx.app.emit("error", err, ctx);
-        this.logger.error("error %o %o", err, ctx);
+        this.logger.error(
+          "error (status=%s) (message=%s)",
+          status,
+          err.message
+        );
+        if (err.status === 500) {
+          this.logger.error("stack trace: %o", err);
+        }
       }
     });
 
@@ -90,6 +119,11 @@ class SimpleKoaWebService extends WebService {
      * Add a body parser
      */
     app.use(bodyParser());
+
+    /**
+     * Index (Redirect by default to /app/home/page/index)
+     */
+    app.use(indexRedirector(this));
 
     /**
      * Simple Health Endpoint
@@ -191,34 +225,58 @@ class SimpleKoaWebService extends WebService {
     });
 
     /**
-     * API Gateway
+     * APP Gateway (proxies loaded and enabled apps Pages and Apis)
      **/
-    // '/app' is the base context for Api Gateway
+    // '/app' is the base context for App Gateway
     // 1: Middleware to provide caching
-    // 1: Middleware to redirect client if the path matches any known module provided routes
-    // 2: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
+    appGateway.use(cacheHandler(this));
+    // 2: Middleware to redirect client if the path matches any known module provided routes
+    appGateway.use(routeHandler(this));
+    // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
+    appGateway.use(idamDecorator(this));
     // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
+    // AuthorisationProviders have access to the Module config and IDAM user context but make the decision
+    // Based on some specific internal logic.
+    appGateway.use(policyDecisionPoint(this));
     // 5: Middleware to authenticate a user if PDP requires it
+    appGateway.use(authenticationHandler(this));
     // 6: '/app/page' Route for Pages (fetch page using app defined auth ((e.g. JWT)))
-    //   a: Middleware to strip resources from page and add to ctx.resources
+    pageProxy.use(fetchPage(this));
+    //   a: Middleware to strip resources from page & module provided ones and add to ctx.resources
+    pageProxy.use(addResourcesToContext(this));
     //   b: Middleware to check if Page needs decoration and replacing page with decorated one
-    //   c: Middleware to add module provided resources to ctx.resources
-    //   d: Middleware to combine ctx.resources back in to page
-    //   e: Middleware to inject PageFragments into page
+    pageProxy.use(decoratePage(this));
+    //   c: Middleware to combine ctx.resources back in to page
+    pageProxy.use(addResourcesFromContext(this));
+    //   d: Middleware to inject PageFragments into page
+    pageProxy.use(addPageFragments(this));
+    //   e: Middleware to inject PageItems into page
+    pageProxy.use(addPageItems(this));
+    appGateway.use(mount("/page", pageProxy));
     // 7: '/app/resource' Route for Serving Static Resources (CSS, JS)
     //   - direct reverse proxy
+    appGateway.use(mount("/resource", resourceProxy));
     // 8: '/app/api' Route for Apis
     //   - direct reverse proxy
+    appGateway.use(mount("/api", apiProxy));
+    app.use(mount("/app", appGateway));
 
     this.logger.debug("Configured Management routes");
     app.use(router.routes());
     app.use(router.allowedMethods());
 
     // Add self links
-    // app.use(async (ctx, next) => {
-    //   ctx.body = Object.assign(ctx.body, { _self: "cheese" });
-    //   await next();
-    // });
+    app.use(async (ctx, next) => {
+      await next();
+      ctx.response.body = Object.assign(ctx.body, {
+        links: [
+          {
+            rel: "self",
+            href: "/objects/1"
+          }
+        ]
+      });
+    });
 
     // Show a 404 JSON based error for any unknown routes
     app.use(ctx => {
