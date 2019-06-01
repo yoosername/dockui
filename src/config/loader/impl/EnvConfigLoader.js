@@ -7,6 +7,8 @@ const { Config } = require("../../Config");
 class EnvConfigLoader extends ConfigLoader {
   constructor() {
     super();
+    // Load any ENV vars from .env into process.env to make it easier
+    // to load defaults
   }
 
   /**

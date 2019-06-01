@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  node-app:
+    image: dockui/app
+    networks:
+      - dockui
+    environment:
+      - DOCKUI_WEB_PORT=3000
+      - DOCKUI_WEB_SSL_CERT=/tmp/dockui/certs/server.cert
+      - DOCKUI_WEB_SSL_KEY=/tmp/dockui/certs/server.key
+      - DOCKUI_WEB_SCHEME=https
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 5
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+
+networks:
+  dockui:
+    driver: overlay
