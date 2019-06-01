@@ -1,27 +1,32 @@
 const Module = require("../Module");
+const DEFAULT_CONTEXT = "app.general";
 
 /**
  * @description Represents an WebResource Module.
  */
 class WebResourceModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
-
-    this.url = descriptor.url;
-    this.resources = descriptor.resources;
-    this.context = descriptor.context;
-    this.weight = descriptor.weight;
+  constructor({
+    url = null,
+    resources = [],
+    context = DEFAULT_CONTEXT,
+    weight = "10"
+  } = {}) {
+    super(...arguments);
+    this.type = WebResourceModule.DESCRIPTOR_TYPE;
+    this.url = url;
+    this.resources = resources;
+    this.context = context;
+    this.weight = weight;
   }
 
   /**
    * @description The URL of the API relative to the App Url
    */
   getUrl() {
-    return this.getUrl;
+    return this.url;
   }
 
   /**
@@ -47,8 +52,25 @@ class WebResourceModule extends Module {
    *              Starts at 0 and goes higher.
    */
   getWeight() {
-    return this.context;
+    return this.weight;
+  }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      resources: this.resources,
+      context: this.context,
+      weight: this.weight,
+      type: this.type
+    });
+    return json;
   }
 }
+
+WebResourceModule.DESCRIPTOR_TYPE = "WebResource";
 
 module.exports = WebResourceModule;

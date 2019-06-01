@@ -5,24 +5,29 @@ const Module = require("../Module");
  */
 class WebItemModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
-
-    this.url = descriptor.url;
-    this.text = descriptor.text;
-    this.location = descriptor.location;
-    this.tooltip = descriptor.tooltip;
-    this.weight = descriptor.weight;
+  constructor({
+    url = null,
+    text = "",
+    location = null,
+    tooltip = "",
+    weight = "10"
+  } = {}) {
+    super(...arguments);
+    this.type = WebItemModule.DESCRIPTOR_TYPE;
+    this.url = url;
+    this.text = text;
+    this.location = location;
+    this.tooltip = tooltip;
+    this.weight = weight;
   }
 
   /**
    * @description The URL of the API relative to the App Url
    */
   getUrl() {
-    return this.getUrl;
+    return this.url;
   }
 
   /**
@@ -53,6 +58,24 @@ class WebItemModule extends Module {
   getWeight() {
     return this.weight;
   }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      text: this.text,
+      location: this.location,
+      tooltip: this.tooltip,
+      weight: this.weight,
+      type: this.type
+    });
+    return json;
+  }
 }
+
+WebItemModule.DESCRIPTOR_TYPE = "WebItem";
 
 module.exports = WebItemModule;

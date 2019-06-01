@@ -1,52 +1,39 @@
-const chai = require("chai");
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
-
-const { MockEventService } = require("../util/mocks");
-var mockEventService = null;
 var AppStore = require("./AppStore");
 
 describe("AppStore", function() {
   "use strict";
 
-  beforeEach(function() {
-    mockEventService = new MockEventService();
-  });
+  beforeEach(function() {});
 
   it("should be defined and loadable", function() {
-    expect(AppStore).to.not.be.undefined;
+    expect(AppStore).not.toBeUndefined();
   });
 
   it("should be a function", function() {
-    expect(AppStore).to.be.a("function");
+    expect(typeof AppStore).toBe("function");
     expect(() => {
       new AppStore();
-    }).to.not.throw();
+    }).not.toThrow();
   });
 
   it("should have correct signature", function() {
-    const store = new AppStore(mockEventService);
-    expect(store.get).to.be.a("function");
-    expect(store.set).to.be.a("function");
-    expect(store.delete).to.be.a("function");
+    const store = new AppStore();
+    expect(typeof store.create).toBe("function");
+    expect(typeof store.read).toBe("function");
+    expect(typeof store.update).toBe("function");
+    expect(typeof store.delete).toBe("function");
+    expect(typeof store.find).toBe("function");
   });
 
   it("should log a warning if you dont extend the default behaviour", function() {
-    var logSpy = sinon.stub(console, "warn");
-    const store = new AppStore(mockEventService);
-    expect(store.get).to.be.a("function");
-    expect(store.set).to.be.a("function");
-    expect(store.delete).to.be.a("function");
-    expect(store.saveAppState).to.be.a("function");
-    expect(store.getAppState).to.be.a("function");
-    store.get();
-    store.set();
+    var logSpy = jest.spyOn(console, "warn").mockImplementation();
+    const store = new AppStore();
+    store.create();
+    store.read();
+    store.update();
     store.delete();
-    store.saveAppState();
-    store.getAppState();
-    expect(logSpy).to.be.called.callCount(5);
-    logSpy.restore();
+    store.find();
+    expect(logSpy).toHaveBeenCalledTimes(5);
+    logSpy.mockReset();
   });
 });

@@ -1,39 +1,20 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
-const { DockUIApps } = require("../app/DockUIApps");
-const LOG_LEVELS = ["info", "warn", "error", "debug"];
+const {
+  Config,
+  EnvConfigLoader,
+  StandardInstance,
+  LoggerFactory,
+  Logger
+} = require("../..");
 
-const DEFAULT_STORE = "memory";
-const DEFAULT_EVENTS = "memory";
-const DEFAULT_PORT = 8080;
-const DEFAULT_SECRET = "changeme";
-
-const InMemoryAppStore = require("../store/impl/InMemoryAppStore");
-const InMemoryEventService = require("../events/impl/InMemoryEventService");
-const DefaultLifecycleEventsStrategy = require("../events/strategy/impl/DefaultLifecycleEventsStrategy");
-
-const WebResourceModuleLoader = require("../app/loader/module/impl/WebResourceModuleLoader");
-const WebPageModuleLoader = require("../app/loader/module/impl/WebPageModuleLoader");
-const WebItemModuleLoader = require("../app/loader/module/impl/WebItemModuleLoader");
-const WebhookModuleLoader = require("../app/loader/module/impl/WebhookModuleLoader");
-const WebFragmentModuleLoader = require("../app/loader/module/impl/WebFragmentModuleLoader");
-const RouteModuleLoader = require("../app/loader/module/impl/RouteModuleLoader");
-const CachableModuleLoader = require("../app/loader/module/impl/CachableModuleLoader");
-const AuthorizationProviderModuleLoader = require("../app/loader/module/impl/AuthorizationProviderModuleLoader");
-const AuthenticationProviderModuleLoader = require("../app/loader/module/impl/AuthenticationProviderModuleLoader");
-const ApiModuleLoader = require("../app/loader/module/impl/ApiModuleLoader");
-
-const DockerAppLoader = require("../app/loader/impl/DockerAppLoader");
-const GitAppLoader = require("../app/loader/impl/GitAppLoader");
-const FileAppLoader = require("../app/loader/impl/FileAppLoader");
-const UrlAppLoader = require("../app/loader/impl/UrlAppLoader");
-
-const DefaultAppService = require("../app/service/impl/DefaultAppService");
-const DefaultWebService = require("../web/impl/DefaultWebService");
-
-const showUsage = ({ name = "cli.js", logger, logLevel = "info" }) => {
-  logger.log(`
+const showUsage = ({
+  name = "CLI.js",
+  logLevel = "info",
+  screen = console
+}) => {
+  screen.log(`
   Usage
     $ ${name} <cmd>
 
@@ -42,126 +23,58 @@ const showUsage = ({ name = "cli.js", logger, logLevel = "info" }) => {
     --verbosity, -v  Increment the logging verbosity
 
   Examples
-    $ ${name} run
-    $ ${name} -vvv apps
+    $ ${name} run           Start instance
+    $ ${name} env           Output config ( merged from all sources ) 
+    $ ${name} app
   
   Info
     Log Level:  ${logLevel}
   `);
 };
 
-const StoreFactory = type => {
-  switch (type) {
-    case "memory":
-      return InMemoryAppStore;
-    default:
-      return InMemoryAppStore;
+const getLogLevel = code => {
+  const levels = Logger.levels;
+  for (var level in levels) {
+    if (levels[level] === code) {
+      return level;
+    }
   }
+  return Logger.levels.error;
 };
 
-const EventServiceFactory = type => {
-  switch (type) {
-    case "memory":
-      return InMemoryEventService;
-    default:
-      return InMemoryEventService;
-  }
-};
-
-const defaultDockUIApps = config => {
-  let Store = null;
-  let store = null;
-  let EventService = null;
-  let eventService = null;
-  let lifecycleEventsStrategy = null;
-  let moduleLoaders = null;
-  let appLoaders = null;
-  let appService = null;
-  let webService = null;
-  let dockUIApps = null;
-
-  try {
-    Store = StoreFactory(config.store);
-    store = new Store();
-    EventService = EventServiceFactory(config.events);
-    eventService = new EventService();
-    lifecycleEventsStrategy = new DefaultLifecycleEventsStrategy(
-      eventService,
-      store
-    );
-    moduleLoaders = [
-      new WebResourceModuleLoader(),
-      new WebPageModuleLoader(),
-      new WebItemModuleLoader(),
-      new WebhookModuleLoader(),
-      new WebFragmentModuleLoader(),
-      new RouteModuleLoader(),
-      new CachableModuleLoader(),
-      new AuthorizationProviderModuleLoader(),
-      new AuthenticationProviderModuleLoader(),
-      new ApiModuleLoader()
-    ];
-    appLoaders = [
-      new DockerAppLoader(store, moduleLoaders, eventService),
-      new GitAppLoader(store, moduleLoaders, eventService),
-      new FileAppLoader(store, moduleLoaders, eventService),
-      new UrlAppLoader(store, moduleLoaders, eventService)
-    ];
-    appService = new DefaultAppService(
-      appLoaders,
-      store,
-      lifecycleEventsStrategy,
-      eventService
-    );
-    webService = new DefaultWebService(appService, eventService);
-    dockUIApps = new DockUIApps()
-      .withStore(store)
-      .withEventService(eventService)
-      .withAppService(appService)
-      .withWebService(webService)
-      .build();
-  } catch (err) {
-    console.error(err);
-  }
-  // Get a Webservice running on selected PORT.
-
-  return dockUIApps;
-};
-
-const loadConfig = (config, loaders) => {
-  loaders.forEach(loader => {
-    const loaderConfig = loader.load();
-    config.store = loaderConfig.store ? loaderConfig.store : config.store;
-    config.events = loaderConfig.events ? loaderConfig.events : config.events;
-    config.port = loaderConfig.port ? loaderConfig.port : config.port;
-    config.secret = loaderConfig.secret ? loaderConfig.secret : config.secret;
-  });
-};
 /**
- * the CLI is a bundled utility to allow easy management of DockUI instances from the Commandline
+ * @description Helper to output runtime settings
+ */
+const logEnvironment = ({ config, screen }) => {
+  const all = config.toEnv("dockui");
+  for (var item in all) {
+    screen.log(item + "=" + all[item]);
+  }
+};
+
+/**
+ * the CLI allows simpler management of DockUI instances from the Commandline
  */
 class CLI {
   /**
-   * @description Starts the CLI
+   * @description Initialize the CLI
    */
   constructor({
     name = "cli.js",
-    dockui = null,
-    config = {
-      store: DEFAULT_STORE,
-      events: DEFAULT_EVENTS,
-      port: DEFAULT_PORT,
-      secret: DEFAULT_SECRET
-    },
-    configLoaders = [],
-    logger = console
+    instance = null,
+    config = null,
+    screen = console,
+    logger = screen
   } = {}) {
     this.name = name;
-    this.config = config;
+    this.config = config
+      ? config
+      : Config.builder()
+          .withConfigLoader(new EnvConfigLoader())
+          .build();
+    this.screen = screen;
     this.logger = logger;
-    configLoaders.length && loadConfig(this.config, configLoaders);
-
-    this.dockui = dockui ? dockui : defaultDockUIApps(this.config);
+    this.instance = instance ? instance : StandardInstance(...arguments);
   }
 
   /**
@@ -185,8 +98,11 @@ class CLI {
       }
 
       // Set LogLevel
-      if (this.args.v && this.args.v.length > 0) {
-        this.logLevel = LOG_LEVELS[this.args.v.length - 1];
+      if (typeof this.args.v === "string") {
+        this.logLevel = getLogLevel(0);
+      }
+      if (this.args.v instanceof Array && this.args.v.length > 0) {
+        this.logLevel = getLogLevel(this.args.v.length - 1);
       }
 
       // user specified --help, show usage
@@ -199,9 +115,23 @@ class CLI {
         return resolve(showUsage(this));
       }
 
+      // Env Command
+      if (this.args._[2] === "env") {
+        try {
+          logEnvironment(this);
+        } catch (err) {
+          return reject(err);
+        }
+        return resolve();
+      }
+
       // Run Command
       if (this.args._[2] === "run") {
-        await this.dockui.start();
+        try {
+          await this.instance.start();
+        } catch (err) {
+          return reject(err);
+        }
         return resolve();
       }
 
@@ -210,9 +140,23 @@ class CLI {
   }
 }
 
-// Allow this module to be run directly as a main module
-if (typeof require != "undefined" && require.main === module) {
-  new CLI({ name: "dockui" }).parse(process.argv);
-}
+/**
+ * Allow this module to be run directly as a main module
+ */
+(async () => {
+  if (typeof require != "undefined" && require.main === module) {
+    try {
+      const config = Config.builder()
+        .withConfigLoader(new EnvConfigLoader())
+        .build();
+      const logger = LoggerFactory.create(config);
+      await new CLI({ name: "dockui", config, logger, screen: console }).parse(
+        process.argv
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  }
+})();
 
 module.exports = CLI;

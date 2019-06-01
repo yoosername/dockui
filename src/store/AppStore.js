@@ -1,51 +1,66 @@
+const { Config } = require("../config/Config");
+
 /**
- * @description Simple Store for persisting App/AppModule state
+ * @description Simple Store for persisting various state objects
  */
 class AppStore {
-  constructor() {}
+  /**
+   * @argument {Config} config Optional runtime config
+   * @returns {AppStore}
+   */
+  constructor(config) {
+    this.config = config ? config : new Config();
+  }
 
   /**
-   * @description Store the value against the given key
+   * @description Store data (using its id or a generated id as unique ref)
+   * @argument {Object} data The object to save
    */
-  set(key, val) {
+  create(data) {
     console.warn(
-      "[AppStore] set - NoOp implementation - this should be extended by child classes"
+      "[AppStore] create - NoOp implementation - this should be extended by child classes"
     );
   }
 
   /**
-   * @description Retrieve the value for the provided key
+   * @description Read data by its id
+   * @argument {String} id The id of the object to return
    */
-  get(key) {
+  read(id) {
     console.warn(
-      "[AppStore] get - NoOp implementation - this should be extended by child classes"
+      "[AppStore] read - NoOp implementation - this should be extended by child classes"
     );
   }
 
   /**
-   * @description Delete an entry by its key
+   * @description Update existing data by its id
+   * @argument {String} id The id of the object to update
+   * @argument {Object} data The partial object containing updated keys
    */
-  delete(key) {
+  update(id, data) {
+    console.warn(
+      "[AppStore] update - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
+   * @description Delete an entry by its id
+   * @argument {String} id The id of the object to delete
+   */
+  delete(id) {
     console.warn(
       "[AppStore] delete - NoOp implementation - this should be extended by child classes"
     );
   }
 
   /**
-   * @description Store the state of an App
+   * @description find objects that match the passed in predicate
+   * @argument {Object} predicate A function which should return a truthy value if object should be included in result
+   * @returns {Array} Array of matching objects
    */
-  saveAppState(app) {
+  find(predicate) {
     console.warn(
-      "[AppStore] saveAppState - NoOp implementation - this should be extended by child classes"
-    );
-  }
-
-  /**
-   * @description Retrieve the state of an App
-   */
-  getAppState(app) {
-    console.warn(
-      "[AppStore] getAppState - NoOp implementation - this should be extended by child classes"
+      "[AppStore] find - NoOp implementation - this should be extended by child classes"
     );
   }
 }

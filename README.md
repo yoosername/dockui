@@ -27,7 +27,6 @@ $ npm install -g https://github.com/yoosername/dockui.git
 ```shell
 $ dockui run
 Starting - logging to STDOUT
-Created new Dockui instance config in /etc/dockui/dockui.yml
 ...
 Startup complete
 ...

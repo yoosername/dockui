@@ -1,6 +1,6 @@
 # DockUI CLI
 
-> CLI for management of DockUI instances
+> Interface for managing a DockUI instance from the command line
 
 ### Example
 

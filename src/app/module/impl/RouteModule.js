@@ -5,14 +5,13 @@ const Module = require("../Module");
  */
 class RouteModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
-
-    this.routes = descriptor.routes;
-    this.url = descriptor.url;
+  constructor({ url = null, routes = [] } = {}) {
+    super(...arguments);
+    this.type = RouteModule.DESCRIPTOR_TYPE;
+    this.url = url;
+    this.routes = routes;
   }
 
   /**
@@ -28,6 +27,21 @@ class RouteModule extends Module {
   getUrl() {
     return this.url;
   }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      routes: this.routes,
+      type: this.type
+    });
+    return json;
+  }
 }
+
+RouteModule.DESCRIPTOR_TYPE = "Route";
 
 module.exports = RouteModule;

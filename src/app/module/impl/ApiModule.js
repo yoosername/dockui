@@ -5,14 +5,20 @@ const Module = require("../Module");
  */
 class ApiModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
+  constructor({ url = null, version = "1.0.0" } = {}) {
+    super(...arguments);
+    this.url = url;
+    this.type = ApiModule.DESCRIPTOR_TYPE;
+    this.version = version;
+  }
 
-    this.version = descriptor.version;
-    this.url = descriptor.url;
+  /**
+   * @description The URL of the API relative to the App Url
+   */
+  getUrl() {
+    return this.url;
   }
 
   /**
@@ -23,11 +29,19 @@ class ApiModule extends Module {
   }
 
   /**
-   * @description The URL of the API relative to the App Url
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
    */
-  getUrl() {
-    return this.getUrl;
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      version: this.version,
+      type: this.type
+    });
+    return json;
   }
 }
+
+ApiModule.DESCRIPTOR_TYPE = "Api";
 
 module.exports = ApiModule;

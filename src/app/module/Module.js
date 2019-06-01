@@ -1,39 +1,40 @@
-const { validateShapes } = require("../../util/validate");
-
-const {
-  MODULE_ENABLED_EVENT,
-  MODULE_DISABLED_EVENT
-} = require("../../constants/events");
+const uuidv4 = require("uuid/v4");
 
 /**
  * @description Represents a single Module loaded from a Module Descriptor.
  */
 class Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {App} descriptor - The module descriptor used to load the module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    // Validate our args using ducktyping utils. (figure out better way to do this later)
-    validateShapes([
-      { shape: "App", object: app },
-      { shape: "ModuleDescriptor", object: descriptor }
-    ]);
+  constructor({
+    id = uuidv4(),
+    key = id,
+    name = id,
+    type = "generic",
+    // Modules default to enabled, but only the enabled Modules will become
+    // fully enabled if the parent app is enabled by an admin
+    enabled = true,
+    cache = { policy: "disabled" },
+    roles = [],
+    appId = null
+  } = {}) {
+    this.id = id;
+    this.key = key;
+    this.name = name;
+    this.type = type;
+    this.enabled = enabled;
+    this.cache = cache;
+    this.roles = roles;
+    this.docType = Module.DOCTYPE;
+    this.appId = appId;
+  }
 
-    this.app = app;
-    this.eventService = app.getEventService();
-    this.descriptor = descriptor;
-    this.key = descriptor.getKey();
-    this.name = descriptor.getName();
-    this.type = descriptor.getType();
-
-    if (descriptor.getCache()) {
-      this.cache = descriptor.getCache();
-    }
-
-    if (descriptor.getRoles()) {
-      this.roles = descriptor.getRoles();
-    }
+  /**
+   * @description The Universal Id of this Module
+   */
+  getId() {
+    return this.id;
   }
 
   /**
@@ -58,6 +59,28 @@ class Module {
   }
 
   /**
+   * @description If This module is enabled
+   */
+  isEnabled() {
+    return this.enabled;
+  }
+
+  /**
+   * @description Return the roles are required to use this module
+   *              or Null if no Roles required.
+   */
+  getCache() {
+    return this.cache;
+  }
+
+  /**
+   * @description If Caching is supported and enabled by this module
+   */
+  isCacheEnabled() {
+    return this.cache.policy === "enabled";
+  }
+
+  /**
    * @description Return the roles are required to use this module
    *              or Null if no Roles required.
    */
@@ -68,43 +91,43 @@ class Module {
   }
 
   /**
-   * @description Return the roles are required to use this module
-   *              or Null if no Roles required.
+   * @description The ID of the App this Module belongs to
    */
-  getCache() {
-    return this.cache && this.cache.policy
-      ? this.cache
-      : { policy: "disabled" };
+  getAppId() {
+    return this.appId;
   }
 
   /**
-   * @description If Caching is supported and enabled by this module
+   * @description Set the appId that this Module belongs to.
    */
-  isCacheEnabled() {
-    return this.cache && this.cache.policy && this.cache.policy === "enabled"
-      ? true
-      : false;
+  setAppId(appId) {
+    return (this.appId = appId);
   }
 
   /**
-   * @description default behaviour is to simply send an enabled event to all listeners.
-   *              subclasses can extend this behaviour
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
    */
-  enable() {
-    this.eventService.trigger(MODULE_ENABLED_EVENT, {
-      module: this
-    });
-  }
-
-  /**
-   * @description default behaviour is to simply send a disabled event to all listeners.
-   *              subclasses can extend this behaviour
-   */
-  disable() {
-    this.eventService.trigger(MODULE_DISABLED_EVENT, {
-      module: this
-    });
+  toJSON() {
+    const json = {
+      docType: this.docType,
+      id: this.id,
+      key: this.key,
+      name: this.name,
+      type: this.type,
+      enabled: this.enabled,
+      cache: this.cache,
+      roles: this.roles,
+      appId: this.appId
+    };
+    return json;
   }
 }
+
+/**
+ * @static
+ * @description Represents the docType for use when persisting
+ */
+Module.DOCTYPE = "MODULE";
 
 module.exports = Module;

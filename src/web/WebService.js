@@ -1,4 +1,4 @@
-const { validateShapes } = require("../util/validate");
+const { Config } = require("../config/Config");
 
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
@@ -7,17 +7,11 @@ const { validateShapes } = require("../util/validate");
 class WebService {
   /**
    * @argument {AppService} appService The AppService for interacting with Apps
-   * @argument {EventService} eventService The EventService to use for web events
+   * @argument {Config} config The Runtime Config
    */
-  constructor(appService, eventService) {
-    validateShapes([
-      { shape: "AppService", object: appService },
-      { shape: "EventService", object: eventService }
-    ]);
-
-    this.server = null;
+  constructor({ appService, config = new Config() } = {}) {
     this.appService = appService;
-    this.eventService = eventService;
+    this.config = config;
   }
 
   /**
@@ -33,6 +27,7 @@ class WebService {
 
   /**
    * @description initialize and start web server
+   * @async
    */
   start() {
     "use strict";
@@ -44,6 +39,7 @@ class WebService {
 
   /**
    * @description Gracefully shutdown web server
+   * @async
    */
   shutdown() {
     "use strict";
@@ -75,13 +71,13 @@ class WebService {
   }
 
   /**
-   * @description Helper to get the passed in EventService
-   * @returns {EventService} the EventService
+   * @description Helper to get the passed in Rutime Config
+   * @returns {Config} the Config
    */
-  getEventService() {
+  getConfig() {
     "use strict";
     console.warn(
-      "[WebService] getEventService - NoOp implementation - this should be extended by child classes"
+      "[WebService] getConfig - NoOp implementation - this should be extended by child classes"
     );
   }
 }
