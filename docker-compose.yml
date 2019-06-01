@@ -10,6 +10,7 @@ services:
       - DOCKUI_WEB_SSL_CERT=/tmp/dockui/certs/server.cert
       - DOCKUI_WEB_SSL_KEY=/tmp/dockui/certs/server.key
       - DOCKUI_WEB_SCHEME=https
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - 3000:3000
     volumes:
