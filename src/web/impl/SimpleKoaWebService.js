@@ -2,20 +2,20 @@ const fs = require("fs");
 const Koa = require("koa");
 const Router = require("koa-router");
 const https = require("https");
-const swaggerDocument = require("./swagger/swagger.json");
 const WebService = require("../WebService");
 const { Config } = require("../../config/Config");
 const Logger = require("../../log/Logger");
 
-// Third party Middleware
+// KOA Specific General Middleware
 const serve = require("koa-static");
 const mount = require("koa-mount");
 const helmet = require("koa-helmet");
 const bodyParser = require("koa-bodyparser");
 //const ratelimit = require('koa-ratelimit');
 
-// Custom Middleware
+// App Gateway Middleware
 const indexRedirector = require("./middleware/indexRedirector");
+const detectModule = require("./middleware/detectModule");
 const cacheHandler = require("./middleware/cacheHandler");
 const routeHandler = require("./middleware/routeHandler");
 const idamDecorator = require("./middleware/idamDecorator");
@@ -33,6 +33,9 @@ const DEFAULT_SCHEME = "http";
 const DEFAULT_PORT = 3000;
 const SSL_CERT_CONFIG_KEY = "web.ssl.cert";
 const SSL_KEY_CONFIG_KEY = "web.ssl.key";
+
+// Swagger Doc for API Docs
+const swaggerDocument = require("./swagger/swagger.json");
 
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
@@ -96,6 +99,19 @@ class SimpleKoaWebService extends WebService {
       }
     });
 
+    // Add self links
+    // app.use(async (ctx, next) => {
+    //   await next();
+    //   ctx.body = Object.assign(ctx.body, {
+    //     links: [
+    //       {
+    //         rel: "self",
+    //         href: "/objects/1"
+    //       }
+    //     ]
+    //   });
+    // });
+
     /*
      * Global Debug Logging
      */
@@ -122,6 +138,7 @@ class SimpleKoaWebService extends WebService {
 
     /**
      * Index (Redirect by default to /app/home/page/index)
+     * This can be set with DOCKUI_WEB_INDEX
      */
     app.use(indexRedirector(this));
 
@@ -134,7 +151,7 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured /health endpoint");
 
     /**
-     * Built in DEMO App Descriptor
+     * Built in DEMO App statically served
      */
     demoMount.use(serve(__dirname + "/static/demo"));
     app.use(mount("/demo", demoMount));
@@ -226,36 +243,51 @@ class SimpleKoaWebService extends WebService {
 
     /**
      * APP Gateway (proxies loaded and enabled apps Pages and Apis)
+     * Base URL = /app
      **/
-    // '/app' is the base context for App Gateway
+    // 0: Detect which Module is being requested and add the module and the App to the CTX
+    appGateway.use(detectModule(this));
+
     // 1: Middleware to provide caching
     appGateway.use(cacheHandler(this));
+
     // 2: Middleware to redirect client if the path matches any known module provided routes
     appGateway.use(routeHandler(this));
+
     // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
     appGateway.use(idamDecorator(this));
+
     // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
     // AuthorisationProviders have access to the Module config and IDAM user context but make the decision
     // Based on some specific internal logic.
     appGateway.use(policyDecisionPoint(this));
+
     // 5: Middleware to authenticate a user if PDP requires it
     appGateway.use(authenticationHandler(this));
+
     // 6: '/app/page' Route for Pages (fetch page using app defined auth ((e.g. JWT)))
     pageProxy.use(fetchPage(this));
+
     //   a: Middleware to strip resources from page & module provided ones and add to ctx.resources
     pageProxy.use(addResourcesToContext(this));
+
     //   b: Middleware to check if Page needs decoration and replacing page with decorated one
     pageProxy.use(decoratePage(this));
+
     //   c: Middleware to combine ctx.resources back in to page
     pageProxy.use(addResourcesFromContext(this));
+
     //   d: Middleware to inject PageFragments into page
     pageProxy.use(addPageFragments(this));
+
     //   e: Middleware to inject PageItems into page
     pageProxy.use(addPageItems(this));
     appGateway.use(mount("/page", pageProxy));
+
     // 7: '/app/resource' Route for Serving Static Resources (CSS, JS)
     //   - direct reverse proxy
     appGateway.use(mount("/resource", resourceProxy));
+
     // 8: '/app/api' Route for Apis
     //   - direct reverse proxy
     appGateway.use(mount("/api", apiProxy));
@@ -264,19 +296,6 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured Management routes");
     app.use(router.routes());
     app.use(router.allowedMethods());
-
-    // Add self links
-    app.use(async (ctx, next) => {
-      await next();
-      ctx.response.body = Object.assign(ctx.body, {
-        links: [
-          {
-            rel: "self",
-            href: "/objects/1"
-          }
-        ]
-      });
-    });
 
     // Show a 404 JSON based error for any unknown routes
     app.use(ctx => {
@@ -333,6 +352,7 @@ class SimpleKoaWebService extends WebService {
           this.server.on("error", err => {
             this.logger.error("Web Service encountered an error: %o", err);
           });
+
           // Set that we are running and log success
           this.running = true;
           this.logger.info(
@@ -345,8 +365,7 @@ class SimpleKoaWebService extends WebService {
           reject(e);
         }
       }
-      // Emit local started event
-      // Set isRunning
+      // And we are done
       resolve(this.server);
     });
   }
@@ -358,7 +377,7 @@ class SimpleKoaWebService extends WebService {
     "use strict";
     //stop server and emit event
     return new Promise(async (resolve, reject) => {
-      this.getServer().close();
+      await this.getServer().close();
       this.running = false;
       resolve();
     });
