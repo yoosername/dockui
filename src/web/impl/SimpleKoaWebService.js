@@ -251,49 +251,49 @@ class SimpleKoaWebService extends WebService {
     // 0: Detect which Module is being requested and add the module and the App to the CTX
     appGateway.use(detectModule(this));
 
-    // 1: Middleware to provide caching
-    appGateway.use(cacheHandler(this));
+    // // 1: Middleware to provide caching
+    // appGateway.use(cacheHandler(this));
 
-    // 2: Middleware to redirect client if the path matches any known module provided routes
-    appGateway.use(routeHandler(this));
+    // // 2: Middleware to redirect client if the path matches any known module provided routes
+    // appGateway.use(routeHandler(this));
 
-    // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
-    appGateway.use(idamDecorator(this));
+    // // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
+    // appGateway.use(idamDecorator(this));
 
-    // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
-    // AuthorisationProviders have access to the Module config and IDAM user context but make the decision
-    // Based on some specific internal logic.
-    appGateway.use(policyDecisionPoint(this));
+    // // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
+    // // AuthorisationProviders have access to the Module config and IDAM user context but make the decision
+    // // Based on some specific internal logic.
+    // appGateway.use(policyDecisionPoint(this));
 
-    // 5: Middleware to authenticate a user if PDP requires it
-    appGateway.use(authenticationHandler(this));
+    // // 5: Middleware to authenticate a user if PDP requires it
+    // appGateway.use(authenticationHandler(this));
 
-    // 6: '/app/page' Route for Pages (fetch page using app defined auth ((e.g. JWT)))
-    pageProxy.use(fetchPage(this));
+    // // 6: '/app/page' Route for Pages (fetch page using app defined auth ((e.g. JWT)))
+    // pageProxy.use(fetchPage(this));
 
-    //   a: Middleware to strip resources from page & module provided ones and add to ctx.resources
-    pageProxy.use(addResourcesToContext(this));
+    // //   a: Middleware to strip resources from page & module provided ones and add to ctx.resources
+    // pageProxy.use(addResourcesToContext(this));
 
-    //   b: Middleware to check if Page needs decoration and replacing page with decorated one
-    pageProxy.use(decoratePage(this));
+    // //   b: Middleware to check if Page needs decoration and replacing page with decorated one
+    // pageProxy.use(decoratePage(this));
 
-    //   c: Middleware to combine ctx.resources back in to page
-    pageProxy.use(addResourcesFromContext(this));
+    // //   c: Middleware to combine ctx.resources back in to page
+    // pageProxy.use(addResourcesFromContext(this));
 
-    //   d: Middleware to inject PageFragments into page
-    pageProxy.use(addPageFragments(this));
+    // //   d: Middleware to inject PageFragments into page
+    // pageProxy.use(addPageFragments(this));
 
-    //   e: Middleware to inject PageItems into page
-    pageProxy.use(addPageItems(this));
-    appGateway.use(mount("/page", pageProxy));
+    // //   e: Middleware to inject PageItems into page
+    // pageProxy.use(addPageItems(this));
+    // appGateway.use(mount("/page", pageProxy));
 
-    // 7: '/app/resource' Route for Serving Static Resources (CSS, JS)
-    //   - direct reverse proxy
-    appGateway.use(mount("/resource", resourceProxy));
+    // // 7: '/app/resource' Route for Serving Static Resources (CSS, JS)
+    // //   - direct reverse proxy
+    // appGateway.use(mount("/resource", resourceProxy));
 
-    // 8: '/app/api' Route for Apis
-    //   - direct reverse proxy
-    appGateway.use(mount("/api", apiProxy));
+    // // 8: '/app/api' Route for Apis
+    // //   - direct reverse proxy
+    // appGateway.use(mount("/api", apiProxy));
     app.use(mount("/app", appGateway));
 
     this.logger.debug("Configured Management routes");
