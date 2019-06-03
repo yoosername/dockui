@@ -1,8 +1,8 @@
-key: dockui-demo-app
-name: DockUI Demo App
+key: dockui.dashboard.app
+name: DockUI Dashboard App
 url: http://localhost:3000/demo
 type: dynamic
-description: This is a demo App showing of the various features of the DockUI framework
+description: This is a demo Dashboard App showing of the various features of the DockUI framework
 version: 1.0.0
 descriptorVersion: 1.0.0
 icon: "/images/logo.png"
@@ -11,28 +11,29 @@ lifecycle:
 authentication:
   - type: jwt
 modules:
-  - type: Route
-    name: Example Route
-    key: example-route
-    routes:
-      - /*
-    url: /apps/dockui-demo-app/modules/example-webpage$1
-    weight: 0
+  # - type: Route
+  #   name: Example Route
+  #   key: example-route
+  #   routes:
+  #     - /*
+  #   url: /apps/dockui-demo-app/example-webpage$1
+  #   weight: 0
+
+  # Check the current user creds are valid
   - type: AuthenticationProvider
-    name: Authentication Provider
-    key: example-authentication-provider
-    url: /authenticate
-    cache:
-      policy: disabled
+    name: SAML Auth Provider
+    key: dockui.saml.auth.provider
+    url: /saml_auth
     weight: 1
+
+    # Check the current user has access to the requested resource
   - type: AuthorizationProvider
-    name: Example Authorization Provider
+    name: Simple Role Based Permissions service
     key: example-authorization-provider
     url: /authorize
     weight: 5
-    cache:
-      policy: enabled
-      expire: 6000
+
+    # Inject single Link
   - type: WebItem
     name: Example Webitem
     key: example-webitem
@@ -42,64 +43,88 @@ modules:
     tooltip: This is a Tooltip (Hint)
     weight: 10
     cache:
-      policy: enabled
-      expire: 0
+      enabled: true
+      ttl: 60000ms
+
+    # Inject Page fragment
   - type: WebFragment
     name: Example fragment
-    key: example-fragment
+    key: dockui.dashboard.fragment1
     url: /fragments/example.html
     selector: "#example-fragment-selector"
-    location: example.home.footer
+    location: dashboard.home.footer
     weight: 10
     cache:
-      policy: enabled
-      expire: 0
+      enabled: true
+      ttl: 60000ms
     roles:
       - EVERYONE
+
+    # Serve Static Resources & inject at existing page location
   - type: WebResource
-    name: Example webresource
-    key: example-webresource
+    name: Dashboard Static Resources
+    key: dockui.dashboard.resources
     url: /static
     resources:
       - type: js
         path: js/example.javascript.js
       - type: css
         path: css/example.style.css
-    context: example.resources.context
+    context: dashboard.home
     weight: 100
     cache:
-      policy: enabled
-      expire: 0
-    roles:
-      - UNAUTHENTICATED
-      - EVERYONE
+      enabled: true
+      ttl: 600000ms
+
+    # Serve Web Page (optionally decorated by another page)
   - type: WebPage
-    name: Example Webpage
-    key: example-webpage
-    url: /pages/example.html
-    cache:
-      policy: disabled
-    roles:
-      - UNAUTHENTICATED
-      - EVERYONE
+    name: Dashboard Home
+    key: dockui.dashboard
+    # Aliases are relative to the App root e.g. http://localhost/app/<alias>
+    # and act as a full replacement for the default which is the key
+    aliases:
+      - /
+      - /index.html
+    url: /pages/home.html
+    caching:
+      enabled: true
+      ttl: 2000ms
+    access:
+      type: Role
+      allowed:
+        - UNAUTHENTICATED
+        - EVERYONE
+    # This dictates the startup behaviour only
+    enabled: true
+
   - type: WebPage
     name: Example Webpage that starts life disabled
-    key: example-disabled-webpage
-    url: /pages/example2.html
+    key: dockui.dashboard.disabled
+    url: /pages/disabled.html
+    aliases:
+      - /disabled
     enabled: false
+
+    # Proxy request directly to an existing API
   - type: Api
-    name: Example API
-    key: example-rest-api-endpoint
+    name: Dashboard Backend
+    key: dockui.dashboard.api
     version: 1.0
     url: /rest/api/1.0/
-    cache:
-      policy: enabled
-      expire: 6000
-    roles:
-      - EVERYONE
+    caching:
+      enabled: true
+      ttl: 60000ms
+    access:
+      type: Role
+      allowed:
+        - EVERYONE
+      disallowed:
+        - UNAUTHENTICATED
+
+    # Receive POST request on given framework events
   - type: Webhook
-    name: Webhook
-    key: example-webhook
+    name: Dashboard Webhook
+    key: dockui.dashboard.webhook
     url: /hook
     events:
       - app:enabled

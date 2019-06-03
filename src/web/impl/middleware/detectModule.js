@@ -8,6 +8,8 @@ module.exports = function({ config, logger, appService } = {}) {
     if (isAppModuleURL.test(ctx.originalUrl)) {
       const data = isAppModuleURL.exec(ctx.originalUrl);
       const appId = data[1];
+      // TODO: Change this so that it looks up based on any alias
+      //        and if no Alias found defaults to the key
       const app = await appService.getApp(appId);
       const moduleId = data[2];
       const module = await appService.getModule(moduleId);
