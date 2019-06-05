@@ -111,25 +111,24 @@ describe("CLI", function() {
     expect(instance.start).toHaveBeenCalled();
   });
 
-  // TODO (v0.0.1-Alpha): These tests
-  // (3) List state of Loaded Apps
+  // TODO (v0.0.1-Alpha): These tests ( all should wrap the web API )
+  // (3) List Loaded Apps
   //
-  //     $ dockui apps
+  //     $ dockui app ls
   //
-  // App                   UUID         State                            Permission
+  // App                   UUID         Loaded        Enabled            Permission
   // ------------------------------------------------------------------------------
-  // Demo Theme App        3cd6745f     Loaded (enabled)                 READ
-  // Demo ReadOnly App     6ec43a77     Loaded (Awaiting Approval)       NONE
-  // Demo Dynamic App      37fe3c2c     Loaded (disabled)                ADMIN
-  // Demo Dynamic App2     c6cc4af6     Loading..........                NONE
+  // Demo Theme App        3cd6745f     true          true               READ
+  // Demo Dynamic App      37fe3c2c     false         false              ADMIN
+  // Demo Dynamic App2     c6cc4af6     true          false              NONE
 
   // (4) Load an App
   //
-  //     $ dockui apps load [--permission <permission> --auto-approve <instance>] <url>|<dockerImage>|<gitRepo>|<filename>
+  //     $ dockui app load [--permission <permission>] <url>|<dockerImage>|<gitRepo>|<filename>
 
-  // (5) Approve a loaded APP which is awaiting Approval:
+  // (5) Enable a loaded APP which is disabled:
   //
-  //     $ dockui apps approve [--permission <permission>] <uuid>
+  //     $ dockui app enable <uuid>
 
   // (6) Gracefully stop the running DockUI instance
   //

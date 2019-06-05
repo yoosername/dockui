@@ -10,7 +10,6 @@ class RouteModule extends Module {
   constructor({ url = null, routes = [] } = {}) {
     super(...arguments);
     this.type = RouteModule.DESCRIPTOR_TYPE;
-    this.url = url;
     this.routes = routes;
   }
 
@@ -19,13 +18,6 @@ class RouteModule extends Module {
    */
   getRoutes() {
     return this.routes;
-  }
-
-  /**
-   * @description The App URL that we should forward our routes to
-   */
-  getUrl() {
-    return this.url;
   }
 
   /**

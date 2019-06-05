@@ -183,6 +183,10 @@ class SimpleKoaWebService extends WebService {
     //   ctx.body = Object.assign(ctx.body, { _self: "cheese" });
     // });
 
+    // TODO: Add endpoint for viewing tasks
+    // Get array of all tasks : router.get("/api/manage/task");
+    // Get single task (including status) : router.get("/api/manage/task/:id");
+
     // Load a new App
     router.post("/api/manage/app", async ctx => {
       const body = ctx.request.body;

@@ -150,10 +150,7 @@ class SingleNodeTaskManager extends TaskManager {
    * @description Grab Task from queue, add to inProgress and return
    * @argument {Object} worker The worker which wants to process the task
    */
-  // TODO: Potentially Use a generator function to return next Task. Use it every process cycle
-  //       and while 'done' !== true attempt to pair with worker
-  //       So for each item in queue, find a worker and task it, or skip
-  //       Check the timeout on the task and if its gone move Task to timeout queue
+  // TODO: Figure out a better way of handling tasks rather than using a set interval
   getNextQueuedTask(worker) {
     let task = null;
 

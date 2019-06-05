@@ -1,64 +1,88 @@
 key: dockui.dashboard.app
+alias: dashboard
 name: DockUI Dashboard App
 url: http://localhost:3000/demo
 type: dynamic
 description: This is a demo Dashboard App showing of the various features of the DockUI framework
 version: 1.0.0
 descriptorVersion: 1.0.0
-icon: "/images/logo.png"
+icon: "/static/images/logo.png"
 lifecycle:
   - loaded: /loaded
 authentication:
   - type: jwt
 modules:
-  # - type: Route
-  #   name: Example Route
-  #   key: example-route
-  #   routes:
-  #     - /*
-  #   url: /apps/dockui-demo-app/example-webpage$1
-  #   weight: 0
+  # Provides:
+  #   Routing at the base level for prettier URLs
+  - type: Route
+    name: Dashboard App Routes
+    key: dockui.routes.common
+    routes:
+      - from: /*
+        to: /apps/dockui.dashboard.app/index$1
+      - from: /login*
+        to: /apps/dockui.dashboard.app/login$1
+    weight: 0
 
-  # Check the current user creds are valid
+  # # Provides:
+  # #   Store of user ids with attached profile info ( e.g. username, password hash, fullname etc )
+  # - type: UserDirectory
+  #   name: Simple File Based User DB
+  #   key: dockui.directory.users.fileDB
+  #   url: /users
+  #   weight: 1
+
+  # Provides:
+  #   Identification checking for existing sessions
+  #     (e.g. if creds in header, return a real user object from some userDB)
+  #   Authentication flow for unidentified users
+  #     (e.g. if no creds in header or creds wrong, send 501 or 301 request redirect to login page (provided elsewhere)
   - type: AuthenticationProvider
-    name: SAML Auth Provider
-    key: dockui.saml.auth.provider
-    url: /saml_auth
+    name: Form Auth Provider
+    key: dockui.dashboard.auth.form
+    url: /identity_check
     weight: 1
 
-    # Check the current user has access to the requested resource
+  # Provides:
+  #   Check that the logged in Principle (user/service) has access to the requested resource
+  #     - if user is known and access granted return 200
+  #     - if user is known but access is not granted return 401
+  #     - if user is not known return 501 Not Implemented
   - type: AuthorizationProvider
     name: Simple Role Based Permissions service
-    key: example-authorization-provider
-    url: /authorize
-    weight: 5
+    key: dockui.dashboard.permissions
+    url: /permission_check
+    weight: 1
 
-    # Inject single Link
+    # Inject single Link (cached forever until module disabled/unloaded)
   - type: WebItem
-    name: Example Webitem
-    key: example-webitem
-    url: /example/relative/url
-    text: Example Webitem
-    location: example.home.header.links
+    name: Link to disabled Page
+    key: dockui.dashboard.links.disabledPageLink
+    url: /app/dashboard/disabled
+    text: Goto Disabled Page
+    location: dockui.dashboard.index.header.links
     tooltip: This is a Tooltip (Hint)
     weight: 10
     cache:
       enabled: true
-      ttl: 60000ms
 
     # Inject Page fragment
   - type: WebFragment
-    name: Example fragment
-    key: dockui.dashboard.fragment1
-    url: /fragments/example.html
-    selector: "#example-fragment-selector"
-    location: dashboard.home.footer
+    name: Dashboard Widget
+    key: dockui.dashboard.fragments.widget
+    url: /fragments/widget.html
+    selector: "#fragment-selector"
+    location: dashboard.home.main
     weight: 10
     cache:
       enabled: true
       ttl: 60000ms
-    roles:
-      - EVERYONE
+    # The difference between leaving auth off and this is that this will require a
+    # user to at least be logged in but could be any user
+    access:
+      type: Role
+      allowed:
+        - EVERYONE
 
     # Serve Static Resources & inject at existing page location
   - type: WebResource
@@ -70,7 +94,7 @@ modules:
         path: js/example.javascript.js
       - type: css
         path: css/example.style.css
-    context: dashboard.home
+    context: dashboard.*
     weight: 100
     cache:
       enabled: true
@@ -80,10 +104,11 @@ modules:
   - type: WebPage
     name: Dashboard Home
     key: dockui.dashboard
-    # Aliases are relative to the App root e.g. http://localhost/app/<alias>
-    # and act as a full replacement for the default which is the key
+    # Aliases are relative to the App root e.g. <scheme>://<host>/app/<appAlias>/<moduleAlias>
+    # and act as a full replacement for the default which is the key of the module
     aliases:
       - /
+      - /index
       - /index.html
     url: /pages/home.html
     caching:

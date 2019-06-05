@@ -18,7 +18,6 @@ describe("RouteModule", function() {
     expect(typeof module.getId).toBe("function");
     expect(typeof module.getKey).toBe("function");
     // From RouteModule
-    expect(typeof module.getUrl).toBe("function");
     expect(typeof module.getRoutes).toBe("function");
   });
 });

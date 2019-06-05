@@ -32,7 +32,6 @@ class RouteModuleLoader extends ModuleLoader {
           type: descriptor.type,
           name: descriptor.name,
           key: descriptor.key,
-          url: descriptor.url,
           routes: descriptor.routes,
           weight: descriptor.weight
         };

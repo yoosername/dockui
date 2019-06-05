@@ -264,6 +264,12 @@ describe("SimpleKoaWebService", function() {
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_SINGLE_MODULE);
     });
+
+    test("should run Tasks asyncronously and return an object containing link to find out status", async () => {
+      // TODO: Change expected response to Async with link to updates
+      // { taskId: "2342342342342", started: true||false, status: "/api/manage/task/2342342342342/status"}
+      // Test should submit e.g. an enable and check that it returns a taskId and status link
+    });
   });
 
   // TODO - Add a test for switching between https and http based on ENV

@@ -13,14 +13,14 @@ class DockerEventsReactor extends Reactor {
    * @description initialize and start Reactor
    */
   start() {
-    // TODO: This
+    // TODO: Implement This
   }
 
   /**
    * @description Gracefully shutdown Reactor
    */
   shutdown() {
-    // TODO: This
+    // TODO: Implement This
   }
 }
 

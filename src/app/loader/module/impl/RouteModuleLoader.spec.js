@@ -28,11 +28,12 @@ describe("RouteModuleLoader", function() {
       type: RouteModule.DESCRIPTOR_TYPE
     });
     expect(canLoad).toEqual(true);
+    const routes = [{ from: "/", to: "/test" }];
     const module = await loader.loadModuleFromDescriptor({
       type: RouteModule.DESCRIPTOR_TYPE,
-      url: "fakeURL"
+      routes: routes
     });
-    expect(module.getUrl()).toEqual("fakeURL");
+    expect(module.getRoutes()).toEqual(routes);
     expect(module instanceof Module).toEqual(true);
     expect(module instanceof RouteModule).toEqual(true);
   });
