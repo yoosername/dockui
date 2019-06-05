@@ -20,6 +20,7 @@ describe("App", function() {
     const app = new App();
     expect(typeof app.getKey).toBe("function");
     expect(typeof app.getName).toBe("function");
+    expect(typeof app.getAlias).toBe("function");
     expect(typeof app.getType).toBe("function");
     expect(typeof app.getUrl).toBe("function");
     expect(typeof app.getDescription).toBe("function");

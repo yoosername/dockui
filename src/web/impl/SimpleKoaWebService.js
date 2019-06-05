@@ -252,11 +252,12 @@ class SimpleKoaWebService extends WebService {
      * APP Gateway (proxies loaded and enabled apps Pages and Apis)
      * Base URL = /app
      **/
-    // 0: Detect which Module is being requested and add the module and the App to the CTX
-    appGateway.use(detectModule(this));
 
-    // // 1: Middleware to provide caching
+    // 0: Middleware to provide caching
     // appGateway.use(cacheHandler(this));
+
+    // 1: Detect which App/Module is being requested and add to the CTX or throw
+    appGateway.use(detectModule(this));
 
     // // 2: Middleware to redirect client if the path matches any known module provided routes
     // appGateway.use(routeHandler(this));

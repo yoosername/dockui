@@ -12,6 +12,7 @@ class App {
     id = uuidv4(),
     key = id,
     name = id,
+    alias = null,
     url = null,
     type = App.types.STATIC,
     description = id,
@@ -28,6 +29,7 @@ class App {
     this.id = id;
     this.key = key;
     this.name = name;
+    this.alias = alias;
     this.url = url;
     this.type = type;
     (this.description = description),
@@ -73,6 +75,14 @@ class App {
    */
   getName() {
     return this.name;
+  }
+
+  /**
+   * @description return the Alias of this App ( used for better looking urls etc )
+   * @returns {String} The Apps alias
+   */
+  getAlias() {
+    return this.alias;
   }
 
   /**
@@ -224,6 +234,7 @@ class App {
       id: this.id,
       key: this.key,
       name: this.name,
+      alias: this.alias,
       url: this.url,
       type: this.type,
       description: this.description,

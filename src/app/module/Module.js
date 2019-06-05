@@ -11,6 +11,7 @@ class Module {
     id = uuidv4(),
     key = id,
     name = id,
+    aliases = [],
     type = "generic",
     // Modules default to enabled, but only the enabled Modules will become
     // fully enabled if the parent app is enabled by an admin
@@ -22,6 +23,7 @@ class Module {
     this.id = id;
     this.key = key;
     this.name = name;
+    this.aliases = aliases;
     this.type = type;
     this.enabled = enabled;
     this.cache = cache;
@@ -49,6 +51,13 @@ class Module {
    */
   getName() {
     return this.name;
+  }
+
+  /**
+   * @description The alternative names for this module (used for pretty urls etc)
+   */
+  getAliases() {
+    return this.aliases;
   }
 
   /**
@@ -114,6 +123,7 @@ class Module {
       id: this.id,
       key: this.key,
       name: this.name,
+      aliases: this.aliases,
       type: this.type,
       enabled: this.enabled,
       cache: this.cache,

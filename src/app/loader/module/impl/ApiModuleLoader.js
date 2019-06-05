@@ -32,6 +32,7 @@ class ApiModuleLoader extends ModuleLoader {
           type: descriptor.type,
           name: descriptor.name,
           key: descriptor.key,
+          aliases: descriptor.aliases,
           version: descriptor.version,
           url: descriptor.url,
           weight: descriptor.weight,

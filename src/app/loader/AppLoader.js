@@ -96,6 +96,7 @@ class AppLoader {
           const shape = {
             key: descriptor.key,
             name: descriptor.name,
+            alias: descriptor.alias,
             url: url,
             type: descriptor.type,
             description: descriptor.description,
