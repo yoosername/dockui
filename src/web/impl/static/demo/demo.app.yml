@@ -18,10 +18,10 @@ modules:
     name: Dashboard App Routes
     key: dockui.routes.common
     routes:
-      - from: /*
-        to: /apps/dockui.dashboard.app/index$1
-      - from: /login*
-        to: /apps/dockui.dashboard.app/login$1
+      - from: ^/$
+        to: /app/dashboard/index
+      - from: ^/login$
+        to: /app/dashboard/login
     weight: 0
 
   # # Provides:

@@ -140,7 +140,13 @@ class SimpleKoaWebService extends WebService {
     app.use(bodyParser());
 
     /**
-     * Index (Redirect by default to /app/home/page/index)
+     * Module provided redirects
+     * Checks if the current route should be redirected somewhere else
+     */
+    app.use(routeHandler(this));
+
+    /**
+     * Index Default Redirector (defaults to /app/home)
      * This can be set with DOCKUI_WEB_INDEX
      */
     app.use(indexRedirector(this));
@@ -253,14 +259,11 @@ class SimpleKoaWebService extends WebService {
      * Base URL = /app
      **/
 
-    // 0: Middleware to provide caching
+    // 1: Middleware to provide caching
     // appGateway.use(cacheHandler(this));
 
-    // 1: Detect which App/Module is being requested and add to the CTX or throw
+    // 2: Detect which App/Module is being requested and add to the CTX or throw
     appGateway.use(detectModule(this));
-
-    // // 2: Middleware to redirect client if the path matches any known module provided routes
-    // appGateway.use(routeHandler(this));
 
     // // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
     // appGateway.use(idamDecorator(this));

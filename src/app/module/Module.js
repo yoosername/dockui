@@ -134,6 +134,8 @@ class Module {
   }
 }
 
+Module.DESCRIPTOR_TYPE = "Generic";
+
 /**
  * @static
  * @description Represents the docType for use when persisting

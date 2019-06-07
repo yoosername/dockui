@@ -1,6 +1,7 @@
 const AppService = require("../AppService");
 const App = require("../../App");
 const Module = require("../../module/Module");
+const ModuleFactory = require("../../module/factory/ModuleFactory");
 const Task = require("../../../task/Task");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
@@ -305,7 +306,7 @@ class SimpleAppService extends AppService {
         if (predicate && typeof predicate === "function") {
           filtered = raw.filter(predicate);
           filtered.forEach(module => {
-            modules.push(new Module(module));
+            modules.push(ModuleFactory.create({ module }));
           });
         } else {
           modules = raw;
@@ -328,7 +329,7 @@ class SimpleAppService extends AppService {
       try {
         json = this.store.read(id);
         if (!json) throw new Error("Module (id=" + id + ") doesnt exist");
-        module = new Module(json);
+        module = ModuleFactory.create({ module: json });
         resolve(module);
       } catch (e) {
         reject(e);
