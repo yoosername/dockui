@@ -16,6 +16,13 @@ const getMatchingModuleRoutes = async ({ appService, logger }) => {
   }
 
   if (allRouteModules && allRouteModules.length > 0) {
+    // Sort by the weights;
+    allRouteModules.sort((prev, next) => {
+      if (prev.getWeight && next.getWeight) {
+        return prev.getWeight() - next.getWeight();
+      }
+      return 0;
+    });
     try {
       filtered = [].concat.apply(
         [],

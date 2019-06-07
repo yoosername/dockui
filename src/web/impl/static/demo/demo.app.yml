@@ -24,6 +24,15 @@ modules:
         to: /app/dashboard/login
     weight: 0
 
+  #   This route wont take effect because the one above
+  #   Also matches and is a lower weight
+  - type: Route
+    name: Dashboard App Routes override
+    key: dockui.routes.override
+    routes:
+      - from: ^/$
+        to: /app/bongo
+    weight: 1000
   # # Provides:
   # #   Store of user ids with attached profile info ( e.g. username, password hash, fullname etc )
   # - type: UserDirectory
