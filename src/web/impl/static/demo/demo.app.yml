@@ -88,10 +88,19 @@ modules:
       ttl: 60000ms
     # The difference between leaving auth off and this is that this will require a
     # user to at least be logged in but could be any user
-    access:
-      type: Role
-      allowed:
-        - EVERYONE
+    auth:
+      - type: policy
+        effect: allow
+        action:
+          - read
+        resource:
+          - "urn:dockui::auth:role/user"
+      - type: policy
+        effect: disallow
+        action:
+          - read
+        resource:
+          - "urn:dockui::auth:role/*"
 
     # Serve Static Resources & inject at existing page location
   - type: WebResource

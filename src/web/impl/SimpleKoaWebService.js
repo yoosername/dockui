@@ -266,7 +266,7 @@ class SimpleKoaWebService extends WebService {
     appGateway.use(detectModule(this));
 
     // // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
-    // appGateway.use(idamDecorator(this));
+    appGateway.use(idamDecorator(this));
 
     // // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
     // // AuthorisationProviders have access to the Module config and IDAM user context but make the decision
