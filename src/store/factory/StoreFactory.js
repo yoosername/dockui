@@ -1,5 +1,7 @@
 const InMemoryAppStore = require("../impl/InMemoryAppStore");
+const LokiAppStore = require("../impl/LokiAppStore");
 const { Config } = require("../../config/Config");
+const Logger = require("../../log/Logger");
 
 /**
  * @description StoreFactory has a single method .create which generates
@@ -14,20 +16,32 @@ class StoreFactory {
    * @argument {Config} config The runtime config
    * @return {Store} A instance of a Store
    */
-  create({ config = new Config() } = {}) {
-    let store = null;
-    switch (config.get("store.type")) {
+  create({ config = new Config(), logger = new Logger(config) } = {}) {
+    let Store,
+      instance = null;
+    const type = config.get("store.type");
+    const filename = config.get("store.db.filename");
+    logger = logger.child({
+      config: { "service.name": "StoreFactory" }
+    });
+    logger.debug("Store specified in Config as 'store.type=%s'", type);
+    switch (type) {
       case "memory":
-        try {
-          store = new InMemoryAppStore({ config });
-        } catch (e) {
-          console.log(e);
-        }
+        Store = InMemoryAppStore;
+        break;
+      case "lokijs":
+        Store = LokiAppStore;
         break;
       default:
-        store = new InMemoryAppStore({ config });
+        Store = InMemoryAppStore;
     }
-    return store;
+    logger.debug(
+      "Creating instance of Store using %s, logfile=%s",
+      Store.name,
+      filename
+    );
+    instance = new Store({ config });
+    return instance;
   }
 }
 let factory;

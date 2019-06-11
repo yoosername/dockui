@@ -2,8 +2,8 @@ const AppStore = require("../AppStore");
 const { Config } = require("../../config/Config");
 const Logger = require("../../log/Logger");
 const Lokijs = require("lokijs");
-const DEFAULT_LOKI_DB = "loki-appstore.db";
-const DEFAULT_LOKI_DB_CONFIG_KEY = "loki.db.filename";
+const DEFAULT_LOKI_DB = "loki.db";
+const DEFAULT_LOKI_DB_CONFIG_KEY = "store.db.filename";
 const DEFAULT_LOKI_COLLECTION_ID = "app";
 
 /**
