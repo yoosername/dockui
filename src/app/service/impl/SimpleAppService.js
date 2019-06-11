@@ -243,15 +243,15 @@ class SimpleAppService extends AppService {
         filtered = [];
       try {
         raw = this.store.find(doc => doc.docType === App.DOCTYPE);
+        raw.forEach(app => {
+          apps.push(new App(app));
+        });
         if (predicate && typeof predicate === "function") {
-          filtered = raw.filter(predicate);
-          filtered.forEach(app => {
-            apps.push(new App(app));
-          });
+          filtered = apps.filter(predicate);
         } else {
-          apps = raw;
+          filtered = apps;
         }
-        resolve(apps);
+        resolve(filtered);
       } catch (e) {
         reject(e);
       }
