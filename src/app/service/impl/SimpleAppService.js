@@ -299,17 +299,14 @@ class SimpleAppService extends AppService {
     // Search Store for all known Apps
     return new Promise((resolve, reject) => {
       let raw = [],
-        modules = [],
-        filtered = [];
+        modules = [];
       try {
         raw = this.store.find(doc => doc.docType === Module.DOCTYPE);
+        raw.forEach(module => {
+          modules.push(ModuleFactory.create({ module }));
+        });
         if (predicate && typeof predicate === "function") {
-          filtered = raw.filter(predicate);
-          filtered.forEach(module => {
-            modules.push(ModuleFactory.create({ module }));
-          });
-        } else {
-          modules = raw;
+          modules = modules.filter(predicate);
         }
         resolve(modules);
       } catch (e) {

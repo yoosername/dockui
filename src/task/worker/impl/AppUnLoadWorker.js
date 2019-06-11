@@ -104,9 +104,10 @@ class AppUnLoadWorker extends TaskWorker {
       try {
         // Delete all the modules for this app
         app.getModules().forEach(module => {
-          this.store.delete(module.id);
+          this.store.delete(module.getId());
         });
-        // then delete the app itself from the Store
+
+        // Then delete the app itself from the Store
         this.store.delete(app.getId());
         // Close off the task
         task.emit(Task.events.SUCCESS_EVENT, app);

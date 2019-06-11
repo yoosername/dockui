@@ -1,5 +1,6 @@
 const uuidv4 = require("uuid/v4");
 const Module = require("./module/Module");
+const ModuleFactory = require("./module/factory/ModuleFactory");
 
 const DEFAULT_APP_VERSION = "1.0.0";
 const DEFAULT_DESCRIPTOR_VERSION = "1.0.0";
@@ -203,7 +204,7 @@ class App {
       let instance = module;
       // If its not a Module instance make it one first
       if (!(instance instanceof Module)) {
-        instance = new Module(instance);
+        instance = ModuleFactory.create({ module: instance });
       }
       // Set the AppId to this App
       instance.setAppId(this.getId());

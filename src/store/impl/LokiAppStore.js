@@ -21,6 +21,7 @@ class LokiAppStore extends AppStore {
     loki
   } = {}) {
     super({ config, logger });
+    this.logger = logger;
     this.configure(loki);
   }
 
@@ -38,12 +39,20 @@ class LokiAppStore extends AppStore {
       this.lokiDB = loki
         ? loki
         : new Lokijs(filename, {
-            autosave: true
+            autoload: true,
+            autosave: true,
+            autosaveInterval: 4000,
+            autoloadCallback: this.initLokiDB.bind(this)
           });
     } catch (err) {
-      logger.error("Error instantiating LOKIDB - error = %o", e);
+      this.logger.error("Error instantiating LOKIDB - error = %o", e);
     }
+  }
 
+  /**
+   * @description Initialize the LokiJS DB e.g. add required collections
+   */
+  initLokiDB() {
     // Load or add required collections
     try {
       this.lokiDB.loadDatabase({}, err => {
@@ -58,7 +67,7 @@ class LokiAppStore extends AppStore {
         }
       });
     } catch (err) {
-      logger.error("Error loading LOKI collection - error = %o", e);
+      this.logger.error("Error loading LOKI collection - error = %o", e);
     }
   }
 
@@ -85,8 +94,20 @@ class LokiAppStore extends AppStore {
    */
   update(id, data) {
     let persistedData = this.read(id);
-    persistedData = Object.assign({}, persistedData, data);
-    this.collection.update(persistedData);
+    let updatedData;
+    if (persistedData) {
+      try {
+        updatedData = Object.assign({}, persistedData, data);
+        this.collection.update(updatedData);
+      } catch (err) {
+        this.logger.error(
+          "Problem updating data with (id=%s) in Loki store, error = %o",
+          id,
+          err
+        );
+        throw err;
+      }
+    }
   }
 
   /**
@@ -94,11 +115,17 @@ class LokiAppStore extends AppStore {
    * @argument {String} id The id of the object to delete
    */
   delete(id) {
-    const item = this.read(id);
-    if (item) {
-      this.collection.remove(item);
+    let persistedData = null;
+    try {
+      persistedData = this.read(id);
+      if (persistedData) {
+        this.collection.remove(persistedData);
+      }
+    } catch (err) {
+      this.logger.error("Problem deleting data in Loki store, error = %o", err);
+      throw err;
     }
-    return item;
+    return persistedData;
   }
 
   /**

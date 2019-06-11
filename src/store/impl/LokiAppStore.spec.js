@@ -70,6 +70,7 @@ describe("LokiAppStore", function() {
 
   test("update should delegate to loki update", function() {
     const obj = { id: "id1", key1: "value1", stage: "first" };
+    store.collection.findOne.mockReturnValue({});
     store.update(obj.id, obj);
     expect(store.collection.findOne).toHaveBeenCalledWith({ id: obj.id });
     expect(store.collection.update).toHaveBeenCalledWith(obj);
