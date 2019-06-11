@@ -53,9 +53,9 @@ module.exports = function({ config, logger, appService } = {}) {
     });
     if (matchingRoutes && matchingRoutes.length > 0) {
       logger.debug(
-        "[%s] RouteModule provided Routes found (%o)",
-        matchingRoutes.length,
-        matchingRoutes
+        "[%s] RouteModule provided Routes found %o",
+        matchingRoutes.length
+        //matchingRoutes
       );
       for (var r = 0; r < matchingRoutes.length; r++) {
         const regString = new RegExp(matchingRoutes[r].from);

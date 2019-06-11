@@ -5,12 +5,15 @@ const https = require("https");
 const WebService = require("../WebService");
 const { Config } = require("../../config/Config");
 const Logger = require("../../log/Logger");
+const jwt = require("jsonwebtoken");
 
 // KOA Specific General Middleware
 const serve = require("koa-static");
 const mount = require("koa-mount");
 const helmet = require("koa-helmet");
 const bodyParser = require("koa-bodyparser");
+const multer = require("koa-multer");
+const cacheControl = require("koa-cache-control");
 //const ratelimit = require('koa-ratelimit');
 
 // App Gateway Middleware
@@ -140,6 +143,16 @@ class SimpleKoaWebService extends WebService {
     app.use(bodyParser());
 
     /**
+     * Add a Multipart body parser
+     */
+    app.use(
+      multer().fields([
+        { name: "username", maxCount: 1 },
+        { name: "password", maxCount: 1 }
+      ])
+    );
+
+    /**
      * Module provided redirects
      * Checks if the current route should be redirected somewhere else
      */
@@ -160,15 +173,120 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured /health endpoint");
 
     /**
-     * Built in DEMO App statically served with example authenticationModule
+     * Built in DEMO App with JWT based auth via authenticationProvider Module
      */
     demoMount.use(serve(__dirname + "/static/demo"));
+    // app.use(async (ctx, next) => {
+    //   console.log(ctx.url);
+    //   if (ctx.url.indexOf("/demo/login") === 0) {
+    //     ctx.url = ctx.url.replace("login", "login.html");
+    //   }
+    //   await next();
+    // });
     app.use(mount("/demo", demoMount));
+    const validDemoUsers = {
+      user: {
+        password: "user",
+        token: null
+      },
+      admin: {
+        password: "admin",
+        token: null
+      }
+    };
     router.post("/demo/identity_check", async ctx => {
-      console.log("This was called yo!! with body: %s", ctx.request.body);
-      ctx.body = {
-        mongo: "equinass"
-      };
+      // See if there is a JWT Token with the admin user in it
+      // If no token redirect
+      await new Promise((resolve, reject) => {
+        const authToken = ctx.request.body.cookies["X-Demo-Auth"];
+        jwt.verify(
+          authToken,
+          "thisIsNotAVeryGoodSecret",
+          (err, authorizedData) => {
+            if (err) {
+              // If no token or is token but error here, send 301 to log in
+              ctx.status = 301;
+              ctx.body = {
+                status: 301,
+                url: "/demo/login.html",
+                message: "Login Required"
+              };
+              this.logger.debug(
+                "No Token or Token Verify failure, send redirect to login page"
+              );
+              return resolve();
+            } else {
+              // If token is successfully verified, we can send the autorized data
+              ctx.status = 200;
+              ctx.body = {
+                status: 200,
+                message: "Success",
+                headers: { Authorization: authToken }
+              };
+              this.logger.debug(
+                "JWT Verified ok, user is (%s)",
+                authorizedData
+              );
+              return resolve();
+            }
+          }
+        );
+      });
+    });
+
+    //router.get("/demo/login", serve(__dirname + "/static/demo/login.html"));
+    router.post("/demo/login.action", async ctx => {
+      // get login details
+      const { username, password } = ctx.request.body;
+      this.logger.debug("User logged in as %s:%s", username, password);
+      // check they match our demo users
+      if (
+        (username === "user" && password === "user") ||
+        (username === "admin" && password === "admin")
+      ) {
+        // User logged in with a valid user
+        this.logger.debug("Signing a freshly minted JWT Token");
+        let self = this;
+        try {
+          await new Promise((resolve, reject) => {
+            jwt.sign(
+              { username },
+              "thisIsNotAVeryGoodSecret",
+              { expiresIn: "1h" },
+              (err, token) => {
+                if (err) {
+                  this.logger.error("Error Signing JWT, error = %s", err);
+                  return reject(err);
+                }
+                this.logger.debug("Setting cookies");
+                validDemoUsers[username].token = token;
+                let futureDate = new Date();
+                ctx.cookies.set(
+                  encodeURIComponent("X-Demo-Auth"),
+                  encodeURIComponent(token),
+                  {
+                    maxAge: 604800,
+                    expires: futureDate.setDate(futureDate.getDate() + 100),
+                    httpOnly: false,
+                    secure: false
+                  }
+                );
+                this.logger.debug("Cookies: %o", ctx.headers.cookie);
+                this.logger.debug(
+                  "Token created as: %s",
+                  validDemoUsers[username].token
+                );
+                resolve();
+              }
+            );
+          });
+        } catch (e) {
+          return this.logger.error("Error Signing JWT, error = %s", e);
+        }
+      }
+      // send a redirect to the location in the then query param
+      this.logger.debug("Redirecting to %s", ctx.query.then);
+      ctx.redirect(ctx.query.then);
     });
 
     /**
@@ -266,7 +384,7 @@ class SimpleKoaWebService extends WebService {
      **/
 
     // 1: Middleware to provide caching
-    // appGateway.use(cacheHandler(this));
+    appGateway.use(cacheControl());
 
     // 2: Detect which App/Module is being requested and add to the CTX or throw
     appGateway.use(detectModule(this));

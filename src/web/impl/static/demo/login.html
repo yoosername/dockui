@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Dashboard Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <form id="loginForm" method="post" action="/demo/login.action">
+      Username: <input type="text" name="username" /> Password:
+      <input type="password" name="password" />
+      <input type="submit" value="submit" />
+    </form>
+    <script type="text/javascript">
+      let form = document.getElementById("loginForm");
+      let existingUrl = form.getAttribute("action");
+      form.setAttribute("action", existingUrl + window.location.search);
+    </script>
+  </body>
+</html>

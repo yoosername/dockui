@@ -35,6 +35,7 @@ const defaultFetcher = async options => {
 module.exports = function({ appService, logger } = {}) {
   return async function authenticationHandler(ctx, next) {
     logger.debug("Testing for Authentication");
+    const url = ctx.originalUrl;
     // - Check a users auth if context.dockui.auth is not null
     if (
       ctx.dockui &&
@@ -52,11 +53,6 @@ module.exports = function({ appService, logger } = {}) {
           ctx.dockui.module.getKey(),
           authModules.length
         );
-        // Order by weight and then for each:
-        //     if returns 405 - try next
-        //     if returns 200 - add passed headers and body
-        //     if returns 301 - send the redirect
-        // {
         const authModuleAppId = authModules[0].getAppId();
         const moduleURL = authModules[0].getUrl();
         const app = await appService.getApp(authModuleAppId);
@@ -64,15 +60,69 @@ module.exports = function({ appService, logger } = {}) {
         const appBasePath = new URL(appBaseURL).pathname;
         const normalizedPath = path.normalize(appBasePath + moduleURL);
         const authURL = new URL(normalizedPath, appBaseURL);
+
+        const getCookies = context => {
+          let cookies = [],
+            cookie = {};
+          const cookieHeader = context.headers.cookie;
+          if (cookieHeader) {
+            cookies = cookieHeader.split(";");
+            cookies.forEach(function(item) {
+              const crumbs = item.split("=");
+              if (crumbs.length > 1)
+                cookie[crumbs[0].trim()] = crumbs[1].trim();
+            });
+          }
+          return cookie;
+        };
+        // Create the Auth Assertion info with url and headers
         let options = {
           method: "POST",
           uri: authURL.href,
-          body: { somethong: "noice" },
+          simple: false,
+          body: {
+            url: url,
+            headers: ctx.request.headers,
+            cookies: getCookies(ctx)
+          },
+          resolveWithFullResponse: true,
           json: true
         };
-        console.log(options);
-        const result = await defaultFetcher(options);
-        console.log("Result = %o", result);
+        //logger.debug(" Requesting Auth with options: %o", options);
+        // For each Auth Module (sorted on weight)
+        // Make the request
+        try {
+          const result = await defaultFetcher(options);
+          logger.debug(
+            "Result = %o, body = %o, REdirect URI = ",
+            result.statusCode,
+            result.body,
+            result.body.url
+          );
+          if (result.statusCode === 302 || result.statusCode === 301) {
+            const thenUrl = result.body.url + "?then=" + url;
+            logger.debug("Redirecting to %s", thenUrl);
+            return ctx.redirect(thenUrl);
+          }
+          if (result.statusCode === 200) {
+            const headers = result.body.headers;
+            if (headers && headers.length > 0) {
+              headers.forEach(header => {
+                ctx.set(header, headers[header]);
+              });
+            }
+            logger.debug("User session is valid, headers(%o)", headers);
+          }
+        } catch (err) {
+          logger.warn(
+            "Authentication request failed with status other than 401",
+            err
+          );
+        }
+        //     if returns 405 - try next
+        //     if returns 200 - add passed headers and body
+        //     if returns 301 - send the redirect
+        // {
         //   url: /relative/url/being/requested?withParams,
         //   headers: [All Headers]
         // }
