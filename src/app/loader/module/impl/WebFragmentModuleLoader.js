@@ -37,7 +37,8 @@ class WebFragmentModuleLoader extends ModuleLoader {
           location: descriptor.location,
           weight: descriptor.weight,
           cache: descriptor.cache,
-          roles: descriptor.roles
+          roles: descriptor.roles,
+          auth: descriptor.auth
         };
         // Create a Module from the shape and return it
         const module = new WebFragmentModule(shape);

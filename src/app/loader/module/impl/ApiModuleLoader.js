@@ -37,7 +37,8 @@ class ApiModuleLoader extends ModuleLoader {
           url: descriptor.url,
           weight: descriptor.weight,
           cache: descriptor.cache,
-          roles: descriptor.roles
+          roles: descriptor.roles,
+          auth: descriptor.auth
         };
         // Create a Module from the shape and return it
         const module = new ApiModule(shape);

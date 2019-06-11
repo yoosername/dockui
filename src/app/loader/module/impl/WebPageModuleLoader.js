@@ -35,7 +35,8 @@ class WebPageModuleLoader extends ModuleLoader {
           aliases: descriptor.aliases,
           url: descriptor.url,
           cache: descriptor.cache,
-          roles: descriptor.roles
+          roles: descriptor.roles,
+          auth: descriptor.auth
         };
         // Create a Module from the shape and return it
         const module = new WebPageModule(shape);

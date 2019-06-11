@@ -33,7 +33,8 @@ class RouteModuleLoader extends ModuleLoader {
           name: descriptor.name,
           key: descriptor.key,
           routes: descriptor.routes,
-          weight: descriptor.weight
+          weight: descriptor.weight,
+          auth: descriptor.auth
         };
         // Create a Module from the shape and return it
         const module = new RouteModule(shape);

@@ -13,7 +13,7 @@ class App {
     key = id,
     name = id,
     alias = null,
-    url = null,
+    baseUrl = null,
     type = App.types.STATIC,
     description = id,
     version = DEFAULT_APP_VERSION,
@@ -30,7 +30,7 @@ class App {
     this.key = key;
     this.name = name;
     this.alias = alias;
-    this.url = url;
+    this.baseUrl = baseUrl;
     this.type = type;
     (this.description = description),
       (this.version = version),
@@ -177,8 +177,8 @@ class App {
    * @description The base URL
    * @returns {String} URL
    */
-  getUrl() {
-    return this.url;
+  getBaseUrl() {
+    return this.baseUrl;
   }
 
   /**
@@ -235,7 +235,7 @@ class App {
       key: this.key,
       name: this.name,
       alias: this.alias,
-      url: this.url,
+      baseUrl: this.baseUrl,
       type: this.type,
       description: this.description,
       version: this.version,

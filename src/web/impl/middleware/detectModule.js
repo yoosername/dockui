@@ -59,7 +59,9 @@ const getModuleFromURLPart = async ({ part, appService, logger }) => {
 module.exports = function({ config, logger, appService } = {}) {
   return async function detectModule(ctx, next) {
     // If it isnt an /app[/.*/.*] style url then reject
-    const isAppModuleRegex = new RegExp("^/app/([^/]+)([/]{0,1})(.*)$");
+    const isAppModuleRegex = new RegExp(
+      "^/app/([^/]+)([/]{0,1})([^?]*)([?]{0,1})([^#]*)([#]{0,1})(.*)$"
+    );
     const isAppModuleURL = isAppModuleRegex.test(ctx.originalUrl);
     if (isAppModuleURL) {
       // Get the App and Module groups

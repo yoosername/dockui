@@ -97,7 +97,7 @@ class AppLoader {
             key: descriptor.key,
             name: descriptor.name,
             alias: descriptor.alias,
-            url: url,
+            baseUrl: descriptor.baseUrl,
             type: descriptor.type,
             description: descriptor.description,
             version: descriptor.version,

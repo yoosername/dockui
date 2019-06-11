@@ -33,7 +33,8 @@ class WebhookModuleLoader extends ModuleLoader {
           name: descriptor.name,
           key: descriptor.key,
           url: descriptor.url,
-          events: descriptor.events
+          events: descriptor.events,
+          auth: descriptor.auth
         };
         // Create a Module from the shape and return it
         const module = new WebhookModule(shape);

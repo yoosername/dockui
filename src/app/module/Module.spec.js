@@ -46,7 +46,8 @@ describe("Module", function() {
       roles: [],
       type: "generic",
       docType: Module.DOCTYPE,
-      appId: null
+      appId: null,
+      auth: null
     };
     const module = new Module(model);
     expect(module.toJSON()).toEqual(model);

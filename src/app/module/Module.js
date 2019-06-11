@@ -18,7 +18,8 @@ class Module {
     enabled = true,
     cache = { policy: "disabled" },
     roles = [],
-    appId = null
+    appId = null,
+    auth = null
   } = {}) {
     this.id = id;
     this.key = key;
@@ -30,6 +31,7 @@ class Module {
     this.roles = roles;
     this.docType = Module.DOCTYPE;
     this.appId = appId;
+    this.auth = auth;
   }
 
   /**
@@ -114,6 +116,14 @@ class Module {
   }
 
   /**
+   * @description Optional per module auth config - this is only used if there
+   *              is an AuthenticationProvider which understand the config
+   */
+  getAuth() {
+    return this.auth;
+  }
+
+  /**
    * @description Helper to return a serialized version of this Module for storage/transport
    * @returns {JSON} A Pure JSON representation of the Module
    */
@@ -128,7 +138,8 @@ class Module {
       enabled: this.enabled,
       cache: this.cache,
       roles: this.roles,
-      appId: this.appId
+      appId: this.appId,
+      auth: this.auth
     };
     return json;
   }

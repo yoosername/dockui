@@ -22,7 +22,7 @@ describe("App", function() {
     expect(typeof app.getName).toBe("function");
     expect(typeof app.getAlias).toBe("function");
     expect(typeof app.getType).toBe("function");
-    expect(typeof app.getUrl).toBe("function");
+    expect(typeof app.getBaseUrl).toBe("function");
     expect(typeof app.getDescription).toBe("function");
     expect(typeof app.getVersion).toBe("function");
     expect(typeof app.getDescriptorVersion).toBe("function");

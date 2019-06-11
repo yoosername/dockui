@@ -1,10 +1,27 @@
-const parseTargetUrnFromContext = ctx => {
+const parseTargetUrnFromContext = ({ ctx, logger }) => {
   // Use the info from the APP or Module
+  let targetURN = null;
+  try {
+    targetURN = `urn:dockui::module:${ctx.dockui.module.getId()}`;
+  } catch (e) {
+    logger.error("Couldnt parse targetURN from context: %o", e);
+  }
+  return targetURN;
 };
 
-const parsePolicyFromContext = ctx => {
-  // Use the info from the APP or Module content
-  // If no Policy then add a default one
+const parsePolicyFromContext = ({ ctx, logger }) => {
+  // Use the info from the APP or Module
+  const module = ctx.dockui.module;
+  let targetPolicy = null;
+  try {
+    targetPolicy = module.getAuth();
+  } catch (e) {
+    logger.debug(
+      "Module(%s) doesnt have auth configured - skipping",
+      module.getKey()
+    );
+  }
+  return targetPolicy;
 };
 
 /**
@@ -15,13 +32,14 @@ const parsePolicyFromContext = ctx => {
  */
 module.exports = function({ config, logger } = {}) {
   return async function idamDecorator(ctx, next) {
-    logger.debug("Adding IDAM info for PDP into ctx");
-    ctx.dockui.idam = {
-      principle: null,
-      target: parseTargetUrnFromContext(ctx),
-      policy: parsePolicyFromContext(ctx)
-    };
-    // App:  urn:dockui::app:<id>
+    if (!ctx.dockui) ctx.dockui = {};
+    if (!ctx.dockui.idam) ctx.dockui.idam = {};
+    ctx.dockui.idam = Object.assign(ctx.dockui.idam, {
+      target: parseTargetUrnFromContext({ ctx, logger }),
+      policy: parsePolicyFromContext({ ctx, logger })
+    });
+    logger.debug("Added IDAM policy info to ctx (%s)", ctx.dockui.idam);
+    // Examples:
     // Module:  urn:dockui::module:<id>
     // User: urn:dockui::idam:users/<id>||<name>
     // Role: urn:dockui::idam:roles/<id>||<name>

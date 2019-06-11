@@ -36,7 +36,8 @@ class WebItemModuleLoader extends ModuleLoader {
           location: descriptor.location,
           tooltip: descriptor.tooltip,
           weight: descriptor.weight,
-          cache: descriptor.cache
+          cache: descriptor.cache,
+          auth: descriptor.auth
         };
         // Create a Module from the shape and return it
         const module = new WebItemModule(shape);

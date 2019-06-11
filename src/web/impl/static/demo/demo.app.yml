@@ -1,7 +1,7 @@
 key: dockui.dashboard.app
 alias: dashboard
 name: DockUI Dashboard App
-url: http://localhost:3000/demo
+baseUrl: http://localhost:3000/demo
 type: dynamic
 description: This is a demo Dashboard App showing of the various features of the DockUI framework
 version: 1.0.0
@@ -32,7 +32,7 @@ modules:
     routes:
       - from: ^/$
         to: /app/bongo
-    weight: 1000
+    weight: 1
   # # Provides:
   # #   Store of user ids with attached profile info ( e.g. username, password hash, fullname etc )
   # - type: UserDirectory
@@ -50,7 +50,7 @@ modules:
     name: Form Auth Provider
     key: dockui.dashboard.auth.form
     url: /identity_check
-    weight: 1
+    weight: 0
 
   # Provides:
   #   Check that the logged in Principle (user/service) has access to the requested resource
@@ -61,7 +61,7 @@ modules:
     name: Simple Role Based Permissions service
     key: dockui.dashboard.permissions
     url: /permission_check
-    weight: 1
+    weight: 0
 
     # Inject single Link (cached forever until module disabled/unloaded)
   - type: WebItem
@@ -90,17 +90,11 @@ modules:
     # user to at least be logged in but could be any user
     auth:
       - type: policy
+        principle:
+          - "urn:dockui::authenticationProvider:role/allUsers"
         effect: allow
         action:
-          - read
-        resource:
-          - "urn:dockui::auth:role/user"
-      - type: policy
-        effect: disallow
-        action:
-          - read
-        resource:
-          - "urn:dockui::auth:role/*"
+          - view
 
     # Serve Static Resources & inject at existing page location
   - type: WebResource
@@ -131,11 +125,17 @@ modules:
     caching:
       enabled: true
       ttl: 2000ms
-    access:
-      type: Role
-      allowed:
-        - UNAUTHENTICATED
-        - EVERYONE
+    auth:
+      - type: role
+        role: DASHBOARD_VIEW
+        action:
+          - GET
+      - type: role
+        role: DASHBOARD_UPDATE
+        action:
+          - POST
+          - PUT
+          - DELETE
     # This dictates the startup behaviour only
     enabled: true
 
@@ -151,17 +151,26 @@ modules:
   - type: Api
     name: Dashboard Backend
     key: dockui.dashboard.api
+    aliases:
+      - dashboard #/api/1.0/dashboard
     version: 1.0
     url: /rest/api/1.0/
     caching:
       enabled: true
       ttl: 60000ms
-    access:
-      type: Role
-      allowed:
-        - EVERYONE
-      disallowed:
-        - UNAUTHENTICATED
+    auth:
+      - type: policy
+        principle:
+          - "urn:dockui::authenticationProvider:role/allUsers"
+        effect: allow
+        action:
+          - view
+      - type: policy
+        principle:
+          - "urn:dockui::authenticationProvider:role/dashboardAdmin"
+        effect: allow
+        action:
+          - write
 
     # Receive POST request on given framework events
   - type: Webhook

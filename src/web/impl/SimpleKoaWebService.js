@@ -160,10 +160,16 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured /health endpoint");
 
     /**
-     * Built in DEMO App statically served
+     * Built in DEMO App statically served with example authenticationModule
      */
     demoMount.use(serve(__dirname + "/static/demo"));
     app.use(mount("/demo", demoMount));
+    router.post("/demo/identity_check", async ctx => {
+      console.log("This was called yo!! with body: %s", ctx.request.body);
+      ctx.body = {
+        mongo: "equinass"
+      };
+    });
 
     /**
      * Raw Swagger API static JSON
@@ -265,16 +271,20 @@ class SimpleKoaWebService extends WebService {
     // 2: Detect which App/Module is being requested and add to the CTX or throw
     appGateway.use(detectModule(this));
 
-    // // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
+    // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
     appGateway.use(idamDecorator(this));
+
+    // 4: Middleware to:
+    //    - Check a users auth if context.dockui.auth is not null
+    //    - If user not authenticated and required - do authentication steps
+    //    - If user authenticated validate it and update context.dockui.auth with
+    //       principle info and optionally a user object
+    appGateway.use(authenticationHandler(this));
 
     // // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
     // // AuthorisationProviders have access to the Module config and IDAM user context but make the decision
     // // Based on some specific internal logic.
     // appGateway.use(policyDecisionPoint(this));
-
-    // // 5: Middleware to authenticate a user if PDP requires it
-    // appGateway.use(authenticationHandler(this));
 
     // // 6: '/app/page' Route for Pages (fetch page using app defined auth ((e.g. JWT)))
     // pageProxy.use(fetchPage(this));
