@@ -62,7 +62,11 @@ class LokiAppStore extends AppStore {
         this.collection = this.lokiDB.getCollection(DEFAULT_LOKI_COLLECTION_ID);
         if (!this.collection) {
           this.collection = this.lokiDB.addCollection(
-            DEFAULT_LOKI_COLLECTION_ID
+            DEFAULT_LOKI_COLLECTION_ID,
+            {
+              indices: ["id", "key"],
+              unique: ["id"]
+            }
           );
         }
       });
