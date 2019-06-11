@@ -1,4 +1,5 @@
 const { Config } = require("../config/Config");
+const Logger = require("../log/Logger");
 
 /**
  * @description Simple Store for persisting various state objects
@@ -8,8 +9,9 @@ class AppStore {
    * @argument {Config} config Optional runtime config
    * @returns {AppStore}
    */
-  constructor(config) {
-    this.config = config ? config : new Config();
+  constructor({ config = new Config(), logger = new Logger(config) } = {}) {
+    this.config = config;
+    this.logger = logger;
   }
 
   /**
