@@ -9,11 +9,25 @@
 ╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═
 ```
 
-> Compose a single web experience from loosely coupled Docker based Apps
+> Build a Pluggable Web App from multiple Docker Containers
 
 This is a **DRAFT** of a _work in progress_ and none of the commands below should be expected to work
 
-## Quick Start
+## Quick start (Docker)
+
+### Start a new framework instance (in dev mode using nodemon and persistant db with LokiJS)
+
+```shell
+$ docker run -it \
+  --env DOCKUI_WEB_PORT=3000 \
+  --env DOCKUI_STORE_TYPE=lokijs \
+  --env DOCKUI_STORE_DB_FILENAME=/app/loki.db \
+  -p 3000:3000 \
+  -v $(pwd):/app \
+  dockui/app
+```
+
+## Quick Start (No Docker)
 
 ### Install the CLI
 
@@ -22,43 +36,14 @@ $ npm install -g https://github.com/yoosername/dockui.git
 ...
 ```
 
-### Start a new framework instance (using default config)
-
-```shell
-$ dockui run
-Starting - logging to STDOUT
-...
-Startup complete
-...
-```
-
-If there wasnt already one found, this will create an instance config that looks like this
-
-```yaml
----
-store: file:./store.db
-events: memory
-port: 5000
-secret: changeme
-```
-
-### Run a framework instance (using existing config)
-
-#### (Option 1) Make sure a file called dockui.yml is in /etc/dockui then run
+### Start a new framework instance (using default Config and in memory DB)
 
 ```shell
 $ dockui run
 ...
-```
-
-#### (Option 2) Make sure you set required ENV vars as follows
-
-```shell
-$ DOCKUI_STORE=file:/tmp/store.db \
-  DOCKUI_EVENTS=memory \
-  DOCKUI_PORT=1234 \
-  DOCKUI_SECRET=whatever \
-  dockui run
+[2019-06-11T21:31:55.645Z][StoreFactory][DEBUG] : Store specified in Config as 'store.type=memory'
+[2019-06-11T21:31:55.652Z][StoreFactory][DEBUG] : Creating instance of Store using InMemoryAppStore, logfile=
+[2019-06-11T21:31:55.662Z][AppService][INFO] : App Service has started
 ...
 ```
 
