@@ -200,14 +200,14 @@ class SimpleKoaWebService extends WebService {
     // Get single task (including status) : router.get("/api/manage/task/:id");
 
     // Load a new App
-    router.post("/api/manage/app", async ctx => {
+    router.post("/api/v1/admin/app", async ctx => {
       const body = ctx.request.body;
       const { url, permission } = body;
       ctx.body = await this.appService.loadApp(url, permission);
     });
 
     // List all Apps ( or return a single app )
-    router.get("/api/manage/app/:id*", async ctx => {
+    router.get("/api/v1/admin/app/:id*", async ctx => {
       if (ctx.params.id && ctx.params.id !== "") {
         const app = await this.appService.getApp(ctx.params.id);
         ctx.body = app;
@@ -217,14 +217,14 @@ class SimpleKoaWebService extends WebService {
     });
 
     // UnLoad an existing App
-    router.delete("/api/manage/app/:id", async ctx => {
+    router.delete("/api/v1/admin/app/:id", async ctx => {
       if (!ctx.params.id) throw new Error("Missing param (id)");
       const app = await this.appService.getApp(ctx.params.id);
       ctx.body = await this.appService.unLoadApp(app);
     });
 
     // List all Modules ( or return a single Module by id )
-    router.get("/api/manage/module/:moduleId*", async ctx => {
+    router.get("/api/v1/admin/module/:moduleId*", async ctx => {
       if (ctx.params.moduleId && ctx.params.moduleId !== "") {
         ctx.body = await this.appService.getModule(ctx.params.moduleId);
       } else {
@@ -233,28 +233,28 @@ class SimpleKoaWebService extends WebService {
     });
 
     // Enable an existing App
-    router.put("/api/manage/app/:id/enable", async ctx => {
+    router.put("/api/v1/admin/app/:id/enable", async ctx => {
       if (!ctx.params.id) throw new Error("Missing param (id)");
       const app = await this.appService.getApp(ctx.params.id);
       ctx.body = await this.appService.enableApp(app);
     });
 
     // Disable an existing App
-    router.put("/api/manage/app/:id/disable", async ctx => {
+    router.put("/api/v1/admin/app/:id/disable", async ctx => {
       if (!ctx.params.id) throw new Error("Missing param (id)");
       const app = await this.appService.getApp(ctx.params.id);
       ctx.body = await this.appService.disableApp(app);
     });
 
     // Enable an existing Module
-    router.put("/api/manage/module/:id/enable", async ctx => {
+    router.put("/api/v1/admin/module/:id/enable", async ctx => {
       if (!ctx.params.id) throw new Error("Missing param (id)");
       const module = await this.appService.getModule(ctx.params.id);
       ctx.body = await this.appService.enableModule(module);
     });
 
     // Disable an existing Module
-    router.put("/api/manage/module/:id/disable", async ctx => {
+    router.put("/api/v1/admin/module/:id/disable", async ctx => {
       if (!ctx.params.id) throw new Error("Missing param (id)");
       const module = await this.appService.getModule(ctx.params.id);
       ctx.body = await this.appService.disableModule(module);

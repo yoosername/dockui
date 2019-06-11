@@ -173,7 +173,7 @@ describe("SimpleKoaWebService", function() {
       await webServiceWithoutAppService.start();
       const response = await request(
         webServiceWithoutAppService.getServer()
-      ).get("/api/manage/app/");
+      ).get("/api/v1/admin/app");
       expect(response.status).toEqual(500);
       await webServiceWithoutAppService.shutdown();
     });
@@ -181,7 +181,7 @@ describe("SimpleKoaWebService", function() {
     //List All Apps - GET /api/manage/app
     test("should be able to List all Apps", async () => {
       const response = await request(webService.getServer()).get(
-        "/api/manage/app/"
+        "/api/v1/admin/app"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_APPS);
@@ -189,7 +189,7 @@ describe("SimpleKoaWebService", function() {
 
     test("should be able to show a single App", async () => {
       const response = await request(webService.getServer()).get(
-        "/api/manage/app/12345"
+        "/api/v1/admin/app/12345"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_SINGLE_APP);
@@ -199,7 +199,7 @@ describe("SimpleKoaWebService", function() {
     test("should be able to Load an App", async () => {
       const body = { url: "/demo/demo.app.yml", permission: "read" };
       const response = await request(webService.getServer())
-        .post("/api/manage/app/")
+        .post("/api/v1/admin/app/")
         .send(body)
         .set("Content-Type", "application/json")
         .set("Accept", "application/json");
@@ -209,7 +209,7 @@ describe("SimpleKoaWebService", function() {
 
     test("should be able to UnLoad an App", async () => {
       const response = await request(webService.getServer())
-        .delete("/api/manage/app/some_id")
+        .delete("/api/v1/admin/app/some_id")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json");
       expect(response.status).toEqual(200);
@@ -219,7 +219,7 @@ describe("SimpleKoaWebService", function() {
     //List Apps Modules - GET /api/manage/module
     test("should be able to List all Modules", async () => {
       const response = await request(webService.getServer()).get(
-        "/api/manage/module/"
+        "/api/v1/admin/module/"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_MODULES);
@@ -227,7 +227,7 @@ describe("SimpleKoaWebService", function() {
 
     test("should be able to show a single Module", async () => {
       const response = await request(webService.getServer()).get(
-        "/api/manage/module/12345"
+        "/api/v1/admin/module/12345"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_SINGLE_MODULE);
@@ -235,7 +235,7 @@ describe("SimpleKoaWebService", function() {
 
     test("should be able to enable an App", async () => {
       const response = await request(webService.getServer()).put(
-        "/api/manage/app/12345/enable"
+        "/api/v1/admin/app/12345/enable"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_SINGLE_APP);
@@ -243,7 +243,7 @@ describe("SimpleKoaWebService", function() {
 
     test("should be able to disable an App", async () => {
       const response = await request(webService.getServer()).put(
-        "/api/manage/app/12345/disable"
+        "/api/v1/admin/app/12345/disable"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_SINGLE_APP);
@@ -251,7 +251,7 @@ describe("SimpleKoaWebService", function() {
 
     test("should be able to enable a Module", async () => {
       const response = await request(webService.getServer()).put(
-        "/api/manage/module/12345/enable"
+        "/api/v1/admin/module/12345/enable"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_SINGLE_MODULE);
@@ -259,7 +259,7 @@ describe("SimpleKoaWebService", function() {
 
     test("should be able to disable a Module", async () => {
       const response = await request(webService.getServer()).put(
-        "/api/manage/module/12345/disable"
+        "/api/v1/admin/module/12345/disable"
       );
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_SINGLE_MODULE);
