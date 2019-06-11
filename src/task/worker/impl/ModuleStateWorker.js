@@ -1,4 +1,4 @@
-const Module = require("../../../app/module/Module");
+const ModuleFactory = require("../../../app/module/factory/ModuleFactory");
 const Task = require("../../Task");
 const TaskWorker = require("../TaskWorker");
 const { Config } = require("../../../config/Config");
@@ -74,6 +74,7 @@ class ModuleStateWorker extends TaskWorker {
     return new Promise(async (resolve, reject) => {
       const payload = task.getPayload();
       const module = payload && payload.module ? payload.module : null;
+      const moduleId = module.getId();
       this.logger.info(
         "Worker (id=%s) is processing Task(id=%s) with payload(%o)",
         worker.id,
@@ -87,27 +88,28 @@ class ModuleStateWorker extends TaskWorker {
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
-      // Toggle disable or enable based on payload
-      const moduleData = module.toJSON();
-      moduleData.enabled =
+      // Get module from store and update the enabled flag and save
+      const persistedModule = await this.store.read(moduleId);
+      this.logger.debug("Fetched Module from DB as %o", persistedModule);
+      persistedModule.enabled =
         task.getType() === Task.types.MODULE_DISABLE ? false : true;
-      const updatedModule = new Module(moduleData);
-      const appId = updatedModule.getAppId();
-      const appData = await this.store.read(appId);
-      if (appData) {
-        appData.modules = appData.modules.map((cur, idx, arr) => {
-          return cur.id === updatedModule.getId()
-            ? updatedModule.toJSON()
-            : cur;
+      this.logger.debug("Updated Module to be %o", persistedModule);
+      await this.store.update(persistedModule.id, persistedModule);
+      this.logger.debug("Saved Module in DB");
+
+      // Get associated app from store and update this module
+      const appId = persistedModule.appId;
+      const persistedApp = await this.store.read(appId);
+      if (persistedApp) {
+        persistedApp.modules = persistedApp.modules.map((cur, idx, arr) => {
+          return cur.id === module.getId() ? persistedModule : cur;
         });
-        await this.store.update(appData.id, appData);
+        await this.store.update(persistedApp.id, persistedApp);
+        this.logger.debug("Updated App in DB with %o", persistedModule);
       }
 
-      // Save it to the Store
-      await this.store.update(moduleData.id, updatedModule);
-
       // Close off the task
-      task.emit(Task.events.SUCCESS_EVENT, updatedModule);
+      task.emit(Task.events.SUCCESS_EVENT, persistedModule);
       resolve();
     });
   }

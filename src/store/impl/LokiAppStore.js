@@ -57,7 +57,7 @@ class LokiAppStore extends AppStore {
     try {
       this.lokiDB.loadDatabase({}, err => {
         if (err) {
-          logger.error("Error loading LOKI DB error = %o", err);
+          this.logger.error("Error loading LOKI DB error = %o", err);
         }
         this.collection = this.lokiDB.getCollection(DEFAULT_LOKI_COLLECTION_ID);
         if (!this.collection) {
@@ -69,6 +69,7 @@ class LokiAppStore extends AppStore {
             }
           );
         }
+        this.logger.debug("LOKI DB loaded successfully");
       });
     } catch (err) {
       this.logger.error("Error loading LOKI collection - error = %o", e);

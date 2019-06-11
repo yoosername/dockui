@@ -43,16 +43,26 @@ module.exports = function({ appService, logger } = {}) {
       ctx.dockui.idam !== undefined
     ) {
       //    - If user not authenticated and required - do authentication steps
-      const authModules = await appService.getModules(
+      let authModules = await appService.getModules(
         module =>
           module.getType() === AuthenticationProviderModule.DESCRIPTOR_TYPE
       );
+
+      authModules = authModules
+        .filter(module => {
+          return module.isEnabled() === true;
+        })
+        .sort((a, b) => {
+          return a.getWeight() - b.getWeight();
+        });
+
       if (authModules && authModules.length > 0) {
         logger.debug(
           "Authentication required for module(%s) - Trying %d providers",
           ctx.dockui.module.getKey(),
           authModules.length
         );
+
         const authModuleAppId = authModules[0].getAppId();
         const moduleURL = authModules[0].getUrl();
         const app = await appService.getApp(authModuleAppId);
