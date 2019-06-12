@@ -1,7 +1,7 @@
 key: dockui.dashboard.app
 alias: dashboard
 name: DockUI Dashboard App
-baseUrl: http://localhost:3000/demo
+baseUrl: http://localhost:8080/demo
 type: dynamic
 description: This is a demo Dashboard App showing of the various features of the DockUI framework
 version: 1.0.0
@@ -86,15 +86,6 @@ modules:
     cache:
       enabled: true
       ttl: 60000ms
-    # The difference between leaving auth off and this is that this will require a
-    # user to at least be logged in but could be any user
-    auth:
-      - type: policy
-        principle:
-          - "urn:dockui::authenticationProvider:role/allUsers"
-        effect: allow
-        action:
-          - view
 
     # Serve Static Resources & inject at existing page location
   - type: WebResource
@@ -131,7 +122,7 @@ modules:
         action:
           - GET
       - type: role
-        role: DASHBOARD_UPDATE
+        role: DASHBOARD_ADMIN
         action:
           - POST
           - PUT
@@ -159,18 +150,16 @@ modules:
       enabled: true
       ttl: 60000ms
     auth:
-      - type: policy
-        principle:
-          - "urn:dockui::authenticationProvider:role/allUsers"
-        effect: allow
+      - type: role
+        role: DASHBOARD_VIEW
         action:
-          - view
-      - type: policy
-        principle:
-          - "urn:dockui::authenticationProvider:role/dashboardAdmin"
-        effect: allow
+          - GET
+      - type: role
+        role: DASHBOARD_ADMIN
         action:
-          - write
+          - POST
+          - PUT
+          - DELETE
 
     # Receive POST request on given framework events
   - type: Webhook

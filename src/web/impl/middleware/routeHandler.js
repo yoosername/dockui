@@ -1,4 +1,5 @@
 const RouteModule = require("../../../app/module/impl/RouteModule");
+const DEFAULT_INDEX = "/app/dashboard";
 
 const getMatchingModuleRoutes = async ({ appService, logger }) => {
   // Return array of all Module specified routes which match the current route
@@ -51,6 +52,7 @@ module.exports = function({ config, logger, appService } = {}) {
       appService,
       logger
     });
+    // If any Enabled Route Modules then try to apply them
     if (matchingRoutes && matchingRoutes.length > 0) {
       logger.debug(
         "[%s] RouteModule provided Routes found %o",
@@ -64,6 +66,13 @@ module.exports = function({ config, logger, appService } = {}) {
         }
       }
     }
+    // If not and user requested base url = / then apply Default or ENV redirect
+    if (ctx.request.path === "/") {
+      let ref = config && config.get ? config.get("web.index") : DEFAULT_INDEX;
+      ref = ref ? ref : DEFAULT_INDEX;
+      return ctx.redirect(ref);
+    }
+    // Otherwise just carry on
     await next();
   };
 };

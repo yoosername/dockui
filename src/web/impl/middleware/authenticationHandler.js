@@ -116,12 +116,17 @@ module.exports = function({ appService, logger } = {}) {
           }
           if (result.statusCode === 200) {
             const headers = result.body.headers;
+            const principle = result.body.principle;
             if (headers && headers.length > 0) {
               headers.forEach(header => {
                 ctx.set(header, headers[header]);
               });
             }
+            ctx.dockui.idam.principle = principle;
             logger.debug("User session is valid, headers(%o)", headers);
+          }
+          if (result.statusCode === 401) {
+            return ctx.throw(401, "Access is Denied for this user");
           }
         } catch (err) {
           logger.warn(
@@ -150,6 +155,7 @@ module.exports = function({ appService, logger } = {}) {
         "Authentication not required for module(%s)",
         ctx.dockui.module.getKey()
       );
+      ctx.dockui.idam.principle = "guest";
     }
     await next();
   };

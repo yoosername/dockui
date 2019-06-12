@@ -114,6 +114,11 @@ class AppUnLoadWorker extends TaskWorker {
         return resolve(app);
       } catch (e) {
         let errMsg = `Task(${task.getId()}) : Error unLoading App (id=${app.getId()})`;
+        this.logger.error(
+          "Error unloading App(id=%s), Error = %o",
+          app.getId(),
+          e
+        );
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }

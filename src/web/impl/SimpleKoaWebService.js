@@ -13,7 +13,6 @@ const mount = require("koa-mount");
 const helmet = require("koa-helmet");
 const bodyParser = require("koa-bodyparser");
 const multer = require("koa-multer");
-const cacheControl = require("koa-cache-control");
 //const ratelimit = require('koa-ratelimit');
 
 // App Gateway Middleware
@@ -107,32 +106,31 @@ class SimpleKoaWebService extends WebService {
     });
 
     // Add self links
-    app.use(async (ctx, next) => {
-      await next();
-      if (ctx.body && ctx.body.docType) {
-        const docType = ctx.body.docType === "MODULE" ? "module" : "app";
-        const id = ctx.body.id;
-        ctx.body = Object.assign(ctx.body, {
-          links: [
-            {
-              rel: "self",
-              method: "GET",
-              href: `${ctx.scheme}://${ctx.host}:${
-                ctx.port
-              }/api/v1/admin/${docType}/${id}`
-            },
-            {
-              rel: "create",
-              method: "POST",
-              title: `create ${docType}`,
-              href: `${ctx.scheme}://${ctx.host}:${
-                ctx.port
-              }/api/v1/admin/${docType}`
-            }
-          ]
-        });
-      }
-    });
+    // app.use(async (ctx, next) => {
+    //   await next();
+    //   if (ctx.body && ctx.body.docType) {
+    //     console.log(ctx.body.id);
+    //     const docType = ctx.body.docType === "MODULE" ? "module" : "app";
+    //     const id = ctx.body.id;
+    //     ctx.body = Object.assign({}, ctx.body, {
+    //       links: [
+    //         {
+    //           rel: "self",
+    //           method: "GET",
+    //           href: `${ctx.protocol}://${
+    //             ctx.host
+    //           }/api/v1/admin/${docType}/${id}`
+    //         },
+    //         {
+    //           rel: "create",
+    //           method: "POST",
+    //           title: `create ${docType}`,
+    //           href: `${ctx.protocol}://${ctx.host}/api/v1/admin/${docType}`
+    //         }
+    //       ]
+    //     });
+    //   }
+    // });
 
     /*
      * Global Debug Logging
@@ -169,18 +167,6 @@ class SimpleKoaWebService extends WebService {
     );
 
     /**
-     * Module provided redirects
-     * Checks if the current route should be redirected somewhere else
-     */
-    app.use(routeHandler(this));
-
-    /**
-     * Index Default Redirector (defaults to /app/home)
-     * This can be set with DOCKUI_WEB_INDEX
-     */
-    app.use(indexRedirector(this));
-
-    /**
      * Simple Health Endpoint
      */
     router.get("/health", async ctx => {
@@ -189,25 +175,22 @@ class SimpleKoaWebService extends WebService {
     this.logger.debug("Configured /health endpoint");
 
     /**
+     * -----------------------------------------------------------------------
      * Built in DEMO App with JWT based auth via authenticationProvider Module
+     * -----------------------------------------------------------------------
      */
     demoMount.use(serve(__dirname + "/static/demo"));
-    // app.use(async (ctx, next) => {
-    //   console.log(ctx.url);
-    //   if (ctx.url.indexOf("/demo/login") === 0) {
-    //     ctx.url = ctx.url.replace("login", "login.html");
-    //   }
-    //   await next();
-    // });
     app.use(mount("/demo", demoMount));
     const validDemoUsers = {
       user: {
         password: "user",
-        token: null
+        token: null,
+        roles: ["DASHBOARD_VIEW"]
       },
       admin: {
         password: "admin",
-        token: null
+        token: null,
+        roles: ["DASHBOARD_VIEW", "DASHBOARD_ADMIN"]
       }
     };
     router.post("/demo/identity_check", async ctx => {
@@ -237,7 +220,8 @@ class SimpleKoaWebService extends WebService {
               ctx.body = {
                 status: 200,
                 message: "Success",
-                headers: { Authorization: authToken }
+                headers: { Authorization: authToken },
+                principle: authorizedData.username
               };
               this.logger.debug(
                 "JWT Verified ok, user is (%s)",
@@ -305,6 +289,54 @@ class SimpleKoaWebService extends WebService {
       ctx.redirect(ctx.query.then);
     });
 
+    router.post("/demo/permission_check", async ctx => {
+      // Check the passed IDAM info and check the requested principle
+      const { principle, target, policy, action } = ctx.request.body;
+      const user = validDemoUsers[principle];
+      const userRoles = user ? user.roles : [];
+      // Are there any types of Role?
+      if (policy && policy.length) {
+        // if so for each one
+        for (var i = 0; i < policy.length; i++) {
+          // Check the type is a role one that we are interested in
+          if (policy[i].type.toLowerCase() === "role") {
+            // and if it is check if the current action is specified
+            if (policy[i].action.includes(action)) {
+              // and if it is check the user has the associated Role - if not send 403 - Forbidden
+              if (userRoles.includes(policy[i].role)) {
+                // and if it is check the user has the associated Role - if not send 403 - Forbidden
+                this.logger.debug(
+                  "User (%s) has required Role (%s) to access restricted target (%s)",
+                  user,
+                  policy[i].role,
+                  target
+                );
+              } else {
+                return ctx.throw(
+                  403,
+                  "User (" +
+                    principle +
+                    ") doesnt have sufficient role (" +
+                    policy[i].role +
+                    ") to access this resource (" +
+                    target +
+                    ")"
+                );
+              }
+            }
+          }
+        }
+      }
+      ctx.status = 200;
+      ctx.body = { user: user };
+    });
+
+    /**
+     * -----------------------------------------------------------------------
+     * End of DEMO - TODO: Move this to seperate project
+     * -----------------------------------------------------------------------
+     */
+
     /**
      * Raw Swagger API static JSON
      */
@@ -321,13 +353,6 @@ class SimpleKoaWebService extends WebService {
     /**
      * DockUI Management Routes
      */
-
-    // If Json incudes a DocType then we can auto add a self href into the JSON.
-    // app.use(async (ctx, next) => {
-    //   await next();
-    //   console.log(ctx.body.docType);
-    //   ctx.body = Object.assign(ctx.body, { _self: "cheese" });
-    // });
 
     // TODO: Add endpoint for viewing tasks
     // Get array of all tasks : router.get("/api/manage/task");
@@ -399,8 +424,19 @@ class SimpleKoaWebService extends WebService {
      * Base URL = /app
      **/
 
-    // 1: Middleware to provide caching
-    appGateway.use(cacheControl());
+    /**
+     * @description Middleware to provide routing
+     *              Checks if there are any enabled Route modules and picks the first
+     *              one which a route that matches (ordered by weight) and redirects to it
+     */
+    app.use(routeHandler(this));
+
+    /**
+     * @description Middleware to provide caching
+     *              On request - check if cache for requested URL and serve unless cache timed out
+     *              On response - check if requested Module has caching enabled and if so cache it
+     */
+    appGateway.use(cacheHandler(this));
 
     // 2: Detect which App/Module is being requested and add to the CTX or throw
     appGateway.use(detectModule(this));
@@ -415,10 +451,12 @@ class SimpleKoaWebService extends WebService {
     //       principle info and optionally a user object
     appGateway.use(authenticationHandler(this));
 
-    // // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
-    // // AuthorisationProviders have access to the Module config and IDAM user context but make the decision
-    // // Based on some specific internal logic.
-    // appGateway.use(policyDecisionPoint(this));
+    // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
+    //    AuthorisationProviders have access to the Module config and IDAM user context but make the decision
+    //    Based on some specific internal logic.
+    //    - If no auth settings pass through
+    //    - if auth settings we can only get here if a user has been verified and added to idam ctx
+    appGateway.use(policyDecisionPoint(this));
 
     // // 6: '/app/page' Route for Pages (fetch page using app defined auth ((e.g. JWT)))
     // pageProxy.use(fetchPage(this));

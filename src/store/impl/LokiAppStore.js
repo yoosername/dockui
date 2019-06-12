@@ -64,7 +64,7 @@ class LokiAppStore extends AppStore {
           this.collection = this.lokiDB.addCollection(
             DEFAULT_LOKI_COLLECTION_ID,
             {
-              indices: ["id", "key"],
+              indices: ["id"],
               unique: ["id"]
             }
           );

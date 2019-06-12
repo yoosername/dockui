@@ -36,7 +36,8 @@ module.exports = function({ config, logger } = {}) {
     if (!ctx.dockui.idam) ctx.dockui.idam = {};
     ctx.dockui.idam = Object.assign(ctx.dockui.idam, {
       target: parseTargetUrnFromContext({ ctx, logger }),
-      policy: parsePolicyFromContext({ ctx, logger })
+      policy: parsePolicyFromContext({ ctx, logger }),
+      action: ctx.request.method
     });
     logger.debug("Added IDAM policy info to ctx (%s)", ctx.dockui.idam);
     // Examples:
