@@ -110,7 +110,6 @@ class LokiAppStore extends AppStore {
           id,
           err
         );
-        throw err;
       }
     }
   }

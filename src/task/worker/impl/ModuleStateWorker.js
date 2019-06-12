@@ -88,6 +88,7 @@ class ModuleStateWorker extends TaskWorker {
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
+
       // Get module from store and update the enabled flag and save
       const persistedModule = await this.store.read(moduleId);
       this.logger.debug("Fetched Module from DB as %o", persistedModule);
@@ -109,7 +110,8 @@ class ModuleStateWorker extends TaskWorker {
       }
 
       // Close off the task
-      task.emit(Task.events.SUCCESS_EVENT, persistedModule);
+      const latestModule = ModuleFactory.create({ module: persistedModule });
+      task.emit(Task.events.SUCCESS_EVENT, latestModule);
       resolve();
     });
   }
