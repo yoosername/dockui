@@ -278,10 +278,13 @@ class SingleNodeTaskManager extends TaskManager {
     // Set timeout and process jobs in the queue every second
     // Using Workers in the workers array that can handle the type
     return new Promise((resolve, reject) => {
-      this.running = setInterval(
-        this.processQueue.bind(this),
-        QUEUE_PROCESSING_INTERVAL
-      );
+      // this.running = setInterval(
+      //   this.processQueue.bind(this),
+      //   QUEUE_PROCESSING_INTERVAL
+      // );
+      this.on(TaskManager.events.COMMIT_EVENT, task => {
+        this.processQueue();
+      });
       this.logger.info("Task Manager has started");
       this.emit(TaskManager.events.TASKMANAGER_STARTED_EVENT);
       resolve();
