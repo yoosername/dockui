@@ -420,8 +420,7 @@ class SimpleKoaWebService extends WebService {
     });
 
     /**
-     * APP Gateway (proxies loaded and enabled apps Pages and Apis)
-     * Base URL = /app
+     * App Gateway Middleware
      **/
 
     /**
@@ -458,32 +457,37 @@ class SimpleKoaWebService extends WebService {
     //    - if auth settings we can only get here if a user has been verified and added to idam ctx
     appGateway.use(policyDecisionPoint(this));
 
-    // // 6: '/app/page' Route for Pages (fetch page using app defined auth ((e.g. JWT)))
-    // pageProxy.use(fetchPage(this));
+    /**
+     * App Gateway
+     **/
+    // If module Type is WebResource then fetch and stream result to originator
+    // If module Type is API then fetch and stream result to originator
 
-    // //   a: Middleware to strip resources from page & module provided ones and add to ctx.resources
-    // pageProxy.use(addResourcesToContext(this));
+    // If module Type is WebPage then perform these steps
+    // 1: Fetch the page (GET/POST) - with replicated headers - and add result to dockui.page
+    // appGateway.use(fetchPage(this));
 
-    // //   b: Middleware to check if Page needs decoration and replacing page with decorated one
-    // pageProxy.use(decoratePage(this));
+    // 2a: Strip resources from page & add to ctx.dockui.resources
+    // 2b: Add Module specified Resources to ctx.dockui.resources
+    // appGateway.use(addResourcesToContext(this));
 
-    // //   c: Middleware to combine ctx.resources back in to page
-    // pageProxy.use(addResourcesFromContext(this));
+    // 3a: Check if Page needs decoration and if so fetch Parent page
+    // 3b: Replace ctx.dockui.page with the decorated one
+    // appGateway.use(decoratePage(this));
 
-    // //   d: Middleware to inject PageFragments into page
-    // pageProxy.use(addPageFragments(this));
+    // 4: Filter and Sort ctx.dockui.resources and inject back into ctx.dockui.page
+    // appGateway.use(addResourcesFromContext(this));
 
-    // //   e: Middleware to inject PageItems into page
-    // pageProxy.use(addPageItems(this));
-    // appGateway.use(mount("/page", pageProxy));
+    // 5a: Fetch any specified PageFragments
+    // 5b: Inject Fragments into ctx.dockui.page
+    // appGateway.use(addPageFragments(this));
 
-    // // 7: '/app/resource' Route for Serving Static Resources (CSS, JS)
-    // //   - direct reverse proxy
-    // appGateway.use(mount("/resource", resourceProxy));
+    // 6: Build and inject any required PageItems into ctx.dockui.page
+    // appGateway.use(addPageItems(this));
 
-    // // 8: '/app/api' Route for Apis
-    // //   - direct reverse proxy
-    // appGateway.use(mount("/api", apiProxy));
+    // 7: Serve the resulting page to client
+    // appGateway.use(serve(this));
+
     app.use(mount("/app", appGateway));
 
     this.logger.debug("Configured Management routes");
