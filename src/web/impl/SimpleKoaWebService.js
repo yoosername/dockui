@@ -16,13 +16,15 @@ const multer = require("koa-multer");
 //const ratelimit = require('koa-ratelimit');
 
 // App Gateway Middleware
-const indexRedirector = require("./middleware/indexRedirector");
 const detectModule = require("./middleware/detectModule");
 const cacheHandler = require("./middleware/cacheHandler");
 const routeHandler = require("./middleware/routeHandler");
 const idamDecorator = require("./middleware/idamDecorator");
 const policyDecisionPoint = require("./middleware/policyDecisionPoint");
 const authenticationHandler = require("./middleware/authenticationHandler");
+const serveIfWebResource = require("./middleware/serveIfWebResource");
+const serveIfApi = require("./middleware/serveIfApi");
+const serveIfWebPage = require("./middleware/serveIfWebPage");
 const fetchPage = require("./middleware/fetchPage");
 const addResourcesToContext = require("./middleware/addResourcesToContext");
 const addResourcesFromContext = require("./middleware/addResourcesFromContext");
@@ -79,9 +81,6 @@ class SimpleKoaWebService extends WebService {
     const swaggerUIStaticMount = new Koa();
     const demoMount = new Koa();
     const appGateway = new Koa();
-    const pageProxy = new Koa();
-    const apiProxy = new Koa();
-    const resourceProxy = new Koa();
 
     /**
      * Global error handler
@@ -117,15 +116,13 @@ class SimpleKoaWebService extends WebService {
     //         {
     //           rel: "self",
     //           method: "GET",
-    //           href: `${ctx.protocol}://${
-    //             ctx.host
-    //           }/api/v1/admin/${docType}/${id}`
+    //           href: `/api/v1/admin/${docType}/${id}`
     //         },
     //         {
     //           rel: "create",
     //           method: "POST",
     //           title: `create ${docType}`,
-    //           href: `${ctx.protocol}://${ctx.host}/api/v1/admin/${docType}`
+    //           href: `/api/v1/admin/${docType}`
     //         }
     //       ]
     //     });
@@ -141,7 +138,7 @@ class SimpleKoaWebService extends WebService {
     });
 
     /**
-     * Apply common security headers using Helmet
+     * Apply common best practice security headers using Helmet
      */
     app.use(helmet());
     this.logger.debug("Configured common security headers");
@@ -152,19 +149,9 @@ class SimpleKoaWebService extends WebService {
     //app.use(ratelimit());
 
     /**
-     * Add a body parser
+     * Add a body parser for JSON based Api
      */
     app.use(bodyParser());
-
-    /**
-     * Add a Multipart body parser
-     */
-    app.use(
-      multer().fields([
-        { name: "username", maxCount: 1 },
-        { name: "password", maxCount: 1 }
-      ])
-    );
 
     /**
      * Simple Health Endpoint
@@ -179,8 +166,17 @@ class SimpleKoaWebService extends WebService {
      * Built in DEMO App with JWT based auth via authenticationProvider Module
      * -----------------------------------------------------------------------
      */
+    // Add a Multipart body parser for the login page
+    app.use(
+      multer().fields([
+        { name: "username", maxCount: 1 },
+        { name: "password", maxCount: 1 }
+      ])
+    );
+    // Mount the static HTML for the Demo
     demoMount.use(serve(__dirname + "/static/demo"));
     app.use(mount("/demo", demoMount));
+    // Add some Hardcoded Demo Users
     const validDemoUsers = {
       user: {
         password: "user",
@@ -193,6 +189,7 @@ class SimpleKoaWebService extends WebService {
         roles: ["DASHBOARD_VIEW", "DASHBOARD_ADMIN"]
       }
     };
+    // Provide the AuthenticationProvider endpoint
     router.post("/demo/identity_check", async ctx => {
       // See if there is a JWT Token with the admin user in it
       // If no token redirect
@@ -233,8 +230,7 @@ class SimpleKoaWebService extends WebService {
         );
       });
     });
-
-    //router.get("/demo/login", serve(__dirname + "/static/demo/login.html"));
+    // Provide the Backing Controller for the Login form
     router.post("/demo/login.action", async ctx => {
       // get login details
       const { username, password } = ctx.request.body;
@@ -288,7 +284,7 @@ class SimpleKoaWebService extends WebService {
       this.logger.debug("Redirecting to %s", ctx.query.then);
       ctx.redirect(ctx.query.then);
     });
-
+    // Provide the endpoint for the AuthorizationProvider
     router.post("/demo/permission_check", async ctx => {
       // Check the passed IDAM info and check the requested principle
       const { principle, target, policy, action } = ctx.request.body;
@@ -304,7 +300,7 @@ class SimpleKoaWebService extends WebService {
             if (policy[i].action.includes(action)) {
               // and if it is check the user has the associated Role - if not send 403 - Forbidden
               if (userRoles.includes(policy[i].role)) {
-                // and if it is check the user has the associated Role - if not send 403 - Forbidden
+                // nice  - user has the role so continue
                 this.logger.debug(
                   "User (%s) has required Role (%s) to access restricted target (%s)",
                   user,
@@ -330,7 +326,7 @@ class SimpleKoaWebService extends WebService {
       ctx.status = 200;
       ctx.body = { user: user };
     });
-
+    this.logger.debug("Configured DEMO App");
     /**
      * -----------------------------------------------------------------------
      * End of DEMO - TODO: Move this to seperate project
@@ -338,20 +334,17 @@ class SimpleKoaWebService extends WebService {
      */
 
     /**
-     * Raw Swagger API static JSON
+     * Raw Swagger API static JSON and Static UI
      */
     router.get("/api/swagger.json", async ctx => {
       ctx.body = swaggerDocument;
     });
-
-    /**
-     * Raw Swagger UI
-     */
     swaggerUIStaticMount.use(serve(__dirname + "/static/swagger"));
     app.use(mount("/api/", swaggerUIStaticMount));
+    this.logger.debug("Configured Swagger UI @ /api");
 
     /**
-     * DockUI Management Routes
+     * DockUI Framework Admin Routes
      */
 
     // TODO: Add endpoint for viewing tasks
@@ -418,6 +411,7 @@ class SimpleKoaWebService extends WebService {
       const module = await this.appService.getModule(ctx.params.id);
       ctx.body = await this.appService.disableModule(module);
     });
+    this.logger.debug("Configured Management routes");
 
     /**
      * App Gateway Middleware
@@ -440,17 +434,16 @@ class SimpleKoaWebService extends WebService {
     // 2: Detect which App/Module is being requested and add to the CTX or throw
     appGateway.use(detectModule(this));
 
-    // 3: Middleware to map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
+    // 3: Map IDAM info against ctx (e.g. URN for user, webpage, policy = (grant all))
     appGateway.use(idamDecorator(this));
 
-    // 4: Middleware to:
-    //    - Check a users auth if context.dockui.auth is not null
+    // 4: Check a users auth if context.dockui.auth is not null
     //    - If user not authenticated and required - do authentication steps
     //    - If user authenticated validate it and update context.dockui.auth with
     //       principle info and optionally a user object
     appGateway.use(authenticationHandler(this));
 
-    // 4: Middleware to enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
+    // 5: Enforce policy (PDP) by delegating to authorisationproviders (using IDAM ctx)
     //    AuthorisationProviders have access to the Module config and IDAM user context but make the decision
     //    Based on some specific internal logic.
     //    - If no auth settings pass through
@@ -461,7 +454,9 @@ class SimpleKoaWebService extends WebService {
      * App Gateway
      **/
     // If module Type is WebResource then fetch and stream result to originator
+    appGateway.use(serveIfWebResource(this));
     // If module Type is API then fetch and stream result to originator
+    appGateway.use(serveIfApi(this));
 
     // If module Type is WebPage then perform these steps
     // 1: Fetch the page (GET/POST) - with replicated headers - and add result to dockui.page
@@ -486,11 +481,11 @@ class SimpleKoaWebService extends WebService {
     // appGateway.use(addPageItems(this));
 
     // 7: Serve the resulting page to client
-    // appGateway.use(serve(this));
+    appGateway.use(serveIfWebPage(this));
 
     app.use(mount("/app", appGateway));
 
-    this.logger.debug("Configured Management routes");
+    this.logger.debug("Configured App Gateway routes");
     app.use(router.routes());
     app.use(router.allowedMethods());
 
