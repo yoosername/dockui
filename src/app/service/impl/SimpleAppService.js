@@ -269,7 +269,7 @@ class SimpleAppService extends AppService {
       try {
         // Find the app in the store
         doc = this.store.read(id);
-        if (!doc)
+        if (!doc || (doc.docType && doc.docType !== App.DOCTYPE))
           throw new Error("App (id=" + id + ") doesnt exist in the store");
 
         // Hydrate the module data from their individual stored instances as that is the information which
@@ -325,7 +325,8 @@ class SimpleAppService extends AppService {
       let json, module;
       try {
         json = this.store.read(id);
-        if (!json) throw new Error("Module (id=" + id + ") doesnt exist");
+        if (!json || (json.docType && json.docType !== Module.DOCTYPE))
+          throw new Error("Module (id=" + id + ") doesnt exist");
         module = ModuleFactory.create({ module: json });
         resolve(module);
       } catch (e) {
