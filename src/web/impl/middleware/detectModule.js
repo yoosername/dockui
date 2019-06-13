@@ -35,15 +35,18 @@ const getModuleFromURLPart = async ({ part, appService, logger, ctx }) => {
       module.getId(),
       module.getAliases()
     );
+
     // First test if its simply the exact id or key of a module
     if (module.getKey() === part || module.getId() === part) {
       return true;
     }
-    // If not then test if it matches any of the modules aliases exactly
+    // If not then test if it matches any of the modules aliases (minus any querystring)
     const aliases = module.getAliases().slice();
+    const minusQueryString = part.split("?")[0];
+
     if (aliases && aliases.length > 0) {
       for (var i = 0; i < aliases.length; i++) {
-        if (aliases[i] === part) {
+        if (aliases[i] === minusQueryString) {
           return true;
         }
       }

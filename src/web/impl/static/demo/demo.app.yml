@@ -20,8 +20,8 @@ modules:
     routes:
       - from: ^/$
         to: /app/dashboard/index
-      - from: ^/login$
-        to: /app/dashboard/login
+      - from: ^/login([?]{0,1}[^?]*)$
+        to: /app/dashboard/login$1
     weight: 0
 
   #   This route wont take effect because the one above
@@ -133,12 +133,12 @@ modules:
     enabled: true
 
   - type: WebPage
-    name: Example Webpage that starts life disabled
-    key: dockui.dashboard.disabled
-    url: /pages/disabled.html
+    name: Example Login page for our authProvider above
+    key: dockui.dashboard.login
+    url: /pages/login.html
     aliases:
-      - disabled
-    enabled: false
+      - login
+    enabled: true
 
     # Proxy request directly to an existing API
   - type: Api

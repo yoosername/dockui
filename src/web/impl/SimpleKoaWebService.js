@@ -204,7 +204,7 @@ class SimpleKoaWebService extends WebService {
               ctx.status = 301;
               ctx.body = {
                 status: 301,
-                url: "/demo/login.html",
+                url: "/app/dashboard/login",
                 message: "Login Required"
               };
               this.logger.debug(

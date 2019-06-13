@@ -15,7 +15,8 @@
     <script type="text/javascript">
       let form = document.getElementById("loginForm");
       let existingUrl = form.getAttribute("action");
-      form.setAttribute("action", existingUrl + window.location.search);
+      let search = window.location.search ? window.location.search : "";
+      form.setAttribute("action", existingUrl + search);
     </script>
   </body>
 </html>
