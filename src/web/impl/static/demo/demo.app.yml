@@ -145,9 +145,9 @@ modules:
     name: Dashboard Backend
     key: dockui.dashboard.api
     aliases:
-      - dashboard #/api/1.0/dashboard
+      - api/users # /app/dashboard/api/users
     version: 1.0
-    url: /rest/api/1.0/
+    url: /rest/api/1.0/users
     caching:
       enabled: true
       ttl: 60000ms

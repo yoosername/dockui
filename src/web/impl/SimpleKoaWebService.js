@@ -326,6 +326,14 @@ class SimpleKoaWebService extends WebService {
       ctx.status = 200;
       ctx.body = { user: user };
     });
+    router.get("/demo/rest/api/1.0/users", async ctx => {
+      ctx.body = [
+        { name: "dave", skill: "winning" },
+        { name: "bob", skill: "losing" },
+        { name: "ruby", skill: "standing" },
+        { name: "tyrone", skill: "staring" }
+      ];
+    });
     this.logger.debug("Configured DEMO App");
     /**
      * -----------------------------------------------------------------------
