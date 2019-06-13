@@ -468,7 +468,7 @@ class SimpleKoaWebService extends WebService {
 
     // If module Type is WebPage then perform these steps
     // 1: Fetch the page (GET/POST) - with replicated headers - and add result to dockui.page
-    // appGateway.use(fetchPage(this));
+    appGateway.use(fetchPage(this));
 
     // 2a: Strip resources from page & add to ctx.dockui.resources
     // 2b: Add Module specified Resources to ctx.dockui.resources
