@@ -44,7 +44,7 @@
     "koa-add-trailing-slashes": "^2.0.1",
     "koa-bodyparser": "^4.2.1",
     "koa-cache-control": "^2.0.0",
-    "koa-helmet": "^4.1.0",
+    "koa-helmet": "^4.2.0",
     "koa-json": "^2.0.2",
     "koa-mount": "^4.0.0",
     "koa-multer": "^1.0.2",
@@ -57,16 +57,16 @@
     "request-promise-native": "^1.0.7",
     "uuid": "^3.3.2",
     "winston": "^3.2.1",
-    "yargs": "^13.2.2"
+    "yargs": "^13.2.4"
   },
   "devDependencies": {
     "babel-jest": "^24.8.0",
-    "coveralls": "^3.0.2",
+    "coveralls": "^3.0.4",
     "documentation": "^10.1.0",
-    "jest": "^24.7.1",
-    "jshint": "^2.9.7",
-    "nyc": "^14.1.0",
-    "prettier": "^1.16.4",
+    "jest": "^24.8.0",
+    "jshint": "^2.10.2",
+    "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
     "supertest": "^4.0.2"
   },
   "template": {
