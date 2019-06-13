@@ -1,12 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <!-- Required meta tags -->
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Dashboard Demo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="/app/dashboard/s/lib/bootstrap/css/bootstrap-4.3.1.min.css"
+    />
+    <style>
+      body {
+        padding-top: 5rem;
+      }
+      .starter-template {
+        padding: 3rem 1.5rem;
+        text-align: center;
+      }
+      .navbar-header {
+        margin-left: 5px;
+        width: 100%;
+      }
+    </style>
+    <title>DockUI Demo</title>
   </head>
   <body>
-    <h1>Dashboard Demo</h1>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">DockUI Dashboard Demo</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarsExampleDefault"
+        aria-controls="navbarsExampleDefault"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault"></div>
+      <button
+        id="logout"
+        class="btn btn-outline-light pull-right"
+        type="submit"
+      >
+        Logout
+      </button>
+    </nav>
+
+    <main role="main" class="container">
+      <div class="starter-template">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Fragment 1</h5>
+                <p class="card-text">
+                  Here is a fragment added by some App/Module
+                </p>
+                <a href="#" class="btn btn-info">Do It</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Fragment 2</h5>
+                <p class="card-text">
+                  Here is another one added by a different App/Module
+                </p>
+                <a href="#" class="btn btn-warning">Go Here</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Fragment 3</h5>
+                <p class="card-text">
+                  Yet another fragment added by some App/Module
+                </p>
+                <a href="#" class="btn btn-danger">Try Me</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Fragment 4</h5>
+                <p class="card-text">
+                  And finally the last fragment added by a different App/Module
+                </p>
+                <a href="#" class="btn btn-success">Find out More...</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="/app/dashboard/s/lib/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script src="/app/dashboard/s/lib/popper/popper-1.14.7.min.js"></script>
+    <script src="/app/dashboard/s/lib/bootstrap/js/bootstrap-4.3.1.min.js"></script>
+    <script>
+      document.getElementById("logout").addEventListener("click", evt => {
+        evt.preventDefault();
+        // TODO: Add a function which calls a /logout api
+        // The Api can be served as ApiModule and simply clears the cookie
+        // Forcing you to go to login flow again
+      });
+    </script>
   </body>
 </html>

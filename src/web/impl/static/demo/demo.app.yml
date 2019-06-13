@@ -96,6 +96,14 @@ modules:
     url: /static
     resources:
       - type: js
+        path: lib/jquery/jquery-3.3.1.slim.min.js
+      - type: js
+        path: lib/popper/popper-1.14.7.min.js
+      - type: js
+        path: lib/bootstrap/js/bootstrap-4.3.1.min.js
+      - type: css
+        path: lib/bootstrap/css/bootstrap-4.3.1.min.css
+      - type: js
         path: js/example.javascript.js
       - type: css
         path: css/example.style.css
