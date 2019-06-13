@@ -46,10 +46,12 @@ describe("AppLoadWorker", function() {
     const store = new AppStore();
     const appLoader = new AppLoader();
     const fakeApp = new App();
-    fakeApp.getModules.mockReturnValue([
-      { key: "module1" },
-      { key: "module2" }
-    ]);
+    const fakeAppModules = [{ key: "module1" }, { key: "module2" }];
+    fakeApp.toJSON.mockReturnValue({
+      id: "testApp",
+      modules: fakeAppModules
+    });
+    fakeApp.getModules.mockReturnValue(fakeAppModules);
     appLoader.load.mockResolvedValue(fakeApp);
     const config = new Config();
     const worker = new AppLoadWorker({ taskManager, store, appLoader, config });

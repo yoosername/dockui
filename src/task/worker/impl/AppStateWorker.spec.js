@@ -42,7 +42,9 @@ describe("AppStateWorker", function() {
     const taskManager = new TaskManager();
     const store = new AppStore();
     const fakeApp = new App();
-    fakeApp.toJSON.mockReturnValue({ enabled: false });
+    store.read.mockReturnValue(fakeApp);
+    fakeApp.getId.mockReturnValue(1);
+    fakeApp.toJSON.mockReturnValue({ id: 1, enabled: false });
     const config = new Config();
     const worker = new AppStateWorker({
       taskManager,

@@ -74,6 +74,7 @@ class AppStateWorker extends TaskWorker {
     return new Promise(async (resolve, reject) => {
       const payload = task.getPayload();
       const app = payload && payload.app ? payload.app : null;
+      const appId = app.getId ? app.getId() : app.id;
       this.logger.info(
         "Worker (id=%s) is processing Task(id=%s) with payload(%o)",
         worker.id,
@@ -82,39 +83,34 @@ class AppStateWorker extends TaskWorker {
       );
 
       // Make sure there is a URL to load
-      if (!app) {
+      if (!app || !appId) {
         let errMsg = `Task with id(${task.getId()}) is missing an app in the payload`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
       // Toggle disable or enable based on payload
-      const appData = app.toJSON();
-      let updatedApp;
+      const persistedApp = this.store.read(appId);
       try {
-        appData.enabled =
+        persistedApp.enabled =
           task.getType() === Task.types.APP_DISABLE ? false : true;
-        updatedApp = new App(appData);
       } catch (e) {
-        let errMsg = `Task(${task.getId()}) : Error Modifying state for app : ${
-          appData.id
-        }, Error: ${e}`;
+        let errMsg = `Task(${task.getId()}) : Error Modifying state for app : ${appId}, Error: ${e}`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
 
       // Save it to the Store
       try {
-        await this.store.update(appData.id, updatedApp);
+        await this.store.update(persistedApp.id, persistedApp);
       } catch (e) {
-        let errMsg = `Task(${task.getId()}) : Error Saving state for app : ${
-          appData.id
-        }, Error: ${e}`;
+        let errMsg = `Task(${task.getId()}) : Error Saving state for app : ${appId}, Error: ${e}`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
 
       // Close off the task
-      task.emit(Task.events.SUCCESS_EVENT, updatedApp);
+      const latestApp = new App(persistedApp);
+      task.emit(Task.events.SUCCESS_EVENT, latestApp);
       resolve();
     });
   }

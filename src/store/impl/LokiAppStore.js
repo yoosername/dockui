@@ -121,8 +121,13 @@ class LokiAppStore extends AppStore {
   delete(id) {
     let persistedData = null;
     try {
+      this.logger.debug("Attempting to delete object with id = %s", id);
       persistedData = this.read(id);
       if (persistedData) {
+        this.logger.debug(
+          "Found object in store: %o - deleting",
+          persistedData
+        );
         this.collection.remove(persistedData);
       }
     } catch (err) {

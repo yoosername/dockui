@@ -104,6 +104,7 @@ class AppUnLoadWorker extends TaskWorker {
       try {
         // Delete all the modules for this app
         app.getModules().forEach(module => {
+          this.logger.debug("Attempting to delete module %s", module.getId());
           this.store.delete(module.getId());
         });
 

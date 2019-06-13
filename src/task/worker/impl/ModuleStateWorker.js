@@ -82,8 +82,8 @@ class ModuleStateWorker extends TaskWorker {
         payload
       );
 
-      // Make sure there is a URL to load
-      if (!module) {
+      // Make sure there is a Module to load
+      if (!module || !moduleId) {
         let errMsg = `Task with id(${task.getId()}) is missing a module in the payload`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));

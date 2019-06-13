@@ -133,11 +133,15 @@ class AppLoadWorker extends TaskWorker {
 
       try {
         // Save App to Store
-        this.store.create(app);
-        app.getModules().forEach(module => {
-          // And each module seperately for easy lookup
+        // Need to serialize with toJSON first or some adapters like lokiJs will accidently use
+        // the build in toJSON method istead of its own decorated one ( thus losing db meta info )
+        const appJSON = app.toJSON();
+        // Store modules individually first
+        appJSON.modules.forEach(module => {
           this.store.create(module);
         });
+        // Now store the App itself
+        this.store.create(appJSON);
         // Close off the task
         task.emit(Task.events.SUCCESS_EVENT, app);
         return resolve(app);
