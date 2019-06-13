@@ -91,6 +91,8 @@ modules:
   - type: WebResource
     name: Dashboard Static Resources
     key: dockui.dashboard.resources
+    aliases:
+      - s
     url: /static
     resources:
       - type: js

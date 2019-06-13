@@ -39,7 +39,10 @@ module.exports = function({ appService, logger } = {}) {
     if (
       ctx.dockui &&
       ctx.dockui.idam !== null &&
-      ctx.dockui.idam !== undefined
+      ctx.dockui.idam.policy &&
+      (ctx.dockui.idam.policy !== undefined &&
+        ctx.dockui.idam.policy !== "" &&
+        ctx.dockui.idam.policy !== null)
     ) {
       // Look for authorisationModule types that are enabled
       let authModules = await appService.getModules(
@@ -102,6 +105,11 @@ module.exports = function({ appService, logger } = {}) {
           logger.warn("PDP Check failed with status other than 200,403", err);
         }
       }
+    } else {
+      logger.debug(
+        "Authorisation is not required for module(%s)",
+        ctx.dockui.module.getKey()
+      );
     }
     await next();
   };

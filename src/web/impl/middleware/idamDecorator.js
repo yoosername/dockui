@@ -15,6 +15,7 @@ const parsePolicyFromContext = ({ ctx, logger }) => {
   let targetPolicy = null;
   try {
     targetPolicy = module.getAuth();
+    targetPolicy = targetPolicy ? targetPolicy : "";
   } catch (e) {
     logger.debug(
       "Module(%s) doesnt have auth configured - skipping",

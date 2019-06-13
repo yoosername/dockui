@@ -40,7 +40,10 @@ module.exports = function({ appService, logger } = {}) {
     if (
       ctx.dockui &&
       ctx.dockui.idam !== null &&
-      ctx.dockui.idam !== undefined
+      ctx.dockui.idam.policy &&
+      (ctx.dockui.idam.policy !== undefined &&
+        ctx.dockui.idam.policy !== "" &&
+        ctx.dockui.idam.policy !== null)
     ) {
       //    - If user not authenticated and required - do authentication steps
       let authModules = await appService.getModules(
