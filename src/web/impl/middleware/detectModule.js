@@ -28,7 +28,7 @@ const getModuleFromURLPart = async ({ part, appService, logger, ctx }) => {
   // When no module is specified it is assumed we want a module with alias of index
   if (part === "") part = "index";
   const modules = await appService.getModules(module => {
-    logger.debug(
+    logger.silly(
       "Testing Module URL (%s) against Module (key=%s,id=%s,aliases=%o)",
       part,
       module.getKey(),

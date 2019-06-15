@@ -472,21 +472,21 @@ class SimpleKoaWebService extends WebService {
 
     // 2a: Strip resources from page & add to ctx.dockui.resources
     // 2b: Add Module specified Resources to ctx.dockui.resources
-    // appGateway.use(addResourcesToContext(this));
+    appGateway.use(addResourcesToContext(this));
 
     // 3a: Check if Page needs decoration and if so fetch Parent page
     // 3b: Replace ctx.dockui.page with the decorated one
     // appGateway.use(decoratePage(this));
 
-    // 4: Filter and Sort ctx.dockui.resources and inject back into ctx.dockui.page
-    // appGateway.use(addResourcesFromContext(this));
-
-    // 5a: Fetch any specified PageFragments
-    // 5b: Inject Fragments into ctx.dockui.page
+    // 4a: Fetch any specified PageFragments
+    // 4b: Inject Fragments into ctx.dockui.page
     // appGateway.use(addPageFragments(this));
 
-    // 6: Build and inject any required PageItems into ctx.dockui.page
+    // 5: Build and inject any required PageItems into ctx.dockui.page
     // appGateway.use(addPageItems(this));
+
+    // 6: Filter and Sort ctx.dockui.resources and inject back into ctx.dockui.page
+    // appGateway.use(addResourcesFromContext(this));
 
     // 7: Serve the resulting page to client
     appGateway.use(serveIfWebPage(this));
