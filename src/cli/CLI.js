@@ -9,6 +9,9 @@ const {
   Logger
 } = require("../..");
 
+const LOG_LEVEL_CONFIG_KEY = "logging.level";
+const DEFAULT_LOG_LEVEL = "info";
+
 const showUsage = ({
   name = "CLI.js",
   logLevel = "info",
@@ -62,9 +65,9 @@ class CLI {
   constructor({
     name = "cli.js",
     instance = null,
-    config = null,
+    config = new Config(),
     screen = console,
-    logger = screen
+    logger = LoggerFactory.create(config)
   } = {}) {
     this.name = name;
     this.config = config
@@ -74,6 +77,8 @@ class CLI {
           .build();
     this.screen = screen;
     this.logger = logger;
+    const configLogLevel = config.get(LOG_LEVEL_CONFIG_KEY);
+    this.logLevel = configLogLevel ? configLogLevel : DEFAULT_LOG_LEVEL;
     this.instance = instance ? instance : StandardInstance(...arguments);
   }
 
@@ -104,6 +109,10 @@ class CLI {
       if (this.args.v instanceof Array && this.args.v.length > 0) {
         this.logLevel = getLogLevel(this.args.v.length - 1);
       }
+      // Add defined logLevel to config for rest of system to use
+      this.logger.setLogLevel(
+        this.logLevel ? this.logLevel : DEFAULT_LOG_LEVEL
+      );
 
       // user specified --help, show usage
       if (this.args && this.args.help) {

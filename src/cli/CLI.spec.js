@@ -7,6 +7,7 @@ jest.mock("../Instance");
 jest.mock("../log/Logger");
 
 let config = null;
+let logger = null;
 let voidConsole = null;
 let cli = null;
 
@@ -17,6 +18,7 @@ describe("CLI", function() {
     config = new Config();
     config.set("store.type", "memory");
     config.set("web.port", "1234");
+    logger = new Logger(config);
     voidConsole = { log: jest.fn().mockImplementation() };
   });
 

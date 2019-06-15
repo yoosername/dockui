@@ -1,4 +1,6 @@
 const WinstonLogger = require("./WinstonLogger");
+const winston = require("winston");
+const TransportStream = require("winston-transport");
 const { Config } = require("../../config/Config");
 const Logger = require("../Logger");
 let config = null;
@@ -9,6 +11,7 @@ describe("WinstonLogger", function() {
   beforeEach(function() {
     config = new Config();
     config.set("logging.transports", "console,file");
+    config.set("logging.level", "info");
   });
 
   test("should be defined and loadable", function() {
@@ -70,6 +73,28 @@ describe("WinstonLogger", function() {
     expect(verboseSpy).toHaveBeenCalledTimes(1);
     expect(debugSpy).toHaveBeenCalledTimes(1);
     expect(sillySpy).toHaveBeenCalledTimes(1);
+    console.error = old;
+  });
+
+  test("Should be able to set the loglevel", function() {
+    const old = console.error;
+    console.error = jest.fn().mockImplementation();
+    const logger = new WinstonLogger();
+    logger._logger.clear();
+    const infoSpy = jest.spyOn(logger._logger, "info");
+    const debugSpy = jest.spyOn(logger._logger, "debug");
+    expect(logger.getLogLevel()).toEqual("info");
+    logger.info("some %o", "stuff", {}, [], "and", "some things");
+    logger.debug("some %o", "stuff", {}, [], "and", "some things");
+    expect(infoSpy).toHaveBeenCalledTimes(1);
+    expect(debugSpy).toHaveBeenCalledTimes(1);
+    logger.setLogLevel("debug");
+    expect(logger.getLogLevel()).toEqual("debug");
+    logger.info("some %o", "stuff", {}, [], "and", "some things");
+    logger.debug("some %o", "stuff", {}, [], "and", "some things");
+    expect(infoSpy).toHaveBeenCalledTimes(2);
+    expect(debugSpy).toHaveBeenCalledTimes(2);
+    expect(logger._logger.level).toEqual("debug");
     console.error = old;
   });
 });

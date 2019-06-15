@@ -86,6 +86,22 @@ class Logger {
   }
 
   /**
+   * @description Get current logLevel
+   * @returns {String} current loglevel
+   */
+  getLogLevel() {
+    // child classes should implement this feature
+  }
+
+  /**
+   * @description Reconfigure a loglevel at runtime
+   * @argument {String} level The level to set the logger to
+   */
+  setLogLevel(level) {
+    // child classes should implement this feature
+  }
+
+  /**
    * @description Create a new logger which overrides certain data
    * @argument {...Object} overrides data to override
    */

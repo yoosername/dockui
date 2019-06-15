@@ -31,6 +31,8 @@ describe("Config", function() {
     expect(typeof logger.debug).toBe("function");
     expect(typeof logger.verbose).toBe("function");
     expect(typeof logger.silly).toBe("function");
+    expect(typeof logger.getLogLevel).toBe("function");
+    expect(typeof logger.setLogLevel).toBe("function");
   });
 
   test("Should be able to get a child logger with overridden config", function() {
