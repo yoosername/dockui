@@ -34,6 +34,7 @@ class WebPageModuleLoader extends ModuleLoader {
           key: descriptor.key,
           aliases: descriptor.aliases,
           url: descriptor.url,
+          decorator: descriptor.decorator,
           cache: descriptor.cache,
           roles: descriptor.roles,
           auth: descriptor.auth

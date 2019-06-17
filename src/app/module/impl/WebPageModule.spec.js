@@ -19,5 +19,6 @@ describe("WebPageModule", function() {
     expect(typeof module.getKey).toBe("function");
     // From WebPage
     expect(typeof module.getUrl).toBe("function");
+    expect(typeof module.getDecorator).toBe("function");
   });
 });

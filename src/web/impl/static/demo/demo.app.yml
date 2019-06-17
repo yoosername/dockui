@@ -133,6 +133,13 @@ modules:
       enabled: true
       ttl: 600000ms
 
+    # A Common Decorator WebPage (Site Header)
+  - type: WebPage
+    name: Dashboard Site Decorator
+    key: dockui.dashboard.decorator
+    url: /pages/decorator.html
+    enabled: true
+
     # Serve Web Page (optionally decorated by another page)
   - type: WebPage
     name: Dashboard Home
@@ -147,6 +154,8 @@ modules:
     caching:
       enabled: true
       ttl: 2000ms
+    # If a decorator is specified then this page will be injected into its HTML at the first "data-content"
+    decorator: dockui.dashboard.decorator
     auth:
       - type: role
         role: DASHBOARD_VIEW
