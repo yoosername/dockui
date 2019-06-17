@@ -87,7 +87,23 @@ modules:
       enabled: true
       ttl: 60000ms
 
-    # Serve Static Resources & inject at existing page location
+  # WebResource
+  #
+  # Serve Static Resources & inject at existing page location
+  # Within the HTML of a WebPage you can specify either meta tags in the HEAD like this:
+  #
+  #   <meta name="WebResourcesFor" content="link,style" />
+  #
+  # or as data attribute on a div in the body like this (note inside the brackets are any modifiers):
+  #
+  #   <div data-WebResourcesFor="script[inline]">
+  #      All WebResource(s) targeting this page (or that are targetting a page decorated by this page)
+  #      of types <script> will be injected here
+  #   </div>
+  #
+  # In both cases the value is a comma seperated list of any of 3 types that could be injected from [link,style,script]
+  #
+  # The "context" refers to the WebPage module key that we want the resources injected into
   - type: WebResource
     name: Dashboard Static Resources
     key: dockui.dashboard.resources
@@ -105,9 +121,13 @@ modules:
         path: lib/bootstrap/css/bootstrap-4.3.1.min.css
       - type: js
         path: js/example.javascript.js
+        modifier:
+          - inline
       - type: css
         path: css/example.style.css
-    context: dashboard.*
+        modifier:
+          - inline
+    context: dockui.dashboard
     weight: 100
     cache:
       enabled: true
@@ -119,6 +139,7 @@ modules:
     key: dockui.dashboard
     # Aliases are relative to the App root e.g. <scheme>://<host>/app/<appAlias>/<moduleAlias>
     # and act as a full replacement for the default which is the key of the module
+    # note: a Module alias of index will resolve to / or ""
     aliases:
       - index
       - index.html
@@ -137,7 +158,7 @@ modules:
           - POST
           - PUT
           - DELETE
-    # This dictates the startup behaviour only
+    # This dictates the startup behaviour only (i.e. what to do the first time the App is loaded)
     enabled: true
 
   - type: WebPage
