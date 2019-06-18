@@ -156,6 +156,21 @@ modules:
       ttl: 2000ms
     # If a decorator is specified then this page will be injected into its HTML at the first "data-content"
     decorator: dockui.dashboard.decorator
+    # This dictates the startup behaviour only (i.e. what to do the first time the App is loaded)
+    enabled: true
+
+    # Serve Web Page (optionally decorated by another page)
+  - type: WebPage
+    name: Dashboard App Admin
+    key: dockui.dashboard.admin.app
+    aliases:
+      - manage
+    url: /pages/manage.html
+    caching:
+      enabled: true
+      ttl: 2000ms
+    # If a decorator is specified then this page will be injected into its HTML at the first "data-content"
+    decorator: dockui.dashboard.admin.decorator
     auth:
       - type: role
         role: DASHBOARD_VIEW
@@ -168,6 +183,13 @@ modules:
           - PUT
           - DELETE
     # This dictates the startup behaviour only (i.e. what to do the first time the App is loaded)
+    enabled: true
+
+  - type: WebPage
+    name: Admin Wrapper
+    key: dockui.dashboard.admin.decorator
+    url: /pages/admin.html
+    decorator: dockui.dashboard.decorator
     enabled: true
 
   - type: WebPage

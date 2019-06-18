@@ -2,6 +2,10 @@ let cheerio = require("cheerio");
 
 const recombinePages = stack => {
   let flatPage = "";
+
+  // Reverse the stack
+  stack = stack.reverse();
+
   try {
     stack.forEach(page => {
       // First time
@@ -17,6 +21,9 @@ const recombinePages = stack => {
             .html($child("body").html());
           // Now decorator contains child, update static
           flatPage = $decorator.html();
+          console.log("Decorator CAN BE INJECTED and is now: %o", flatPage);
+        } else {
+          console.log("Decorator CANNOT BE INJECTED");
         }
       }
     });

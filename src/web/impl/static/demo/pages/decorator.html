@@ -32,11 +32,36 @@
         width: 100%;
       }
     </style>
+    <style>
+      html,
+      body,
+      .container-fluid,
+      .row {
+        height: 100%;
+      }
+
+      .sidebar {
+        background-color: #cccccc;
+        padding-top: 5rem;
+      }
+
+      @media (min-width: 992px) {
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          z-index: 1000;
+          display: block;
+          background-color: #cccccc;
+        }
+      }
+    </style>
     <title>DockUI Demo</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-      <a class="navbar-brand" href="#">DockUI Dashboard Demo</a>
+      <a class="navbar-brand" href="/app/dashboard">DockUI Dashboard Demo</a>
       <button
         class="navbar-toggler"
         type="button"

@@ -84,12 +84,14 @@ const chainFetch = async ({ ctx, moduleKey, appService, logger }) => {
       if (res.statusCode === 200) {
         pages.unshift(res.body);
         if (decoratorModuleKey) {
-          const decorator = await chainFetch({
-            moduleKey: decoratorModuleKey,
-            appService,
-            logger
-          });
-          pages.unshift(decorator);
+          pages = [].concat.apply(
+            pages,
+            await chainFetch({
+              moduleKey: decoratorModuleKey,
+              appService,
+              logger
+            })
+          );
         }
       }
     } catch (err) {
