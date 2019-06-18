@@ -84,9 +84,9 @@
     <script>
       document.getElementById("logout").addEventListener("click", evt => {
         evt.preventDefault();
-        // TODO: Add a function which calls a /logout api
-        // The Api can be served as ApiModule and simply clears the cookie
-        // Forcing you to go to login flow again
+        document.cookie =
+          "X-Demo-Auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        location.reload();
       });
     </script>
   </body>
