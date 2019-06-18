@@ -70,16 +70,19 @@ const chainFetch = async ({ ctx, moduleKey, appService, logger }) => {
         method: "GET",
         uri: pageUrl.toString()
       };
-      logger.debug("Trying Decorator: %s", options);
+      logger.debug(
+        "Attempting to fetch page: [%s] %s",
+        options.method,
+        options.uri
+      );
 
       let { res, page } = await singlePageFetcher(req, options);
 
       if (res.statusCode === 404) {
-        logger.warn("decorator specified but was missing - skipping");
+        logger.warn("Page was not found (%s) - SKIPPING", options.uri);
       }
       if (res.statusCode === 200) {
         pages.unshift(res.body);
-        logger.error("Added Page %o", res.body);
         if (decoratorModuleKey) {
           const decorator = await chainFetch({
             moduleKey: decoratorModuleKey,
@@ -152,74 +155,26 @@ module.exports = function({ config, logger, appService } = {}) {
       // If its a WebPage
       if (module.getType() === WebPageModule.DESCRIPTOR_TYPE) {
         try {
+          // Get the key
           const moduleKey = module.getKey();
-          const decoratorModuleKey = module.getDecorator();
-          let pageUrl = null;
-          let decoratorUrl = null;
 
-          logger.debug(
-            "ModuleKey: %s, DecoratorKey: %s",
-            moduleKey,
-            decoratorModuleKey
-          );
-          if (moduleKey) {
-            pageUrl = await getAbsolutePageUrlFromModuleKey({
-              moduleKey,
-              appService,
-              logger
-            });
-          }
-          if (decoratorModuleKey) {
-            decoratorUrl = await getAbsolutePageUrlFromModuleKey({
-              moduleKey: decoratorModuleKey,
-              appService,
-              logger
-            });
-          }
-          logger.debug(
-            "Prefetching WebPageModule(%s) which is decorated by WebPageModule(%s)",
-            pageUrl,
-            decoratorUrl
-          );
+          // Perform recursive Fetch against the Page and any specified decorators
           try {
-            // Get the initial page
-            const { res, body } = await singlePageFetcher(ctx.req, {
-              method: "GET",
-              uri: pageUrl.toString()
-            });
+            let pages = [].concat.apply(
+              [],
+              await chainFetch({
+                ctx,
+                moduleKey,
+                appService,
+                logger
+              })
+            );
 
-            // If doesnt exist then just 404 it now
-            if (res.statusCode === 404) {
-              ctx.status = 404;
-              ctx.body = {
-                error: {
-                  status: 404,
-                  message: "WebPage (key=" + module.getKey() + ") not found"
-                }
-              };
-              return;
-            }
-            if (res.statusCode === 200) {
-              logger.debug(
-                "Main WebPage fetched OK - try to get decorator chain"
-              );
-              // Get first decorator (if any )
-              let decorators = [];
-              if (decoratorUrl) {
-                // Fetch it and any parents all the way up the stack.
-                decorators = await chainFetch({
-                  ctx,
-                  moduleKey: decoratorModuleKey,
-                  appService,
-                  logger
-                });
-              }
+            logger.debug("Stack = %o", pages);
 
-              ctx.dockui.webPage = {
-                html: body,
-                decorators: decorators
-              };
-            }
+            ctx.dockui.webPage = {
+              stack: pages
+            };
           } catch (err) {
             // If here there was an unknown error
             return ctx.throw(err);

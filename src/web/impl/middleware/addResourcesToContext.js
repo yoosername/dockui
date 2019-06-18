@@ -13,7 +13,13 @@ module.exports = function({ config, logger } = {}) {
     if (ctx.dockui.webPage && ctx.dockui.webPage.html) {
       try {
         const $ = cheerio.load(ctx.dockui.webPage.html);
-        console.log($.html());
+        // TODO: Find all the types e.g. link,style,script and parse them out into
+        // ctx.dockui.webPage.resources[{
+        //   tag: "script",
+        //   attributes: {"src" : "href://bla.com"}
+        // },...]
+        // Do this for every page in the stack starting with decorator up
+        // Dont duplicate, so if same tag and src then skip.
       } catch (err) {
         logger.error("Error parsing current page: error = %o", err);
       }

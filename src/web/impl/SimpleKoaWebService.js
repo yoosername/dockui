@@ -476,7 +476,7 @@ class SimpleKoaWebService extends WebService {
 
     // 3a: Check if Page needs decoration and if so fetch Parent page
     // 3b: Replace ctx.dockui.page with the decorated one
-    // appGateway.use(decoratePage(this));
+    appGateway.use(decoratePage(this));
 
     // 4a: Fetch any specified PageFragments
     // 4b: Inject Fragments into ctx.dockui.page

@@ -6,14 +6,10 @@ module.exports = function({ config, logger, appService } = {}) {
     logger.debug("Checking if there is a WebPage to serve");
 
     // If There is a pre built webPage on the context just serve it
-    if (
-      ctx.dockui &&
-      ctx.dockui.webPage &&
-      ctx.dockui.webPage.html &&
-      ctx.dockui.webPage.html !== ""
-    ) {
+    if (ctx.dockui && ctx.dockui.webPage && ctx.dockui.webPage.decoratedPage) {
+      const page = ctx.dockui.webPage.decoratedPage;
       logger.debug("WebPage found - serving to client");
-      return (ctx.body = ctx.dockui.webPage.html);
+      return (ctx.body = page);
     }
 
     // Otherwise just carry on
