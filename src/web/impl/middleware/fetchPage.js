@@ -172,7 +172,7 @@ module.exports = function({ config, logger, appService } = {}) {
               })
             );
 
-            logger.debug("Stack = %o", pages);
+            logger.silly("Stack = %o", pages);
 
             ctx.dockui.webPage = {
               stack: pages

@@ -12,12 +12,17 @@
       All WebResource(s) targeting this page (or that are targetting a page decorated by this page) 
       of types <link> and <style> will be injected here
     -->
-    <meta name="WebResourcesFor" content="link,style" />
+    <meta name="WebResourcesFor" content="link" />
+    <meta name="WebResourcesFor" content="style" />
 
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
       href="/app/dashboard/s/lib/bootstrap/css/bootstrap-4.3.1.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/app/dashboard/s/lib/fontawesome/css/fontawesome-5.9.0.min.css"
     />
     <style>
       body {
@@ -61,7 +66,9 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-      <a class="navbar-brand" href="/app/dashboard">DockUI Dashboard Demo</a>
+      <a class="navbar-brand" href="/app/dashboard"
+        ><i class="fas fa-home"></i> DockUI Dashboard Demo</a
+      >
       <button
         class="navbar-toggler"
         type="button"
@@ -80,6 +87,7 @@
         type="submit"
       >
         Logout
+        <i class="fas fa-sign-in-alt"></i>
       </button>
     </nav>
 
@@ -93,18 +101,16 @@
       <!-- This will be replaced by webFragments targetting "dockui.dashboard:footer" -->
     </div>
 
-    <div data-WebResourcesFor="script[src]">
-      <!-- 
-        All WebResource(s) targeting this page (or that are targetting a page decorated by this page) 
-        of types <script> that point to a src file will be injected here
-      -->
-    </div>
     <script src="/app/dashboard/s/lib/jquery/jquery-3.3.1.slim.min.js"></script>
     <script src="/app/dashboard/s/lib/popper/popper-1.14.7.min.js"></script>
     <script src="/app/dashboard/s/lib/bootstrap/js/bootstrap-4.3.1.min.js"></script>
 
-    <!-- These will be replaced by any scripts which are defined as inline -->
-    <div data-WebResourcesFor="script[inline]"></div>
+    <div data-WebResourcesFor="script:src">
+      <!-- This will be replaced by any scripts which have a src attribute -->
+    </div>
+    <div data-WebResourcesFor="script:content">
+      <!-- This will be replaced by any scripts which have inline content -->
+    </div>
 
     <script>
       document.getElementById("logout").addEventListener("click", evt => {

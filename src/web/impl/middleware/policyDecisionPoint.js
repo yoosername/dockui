@@ -34,7 +34,7 @@ const defaultFetcher = async options => {
  */
 module.exports = function({ appService, logger } = {}) {
   return async function policyDecisionPoint(ctx, next) {
-    logger.debug("PDP Check Happens HERE, idam info = %o", ctx.dockui.idam);
+    logger.silly("PDP Check Happens HERE, idam info = %o", ctx.dockui.idam);
     // Perform a policy check if one is required
     if (
       ctx.dockui &&

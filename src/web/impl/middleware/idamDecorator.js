@@ -40,7 +40,7 @@ module.exports = function({ config, logger } = {}) {
       policy: parsePolicyFromContext({ ctx, logger }),
       action: ctx.request.method
     });
-    logger.debug("Added IDAM policy info to ctx (%s)", ctx.dockui.idam);
+    logger.silly("Added IDAM policy info to ctx (%s)", ctx.dockui.idam);
     // Examples:
     // Module:  urn:dockui::module:<id>
     // User: urn:dockui::idam:users/<id>||<name>

@@ -26,6 +26,7 @@ module.exports = function({ config, logger, appService } = {}) {
       if (module.getType() === WebResourceModule.DESCRIPTOR_TYPE) {
         if (ctx.dockui.resourcePath) {
           try {
+            // if ctx.dockui.resourcePath is not static then just serve it
             const appBaseUrl = app.getBaseUrl();
             const appBasePath = new URL(appBaseUrl).pathname;
             const normalizedPath = path.normalize(
@@ -37,6 +38,7 @@ module.exports = function({ config, logger, appService } = {}) {
               resourceUrl
             );
             return (ctx.body = ctx.req.pipe(request(resourceUrl.toString())));
+            // if ctx.dockui.resourcePath is static then serve
           } catch (e) {
             logger.error("Error streaming WebResource, error = %o", e);
           }

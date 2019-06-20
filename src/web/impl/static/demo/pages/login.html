@@ -9,6 +9,7 @@
     <title>Dashboard Login</title>
 
     <!-- Bootstrap core CSS -->
+    <meta name="WebResourcesFor" content="link,style" />
     <link
       rel="stylesheet"
       href="/app/dashboard/s/lib/bootstrap/css/bootstrap-4.3.1.min.css"
@@ -114,6 +115,9 @@
         Sign in
       </button>
     </form>
+    <div data-WebResourcesFor="script:src,content">
+      <!-- This will be replaced by any scripts which have a src attribute or embedded-->
+    </div>
     <script type="text/javascript">
       let form = document.getElementById("loginForm");
       let existingUrl = form.getAttribute("action");

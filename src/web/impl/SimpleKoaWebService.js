@@ -467,7 +467,7 @@ class SimpleKoaWebService extends WebService {
     appGateway.use(serveIfApi(this));
 
     // If module Type is WebPage then perform these steps
-    // 1: Fetch the page (GET/POST) - with replicated headers - and add result to dockui.page
+    // 1: Fetch the page (GET/POST) - with replicated headers - and add result to dockui.webPage.stack
     appGateway.use(fetchPage(this));
 
     // 2a: Strip resources from page & add to ctx.dockui.resources
@@ -486,7 +486,7 @@ class SimpleKoaWebService extends WebService {
     // appGateway.use(addPageItems(this));
 
     // 6: Filter and Sort ctx.dockui.resources and inject back into ctx.dockui.page
-    // appGateway.use(addResourcesFromContext(this));
+    appGateway.use(addResourcesFromContext(this));
 
     // 7: Serve the resulting page to client
     appGateway.use(serveIfWebPage(this));

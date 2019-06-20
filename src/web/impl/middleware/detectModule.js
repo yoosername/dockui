@@ -63,7 +63,12 @@ const getModuleFromURLPart = async ({ part, appService, logger, ctx }) => {
             aliases.map(a => {
               let t = [];
               resources.forEach(p => {
-                t.push("(" + a + ")/(" + p.path + ")");
+                // If p is static then make test more forgiving
+                if (p.type === "static") {
+                  t.push("(" + a + ")/(" + p.path + "[^?]*)");
+                } else {
+                  t.push("(" + a + ")/(" + p.path + ")");
+                }
               });
               return t;
             })

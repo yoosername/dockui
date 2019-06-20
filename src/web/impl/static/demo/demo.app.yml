@@ -119,6 +119,10 @@ modules:
         path: lib/bootstrap/js/bootstrap-4.3.1.min.js
       - type: css
         path: lib/bootstrap/css/bootstrap-4.3.1.min.css
+      - type: css
+        path: lib/fontawesome/css/fontawesome-5.9.0.min.css
+      - type: static
+        path: lib/fontawesome/webfonts
       - type: js
         path: js/example.javascript.js
         modifier:

@@ -21,16 +21,11 @@ const recombinePages = stack => {
             .html($child("body").html());
           // Now decorator contains child, update static
           flatPage = $decorator.html();
-          console.log("Decorator CAN BE INJECTED and is now: %o", flatPage);
         } else {
-          console.log("Decorator CANNOT BE INJECTED");
         }
       }
     });
-  } catch (err) {
-    console.log("Error recombining page: ", err);
-    // Worst case just return what we have
-  }
+  } catch (err) {}
   return flatPage;
 };
 /**
