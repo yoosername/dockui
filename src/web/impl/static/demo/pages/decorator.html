@@ -36,33 +36,14 @@
         margin-left: 5px;
         width: 100%;
       }
-    </style>
-    <style>
       html,
       body,
       .container-fluid,
       .row {
         height: 100%;
       }
-
-      .sidebar {
-        background-color: #cccccc;
-        padding-top: 5rem;
-      }
-
-      @media (min-width: 992px) {
-        .sidebar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          z-index: 1000;
-          display: block;
-          background-color: #cccccc;
-        }
-      }
     </style>
-    <title>DockUI Demo</title>
+    <title>DockUI Site Decorator</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -91,14 +72,8 @@
       </button>
     </nav>
 
-    <div data-webFragmentsFor="header">
-      <!-- This will be replaced by webFragments targetting "dockui.dashboard:header" -->
-    </div>
     <div data-content>
       <!-- This will be replaced by the body of a decorated page -->
-    </div>
-    <div data-webFragmentsFor="footer">
-      <!-- This will be replaced by webFragments targetting "dockui.dashboard:footer" -->
     </div>
 
     <script src="/app/dashboard/s/lib/jquery/jquery-3.3.1.slim.min.js"></script>

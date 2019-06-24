@@ -17,18 +17,13 @@
       body {
         padding-top: 5rem;
       }
-      .starter-template {
-        padding: 3rem 1.5rem;
-        text-align: center;
-      }
-      .navbar-header {
-        margin-left: 5px;
-        width: 100%;
-      }
     </style>
     <title>DockUI Demo</title>
   </head>
   <body>
+    <div data-webFragmentsFor="header">
+      <!-- This will be replaced by webFragments targetting "dockui.dashboard:header" -->
+    </div>
     <main role="main" class="container">
       <div class="starter-template">
         <div class="row">
@@ -112,6 +107,9 @@
         </div>
       </div>
     </main>
+    <div data-webFragmentsFor="footer">
+      <!-- This will be replaced by webFragments targetting "dockui.dashboard:header" -->
+    </div>
 
     <script src="/app/dashboard/s/lib/jquery/jquery-3.3.1.slim.min.js"></script>
     <script src="/app/dashboard/s/lib/popper/popper-1.14.7.min.js"></script>

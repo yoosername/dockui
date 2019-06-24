@@ -17,8 +17,8 @@ const recombinePages = stack => {
         // If $decorator has a data-content div then inject the next page into it
         if ($decorator("[data-content]")) {
           $decorator("[data-content]")
-            .removeAttr("data-content")
-            .html($child("body").html());
+            //.removeAttr("data-content")
+            .replaceWith($child("body").html());
           // Now decorator contains child, update static
           flatPage = $decorator.html();
         } else {
