@@ -483,8 +483,8 @@ class SimpleKoaWebService extends WebService {
     // 4b: Inject Fragments into ctx.dockui.page at the target locations
     appGateway.use(addPageFragments(this));
 
-    // 5: Build and inject any required PageItems into ctx.dockui.page
-    // appGateway.use(addPageItems(this));
+    // 5: Build and inject any required WebItems into ctx.dockui.page
+    appGateway.use(addPageItems(this));
 
     // 6: Filter and Sort ctx.dockui.resources and inject back into ctx.dockui.page
     appGateway.use(addResourcesFromContext(this));

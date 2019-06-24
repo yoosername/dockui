@@ -65,12 +65,13 @@ modules:
 
     # Inject single Link (cached forever until module disabled/unloaded)
   - type: WebItem
-    name: Link to disabled Page
-    key: dockui.dashboard.links.disabledPageLink
-    url: /app/dashboard/disabled
-    text: Goto Disabled Page
-    location: dockui.dashboard.index.header.links
-    tooltip: This is a Tooltip (Hint)
+    name: Logout Link
+    description: Static Link to Docs
+    key: dockui.dashboard.links.docs
+    url: "/app/dashboard/docs"
+    text: Docs
+    location: dockui.dashboard:fraglinks
+    tooltip: Goto Docs
     weight: 10
     cache:
       enabled: true

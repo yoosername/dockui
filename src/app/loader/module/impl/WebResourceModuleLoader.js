@@ -31,6 +31,7 @@ class WebResourceModuleLoader extends ModuleLoader {
         const shape = {
           key: descriptor.key,
           name: descriptor.name,
+          description: descriptor.description,
           aliases: descriptor.aliases,
           resources: descriptor.resources,
           url: descriptor.url,

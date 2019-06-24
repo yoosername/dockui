@@ -32,6 +32,8 @@ class WebItemModuleLoader extends ModuleLoader {
           type: descriptor.type,
           name: descriptor.name,
           key: descriptor.key,
+          text: descriptor.text,
+          description: descriptor.description,
           url: descriptor.url,
           location: descriptor.location,
           tooltip: descriptor.tooltip,

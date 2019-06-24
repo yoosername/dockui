@@ -18,6 +18,7 @@ describe("Module", function() {
     expect(typeof module.getId).toBe("function");
     expect(typeof module.getKey).toBe("function");
     expect(typeof module.getName).toBe("function");
+    expect(typeof module.getDescription).toBe("function");
     expect(typeof module.getAliases).toBe("function");
     expect(typeof module.getType).toBe("function");
     expect(typeof module.isEnabled).toBe("function");
@@ -42,6 +43,7 @@ describe("Module", function() {
       id: "0d4e56de-846c-4245-9489-0ec1bbe7f65a",
       key: "0d4e56de-846c-4245-9489-0ec1bbe7f65a",
       name: "0d4e56de-846c-4245-9489-0ec1bbe7f65a",
+      description: "Test Description",
       aliases: [],
       roles: [],
       type: "generic",

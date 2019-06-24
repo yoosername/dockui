@@ -32,6 +32,7 @@ class AuthenticationProviderModuleLoader extends ModuleLoader {
           type: descriptor.type,
           name: descriptor.name,
           key: descriptor.key,
+          description: descriptor.description,
           url: descriptor.url,
           weight: descriptor.weight,
           cache: descriptor.cache,

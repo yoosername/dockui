@@ -32,6 +32,7 @@ class WebhookModuleLoader extends ModuleLoader {
           type: descriptor.type,
           name: descriptor.name,
           key: descriptor.key,
+          description: descriptor.description,
           url: descriptor.url,
           events: descriptor.events,
           auth: descriptor.auth

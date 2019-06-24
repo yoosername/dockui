@@ -11,6 +11,7 @@ class Module {
     id = uuidv4(),
     key = id,
     name = id,
+    description = "",
     aliases = [],
     type = "generic",
     // Modules default to enabled, but only the enabled Modules will become
@@ -24,6 +25,7 @@ class Module {
     this.id = id;
     this.key = key;
     this.name = name;
+    this.description = description;
     this.aliases = aliases;
     this.type = type;
     this.enabled = enabled;
@@ -53,6 +55,13 @@ class Module {
    */
   getName() {
     return this.name;
+  }
+
+  /**
+   * @description The Human readable description of this Module
+   */
+  getDescription() {
+    return this.description;
   }
 
   /**
@@ -133,6 +142,7 @@ class Module {
       id: this.id,
       key: this.key,
       name: this.name,
+      description: this.description,
       aliases: this.aliases,
       type: this.type,
       enabled: this.enabled,

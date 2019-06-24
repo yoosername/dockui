@@ -32,6 +32,7 @@ class WebFragmentModuleLoader extends ModuleLoader {
           type: descriptor.type,
           name: descriptor.name,
           key: descriptor.key,
+          description: descriptor.description,
           url: descriptor.url,
           selector: descriptor.selector,
           location: descriptor.location,
