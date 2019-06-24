@@ -30,7 +30,42 @@
   </head>
   <body>
     <div id="heroHeader">
-      <H1>HEADER WIDGET</H1>
+      <style>
+        .hero-image {
+          /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+          background-image: linear-gradient(
+              rgba(0, 0, 0, 0.5),
+              rgba(0, 0, 0, 0.5)
+            ),
+            url("/app/dashboard/s/images/abstract.jpg");
+
+          /* Set a specific height */
+          height: 50%;
+          top: -1.5rem;
+
+          /* Position and center the image to scale nicely on all screens */
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          position: relative;
+        }
+
+        /* Place text in the middle of the image */
+        .hero-text {
+          text-align: center;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+        }
+      </style>
+      <div class="hero-image">
+        <div class="hero-text">
+          <h1>Welcome to the Marketplace</h1>
+          <p>Something Something Darkside.....</p>
+        </div>
+      </div>
     </div>
 
     <script src="/app/dashboard/s/lib/jquery/jquery-3.3.1.slim.min.js"></script>

@@ -123,6 +123,8 @@ modules:
         path: lib/fontawesome/css/fontawesome-5.9.0.min.css
       - type: static
         path: lib/fontawesome/webfonts
+      - type: static
+        path: images
       - type: js
         path: js/example.javascript.js
         modifier:
