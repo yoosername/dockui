@@ -4,6 +4,7 @@ const ModuleFactory = require("./module/factory/ModuleFactory");
 
 const DEFAULT_APP_VERSION = "1.0.0";
 const DEFAULT_DESCRIPTOR_VERSION = "1.0.0";
+const DEFAULT_DESCRIPTOR_NAME = "dockui.app.yml";
 /**
  * @description Represents a single App.
  * @argument {Object} data - Existing App data
@@ -19,6 +20,7 @@ class App {
     description = id,
     version = DEFAULT_APP_VERSION,
     descriptorVersion = DEFAULT_DESCRIPTOR_VERSION,
+    descriptorName = DEFAULT_DESCRIPTOR_NAME,
     icon = null,
     build = null,
     lifecycle = null,
@@ -33,14 +35,15 @@ class App {
     this.alias = alias;
     this.baseUrl = baseUrl;
     this.type = type;
-    (this.description = description),
-      (this.version = version),
-      (this.descriptorVersion = descriptorVersion),
-      (this.icon = icon),
-      (this.build = build),
-      (this.lifecycle = lifecycle),
-      (this.authentication = authentication),
-      (this.enabled = enabled);
+    this.description = description;
+    this.version = version;
+    this.descriptorVersion = descriptorVersion;
+    this.descriptorName = descriptorName;
+    this.icon = icon;
+    this.build = build;
+    this.lifecycle = lifecycle;
+    this.authentication = authentication;
+    this.enabled = enabled;
     this.setModules(modules);
     this.permission = permission;
     this.docType = App.DOCTYPE;
@@ -125,10 +128,19 @@ class App {
 
   /**
    * @description Return the descriptor version of the descriptor that this App was loaded from
-   * @returns {String} version
+   * @returns {String} descriptorVersion
    */
   getDescriptorVersion() {
     return this.descriptorVersion;
+  }
+
+  /**
+   * @description Return the descriptor name of the descriptor that this App was loaded from
+   *              - defaults to dockui.app.yml
+   * @returns {String} descriptorName
+   */
+  getDescriptorName() {
+    return this.descriptorName;
   }
 
   /**
@@ -241,6 +253,7 @@ class App {
       description: this.description,
       version: this.version,
       descriptorVersion: this.descriptorVersion,
+      descriptorName: this.descriptorName,
       icon: this.icon,
       build: this.build,
       lifecycle: this.lifecycle,

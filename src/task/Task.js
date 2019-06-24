@@ -94,6 +94,7 @@ Task.events = Object.freeze({
 Task.types = Object.freeze({
   APP_LOAD: "APP_LOAD",
   APP_UNLOAD: "APP_UNLOAD",
+  APP_RELOAD: "APP_RELOAD",
   APP_ENABLE: "APP_ENABLE",
   APP_DISABLE: "APP_DISABLE",
   MODULE_ENABLE: "MODULE_ENABLE",

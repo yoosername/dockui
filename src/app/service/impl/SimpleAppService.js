@@ -111,6 +111,55 @@ class SimpleAppService extends AppService {
   }
 
   /**
+   * @description ReLoad an existing App (delegates to TaskManager for async operation)
+   *              - Loads the App as if it was new, but maintains the same id in the DB
+   *              - Optionally modify the Permission granted to the App
+   * @argument {App} app The existing App to reload
+   * @optional @argument {String} permission Permission to override when the App is reloaded
+   * @returns {Promise} Promise which resolves with new App() throws Error()
+   */
+  reloadApp(app, permission) {
+    // Use TaskManager to schedule loading the App
+    return new Promise(async (resolve, reject) => {
+      let task;
+      this.logger.info(
+        "APP RELOAD has been requested, creating a task for it (app=%s, permission=%s)",
+        app.getId(),
+        permission
+      );
+      try {
+        task = await this.taskManager.create(Task.types.APP_RELOAD, {
+          app: app,
+          permission: permission
+        });
+      } catch (err) {
+        this.logger.error("Error creating task %o", err);
+        return reject(err);
+      }
+      // Schedule it immediately
+      try {
+        task
+          .on(Task.events.ERROR_EVENT, error => {
+            this.logger.error("App ReLoad failed with error: %o", error);
+            reject(error);
+          })
+          .on(Task.events.SUCCESS_EVENT, data => {
+            this.logger.info(
+              "App ReLoaded successfully with App (id=%s, key=%s)",
+              data.getId(),
+              data.getKey()
+            );
+            resolve(data);
+          })
+          .commit();
+      } catch (err) {
+        this.logger.error("Error could not commit task %o", err);
+        return reject(new Error("Error commiting task"));
+      }
+    });
+  }
+
+  /**
    * @description UnLoad an already loaded App (delegates to TaskManager for async operation)
    * @argument {App} app The App to unload
    * @returns {Promise} Promise which resolves when app has been loaded.

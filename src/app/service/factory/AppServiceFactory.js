@@ -36,7 +36,7 @@ class AppServiceFactory {
     try {
       appService = new AppService({ taskManager, store, config, logger });
     } catch (e) {
-      console.log(e);
+      logger.error("Error creating AppService, error = ", e);
     }
 
     return appService;

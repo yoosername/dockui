@@ -26,6 +26,7 @@ describe("App", function() {
     expect(typeof app.getDescription).toBe("function");
     expect(typeof app.getVersion).toBe("function");
     expect(typeof app.getDescriptorVersion).toBe("function");
+    expect(typeof app.getDescriptorName).toBe("function");
     expect(typeof app.getIcon).toBe("function");
     expect(typeof app.getBuild).toBe("function");
     expect(typeof app.getLifecycle).toBe("function");

@@ -10,7 +10,8 @@ const TEST_APP_DESCRIPTOR = {
   description:
     "This is a demo App showing of the various features of the DockUI framework",
   version: "1.0.0",
-  "descriptor-version": "1.0.0",
+  descriptorVersion: "1.0.0",
+  descriptorName: "file.yml",
   icon: "/static/logo.png",
   build: ["docker build --tag dockuidemo .", "docker run -t dockuidemo"],
   lifecycle: {

@@ -43,6 +43,7 @@ describe("SimpleAppService", () => {
     expect(typeof appService.shutdown).toBe("function");
     expect(typeof appService.loadApp).toBe("function");
     expect(typeof appService.unLoadApp).toBe("function");
+    expect(typeof appService.reloadApp).toBe("function");
     expect(typeof appService.enableApp).toBe("function");
     expect(typeof appService.disableApp).toBe("function");
     expect(typeof appService.getApps).toBe("function");
@@ -97,6 +98,19 @@ describe("SimpleAppService", () => {
     } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_UNLOAD, {
       app
+    });
+  });
+
+  test("should reload an app by delegating to taskManager", async () => {
+    // Test that appService calls TaskManager.create("APP_RELOAD"
+    const appService = new SimpleAppService({ taskManager, store });
+    const app = new App();
+    try {
+      await appService.reloadApp(app, App.permissions.ADMIN);
+    } catch (e) {}
+    expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_RELOAD, {
+      app: app,
+      permission: App.permissions.ADMIN
     });
   });
 

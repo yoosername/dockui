@@ -383,6 +383,17 @@ class SimpleKoaWebService extends WebService {
       ctx.body = await this.appService.unLoadApp(app);
     });
 
+    // ReLoad an Existing App (Should keep ID and App should be notified)
+    router.put("/api/v1/admin/app/:id/reload", async ctx => {
+      if (!ctx.params.id) throw new Error("Missing param (id)");
+      const app = await this.appService.getApp(ctx.params.id);
+      const optionalPermission =
+        ctx.request.body && ctx.request.body.permission
+          ? ctx.request.body.permission
+          : ctx.request.query.permission;
+      ctx.body = await this.appService.reloadApp(app, optionalPermission);
+    });
+
     // List all Modules ( or return a single Module by id )
     router.get("/api/v1/admin/module/:moduleId*", async ctx => {
       if (ctx.params.moduleId && ctx.params.moduleId !== "") {

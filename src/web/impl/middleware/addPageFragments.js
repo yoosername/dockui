@@ -81,24 +81,20 @@ const fetchAndInjectFragment = async ({
   );
   try {
     let fragmentHtml = "";
-    console.log("GETS 1");
     const fragmentUrl = await getAbsoluteFragmentUrlFromModule({
       module,
       appService,
       logger
     });
-    console.log("GETS 2");
     const { res, body } = await fetch(null, {
       uri: fragmentUrl,
       method: "GET"
     });
-    console.log("GETS 3");
     if (res.statusCode === 200 && body) {
       const $fragment = cheerio.load(body);
       const fragSelector = module.getSelector();
       const actual = $fragment(fragSelector);
       if (actual) {
-        console.log("GETS 4");
         fragmentHtml = actual.html();
         selector.replaceWith(dom(fragmentHtml));
       } else {

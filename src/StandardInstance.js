@@ -14,6 +14,7 @@ const WebServiceFactory = require("./web/factory/WebServiceFactory");
 const AppLoader = require("./app/loader/AppLoader");
 const AppLoadWorker = require("./task/worker/impl/AppLoadWorker");
 const AppUnLoadWorker = require("./task/worker/impl/AppUnLoadWorker");
+const AppReloadWorker = require("./task/worker/impl/AppReloadWorker");
 const AppStateWorker = require("./task/worker/impl/AppStateWorker");
 const ModuleStateWorker = require("./task/worker/impl/ModuleStateWorker");
 const { Instance } = require("./Instance");
@@ -76,6 +77,7 @@ module.exports = generateStandardInstance = ({
     .withTaskWorkers([
       new AppLoadWorker(context),
       new AppUnLoadWorker(context),
+      new AppReloadWorker(context),
       new AppStateWorker(context),
       new ModuleStateWorker(context)
     ])

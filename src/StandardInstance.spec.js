@@ -16,7 +16,6 @@ describe("StandardInstance", function() {
   });
 
   test("it produces a standard instance properly", () => {
-    console.log;
     expect(() => {
       StandardInstance({ logger: supressLogger });
     }).not.toThrow();

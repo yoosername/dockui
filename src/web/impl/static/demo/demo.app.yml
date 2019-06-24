@@ -6,6 +6,8 @@ type: dynamic
 description: This is a demo Dashboard App showing of the various features of the DockUI framework
 version: 1.0.0
 descriptorVersion: 1.0.0
+# This defaults to dockui.app.yml ( used e.g. for reloads )
+descriptorName: demo.app.yml
 icon: "/static/images/logo.png"
 lifecycle:
   - loaded: /loaded

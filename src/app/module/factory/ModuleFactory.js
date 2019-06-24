@@ -24,7 +24,8 @@ class ModuleFactory {
    */
   create({ module = { type: Module.DESCRIPTOR_TYPE } } = {}) {
     let ModuleConstructor = null;
-    switch (module.type) {
+    let type = module && module.type ? module.type : "";
+    switch (type) {
       case ApiModule.DESCRIPTOR_TYPE:
         ModuleConstructor = ApiModule;
         break;

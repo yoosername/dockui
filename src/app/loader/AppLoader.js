@@ -102,6 +102,7 @@ class AppLoader {
             description: descriptor.description,
             version: descriptor.version,
             descriptorVersion: descriptor.descriptorVersion,
+            descriptorName: descriptor.descriptorName,
             icon: descriptor.icon,
             build: descriptor.build,
             lifecycle: descriptor.lifecycle,
