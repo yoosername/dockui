@@ -468,19 +468,20 @@ class SimpleKoaWebService extends WebService {
 
     // If module Type is WebPage then perform these steps
     // 1: Fetch the page (GET/POST) - with replicated headers - and add result to dockui.webPage.stack
+    // 1b: Check if it has a decortator - if yes fetch and add to stack - if no return
+    // 1c: repeat
     appGateway.use(fetchPage(this));
 
-    // 2a: Strip resources from page & add to ctx.dockui.resources
+    // 2a: Strip resources from each page in the stack (dedupe) and add to ctx.dockui.resources
     // 2b: Add Module specified Resources to ctx.dockui.resources
     appGateway.use(addResourcesToContext(this));
 
-    // 3a: Check if Page needs decoration and if so fetch Parent page
-    // 3b: Replace ctx.dockui.page with the decorated one
+    // 3: Recombine the stack of pages into a single decorated page
     appGateway.use(decoratePage(this));
 
-    // 4a: Fetch any specified PageFragments
-    // 4b: Inject Fragments into ctx.dockui.page
-    // appGateway.use(addPageFragments(this));
+    // 4a: Fetch any known WebFragments which target this page
+    // 4b: Inject Fragments into ctx.dockui.page at the target locations
+    appGateway.use(addPageFragments(this));
 
     // 5: Build and inject any required PageItems into ctx.dockui.page
     // appGateway.use(addPageItems(this));
@@ -491,13 +492,17 @@ class SimpleKoaWebService extends WebService {
     // 7: Serve the resulting page to client
     appGateway.use(serveIfWebPage(this));
 
+    // Mount the app middle to the /app context
     app.use(mount("/app", appGateway));
 
+    // Add all the Router configured routes to the main app
     this.logger.debug("Configured App Gateway routes");
     app.use(router.routes());
     app.use(router.allowedMethods());
 
-    // Show a 404 JSON based error for any unknown routes
+    /**
+     * At this point all routes have been exhausted, so must be a 404
+     **/
     app.use(ctx => {
       ctx.throw(404); // throw 404s after all routers try to route this request
     });

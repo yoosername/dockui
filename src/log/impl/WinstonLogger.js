@@ -9,9 +9,16 @@ const upperCaseLevel = printf((info, opts) => {
   info.level = info.level.toUpperCase();
   return info;
 });
+
+const dockuiSpacing = printf((info, opts) => {
+  info.service = info.service.padStart(20, ".").slice(-20);
+  info.level = info.level.padStart(6, " ").slice(-6);
+  return info;
+});
+
 const dockuiLogFormat = printf(
   ({ level, message, service, timestamp, ...rest }) => {
-    return `[${timestamp}][${service}][${level}] : ${message}`;
+    return `[${level}][${timestamp}][${service}] : ${message}`;
   }
 );
 /**
@@ -29,7 +36,7 @@ class WinstonLogger extends Logger {
     this.logLevel = configLogLevel ? configLogLevel : DEFAULT_LOG_LEVEL;
     this.parent = parent;
     this.children = [];
-    const loggerServiceName = this.config.get("service.name") || "main";
+    let loggerServiceName = this.config.get("service.name") || "main";
     // If we have a parent then get a winston child logger instead.
     try {
       this._transports = {
@@ -43,6 +50,7 @@ class WinstonLogger extends Logger {
           upperCaseLevel,
           splat(),
           simple(),
+          dockuiSpacing,
           colorize({ all: false }),
           dockuiLogFormat
         ),

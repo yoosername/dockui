@@ -51,7 +51,6 @@ module.exports = function({ config, logger } = {}) {
     // Do bodyResources
     $("[data-WebResourcesFor]").each(function(i, el) {
       let resourcesFor = $(this).data("webresourcesfor");
-      console.log(resourcesFor);
       let parts = resourcesFor.split(":");
       let resourceType = parts[0];
       let embedTypes = parts[1].split(",");

@@ -1,4 +1,4 @@
-let cheerio = require("cheerio");
+const cheerio = require("cheerio");
 
 const recombinePages = stack => {
   let flatPage = "";
@@ -29,8 +29,7 @@ const recombinePages = stack => {
   return flatPage;
 };
 /**
- * @description Middleware function to Check if a Page requires decoration and if so
- *              fetching it and decorating it
+ * @description Middleware function to Recombine the stack of pages into a single decorated page
  */
 module.exports = function({ config, logger } = {}) {
   return async function decoratePage(ctx, next) {

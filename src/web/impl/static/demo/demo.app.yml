@@ -77,11 +77,11 @@ modules:
 
     # Inject Page fragment
   - type: WebFragment
-    name: Dashboard Widget
-    key: dockui.dashboard.fragments.widget
-    url: /fragments/widget.html
-    selector: "#fragment-selector"
-    location: dashboard.home.main
+    name: Dashboard Welcome Header
+    key: dockui.dashboard.fragments.header
+    url: /pages/fragments/heroHeader.html
+    selector: "#heroHeader"
+    location: dockui.dashboard:header
     weight: 10
     cache:
       enabled: true

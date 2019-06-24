@@ -34,7 +34,7 @@ module.exports = function({ config, logger, appService } = {}) {
             );
             const resourceUrl = new URL(normalizedPath, appBaseUrl);
             logger.debug(
-              "This is a Resource Module, streaming file from %s",
+              "This is a Resource Module, streaming file directly from %s",
               resourceUrl
             );
             return (ctx.body = ctx.req.pipe(request(resourceUrl.toString())));
