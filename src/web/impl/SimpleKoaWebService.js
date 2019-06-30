@@ -16,6 +16,7 @@ const multer = require("koa-multer");
 //const ratelimit = require('koa-ratelimit');
 
 // App Gateway Middleware
+const setupDockUI = require("./middleware/setupDockUI");
 const detectModule = require("./middleware/detectModule");
 const cacheHandler = require("./middleware/cacheHandler");
 const routeHandler = require("./middleware/routeHandler");
@@ -435,6 +436,8 @@ class SimpleKoaWebService extends WebService {
     /**
      * App Gateway Middleware
      **/
+    // Make sure dockui object available for middlewares
+    app.use(setupDockUI(this));
 
     /**
      * @description Middleware to provide routing

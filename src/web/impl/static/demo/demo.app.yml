@@ -160,7 +160,7 @@ modules:
       - index
       - index.html
     url: /pages/home.html
-    caching:
+    cache:
       enabled: true
       ttl: 2000ms
     # If a decorator is specified then this page will be injected into its HTML at the first "data-content"
@@ -175,7 +175,7 @@ modules:
     aliases:
       - manage
     url: /pages/manage.html
-    caching:
+    cache:
       enabled: true
       ttl: 2000ms
     # If a decorator is specified then this page will be injected into its HTML at the first "data-content"
@@ -217,7 +217,7 @@ modules:
       - api/users # /app/dashboard/api/users
     version: 1.0
     url: /rest/api/1.0/users
-    caching:
+    cache:
       enabled: true
       ttl: 60000ms
     auth:
