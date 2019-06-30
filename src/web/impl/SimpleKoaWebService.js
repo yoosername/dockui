@@ -53,6 +53,7 @@ class SimpleKoaWebService extends WebService {
    */
   constructor({
     appService,
+    taskManager,
     config = new Config(),
     logger = new Logger(config)
   } = {}) {
@@ -357,8 +358,15 @@ class SimpleKoaWebService extends WebService {
      */
 
     // TODO: Add endpoint for viewing tasks
-    // Get array of all tasks : router.get("/api/manage/task");
-    // Get single task (including status) : router.get("/api/manage/task/:id");
+    // Get Object of all tasks : router.get("/api/manage/task?status=InProgress");
+    // or get single task (including status) : router.get("/api/manage/task/:id");
+    router.get("/api/v1/admin/task/:id*", async ctx => {
+      if (ctx.params.id && ctx.params.id !== "") {
+        ctx.body = this.taskManager.getTask(ctx.params.id);
+      } else {
+        ctx.body = this.taskManager.getTasks(ctx.request.query.status);
+      }
+    });
 
     // Load a new App
     router.post("/api/v1/admin/app", async ctx => {

@@ -9,8 +9,9 @@ class WebService {
    * @argument {AppService} appService The AppService for interacting with Apps
    * @argument {Config} config The Runtime Config
    */
-  constructor({ appService, config = new Config() } = {}) {
+  constructor({ appService, taskManager, config = new Config() } = {}) {
     this.appService = appService;
+    this.taskManager = taskManager;
     this.config = config;
   }
 

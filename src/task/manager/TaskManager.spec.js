@@ -15,6 +15,8 @@ describe("TaskManager", function() {
     const taskManager = new TaskManager();
     expect(typeof taskManager.create).toBe("function");
     expect(typeof taskManager.process).toBe("function");
+    expect(typeof taskManager.getTasks).toBe("function");
+    expect(typeof taskManager.getTask).toBe("function");
     expect(typeof taskManager.start).toBe("function");
     expect(typeof taskManager.shutdown).toBe("function");
   });
@@ -24,9 +26,11 @@ describe("TaskManager", function() {
     const taskManager = new TaskManager();
     taskManager.create();
     taskManager.process();
+    taskManager.getTasks();
+    taskManager.getTask();
     taskManager.start();
     taskManager.shutdown();
-    expect(logSpy).toHaveBeenCalledTimes(4);
+    expect(logSpy).toHaveBeenCalledTimes(6);
     logSpy.mockRestore();
   });
 });

@@ -66,6 +66,28 @@ class TaskManager extends EventEmitter {
   }
 
   /**
+   * @description Return all tasks processed by this Manager
+   * @argument {String} type Optional filter for list of tasks
+   * @return {Object} An object containing tasks keyed on respective queue.
+   */
+  getTasks(type) {
+    console.warn(
+      "[TaskManager] getTasks - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
+   * @description Return single taskby its ID
+   * @argument {String} id Id of the task to find
+   * @return {Task} The Task matching the ID
+   */
+  getTask(id) {
+    console.warn(
+      "[TaskManager] getTask - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
    * @async
    * @description Start Processing Tasks
    * @return {Promise} A Promise which should resolve once everything has been started successfully

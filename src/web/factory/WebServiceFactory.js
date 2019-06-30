@@ -17,6 +17,7 @@ class WebServiceFactory {
    */
   create({
     appService,
+    taskManager,
     config = new Config(),
     logger = new Logger(config)
   } = {}) {
@@ -29,7 +30,7 @@ class WebServiceFactory {
         WebService = SimpleKoaWebService;
     }
     try {
-      webService = new WebService({ appService, config, logger });
+      webService = new WebService({ appService, taskManager, config, logger });
     } catch (e) {
       logger.error("Error creating WebService: %o", e);
     }

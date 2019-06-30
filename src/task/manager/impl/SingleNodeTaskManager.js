@@ -34,6 +34,42 @@ class SingleNodeTaskManager extends TaskManager {
   }
 
   /**
+   * @description Conveniance wrapper for showing tasks by status
+   * @return {Object} The tasks keyed on their respective queue
+   */
+  getTasks(type) {
+    let tasks = {
+      queue: this.getQueued(),
+      inProgress: this.getInProgress(),
+      successful: this.getSuccessful(),
+      failed: this.getFailed()
+    };
+    if (type) {
+      return { [type]: tasks[type] };
+    }
+    return tasks;
+  }
+
+  /**
+   * @description Return single taskby its ID
+   * @argument {String} id Id of the task to find
+   * @return {Task} The Task matching the ID
+   */
+  getTask(id) {
+    let filteredTasks = []
+      .concat([
+        ...this.getQueued(),
+        ...this.getInProgress(),
+        ...this.getSuccessful(),
+        ...this.getFailed()
+      ])
+      .filter(task => {
+        return task.id === id;
+      });
+    return filteredTasks[0];
+  }
+
+  /**
    * @description Get all the queued (committed) tasks
    * @argument {Array} tasks The task that have been committed
    */
@@ -150,7 +186,6 @@ class SingleNodeTaskManager extends TaskManager {
    * @description Grab Task from queue, add to inProgress and return
    * @argument {Object} worker The worker which wants to process the task
    */
-  // TODO: Figure out a better way of handling tasks rather than using a set interval
   getNextQueuedTask(worker) {
     let task = null;
 

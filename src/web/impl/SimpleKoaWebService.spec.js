@@ -1,9 +1,11 @@
 const SimpleKoaWebService = require("./SimpleKoaWebService");
 const AppService = require("../../app/service/AppService");
+const TaskManager = require("../../task/manager/TaskManager");
 const { Config } = require("../../config/Config");
 const request = require("supertest");
 
 jest.mock("../../app/service/AppService");
+jest.mock("../../task/manager/TaskManager");
 
 var TEST_MODULES = [{ key: "1" }, { key: "2" }];
 var TEST_SINGLE_MODULE = { key: "im-a-key" };
@@ -50,6 +52,29 @@ const TEST_DELETED_APP = {
   enabled: "false"
 };
 
+const TEST_TASKS = {
+  queue: "",
+  inProgress: "",
+  successful: "",
+  failed: ""
+};
+
+const TEST_TASK = {
+  id: "test"
+};
+
+const setupTestTaskManager = () => {
+  const base = new TaskManager();
+  base.getTasks.mockImplementation(type => {
+    if (type) {
+      return { [type]: TEST_TASKS[type] };
+    }
+    return TEST_TASKS;
+  });
+  base.getTask.mockReturnValue(TEST_TASK);
+  return base;
+};
+
 const setupTestAppService = () => {
   const base = new AppService();
   base.getApps.mockResolvedValue(TEST_APPS);
@@ -68,6 +93,7 @@ const setupTestAppService = () => {
 // Follow example at: https://codeburst.io/lets-build-a-rest-api-with-koa-js-and-test-with-jest-2634c14394d3
 let webService = null;
 let appService = null;
+let taskManager = null;
 let config = null;
 
 describe("SimpleKoaWebService", function() {
@@ -76,9 +102,10 @@ describe("SimpleKoaWebService", function() {
   beforeEach(async () => {
     process.env.DOCKUI_WEB_PORT = 10000;
     appService = setupTestAppService();
+    taskManager = setupTestTaskManager();
     config = new Config();
     try {
-      webService = new SimpleKoaWebService({ appService, config });
+      webService = new SimpleKoaWebService({ appService, taskManager, config });
       await webService.start();
     } catch (e) {
       console.error("couldnt start webService : ", e);
@@ -265,10 +292,26 @@ describe("SimpleKoaWebService", function() {
       expect(response.body).toEqual(TEST_SINGLE_MODULE);
     });
 
-    test("should run Tasks asyncronously and return an object containing link to find out status", async () => {
-      // TODO: Change expected response to Async with link to updates
-      // { taskId: "2342342342342", started: true||false, status: "/api/manage/task/2342342342342/status"}
-      // Test should submit e.g. an enable and check that it returns a taskId and status link
+    test("should be able to list all tasks (optionally filtering on status)", async () => {
+      let response = await request(webService.getServer()).get(
+        "/api/v1/admin/task"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_TASKS);
+
+      response = await request(webService.getServer()).get(
+        "/api/v1/admin/task?status=inProgress"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual({ inProgress: TEST_TASKS.inProgress });
+    });
+
+    test("should be able to list a single task", async () => {
+      let response = await request(webService.getServer()).get(
+        "/api/v1/admin/task/12345"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual(TEST_TASK);
     });
   });
 
