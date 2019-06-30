@@ -53,9 +53,11 @@ module.exports = function({ config, logger } = {}) {
     // Continue up the middleware chain
     await next();
     // Request is ready
+    // Only cache for status 200
+    const is200 = ctx.statusCode === 200 ? true : false;
     // If Module has caching enabled cache using defined TTL
     const cacheSettings = ctx.dockui.module.getCache();
-    if (cacheSettings && cacheSettings.enabled === true) {
+    if (is200 && cacheSettings && cacheSettings.enabled === true) {
       // Add current CTX.body to cache using (ctx.dockui.cache.key) mark response time (ctx.dockui.cache.responseTimestamp)
       const ttl = cacheSettings.ttl;
       if (ttl) {
@@ -68,17 +70,12 @@ module.exports = function({ config, logger } = {}) {
       logger.debug("Cached response (key=%s)", ctx.dockui.cache.key);
     } else {
       logger.debug(
-        "Caching disabled or not configured for module (key=%s)",
+        "Caching disabled, ignored as status != 200, or not configured for module (key=%s)",
         ctx.dockui.module.getKey()
       );
     }
     ctx.dockui.cache.finishTime = timeInMS();
     const timeTaken = ctx.dockui.cache.finishTime - ctx.dockui.cache.startTime;
     logger.debug("Uncached response took %i ms", timeTaken);
-    console.log(
-      ctx.dockui.cache.startTime,
-      ctx.dockui.cache.finishTime,
-      timeTaken
-    );
   };
 };
