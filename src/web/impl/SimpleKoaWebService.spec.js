@@ -3,6 +3,7 @@ const AppService = require("../../app/service/AppService");
 const TaskManager = require("../../task/manager/TaskManager");
 const { Config } = require("../../config/Config");
 const request = require("supertest");
+const execSync = require("child_process").execSync;
 
 jest.mock("../../app/service/AppService");
 jest.mock("../../task/manager/TaskManager");
@@ -98,6 +99,10 @@ let config = null;
 
 describe("SimpleKoaWebService", function() {
   "use strict";
+
+  beforeAll(async () => {
+    execSync("tools/gen_ssl_cert.sh &>/dev/null");
+  });
 
   beforeEach(async () => {
     process.env.DOCKUI_WEB_PORT = 10000;
@@ -313,32 +318,28 @@ describe("SimpleKoaWebService", function() {
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(TEST_TASK);
     });
+
+    test("should be able to switch https on or off with ENV", async () => {
+      expect(webService.getScheme()).toEqual("http");
+      expect(webService.isRunning()).toEqual(true);
+      try {
+        webService.shutdown();
+        config.set("web.scheme", "https");
+        config.set("web.ssl.cert", "/tmp/dockui.server.cert");
+        config.set("web.ssl.key", "/tmp/dockui.server.key");
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        webService = new SimpleKoaWebService({
+          appService,
+          taskManager,
+          config
+        });
+        await webService.start();
+      } catch (e) {
+        console.log("couldnt start webService : ", e);
+      }
+
+      expect(webService.getScheme()).toEqual("https");
+      expect(webService.isRunning()).toEqual(true);
+    });
   });
-
-  // TODO - Add a test for switching between https and http based on ENV
-
-  // TODO (v0.0.2-Alpha):
-  // Implement the concept of a URN for subject, resource
-  // Implement the concept of action
-  // Do this mapping early in the handling of traffic. (Perhaps after authentication) Examples:
-  //
-  //  User User1 performs GET against /api/apps
-  //    Subject URN = urn:dockui:2ca6fec3:iam:user/User1
-  //    Resource URN = urn:dockui:2ca6fec3:app:api/
-  //    Action = { action "read" }
-  //
-  //  User Bob performs POST against /api/apps/c33de4ff/modules/6f77c12a/enable
-  //    Subject URN = urn:dockui:2ca6fec3:iam:user/Bob
-  //    Resource URN = urn:dockui:2ca6fec3:app:api/c33de4ff/modules/6f77c12a/enable
-  //    Action = { action "write" }
-  //
-  //  App c33de4ff performs PUT against /api/apps/1.0/a3cc4ed2
-  //    Subject URN = urn:dockui:2ca6fec3:app:c33de4ff
-  //    Resource URN = urn:dockui:2ca6fec3:app:api:1.0:GET:/a3cc4ed2
-  //    Action = { action "write" }
-
-  // If there are no Authentication Provider modules then provide default as follows:
-  //  - Authentication provider maps your request to predefined Anonimous access account
-  //  - Authorization provider checks that the Resources allow Anonimous access.
-  //  When designing a demo make sure it has some features with anon access and some locked down
 });

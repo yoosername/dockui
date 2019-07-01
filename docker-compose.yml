@@ -7,8 +7,8 @@ services:
       - dockui
     environment:
       - DOCKUI_WEB_PORT=3000
-      - DOCKUI_WEB_SSL_CERT=/tmp/dockui/certs/server.cert
-      - DOCKUI_WEB_SSL_KEY=/tmp/dockui/certs/server.key
+      - DOCKUI_WEB_SSL_CERT=/tmp/dockui.server.cert
+      - DOCKUI_WEB_SSL_KEY=/tmp/dockui.server.key
       - DOCKUI_WEB_SCHEME=https
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:

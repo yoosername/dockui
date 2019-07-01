@@ -620,6 +620,15 @@ class SimpleKoaWebService extends WebService {
   }
 
   /**
+   * @description Helper to get the current scheme
+   * @returns {String} the Scheme (http/https)
+   */
+  getScheme() {
+    "use strict";
+    return this.scheme;
+  }
+
+  /**
    * @description Helper to get the configured port
    * @returns {int} port
    */

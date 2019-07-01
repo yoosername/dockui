@@ -1,4 +1,5 @@
 const { Config } = require("../config/Config");
+const DEFAULT_SCHEME = "http";
 
 /**
  * @description Wraps the intialization, configuration and starting/stopping of a web server
@@ -13,6 +14,7 @@ class WebService {
     this.appService = appService;
     this.taskManager = taskManager;
     this.config = config;
+    this.scheme = DEFAULT_SCHEME;
   }
 
   /**
@@ -57,6 +59,17 @@ class WebService {
     "use strict";
     console.warn(
       "[WebService] isRunning - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
+   * @description Helper to get the current scheme
+   * @returns {String} the Scheme (http/https)
+   */
+  getScheme() {
+    "use strict";
+    console.warn(
+      "[WebService] getScheme - NoOp implementation - this should be extended by child classes"
     );
   }
 
