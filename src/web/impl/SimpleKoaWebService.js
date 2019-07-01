@@ -92,15 +92,20 @@ class SimpleKoaWebService extends WebService {
         await next();
       } catch (err) {
         const status = err.status || 500;
+        const msg =
+          typeof err === "string"
+            ? err.toString()
+            : !(err instanceof Error) && typeof err === "object"
+            ? err.message
+            : err instanceof Error
+            ? err
+            : err.toString();
+
         ctx.status = status;
-        ctx.body = { error: { status: status, message: err.message } };
-        ctx.app.emit("error", err, ctx);
-        this.logger.error(
-          "error (status=%s) (message=%s)",
-          status,
-          err.message
-        );
-        if (err.status === 500) {
+        ctx.body = { error: { status: status, message: msg } };
+        //ctx.app.emit("error", err, ctx);
+        this.logger.error("error (status=%s) (message=%s)", status, msg);
+        if (status === 500) {
           this.logger.error("stack trace: %o", err);
         }
       }

@@ -207,6 +207,8 @@ class SingleNodeTaskManager extends TaskManager {
     });
     // add it to the in progress queue
     this.inProgressQueue.push(task);
+    // Update task status
+    task.emit(Task.events.IN_PROGRESS_EVENT);
     this.logger.debug(
       "Promoted task with id %s, from queue to in progress",
       task.getId()

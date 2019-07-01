@@ -2,6 +2,7 @@ const Task = require("../../../task/Task");
 const TaskWorker = require("../../../task/worker/TaskWorker");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
+const App = require("../../../app/App");
 
 /**
  * @description Worker which responds to App Load requests by processing the descriptor
@@ -33,6 +34,11 @@ class AppLoadWorker extends TaskWorker {
     this.config = config;
     this.logger = logger.child({ config: { "service.name": "AppLoadWorker" } });
     this._running = false;
+
+    process.on("unhandledRejection", (reason, p) => {
+      console.log("Unhandled Rejection at: Promise", p, "reason:", reason);
+      // application specific logging, throwing an error, or other logic here
+    });
   }
 
   /**
@@ -125,6 +131,20 @@ class AppLoadWorker extends TaskWorker {
       // Try to load the App from the URL
       try {
         app = await this.appLoader.load({ url, permission });
+
+        // Make sure it isnt already loaded
+        const existingApps = this.store.find(doc => {
+          return (
+            doc.docType === App.DOCTYPE &&
+            doc.baseUrl === app.getBaseUrl() &&
+            doc.key === app.getKey()
+          );
+        });
+        if (existingApps && existingApps.length && existingApps.length > 0) {
+          throw new Error(
+            `This App(id=${app.getKey()}, baseUrl=${app.getBaseUrl()}) already exists - skipping`
+          );
+        }
       } catch (e) {
         let errMsg = `Task(${task.getId()}) : There was a problem loading the App descriptor from url(${url}) : ${e}`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
