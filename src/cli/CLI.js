@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
-const request = require("request-promise-native");
+const request = require("request");
 const Table = require("cli-table3");
 const colors = require("colors");
 
 const defaultFetcher = async options => {
-  let data = {};
-  try {
-    data = await request(options);
-  } catch (e) {
-    throw new Error(
-      `Error fetching Descriptor with options(${options}) Error: ${e}`
-    );
-  }
-  return data;
+  return new Promise(function(resolve, reject) {
+    try {
+      request(options, (err, response, body) => {
+        if (err) return reject(err);
+        resolve({ response, body });
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
 };
 
 const {
@@ -41,9 +42,10 @@ const showUsage = ({
     $ ${name} <cmd>
 
   Options
-    --help, -h  Show this usage
-    -v  Increment the logging verbosity
-    -i  Running instance to run commands against
+    --help, -h       Show this usage
+    -v               Increment the logging verbosity
+    --instance, -i   Running instance to run commands against
+    --quiet, -q      Quiet mode
 
   Examples
     $ ${name} run                             Start new instance
@@ -97,6 +99,18 @@ const getDefaultFormatters = () => {
   };
 };
 
+const getQuietFormatters = () => {
+  return {
+    apps: apps => {
+      let output = "";
+      apps.forEach(app => {
+        output += app.id + "\n";
+      });
+      return output.trimRight();
+    }
+  };
+};
+
 /**
  * the CLI allows simpler management of DockUI instances from the Commandline
  */
@@ -130,6 +144,7 @@ class CLI {
     this.remoteInstanceURL = remoteInstanceURL
       ? remoteInstanceURL
       : DEFAULT_INSTANCE_URL;
+    this.quiet = false;
   }
 
   /**
@@ -140,21 +155,37 @@ class CLI {
   }
 
   /**
+   * @description Sets formatters to be quiet for all output
+   */
+  setQuietMode() {
+    this.formatters = getQuietFormatters();
+    this.quiet = true;
+  }
+
+  /**
    * @description Processes the passed arguments
    */
   parse(args) {
     return new Promise(async (resolve, reject) => {
       try {
         this.args = minimist(args, {
-          string: ["v", "instance", "i"]
+          string: ["v", "instance", "i"],
+          boolean: ["quiet", "q"]
         });
       } catch (err) {
         return reject(err);
       }
 
+      // Set whether to quiet all output
+      if (this.args.quiet || this.args.q) {
+        this.setQuietMode();
+      }
+
       // Set the instance
-      if (this.args.instance) {
-        this.remoteInstanceURL = this.args.instance;
+      if (this.args.instance || this.args.i) {
+        this.remoteInstanceURL = this.args.instance
+          ? this.args.instance
+          : this.args.i;
       }
 
       // Set LogLevel
@@ -203,25 +234,34 @@ class CLI {
       if (this.args._[2] === "app") {
         // List all Apps
         if (this.args._[3] === "ls") {
+          const uri = this.remoteInstanceURL + "/api/v1/admin/app";
           try {
-            const uri = this.remoteInstanceURL + "/api/v1/admin/app";
-            const allApps = await this.fetcher({
+            const { response, body } = await this.fetcher({
               uri,
               method: "GET",
               json: true
             });
-            if (allApps && allApps.length && allApps.length > 0) {
+            if (!response.statusCode === 200) {
+              this.logger.error(
+                "There was an error calling the management Api(%s)",
+                uri
+              );
+              this.logger.error(response.message);
+              resolve();
+            }
+            if (body && body.length && body.length > 0) {
               if (
                 this.formatters.apps &&
                 typeof this.formatters.apps === "function"
               ) {
-                this.screen.log(this.formatters.apps(allApps));
+                this.screen.log(this.formatters.apps(body));
               }
             } else {
               this.screen.log("");
             }
           } catch (err) {
-            this.logger.error("Error fetching apps, error = %o", err);
+            this.logger.error("Error connecting to Management API (%s)", uri);
+            this.logger.debug(err);
           }
         }
       }
