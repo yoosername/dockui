@@ -37,7 +37,9 @@ class WebResourceModuleLoader extends ModuleLoader {
           url: descriptor.url,
           type: descriptor.type,
           description: descriptor.description,
-          auth: descriptor.auth
+          auth: descriptor.auth,
+          cache: descriptor.cache,
+          context: descriptor.context
         };
         // Create a Module from the shape and return it
         const module = new WebResourceModule(shape);

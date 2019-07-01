@@ -1,5 +1,4 @@
 const Module = require("../Module");
-const DEFAULT_CONTEXT = "app.general";
 
 /**
  * @description Represents an WebResource Module.
@@ -11,7 +10,7 @@ class WebResourceModule extends Module {
   constructor({
     url = null,
     resources = [],
-    context = DEFAULT_CONTEXT,
+    context = null,
     weight = "10"
   } = {}) {
     super(...arguments);

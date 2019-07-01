@@ -103,7 +103,10 @@ const getModuleFromURLPart = async ({ part, appService, logger, ctx }) => {
     }
     return modules[0];
   } else {
-    throw new Error("No Module found with (id,key or alias) of " + part);
+    throw {
+      status: 404,
+      message: "No Module found with (id,key or alias) of " + part
+    };
   }
 };
 /**

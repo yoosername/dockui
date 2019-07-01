@@ -312,7 +312,6 @@ class SimpleAppService extends AppService {
    * @argument {Object} id The ID of the App
    * @returns {App} Requested App
    */
-  // TODO Cache the response from the store in memory.
   async getApp(id) {
     return new Promise((resolve, reject) => {
       let doc, app;

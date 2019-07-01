@@ -362,7 +362,6 @@ class SimpleKoaWebService extends WebService {
      * DockUI Framework Admin Routes
      */
 
-    // TODO: Add endpoint for viewing tasks
     // Get Object of all tasks : router.get("/api/manage/task?status=InProgress");
     // or get single task (including status) : router.get("/api/manage/task/:id");
     router.get("/api/v1/admin/task/:id*", async ctx => {

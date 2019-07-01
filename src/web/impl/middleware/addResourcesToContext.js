@@ -1,10 +1,66 @@
-let cheerio = require("cheerio");
+const cheerio = require("cheerio");
+const WebResourceModule = require("../../../app/module/impl/WebResourceModule");
+const path = require("path");
+
+const getResourcePath = async (appService, resource) => {
+  const resourcePath = resource.path;
+  const module = resource.module;
+  let resourceUrl = null;
+  try {
+    const app = await appService.getApp(module.getAppId());
+    let appKey = app.getKey();
+    // If App has alias use it instead of the key for shorter URL
+    if (app.getAlias() !== null) {
+      appKey = app.getAlias();
+    }
+    let moduleKey = module.getKey();
+    // If Module has aliases use first foudn one instead of the key for shorter URL
+    const moduleAliases = module.getAliases();
+    if (
+      moduleAliases !== null &&
+      moduleAliases.length &&
+      moduleAliases.length > 0
+    ) {
+      moduleKey = moduleAliases[0];
+    }
+
+    resourceUrl = path.normalize(
+      "/app/" + appKey + "/" + moduleKey + "/" + resourcePath
+    );
+  } catch (e) {}
+  return resourceUrl;
+};
+
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(index, array[index], array);
+  }
+}
+
+const generateUniqueKeyFromObj = obj => {
+  const key = Object.values(obj)
+    .map(i => Object.values(i))
+    .join(":")
+    .replace(/[,\s:\.\/]/g, "");
+  return key;
+};
+
+const makeUnique = orig => {
+  let unique = {};
+  return orig.filter(item => {
+    const key = generateUniqueKeyFromObj(item);
+    if (!unique.hasOwnProperty(key)) {
+      unique[key] = item;
+      return true;
+    }
+  });
+};
 
 /**
  * @description Middleware function to strip out Page resources to the context
  *              and add resources provided by other Modules to the context too
  */
-module.exports = function({ config, logger } = {}) {
+module.exports = function({ config, logger, appService } = {}) {
   return async function addResourcesToContext(ctx, next) {
     // For each css, link, style, script tag parse it out for later.
     if (ctx.dockui.webPage && ctx.dockui.webPage.stack) {
@@ -60,32 +116,59 @@ module.exports = function({ config, logger } = {}) {
           ctx.dockui.webPage.stack[idx] = $.html();
         });
 
-        // Unique them
-        let unique = {};
-        ctx.dockui.webPage.scripts = scripts.filter(script => {
-          if (!unique[script.tag + script.attributes.src + script.content]) {
-            unique[
-              script.tag + script.attributes.src + script.content
-            ] = script;
-            return true;
-          }
-        });
-        ctx.dockui.webPage.links = links.filter(link => {
-          if (!unique[link.tag + link.attributes.href]) {
-            unique[link.tag + link.attributes.href] = link;
-            return true;
-          }
-        });
-        ctx.dockui.webPage.styles = styles.filter(style => {
-          if (!unique[style.tag + style.content]) {
-            unique[style.tag + style.content] = style;
-            return true;
-          }
-        });
+        // Now Add entries for each non static resource across all Resource modules that match
+        // the current context
+        const allResources = (await appService.getModules(module => {
+          let context = module.getContext ? module.getContext() : null;
+          return (
+            module.getType() === WebResourceModule.DESCRIPTOR_TYPE &&
+            module.getContext() === ctx.dockui.module.getKey()
+          );
+        }))
+          .map(module => {
+            let decoratedResources = module.getResources();
+            decoratedResources.forEach(resource => {
+              resource.module = module;
+            });
+            return decoratedResources;
+          })
+          .reduce((existingArray, newArray) => {
+            return [].concat(existingArray, newArray);
+          });
 
-        // Now for each non static item across all Resource modules
-        // Add them too
-        // TODO: this
+        if (allResources && allResources.length && allResources.length > 0) {
+          await asyncForEach(allResources, async (idx, resource) => {
+            const resourcePath = await getResourcePath(appService, resource);
+            switch (resource.type) {
+              case "js":
+                const script = {
+                  tag: "script",
+                  attributes: {
+                    src: resourcePath
+                  }
+                };
+                scripts.push(script);
+                break;
+              case "css":
+                const style = {
+                  tag: "link",
+                  attributes: {
+                    rel: "stylesheet",
+                    href: resourcePath
+                  }
+                };
+                links.push(style);
+                break;
+              default:
+                break;
+            }
+          });
+        }
+
+        // Unique them and add to the context
+        ctx.dockui.webPage.scripts = makeUnique(ctx.dockui.webPage.scripts);
+        ctx.dockui.webPage.links = makeUnique(ctx.dockui.webPage.links);
+        ctx.dockui.webPage.styles = makeUnique(ctx.dockui.webPage.styles);
       } catch (err) {
         logger.error("Error parsing current page: error = %o", err);
       }
