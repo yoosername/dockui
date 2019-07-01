@@ -1,6 +1,22 @@
 #!/usr/bin/env node
 
 const minimist = require("minimist");
+const request = require("request-promise-native");
+const Table = require("cli-table3");
+const colors = require("colors");
+
+const defaultFetcher = async options => {
+  let data = {};
+  try {
+    data = await request(options);
+  } catch (e) {
+    throw new Error(
+      `Error fetching Descriptor with options(${options}) Error: ${e}`
+    );
+  }
+  return data;
+};
+
 const {
   Config,
   EnvConfigLoader,
@@ -23,12 +39,14 @@ const showUsage = ({
 
   Options
     --help, -h  Show this usage
-    --verbosity, -v  Increment the logging verbosity
+    -v  Increment the logging verbosity
+    -i  Running instance to run commands against
 
   Examples
-    $ ${name} run           Start instance
-    $ ${name} env           Output config ( merged from all sources ) 
-    $ ${name} app
+    $ ${name} run                             Start new instance
+    $ ${name} env                             Output config ( merged from all sources ) 
+    $ ${name} app ls                          List all loaded Apps
+    $ ${name} app load <url> <permission>     Load a single App from its URL and optionally grant a permission
   
   Info
     Log Level:  ${logLevel}
@@ -55,6 +73,26 @@ const logEnvironment = ({ config, screen }) => {
   }
 };
 
+const getDefaultFormatters = () => {
+  return {
+    apps: apps => {
+      const table = new Table({
+        head: ["App", "Id", "Key", "Enabled", "Permission"],
+        style: {
+          head: []
+        }
+        //colWidths: [200, 100, 100, 100, 100, 100]
+      });
+      apps.forEach(app => {
+        let enabled = app.enabled ? colors.green(true) : colors.red(false);
+        const row = [app.name, app.id, app.key, enabled, app.permission];
+        table.push(row);
+      });
+      return table.toString();
+    }
+  };
+};
+
 /**
  * the CLI allows simpler management of DockUI instances from the Commandline
  */
@@ -67,9 +105,13 @@ class CLI {
     instance = null,
     config = new Config(),
     screen = console,
+    formatters = getDefaultFormatters(),
+    fetcher = defaultFetcher,
     logger = LoggerFactory.create(config)
   } = {}) {
     this.name = name;
+    this.fetcher = fetcher;
+    this.formatters = formatters;
     this.config = config
       ? config
       : Config.builder()
@@ -80,6 +122,7 @@ class CLI {
     const configLogLevel = config.get(LOG_LEVEL_CONFIG_KEY);
     this.logLevel = configLogLevel ? configLogLevel : DEFAULT_LOG_LEVEL;
     this.instance = instance ? instance : StandardInstance(...arguments);
+    this.remoteInstanceURL = null;
   }
 
   /**
@@ -96,10 +139,15 @@ class CLI {
     return new Promise(async (resolve, reject) => {
       try {
         this.args = minimist(args, {
-          string: ["v"]
+          string: ["v", "instance", "i"]
         });
       } catch (err) {
         return reject(err);
+      }
+
+      // Set the instance
+      if (this.args.instance) {
+        this.remoteInstanceURL = this.args.instance;
       }
 
       // Set LogLevel
@@ -142,6 +190,33 @@ class CLI {
           return reject(err);
         }
         return resolve();
+      }
+
+      // App commands
+      if (this.args._[2] === "app") {
+        // List all Apps
+        if (this.args._[3] === "ls") {
+          try {
+            const uri = this.remoteInstanceURL + "/api/v1/admin/app";
+            const allApps = await this.fetcher({
+              uri,
+              method: "GET",
+              json: true
+            });
+            if (allApps && allApps.length && allApps.length > 0) {
+              if (
+                this.formatters.apps &&
+                typeof this.formatters.apps === "function"
+              ) {
+                this.screen.log(this.formatters.apps(allApps));
+              }
+            } else {
+              this.screen.log("");
+            }
+          } catch (err) {
+            this.logger.error("Error fetching apps, error = %o", err);
+          }
+        }
       }
 
       resolve(arguments);

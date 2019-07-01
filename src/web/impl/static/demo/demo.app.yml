@@ -1,4 +1,4 @@
-key: dockui.dashboard.app
+key: dockui.dashboard.app2
 alias: dashboard
 name: DockUI Dashboard App
 baseUrl: http://localhost:8080/demo

@@ -113,7 +113,35 @@ describe("CLI", function() {
     expect(instance.start).toHaveBeenCalled();
   });
 
+  // ┌──────────────────────┬──────────────────────────────────────┬──────────────────────┬─────────┬────────────┐
+  // │ App                  │ Id                                   │ Key                  │ Enabled │ Permission │
+  // ├──────────────────────┼──────────────────────────────────────┼──────────────────────┼─────────┼────────────┤
+  // │ DockUI Dashboard App │ cfc3ad93-cfed-4b55-b9be-402ebae91839 │ dockui.dashboard.app │ true    │ read       │
+  // └──────────────────────┴──────────────────────────────────────┴──────────────────────┴─────────┴────────────┘
+
   // TODO (v0.0.1-Alpha): These tests ( all should wrap the web API )
+  test("should run an instance of dockui)", async function() {
+    const instance = new Instance();
+    const appList = [
+      { name: "1", id: "1", key: "1", enabled: "true", permission: "read" },
+      { name: "2", id: "2", key: "2", enabled: "false", permission: "read" }
+    ];
+    const testFetcher = jest.fn().mockResolvedValue(appList);
+    const screenSpy = { log: jest.fn() };
+    cli = new CLI({
+      instance: instance,
+      formatters: {
+        apps: apps => {
+          return apps;
+        }
+      },
+      fetcher: testFetcher,
+      screen: screenSpy
+    });
+    await cli.parse(["node", "dockui", "-i", "bla", "app", "ls"]);
+    expect(screenSpy.log).toHaveBeenCalled();
+    expect(screenSpy.log.mock.calls[0][0]).toBe(appList);
+  });
   // (3) List Loaded Apps
   //
   //     $ dockui app ls
