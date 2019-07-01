@@ -134,7 +134,7 @@ module.exports = function({ config, logger, appService } = {}) {
           })
           .reduce((existingArray, newArray) => {
             return [].concat(existingArray, newArray);
-          });
+          }, []); // Add starting array for the case of no starting values for reducer
 
         if (allResources && allResources.length && allResources.length > 0) {
           await asyncForEach(allResources, async (idx, resource) => {
