@@ -5,6 +5,9 @@ const request = require("request");
 const Table = require("cli-table3");
 const colors = require("colors");
 
+// Specific Commands
+const listApps = require("./commands/listApps");
+
 const defaultFetcher = async options => {
   return new Promise(function(resolve, reject) {
     try {
@@ -234,35 +237,13 @@ class CLI {
       if (this.args._[2] === "app") {
         // List all Apps
         if (this.args._[3] === "ls") {
-          const uri = this.remoteInstanceURL + "/api/v1/admin/app";
-          try {
-            const { response, body } = await this.fetcher({
-              uri,
-              method: "GET",
-              json: true
-            });
-            if (!response.statusCode === 200) {
-              this.logger.error(
-                "There was an error calling the management Api(%s)",
-                uri
-              );
-              this.logger.error(response.message);
-              resolve();
-            }
-            if (body && body.length && body.length > 0) {
-              if (
-                this.formatters.apps &&
-                typeof this.formatters.apps === "function"
-              ) {
-                this.screen.log(this.formatters.apps(body));
-              }
-            } else {
-              this.screen.log("");
-            }
-          } catch (err) {
-            this.logger.error("Error connecting to Management API (%s)", uri);
-            this.logger.debug(err);
-          }
+          listApps({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            formatters: this.formatters,
+            logger: this.logger
+          });
         }
       }
 
