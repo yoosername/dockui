@@ -217,7 +217,7 @@ class AppReloadWorker extends TaskWorker {
             } catch (e) {}
           }
         );
-        this.logger.info(
+        this.logger.verbose(
           "Task Worker (AppReload) [%s] has started and is ready to process tasks",
           this.worker.id
         );

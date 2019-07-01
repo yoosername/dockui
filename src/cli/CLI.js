@@ -27,11 +27,14 @@ const {
 
 const LOG_LEVEL_CONFIG_KEY = "logging.level";
 const DEFAULT_LOG_LEVEL = "info";
+const INSTANCE_URL_CONFIG_KEY = "instance";
+const DEFAULT_INSTANCE_URL = "http://localhost:8080";
 
 const showUsage = ({
   name = "CLI.js",
   logLevel = "info",
-  screen = console
+  screen = console,
+  remoteInstanceURL = DEFAULT_INSTANCE_URL
 }) => {
   screen.log(`
   Usage
@@ -50,6 +53,7 @@ const showUsage = ({
   
   Info
     Log Level:  ${logLevel}
+    Instance:  ${remoteInstanceURL}
   `);
 };
 
@@ -122,7 +126,10 @@ class CLI {
     const configLogLevel = config.get(LOG_LEVEL_CONFIG_KEY);
     this.logLevel = configLogLevel ? configLogLevel : DEFAULT_LOG_LEVEL;
     this.instance = instance ? instance : StandardInstance(...arguments);
-    this.remoteInstanceURL = null;
+    const remoteInstanceURL = config.get(INSTANCE_URL_CONFIG_KEY);
+    this.remoteInstanceURL = remoteInstanceURL
+      ? remoteInstanceURL
+      : DEFAULT_INSTANCE_URL;
   }
 
   /**

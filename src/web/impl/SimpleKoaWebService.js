@@ -591,6 +591,15 @@ class SimpleKoaWebService extends WebService {
             this.scheme,
             this.getPort()
           );
+          this.logger.info(`
+          
+            To connect a CLI to this instance first run:
+
+                export DOCKUI_INSTANCE=${
+                  this.scheme
+                }://localhost:${this.getPort()}
+
+          `);
         } catch (e) {
           this.logger.error("Web Service didnt start: %o", e);
           reject(e);

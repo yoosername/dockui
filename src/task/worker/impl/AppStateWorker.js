@@ -134,7 +134,7 @@ class AppStateWorker extends TaskWorker {
             await this.processTask(task, this.worker1);
           }
         );
-        this.logger.info(
+        this.logger.verbose(
           "TaskWorker (AppEnable) [%s] has started and is ready to process tasks",
           this.worker1.id
         );
@@ -150,7 +150,7 @@ class AppStateWorker extends TaskWorker {
             await this.processTask(task, this.worker2);
           }
         );
-        this.logger.info(
+        this.logger.verbose(
           "TaskWorker (AppDisable) [%s] has started and is ready to process tasks",
           this.worker2.id
         );

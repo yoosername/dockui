@@ -135,7 +135,7 @@ class ModuleStateWorker extends TaskWorker {
             await this.processTask(task, this.worker1);
           }
         );
-        this.logger.info(
+        this.logger.verbose(
           "TaskWorker (ModuleEnable) [%s] has started and is ready to process tasks",
           this.worker1.id
         );
@@ -151,7 +151,7 @@ class ModuleStateWorker extends TaskWorker {
             await this.processTask(task, this.worker2);
           }
         );
-        this.logger.info(
+        this.logger.verbose(
           "TaskWorker (ModuleDisable) [%s] has started and is ready to process tasks",
           this.worker2.id
         );

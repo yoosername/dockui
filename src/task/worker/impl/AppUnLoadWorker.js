@@ -146,7 +146,7 @@ class AppUnLoadWorker extends TaskWorker {
             } catch (e) {}
           }
         );
-        this.logger.info(
+        this.logger.verbose(
           "Task Worker (AppUnLoad) [%s] has started and is ready to process tasks",
           this.worker.id
         );

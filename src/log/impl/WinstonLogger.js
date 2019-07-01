@@ -12,7 +12,7 @@ const upperCaseLevel = printf((info, opts) => {
 
 const dockuiSpacing = printf((info, opts) => {
   info.service = info.service.padStart(20, ".").slice(-20);
-  info.level = info.level.padStart(6, " ").slice(-6);
+  info.level = info.level.padStart(8, " ").slice(-8);
   return info;
 });
 
