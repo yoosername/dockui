@@ -7,6 +7,8 @@ const colors = require("colors");
 
 // Specific Commands
 const listApps = require("./commands/listApps");
+const enableApp = require("./commands/enableApp");
+const disableApp = require("./commands/disableApp");
 
 const defaultFetcher = async options => {
   return new Promise(function(resolve, reject) {
@@ -55,6 +57,8 @@ const showUsage = ({
     $ ${name} env                             Output config ( merged from all sources ) 
     $ ${name} app ls                          List all loaded Apps
     $ ${name} app load <url> <permission>     Load a single App from its URL and optionally grant a permission
+    $ ${name} app enable <appId>              Enable a single app by its ID
+    $ ${name} app disable <appId>             Disable a single app by its ID
   
   Info
     Log Level:  ${logLevel}
@@ -243,6 +247,38 @@ class CLI {
             screen: this.screen,
             formatters: this.formatters,
             logger: this.logger
+          });
+        }
+
+        // Enable App
+        if (this.args._[3] === "enable") {
+          if (!this.args._[4]) {
+            this.screen.log("Missing argument <appId>\n");
+            return resolve(showUsage(this));
+          }
+          enableApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            formatters: this.formatters,
+            logger: this.logger,
+            appId: this.args._[4]
+          });
+        }
+
+        // Disable App
+        if (this.args._[3] === "disable") {
+          if (!this.args._[4]) {
+            this.screen.log("Missing argument <appId>\n");
+            return resolve(showUsage(this));
+          }
+          disableApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            formatters: this.formatters,
+            logger: this.logger,
+            appId: this.args._[4]
           });
         }
       }
