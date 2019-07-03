@@ -126,7 +126,9 @@ describe("CLI", function() {
       { name: "1", id: "1", key: "1", enabled: "true", permission: "read" },
       { name: "2", id: "2", key: "2", enabled: "false", permission: "read" }
     ];
-    const testFetcher = jest.fn().mockResolvedValue(appList);
+    const testFetcher = jest
+      .fn()
+      .mockResolvedValue({ response: { statusCode: 200 }, body: appList });
     const screenSpy = { log: jest.fn() };
     cli = new CLI({
       instance: instance,

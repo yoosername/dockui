@@ -15,7 +15,7 @@ const getAppFromURLPart = async ({ part, appService, logger, ctx }) => {
       }
     });
   } catch (e) {
-    throw e;
+    throw new Error(e);
   }
   if (apps && apps.length > 0) {
     return apps[0];
@@ -158,6 +158,11 @@ module.exports = function({ config, logger, appService } = {}) {
           app.getId(),
           module.getId()
         );
+      }
+      // If the APp is diabled then throw here as shouldnt carry on
+      if (!app.isEnabled()) {
+        console.log("GETS HERE");
+        throw new Error(`App(key=${app.getKey()}) exists but is disabled`);
       }
     } else {
       throw new Error("Malformed URL - Expecting /app/(id||key||alias)[/.*]");

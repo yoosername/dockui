@@ -132,7 +132,7 @@ class LokiAppStore extends AppStore {
       }
     } catch (err) {
       this.logger.error("Problem deleting data in Loki store, error = %o", err);
-      throw err;
+      throw new Error(err);
     }
     return persistedData;
   }

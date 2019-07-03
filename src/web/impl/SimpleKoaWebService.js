@@ -91,16 +91,14 @@ class SimpleKoaWebService extends WebService {
       try {
         await next();
       } catch (err) {
-        const status = err.status || 500;
+        const status =
+          typeof err === "number" ? err : err.status ? err.status : 500;
         const msg =
-          typeof err === "string"
-            ? err.toString()
-            : !(err instanceof Error) && typeof err === "object"
+          err instanceof Error || typeof err === "object"
             ? err.message
-            : err instanceof Error
-            ? err
-            : err.toString();
-
+            : typeof err === "string"
+            ? err.toString()
+            : err;
         ctx.status = status;
         ctx.body = { error: { status: status, message: msg } };
         //ctx.app.emit("error", err, ctx);

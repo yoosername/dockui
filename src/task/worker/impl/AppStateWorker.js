@@ -76,18 +76,19 @@ class AppStateWorker extends TaskWorker {
       const app = payload && payload.app ? payload.app : null;
       const appId = app.getId ? app.getId() : app.id;
       this.logger.info(
-        "Worker (id=%s) is processing Task(id=%s) with payload(%o)",
+        "Worker (id=%s) is processing Task(id=%s) to toggle state of App(key=%s)",
         worker.id,
         task.getId(),
-        payload
+        app.getKey()
       );
 
-      // Make sure there is a URL to load
+      // Make sure there is an app to toggle state on
       if (!app || !appId) {
         let errMsg = `Task with id(${task.getId()}) is missing an app in the payload`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
         return reject(new Error(errMsg));
       }
+
       // Toggle disable or enable based on payload
       const persistedApp = this.store.read(appId);
       try {
@@ -101,7 +102,7 @@ class AppStateWorker extends TaskWorker {
 
       // Save it to the Store
       try {
-        await this.store.update(persistedApp.id, persistedApp);
+        this.store.update(persistedApp.id, persistedApp);
       } catch (e) {
         let errMsg = `Task(${task.getId()}) : Error Saving state for app : ${appId}, Error: ${e}`;
         task.emit(Task.events.ERROR_EVENT, errMsg);
