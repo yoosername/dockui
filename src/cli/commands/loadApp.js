@@ -2,16 +2,21 @@ module.exports = async ({
   baseUrl,
   fetcher,
   screen,
-  formatters,
   logger,
-  appId
+  url,
+  permission
 }) => {
-  const uri = `${baseUrl}/api/v1/admin/app/${appId}/disable`;
+  const uri = `${baseUrl}/api/v1/admin/app`;
   try {
+    const request = {
+      url: url,
+      permission: permission
+    };
     const { response, body } = await fetcher({
       uri,
-      method: "PUT",
-      json: true
+      method: "POST",
+      json: true,
+      body: request
     });
     if (!response.statusCode === 200) {
       logger.error("There was an error calling the management Api(%s)", uri);
@@ -19,7 +24,9 @@ module.exports = async ({
       resolve();
     }
     if (typeof body === "object") {
-      screen.log(`App(key=${body.key},id=${body.id}) has been disabled`);
+      screen.log(
+        `App(key=${body.key},id=${body.id}) has been successfully loaded`
+      );
     }
   } catch (err) {
     logger.error("Error connecting to Management API (%s)", uri);

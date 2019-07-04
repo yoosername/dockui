@@ -56,6 +56,7 @@ class AppLoader {
     return new Promise(async (resolve, reject) => {
       let descriptor;
       let options = { method: "GET", uri: url };
+
       // Use the fetcher to fetch the descriptor file
       this.logger.debug("Fetching Descriptor from (url=%s)", url);
       try {

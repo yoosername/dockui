@@ -309,6 +309,7 @@ App.auth = Object.freeze({
  * @description Represents the available permissions that can be grant the App
  */
 App.permissions = Object.freeze({
+  DEFAULT: "READ",
   READ: "READ",
   WRITE: "WRITE",
   ADMIN: "ADMIN"

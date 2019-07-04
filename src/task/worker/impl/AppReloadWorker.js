@@ -102,6 +102,14 @@ class AppReloadWorker extends TaskWorker {
           : app.getPermission();
       } catch (e) {}
 
+      // Validate that permission is a valid one
+      permission = permission.toUpperCase();
+      if (!Object.keys(App.permissions).includes(permission)) {
+        errors.push(
+          `Task with id(${task.getId()}) has been passed an invalid permission(${permission})`
+        );
+      }
+
       // Make sure there is an App to reload
       if (!app) {
         errors.push(
@@ -111,7 +119,7 @@ class AppReloadWorker extends TaskWorker {
 
       // Stop here if errors
       if (errors && errors.length > 0) {
-        task.emit(Task.events.ERROR_EVENT, errors);
+        task.emit(Task.events.ERROR_EVENT, new Error(errors));
         return reject(new Error(errors));
       }
 
@@ -141,6 +149,7 @@ class AppReloadWorker extends TaskWorker {
 
         let appJSON = this.store.read(app.getId());
         const existingAppId = appJSON.id;
+        const existingEnabledStatus = appJSON.enabled;
         let reloadedAppJSON = reloadedApp.toJSON();
         let reloadedModules = [];
 
@@ -178,6 +187,7 @@ class AppReloadWorker extends TaskWorker {
         // Update the original with all the new data
         let combinedApp = Object.assign({}, appJSON, reloadedAppJSON, {
           id: existingAppId,
+          enabled: existingEnabledStatus,
           modules: reloadedModules
         });
 

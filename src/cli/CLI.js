@@ -7,6 +7,9 @@ const colors = require("colors");
 
 // Specific Commands
 const listApps = require("./commands/listApps");
+const loadApp = require("./commands/loadApp");
+const reloadApp = require("./commands/reloadApp");
+const unloadApp = require("./commands/unloadApp");
 const enableApp = require("./commands/enableApp");
 const disableApp = require("./commands/disableApp");
 
@@ -28,7 +31,8 @@ const {
   EnvConfigLoader,
   StandardInstance,
   LoggerFactory,
-  Logger
+  Logger,
+  App
 } = require("../..");
 
 const LOG_LEVEL_CONFIG_KEY = "logging.level";
@@ -56,7 +60,9 @@ const showUsage = ({
     $ ${name} run                             Start new instance
     $ ${name} env                             Output config ( merged from all sources ) 
     $ ${name} app ls                          List all loaded Apps
-    $ ${name} app load <url> <permission>     Load a single App from its URL and optionally grant a permission
+    $ ${name} app load <url> [permission]     Load a single App from its URL and optionally grant a permission
+    $ ${name} app reload <appId> [permission] Load a single App from its URL and optionally grant a permission
+    $ ${name} app unload <appId>              Unload (delete) a single App by its ID
     $ ${name} app enable <appId>              Enable a single app by its ID
     $ ${name} app disable <appId>             Disable a single app by its ID
   
@@ -247,6 +253,55 @@ class CLI {
             screen: this.screen,
             formatters: this.formatters,
             logger: this.logger
+          });
+        }
+
+        // LoadApp
+        if (this.args._[3] === "load") {
+          if (!this.args._[4]) {
+            this.screen.log("Missing argument <url>\n");
+            return resolve(showUsage(this));
+          }
+          loadApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            formatters: this.formatters,
+            logger: this.logger,
+            url: this.args._[4],
+            permission: this.args._[5] || App.permissions.DEFAULT
+          });
+        }
+
+        // LoadApp
+        if (this.args._[3] === "reload") {
+          if (!this.args._[4]) {
+            this.screen.log("Missing argument <appId>\n");
+            return resolve(showUsage(this));
+          }
+          reloadApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            formatters: this.formatters,
+            logger: this.logger,
+            appId: this.args._[4],
+            permission: this.args._[5]
+          });
+        }
+
+        // UnloadApp
+        if (this.args._[3] === "unload") {
+          if (!this.args._[4]) {
+            this.screen.log("Missing argument <appId>\n");
+            return resolve(showUsage(this));
+          }
+          unloadApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            logger: this.logger,
+            appId: this.args._[4]
           });
         }
 

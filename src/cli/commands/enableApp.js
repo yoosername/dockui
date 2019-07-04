@@ -18,7 +18,7 @@ module.exports = async ({
       logger.error(response.message);
       resolve();
     }
-    if (body && body.length && body.length > 0) {
+    if (typeof body === "object") {
       screen.log(`App(key=${body.key},id=${body.id}) has been enabled`);
     }
   } catch (err) {
