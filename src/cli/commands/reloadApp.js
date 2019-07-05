@@ -25,9 +25,8 @@ module.exports = async ({
     if (typeof body === "object") {
       const permText = permission ? `With new Permission ${permission}` : "";
       screen.log(
-        `App(key=${body.key},id=${
-          body.id
-        }) has been successfully reloaded ${permText}`
+        // Only return id so we can chain together commands
+        `${body.id}`
       );
     }
   } catch (err) {

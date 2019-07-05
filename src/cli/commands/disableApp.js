@@ -19,7 +19,7 @@ module.exports = async ({
       resolve();
     }
     if (typeof body === "object") {
-      screen.log(`App(key=${body.key},id=${body.id}) has been disabled`);
+      screen.log(`${body.id}`);
     }
   } catch (err) {
     logger.error("Error connecting to Management API (%s)", uri);

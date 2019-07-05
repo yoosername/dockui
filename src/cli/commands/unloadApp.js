@@ -12,7 +12,8 @@ module.exports = async ({ baseUrl, fetcher, screen, logger, appId }) => {
     }
     if (typeof body === "object") {
       screen.log(
-        `App(key=${body.key},id=${body.id}) has been successfully unloaded`
+        // Display just id for chaining commands together
+        `${body.id}`
       );
     }
   } catch (err) {

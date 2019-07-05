@@ -24,9 +24,8 @@ module.exports = async ({
       resolve();
     }
     if (typeof body === "object") {
-      screen.log(
-        `App(key=${body.key},id=${body.id}) has been successfully loaded`
-      );
+      // Return just the id so commands can be chained together
+      screen.log(`${body.id}`);
     }
   } catch (err) {
     logger.error("Error connecting to Management API (%s)", uri);

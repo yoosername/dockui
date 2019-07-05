@@ -12,6 +12,7 @@ const reloadApp = require("./commands/reloadApp");
 const unloadApp = require("./commands/unloadApp");
 const enableApp = require("./commands/enableApp");
 const disableApp = require("./commands/disableApp");
+const listModules = require("./commands/listModules");
 
 const defaultFetcher = async options => {
   return new Promise(function(resolve, reject) {
@@ -105,6 +106,21 @@ const getDefaultFormatters = () => {
       apps.forEach(app => {
         let enabled = app.enabled ? colors.green(true) : colors.red(false);
         const row = [app.name, app.id, app.key, enabled, app.permission];
+        table.push(row);
+      });
+      return table.toString();
+    },
+    modules: modules => {
+      const table = new Table({
+        head: ["Module", "Id", "Enabled", "Type"],
+        style: {
+          colWidths: [50, , ,],
+          head: []
+        }
+      });
+      modules.forEach(module => {
+        let enabled = module.enabled ? colors.green(true) : colors.red(false);
+        const row = [module.name, module.id, enabled, module.type];
         table.push(row);
       });
       return table.toString();
@@ -244,10 +260,99 @@ class CLI {
       }
 
       // App commands
-      if (this.args._[2] === "app") {
-        // List all Apps
+      // dockui ls [--filter property=val] [-q]
+      // List all Apps
+      if (this.args._[2] === "ls") {
+        listApps({
+          baseUrl: this.remoteInstanceURL,
+          fetcher: this.fetcher,
+          screen: this.screen,
+          formatters: this.formatters,
+          logger: this.logger
+        });
+      }
+
+      // dockui load <url> [permission]
+      if (this.args._[2] === "load") {
+        if (!this.args._[3]) {
+          this.screen.log("Missing argument <url>\n");
+          return resolve(showUsage(this));
+        }
+        loadApp({
+          baseUrl: this.remoteInstanceURL,
+          fetcher: this.fetcher,
+          screen: this.screen,
+          formatters: this.formatters,
+          logger: this.logger,
+          url: this.args._[3],
+          permission: this.args._[4] || App.permissions.DEFAULT
+        });
+      }
+      // dockui reload <appId> [permission]
+      if (this.args._[2] === "reload") {
+        if (!this.args._[3]) {
+          this.screen.log("Missing argument <appId>\n");
+          return resolve(showUsage(this));
+        }
+        reloadApp({
+          baseUrl: this.remoteInstanceURL,
+          fetcher: this.fetcher,
+          screen: this.screen,
+          formatters: this.formatters,
+          logger: this.logger,
+          appId: this.args._[3],
+          permission: this.args._[4]
+        });
+      }
+      // dockui unload <appId>
+      if (this.args._[2] === "unload") {
+        if (!this.args._[3]) {
+          this.screen.log("Missing argument <appId>\n");
+          return resolve(showUsage(this));
+        }
+        unloadApp({
+          baseUrl: this.remoteInstanceURL,
+          fetcher: this.fetcher,
+          screen: this.screen,
+          logger: this.logger,
+          appId: this.args._[3]
+        });
+      }
+      // dockui enable <appId>
+      if (this.args._[2] === "enable") {
+        if (!this.args._[3]) {
+          this.screen.log("Missing argument <appId>\n");
+          return resolve(showUsage(this));
+        }
+        enableApp({
+          baseUrl: this.remoteInstanceURL,
+          fetcher: this.fetcher,
+          screen: this.screen,
+          formatters: this.formatters,
+          logger: this.logger,
+          appId: this.args._[3]
+        });
+      }
+      // dockui disable <appId>
+      if (this.args._[2] === "disable") {
+        if (!this.args._[3]) {
+          this.screen.log("Missing argument <appId>\n");
+          return resolve(showUsage(this));
+        }
+        disableApp({
+          baseUrl: this.remoteInstanceURL,
+          fetcher: this.fetcher,
+          screen: this.screen,
+          formatters: this.formatters,
+          logger: this.logger,
+          appId: this.args._[3]
+        });
+      }
+      // dockui mod ls [--filter property=val] [-q]
+      if (this.args._[2] === "mod") {
+        // dockui disable <appId>
         if (this.args._[3] === "ls") {
-          listApps({
+          listModules({
             baseUrl: this.remoteInstanceURL,
             fetcher: this.fetcher,
             screen: this.screen,
@@ -255,88 +360,10 @@ class CLI {
             logger: this.logger
           });
         }
-
-        // LoadApp
-        if (this.args._[3] === "load") {
-          if (!this.args._[4]) {
-            this.screen.log("Missing argument <url>\n");
-            return resolve(showUsage(this));
-          }
-          loadApp({
-            baseUrl: this.remoteInstanceURL,
-            fetcher: this.fetcher,
-            screen: this.screen,
-            formatters: this.formatters,
-            logger: this.logger,
-            url: this.args._[4],
-            permission: this.args._[5] || App.permissions.DEFAULT
-          });
-        }
-
-        // LoadApp
-        if (this.args._[3] === "reload") {
-          if (!this.args._[4]) {
-            this.screen.log("Missing argument <appId>\n");
-            return resolve(showUsage(this));
-          }
-          reloadApp({
-            baseUrl: this.remoteInstanceURL,
-            fetcher: this.fetcher,
-            screen: this.screen,
-            formatters: this.formatters,
-            logger: this.logger,
-            appId: this.args._[4],
-            permission: this.args._[5]
-          });
-        }
-
-        // UnloadApp
-        if (this.args._[3] === "unload") {
-          if (!this.args._[4]) {
-            this.screen.log("Missing argument <appId>\n");
-            return resolve(showUsage(this));
-          }
-          unloadApp({
-            baseUrl: this.remoteInstanceURL,
-            fetcher: this.fetcher,
-            screen: this.screen,
-            logger: this.logger,
-            appId: this.args._[4]
-          });
-        }
-
-        // Enable App
-        if (this.args._[3] === "enable") {
-          if (!this.args._[4]) {
-            this.screen.log("Missing argument <appId>\n");
-            return resolve(showUsage(this));
-          }
-          enableApp({
-            baseUrl: this.remoteInstanceURL,
-            fetcher: this.fetcher,
-            screen: this.screen,
-            formatters: this.formatters,
-            logger: this.logger,
-            appId: this.args._[4]
-          });
-        }
-
-        // Disable App
-        if (this.args._[3] === "disable") {
-          if (!this.args._[4]) {
-            this.screen.log("Missing argument <appId>\n");
-            return resolve(showUsage(this));
-          }
-          disableApp({
-            baseUrl: this.remoteInstanceURL,
-            fetcher: this.fetcher,
-            screen: this.screen,
-            formatters: this.formatters,
-            logger: this.logger,
-            appId: this.args._[4]
-          });
-        }
       }
+      // dockui mod enable <modId>
+      // dockui mod disable <modId>
+      // dockui task ls [--filter property=val] [-q]
 
       resolve(arguments);
     });
