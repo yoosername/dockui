@@ -13,6 +13,9 @@ const unloadApp = require("./commands/unloadApp");
 const enableApp = require("./commands/enableApp");
 const disableApp = require("./commands/disableApp");
 const listModules = require("./commands/listModules");
+const enableModule = require("./commands/enableModule");
+const disableModule = require("./commands/disableModule");
+const listTasks = require("./commands/listTasks");
 
 const defaultFetcher = async options => {
   return new Promise(function(resolve, reject) {
@@ -121,6 +124,22 @@ const getDefaultFormatters = () => {
       modules.forEach(module => {
         let enabled = module.enabled ? colors.green(true) : colors.red(false);
         const row = [module.name, module.id, enabled, module.type];
+        table.push(row);
+      });
+      return table.toString();
+    },
+    tasks: tasks => {
+      const table = new Table({
+        head: ["Task", "Type", "Status"],
+        style: {
+          colWidths: [50, ,],
+          head: []
+        }
+      });
+      allTasks = [].concat(...Object.values(tasks));
+      console.log(allTasks);
+      allTasks.forEach(task => {
+        const row = [task.id, task.type, task.status];
         table.push(row);
       });
       return table.toString();
@@ -282,7 +301,6 @@ class CLI {
           baseUrl: this.remoteInstanceURL,
           fetcher: this.fetcher,
           screen: this.screen,
-          formatters: this.formatters,
           logger: this.logger,
           url: this.args._[3],
           permission: this.args._[4] || App.permissions.DEFAULT
@@ -298,7 +316,6 @@ class CLI {
           baseUrl: this.remoteInstanceURL,
           fetcher: this.fetcher,
           screen: this.screen,
-          formatters: this.formatters,
           logger: this.logger,
           appId: this.args._[3],
           permission: this.args._[4]
@@ -328,7 +345,6 @@ class CLI {
           baseUrl: this.remoteInstanceURL,
           fetcher: this.fetcher,
           screen: this.screen,
-          formatters: this.formatters,
           logger: this.logger,
           appId: this.args._[3]
         });
@@ -343,7 +359,6 @@ class CLI {
           baseUrl: this.remoteInstanceURL,
           fetcher: this.fetcher,
           screen: this.screen,
-          formatters: this.formatters,
           logger: this.logger,
           appId: this.args._[3]
         });
@@ -360,10 +375,47 @@ class CLI {
             logger: this.logger
           });
         }
+        // dockui mod enable <modId>
+        if (this.args._[3] === "enable") {
+          if (!this.args._[4]) {
+            this.screen.log("Missing argument <moduleId>\n");
+            return resolve(showUsage(this));
+          }
+          enableModule({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            logger: this.logger,
+            moduleId: this.args._[4]
+          });
+        }
+        // dockui mod disable <modId>
+        if (this.args._[3] === "disable") {
+          if (!this.args._[4]) {
+            this.screen.log("Missing argument <moduleId>\n");
+            return resolve(showUsage(this));
+          }
+          disableModule({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            logger: this.logger,
+            moduleId: this.args._[4]
+          });
+        }
       }
-      // dockui mod enable <modId>
-      // dockui mod disable <modId>
       // dockui task ls [--filter property=val] [-q]
+      if (this.args._[2] === "task") {
+        if (this.args._[3] === "ls") {
+          listTasks({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            formatters: this.formatters,
+            logger: this.logger
+          });
+        }
+      }
 
       resolve(arguments);
     });

@@ -1,5 +1,5 @@
-module.exports = async ({ baseUrl, fetcher, screen, logger, appId }) => {
-  const uri = `${baseUrl}/api/v1/admin/app/${appId}/enable`;
+module.exports = async ({ baseUrl, fetcher, screen, logger, moduleId }) => {
+  const uri = `${baseUrl}/api/v1/admin/module/${moduleId}/enable`;
   try {
     const { response, body } = await fetcher({
       uri,
