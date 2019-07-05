@@ -66,6 +66,15 @@ const chainFetch = async ({ ctx, moduleKey, appService, logger }) => {
         });
       }
 
+      // If not enabled then skip this module
+      if (!module.isEnabled()) {
+        logger.warn(
+          "WebPage Module is disabled (%s) - SKIPPING",
+          module.getKey()
+        );
+        return resolve(pages);
+      }
+
       const options = {
         method: "GET",
         uri: pageUrl.toString()

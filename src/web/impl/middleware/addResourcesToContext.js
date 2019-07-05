@@ -128,11 +128,18 @@ module.exports = function({ config, logger, appService } = {}) {
           .map(module => {
             // Take copy because we need to associated the module to the resource and if we dont
             // any persistance later will fail because of recursion
-            let decoratedResources = [...moduleJson.getResources()];
+            // TODO: This doesnt seem to work!!!
+            let decoratedResources = [...module.getResources()];
+            let collection = [];
             decoratedResources.forEach(resource => {
-              resource.module = module;
+              //resource.module = module;
+              collection.push({
+                module: module,
+                ...resource
+              });
             });
-            return decoratedResources;
+            //return decoratedResources;
+            return collection;
           })
           .reduce((existingArray, newArray) => {
             return [].concat(existingArray, newArray);
