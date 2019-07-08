@@ -17,16 +17,6 @@ const defaultFetcher = async options => {
   return data;
 };
 
-const isJson = json => {
-  var str = json.toString();
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-};
-
 /**
  * @description Encapsulates an external App and its Descriptor to be loaded
  */
