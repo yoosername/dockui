@@ -39,11 +39,19 @@ class Instance {
     process.on("SIGINT", shutdown);
 
     try {
+      // Start the passed in AppService
       await this.appService.start();
+      // Start the passed in TaskManager
       await this.taskManager.start();
+      // Start each passed in TaskWorker
       this.taskWorkers.forEach(async worker => {
         await worker.start();
       });
+      // Start each passed in Reactor
+      this.reactors.forEach(async reactor => {
+        await reactor.start();
+      });
+      // Finally start the passed in WebService
       await this.webService.start();
     } catch (err) {
       await this.logger.error("Error starting DockUI : %o", err);

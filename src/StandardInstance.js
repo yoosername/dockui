@@ -21,6 +21,7 @@ const { Instance } = require("./Instance");
 const { Config } = require("./config/Config");
 const EnvConfigLoader = require("./config/loader/impl/EnvConfigLoader");
 const LoggerFactory = require("./log/factory/LoggerFactory");
+const DockerEventsReactor = require("./task/reactor/impl/DockerEventsReactor");
 
 /**
  * @description Generate an Instance of DockUI based on sensible defaults
@@ -81,7 +82,7 @@ module.exports = generateStandardInstance = ({
       new AppStateWorker(context),
       new ModuleStateWorker(context)
     ])
-    //.withReactors([new DockerEventsReactor(taskManager, config)])
+    .withReactors([new DockerEventsReactor(context)])
     .withAppService(context.appService)
     .withWebService(context.webService)
     .build();
