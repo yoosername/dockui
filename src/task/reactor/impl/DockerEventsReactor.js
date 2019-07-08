@@ -3,6 +3,11 @@ const monitor = require("node-docker-monitor");
 const request = require("request-promise-native");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
+const {
+  getDescriptorAsObject,
+  getHashableInfoFromDescriptor,
+  createHashFromDescriptorInfo
+} = require("../../../util");
 
 const SELECTOR_LABEL_CONFIG_KEY = "docker.selector.label";
 const DEFAULT_SELECTOR_LABEL = "DOCKUI_APP";
@@ -47,7 +52,7 @@ const defaultFetcher = async options => {
 };
 
 const fetchDescriptor = async ({ url, logger }) => {
-  let options = { method: "GET", uri: url };
+  let options = { method: "GET", uri: url, type: "json" };
   let descriptor = null;
   try {
     descriptor = await defaultFetcher(options);
@@ -77,6 +82,7 @@ class DockerEventsReactor extends Reactor {
       ? config.get(SELECTOR_LABEL_CONFIG_KEY)
       : DEFAULT_SELECTOR_LABEL;
     this._running = false;
+    this._cachedContainers = [];
   }
 
   /**
@@ -117,8 +123,20 @@ class DockerEventsReactor extends Reactor {
       network: netInfo
     });
     try {
-      const descriptor = await fetchDescriptor({ url, logger: this.logger });
+      let descriptor = await fetchDescriptor({ url, logger: this.logger });
+      descriptor = getDescriptorAsObject(descriptor);
+      // So that when we detect a shutting down container we know which app to request an unload for
       if (descriptor) {
+        // Store this descriptor in JSON format keyed on its Hash in a local cache
+        const descriptorInfo = getHashableInfoFromDescriptor(descriptor);
+        console.log(descriptorInfo);
+        const descriptorId = createHashFromDescriptorInfo(descriptorInfo);
+        console.log(descriptorId);
+        if (this._cachedContainers[descriptorId]) {
+          // Container has been seen before.
+        } else {
+        }
+
         this.logger.info(
           "Docker container detected with id %s and descriptor detected at %s - Submitting Load event",
           container.Id,
@@ -136,7 +154,12 @@ class DockerEventsReactor extends Reactor {
       // If it does use TaskManager to fire off a Reload task
       // If it doesnt then use TaskManager to fire off a Load event
       // Make sure its read only.
-    } catch (err) {}
+    } catch (err) {
+      this.logger.warn(
+        "Error fetching descriptor from detected Docker container, error = %o",
+        err
+      );
+    }
   }
 
   /**
