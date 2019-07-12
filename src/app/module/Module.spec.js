@@ -59,7 +59,7 @@ describe("Module", function() {
   test("should be able to set the ID", function() {
     const module = new Module();
     const moduleID = module.getId();
-    const newModule = new Module(module.getJSON());
+    const newModule = new Module(module.toJSON());
     expect(newModule.getId()).toEqual(moduleID);
   });
 });

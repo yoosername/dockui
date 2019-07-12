@@ -114,6 +114,10 @@ describe("CLI", function() {
     expect(voidConsole.log.mock.calls[5][0]).toContain("Log Level:  debug");
     await cli.parse(["node", "dockui", "--help", "-vvvvvv"]);
     expect(voidConsole.log.mock.calls[6][0]).toContain("Log Level:  silly");
+    await cli.parse(["node", "dockui", "--help", "-vvvvvvv"]);
+    expect(voidConsole.log.mock.calls[7][0]).toContain("Log Level:  silly");
+    await cli.parse(["node", "dockui", "--help", "-vvvvvvvvvvvvvv"]);
+    expect(voidConsole.log.mock.calls[8][0]).toContain("Log Level:  silly");
   });
 
   // COMMAND TESTS

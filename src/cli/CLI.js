@@ -241,7 +241,10 @@ class CLI {
         this.logLevel = getLogLevel(0);
       }
       if (this.args.v instanceof Array && this.args.v.length > 0) {
-        this.logLevel = getLogLevel(this.args.v.length - 1);
+        let passedLogLevel = this.args.v.length - 1;
+        // Max LogLevel can be 5
+        passedLogLevel = passedLogLevel <= 5 ? passedLogLevel : 5;
+        this.logLevel = getLogLevel(passedLogLevel);
       }
       // Add defined logLevel to config for rest of system to use
       this.logger.setLogLevel(
