@@ -43,7 +43,9 @@ class App {
     authentication = App.auth.JWT,
     enabled = false,
     modules = [],
-    permission = App.permissions.READ
+    permission = App.permissions.READ,
+    loadedDate = new Date(),
+    lastUpdatedDate = loadedDate
   } = {}) {
     this.id = generateUniqueAppId(this);
     this.key = key ? key : this.id;
@@ -63,6 +65,8 @@ class App {
     this.setModules(modules);
     this.permission = permission;
     this.docType = App.DOCTYPE;
+    this.loadedDate = loadedDate;
+    this.lastUpdatedDate = lastUpdatedDate;
   }
 
   /**
@@ -254,6 +258,22 @@ class App {
   }
 
   /**
+   * @description return the date timestamp this App was originally loaded
+   * @returns {Date}
+   */
+  getLoadedDate() {
+    return this.loadedDate;
+  }
+
+  /**
+   * @description return the date timestamp this App was last Updated
+   * @returns {Date} Initially set to the same as loadedDate
+   */
+  getLastUpdatedDate() {
+    return this.lastUpdatedDate;
+  }
+
+  /**
    * @description Helper to return a serialized version of this App for storage/transport
    * @returns {JSON} A Pure JSON representation of the App
    */
@@ -276,6 +296,8 @@ class App {
       authentication: this.authentication,
       enabled: this.enabled,
       permission: this.permission,
+      loadedDate: this.loadedDate,
+      lastUpdatedDate: this.lastUpdatedDate,
       modules: []
     };
     if (this.modules && this.modules.length && this.modules.length > 0) {

@@ -35,6 +35,8 @@ describe("App", function() {
     expect(typeof app.getPermission).toBe("function");
     expect(typeof app.getModules).toBe("function");
     expect(typeof app.isEnabled).toBe("function");
+    expect(typeof app.getLoadedDate).toBe("function");
+    expect(typeof app.getLastUpdatedDate).toBe("function");
   });
 
   test("should allow intantiation with zero args", function() {
@@ -82,6 +84,23 @@ describe("App", function() {
           return m.key === "m2";
         }).length
       ).toBe(1);
+    });
+
+    test("should be able to set the loaded and lastUpdated Dates", function() {
+      const testDate = new Date();
+      const app = new App({
+        loadedDate: testDate
+      });
+      expect(app.getLoadedDate()).toBe(testDate);
+      // Should initially default to the same as loaded date
+      expect(app.getLastUpdatedDate()).toBe(testDate);
+      // But can be overridden
+      const updatedDate = new Date() + 10000;
+      const copiedApp = new App(
+        Object.assign({}, app.toJSON(), { lastUpdatedDate: updatedDate })
+      );
+      expect(copiedApp.getLoadedDate()).toBe(testDate);
+      expect(copiedApp.getLastUpdatedDate()).toBe(updatedDate);
     });
 
     // Test getModule(moduleKey)
