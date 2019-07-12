@@ -54,4 +54,12 @@ describe("Module", function() {
     const module = new Module(model);
     expect(module.toJSON()).toEqual(model);
   });
+
+  // Test getModules(predicate)
+  test("should be able to set the ID", function() {
+    const module = new Module();
+    const moduleID = module.getId();
+    const newModule = new Module(module.getJSON());
+    expect(newModule.getId()).toEqual(moduleID);
+  });
 });

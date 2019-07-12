@@ -47,7 +47,7 @@ class App {
     loadedDate = new Date(),
     lastUpdatedDate = loadedDate
   } = {}) {
-    this.id = generateUniqueAppId(this);
+    this.id = id ? id : generateUniqueAppId(this);
     this.key = key ? key : this.id;
     this.name = name ? name : this.key;
     this.alias = alias;

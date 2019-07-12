@@ -68,7 +68,7 @@
   "devDependencies": {
     "babel-jest": "^24.8.0",
     "coveralls": "^3.0.4",
-    "documentation": "^10.1.0",
+    "documentation": "^12.0.1",
     "jest": "^24.8.0",
     "jshint": "^2.10.2",
     "nyc": "^14.1.1",

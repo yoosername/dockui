@@ -1,4 +1,19 @@
-const uuidv4 = require("uuid/v4");
+const crypto = require("crypto");
+
+/**
+ * @description Generate a Unique Id from data in an App (Id should be repeatable from same data)
+ * @argument {App} app - The App from which to generate an ID
+ * @returns {String} The generated ID
+ */
+const generateUniqueModuleId = module => {
+  const key = module.getKey();
+  const type = module.getType();
+  const hash = crypto
+    .createHash("sha256")
+    .update(`${key}${type}`)
+    .digest("hex");
+  return hash;
+};
 
 /**
  * @description Represents a single Module loaded from a Module Descriptor.
@@ -8,9 +23,9 @@ class Module {
    * @argument {Object} data - Existing Module data
    */
   constructor({
-    id = uuidv4(),
-    key = id,
-    name = id,
+    id,
+    key,
+    name,
     description = "",
     aliases = [],
     type = "generic",
@@ -22,9 +37,9 @@ class Module {
     appId = null,
     auth = null
   } = {}) {
-    this.id = id;
-    this.key = key;
-    this.name = name;
+    this.id = id ? id : generateUniqueModuleId(this);
+    this.key = key ? key : this.id;
+    this.name = name ? name : this.key;
     this.description = description;
     this.aliases = aliases;
     this.type = type;
