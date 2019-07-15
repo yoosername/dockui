@@ -1,19 +1,4 @@
-const crypto = require("crypto");
-
-/**
- * @description Generate a Unique Id from data in an App (Id should be repeatable from same data)
- * @argument {App} app - The App from which to generate an ID
- * @returns {String} The generated ID
- */
-const generateUniqueModuleId = module => {
-  const key = module.getKey();
-  const type = module.getType();
-  const hash = crypto
-    .createHash("sha256")
-    .update(`${key}${type}`)
-    .digest("hex");
-  return hash;
-};
+const { getHashFromModule } = require("../../util");
 
 /**
  * @description Represents a single Module loaded from a Module Descriptor.
@@ -37,7 +22,6 @@ class Module {
     appId = null,
     auth = null
   } = {}) {
-    this.id = id ? id : generateUniqueModuleId(this);
     this.key = key ? key : this.id;
     this.name = name ? name : this.key;
     this.description = description;
@@ -49,6 +33,8 @@ class Module {
     this.docType = Module.DOCTYPE;
     this.appId = appId;
     this.auth = auth;
+    // Only generate ID once the rest of the info has been set
+    this.id = id ? id : getHashFromModule(this);
   }
 
   /**

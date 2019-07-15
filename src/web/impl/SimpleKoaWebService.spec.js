@@ -83,7 +83,7 @@ const setupTestAppService = () => {
   base.enableApp.mockResolvedValue(TEST_SINGLE_APP);
   base.disableApp.mockResolvedValue(TEST_SINGLE_APP);
   base.loadApp.mockResolvedValue(TEST_LOADED_APP);
-  base.unLoadApp.mockResolvedValue(TEST_DELETED_APP);
+  base.unloadApp.mockResolvedValue(TEST_DELETED_APP);
   base.getModules.mockResolvedValue(TEST_MODULES);
   base.getModule.mockResolvedValue(TEST_SINGLE_MODULE);
   base.enableModule.mockResolvedValue(TEST_SINGLE_MODULE);

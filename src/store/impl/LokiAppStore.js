@@ -89,7 +89,8 @@ class LokiAppStore extends AppStore {
    * @argument {String} id The id of the object to return
    */
   read(id) {
-    return this.collection.findOne({ id });
+    if (!id) return null;
+    return this.collection.findOne({ id: id });
   }
 
   /**

@@ -80,10 +80,10 @@ class AppService extends EventEmitter {
    * @description UnLoad an already loaded App by its UUID
    * @argument {String} uuid The App UUID to unload
    */
-  unLoadApp(uuid) {
+  unloadApp(uuid) {
     "use strict";
     console.warn(
-      "[AppService] unLoadApp - NoOp implementation - this should be extended by child classes"
+      "[AppService] unloadApp - NoOp implementation - this should be extended by child classes"
     );
   }
 

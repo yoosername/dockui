@@ -391,7 +391,7 @@ class SimpleKoaWebService extends WebService {
     router.delete("/api/v1/admin/app/:id", async ctx => {
       if (!ctx.params.id) throw new Error("Missing param (id)");
       const app = await this.appService.getApp(ctx.params.id);
-      ctx.body = await this.appService.unLoadApp(app);
+      ctx.body = await this.appService.unloadApp(app);
     });
 
     // ReLoad an Existing App (Should keep ID and App should be notified)

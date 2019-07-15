@@ -138,7 +138,6 @@ class AppLoader {
               }
             }
           }
-
           // Now set the apps modules
           app.setModules(modules);
 

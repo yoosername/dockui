@@ -68,7 +68,7 @@ describe("AppLoader", function() {
   test("should Load a Descriptor file from URL", async () => {
     const appLoader = new AppLoader().build();
     const TEST_URL = "http://some.url";
-    const returnedApp = new App();
+    const returnedApp = new App({ key: "demo_key", version: "2.0" });
     const testFetcher = jest.fn().mockResolvedValue(returnedApp);
     const permission = App.permissions.READ;
     const app = await appLoader.load({

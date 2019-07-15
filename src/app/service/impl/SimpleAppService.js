@@ -160,11 +160,11 @@ class SimpleAppService extends AppService {
   }
 
   /**
-   * @description UnLoad an already loaded App (delegates to TaskManager for async operation)
+   * @description Unload an already loaded App (delegates to TaskManager for async operation)
    * @argument {App} app The App to unload
    * @returns {Promise} Promise which resolves when app has been loaded.
    */
-  unLoadApp(app) {
+  unloadApp(app) {
     // Use TaskManager to schedule unloading the App
     return new Promise(async (resolve, reject) => {
       let task;

@@ -2,28 +2,53 @@ const crypto = require("crypto");
 const yaml = require("js-yaml");
 
 /**
- * @description Return App specific information out of the descriptor for hashing purposes
- * @argument {Object} descriptor The descriptor Object to parse Hashable data from
- * @return {string} A Stringified representation of the hashable data
+ * @description  Return a unique hash given an App
+ * @argument {App} app The App we want to know the Hash for
+ * @return {String} md5 hash
  */
-const getHashableInfoFromDescriptor = descriptor => {
-  const descriptorObj =
-    typeof descriptor === "object" ? descriptor : JSON.parse(descriptor);
-  const descriptorInfo = Object.assign({}, descriptorObj, { modules: {} });
-  return JSON.stringify(descriptorInfo);
+const getHashFromApp = app => {
+  return getHashFromAppDescriptor(app.toJSON());
 };
 
 /**
- * @description Return a unique hash from a JSON representation of a DockUI descriptor
+ * @description  Return a unique hash given a JSON representation of a DockUI App
  * @argument {Object} descriptor The descriptor JSON to generate Hash from
- * @argument {String} algorithm The hasing algorithm to use (defaults to MD5)
- * @argument {Object} config Any additional Algorithm specific config
+ * @return {String} md5 hash
  */
-const createHashFromDescriptorInfo = (descriptorInfo, algorithm, config) => {
-  const algo = algorithm ? algorithm : "sha256";
+const getHashFromAppDescriptor = descriptor => {
+  const key = descriptor.key;
+  const version = descriptor.version;
+  const algo = "sha256";
+  const config = {};
   const hash = crypto
     .createHash(algo, config)
-    .update(descriptorInfo)
+    .update(`${key}${version}`)
+    .digest("hex");
+  return hash;
+};
+
+/**
+ * @description  Return a unique hash given a Module
+ * @argument {App} app The Module we want to know the Hash for
+ * @return {String} md5 hash
+ */
+const getHashFromModule = module => {
+  return getHashFromModuleDescriptor(module.toJSON());
+};
+
+/**
+ * @description  Return a unique hash given a JSON representation of a DockUI Module
+ * @argument {Object} descriptor The descriptor JSON to generate Hash from
+ * @return {String} md5 hash
+ */
+const getHashFromModuleDescriptor = descriptor => {
+  const key = descriptor.key;
+  const type = descriptor.type;
+  const algo = "sha256";
+  const config = {};
+  const hash = crypto
+    .createHash(algo, config)
+    .update(`${key}${type}`)
     .digest("hex");
   return hash;
 };
@@ -47,6 +72,8 @@ const getDescriptorAsObject = descriptor => {
 
 module.exports = {
   getDescriptorAsObject,
-  getHashableInfoFromDescriptor,
-  createHashFromDescriptorInfo
+  getHashFromAppDescriptor,
+  getHashFromApp,
+  getHashFromModule,
+  getHashFromModuleDescriptor
 };

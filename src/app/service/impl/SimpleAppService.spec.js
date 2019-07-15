@@ -42,7 +42,7 @@ describe("SimpleAppService", () => {
     expect(typeof appService.start).toBe("function");
     expect(typeof appService.shutdown).toBe("function");
     expect(typeof appService.loadApp).toBe("function");
-    expect(typeof appService.unLoadApp).toBe("function");
+    expect(typeof appService.unloadApp).toBe("function");
     expect(typeof appService.reloadApp).toBe("function");
     expect(typeof appService.enableApp).toBe("function");
     expect(typeof appService.disableApp).toBe("function");
@@ -94,7 +94,7 @@ describe("SimpleAppService", () => {
     const appService = new SimpleAppService({ taskManager, store });
     const app = new App();
     try {
-      await appService.unLoadApp(app);
+      await appService.unloadApp(app);
     } catch (e) {}
     expect(taskManager.create).toHaveBeenCalledWith(Task.types.APP_UNLOAD, {
       app

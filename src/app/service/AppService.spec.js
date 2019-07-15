@@ -29,7 +29,7 @@ describe("AppService", function() {
     expect(typeof appService.start).toBe("function");
     expect(typeof appService.shutdown).toBe("function");
     expect(typeof appService.loadApp).toBe("function");
-    expect(typeof appService.unLoadApp).toBe("function");
+    expect(typeof appService.unloadApp).toBe("function");
     expect(typeof appService.enableApp).toBe("function");
     expect(typeof appService.disableApp).toBe("function");
     expect(typeof appService.getApps).toBe("function");
@@ -48,7 +48,7 @@ describe("AppService", function() {
     appService.start();
     appService.shutdown();
     appService.loadApp();
-    appService.unLoadApp();
+    appService.unloadApp();
     appService.enableApp();
     appService.disableApp();
     appService.getApps();

@@ -2,24 +2,11 @@ const crypto = require("crypto");
 const Module = require("./module/Module");
 const ModuleFactory = require("./module/factory/ModuleFactory");
 
+const { getHashFromApp } = require("../util");
+
 const DEFAULT_APP_VERSION = "1.0.0";
 const DEFAULT_DESCRIPTOR_VERSION = "1.0.0";
 const DEFAULT_DESCRIPTOR_NAME = "dockui.app.yml";
-
-/**
- * @description Generate a Unique Id from data in an App (Id should be repeatable from same data)
- * @argument {App} app - The App from which to generate an ID
- * @returns {String} The generated ID
- */
-const generateUniqueAppId = app => {
-  const key = app.getKey();
-  const version = app.getVersion();
-  const hash = crypto
-    .createHash("sha256")
-    .update(`${key}${version}`)
-    .digest("hex");
-  return hash;
-};
 
 /**
  * @description Represents a single App.
@@ -47,7 +34,6 @@ class App {
     loadedDate = new Date(),
     lastUpdatedDate = loadedDate
   } = {}) {
-    this.id = id ? id : generateUniqueAppId(this);
     this.key = key ? key : this.id;
     this.name = name ? name : this.key;
     this.alias = alias;
@@ -67,6 +53,8 @@ class App {
     this.docType = App.DOCTYPE;
     this.loadedDate = loadedDate;
     this.lastUpdatedDate = lastUpdatedDate;
+    // Generate ID once we have all the other info
+    this.id = id ? id : getHashFromApp(this);
   }
 
   /**
