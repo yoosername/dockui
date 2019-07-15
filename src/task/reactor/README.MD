@@ -7,7 +7,7 @@
 ```javascript
 const factory = new TaskManagerFactory();
 const manager = factory.create();
-const reactor = new FileWatchReactor(manager);
+const reactor = new DockerEventsReactor(manager);
 reactor.start();
 // Listenes for events and uses TaskManager to create tasks
 reactor.shutdown();

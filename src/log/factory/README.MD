@@ -1,6 +1,6 @@
 # LoggerFactory
 
-> The LoggerFactory returns the correct Logger instance based on data from the passed in Config
+> The LoggerFactory returns the correct Logger implementation based on data from the passed in Config
 
 ```javascript
 const config = new Config();

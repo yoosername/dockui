@@ -57,7 +57,7 @@ const showUsage = ({
   Options
     --help, -h       Show this usage
     -v               Increment the logging verbosity
-    --instance, -i   Running instance to run commands against
+    --instance, -i   Specify the instance to run commands against
     --quiet, -q      Quiet mode
 
   Examples
@@ -69,6 +69,9 @@ const showUsage = ({
     $ ${name} app unload <appId>              Unload (delete) a single App by its ID
     $ ${name} app enable <appId>              Enable a single app by its ID
     $ ${name} app disable <appId>             Disable a single app by its ID
+    $ ${name} mod ls                          List all Modules of Loaded Apps
+    $ ${name} mod enable <modId>              Enable a single module by its ID
+    $ ${name} mod disable <modId>             Disable a single module by its ID
   
   Info
     Log Level:  ${logLevel}
