@@ -58,23 +58,25 @@ const showUsage = ({
     $ ${name} <cmd>
 
   Options
-    --help, -h       Show this usage
-    -v               Increment the logging verbosity
-    --instance, -i   Specify the instance to run commands against
-    --quiet, -q      Quiet mode
+    --help, -h                    Show this usage
+    -v                            Increment the logging verbosity
+    --instance, -i   <url>        Specify the instance URL to run commands against
+    --filter <property>=<value>   If output is an array of objects filter based on this property        
+    --quiet, -q                   Quiet mode ( useful for chaining commands )
 
   Examples
-    $ ${name} run                             Start new instance
-    $ ${name} env                             Output config ( merged from all sources ) 
-    $ ${name} app ls                          List all loaded Apps
-    $ ${name} app load <url> [permission]     Load a single App from its URL and optionally grant a permission
-    $ ${name} app reload <appId> [permission] Load a single App from its URL and optionally grant a permission
-    $ ${name} app unload <appId>              Unload (delete) a single App by its ID
-    $ ${name} app enable <appId>              Enable a single app by its ID
-    $ ${name} app disable <appId>             Disable a single app by its ID
-    $ ${name} mod ls                          List all Modules of Loaded Apps
-    $ ${name} mod enable <modId>              Enable a single module by its ID
-    $ ${name} mod disable <modId>             Disable a single module by its ID
+    $ ${name} run                                             Start new instance
+    $ ${name} env                                             Output config ( merged from all sources ) 
+    $ ${name} app ls                                          List all loaded Apps
+    $ ${name} app load [--permission <permission>] <url>      Load a single App from its URL and optionally grant a permission
+    $ ${name} app reload [--permission <permission>] <appId>  Reload an existing App Optionally granting a new Permission
+    $ ${name} app unload <appId>                              Unload (delete) a single App by its ID
+    $ ${name} app enable <appId>                              Enable a single app by its ID
+    $ ${name} app disable <appId>                             Disable a single app by its ID
+    $ ${name} mod ls                                          List all Modules of Loaded Apps
+    $ ${name} mod enable <modId>                              Enable a single module by its ID
+    $ ${name} mod disable <modId>                             Disable a single module by its ID
+    $ ${name} task ls                                         List the instance Task queue
   
   Info
     Log Level:  ${logLevel}
