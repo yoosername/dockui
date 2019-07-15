@@ -335,7 +335,7 @@ describe("SimpleKoaWebService", function() {
         });
         await webService.start();
       } catch (e) {
-        console.log("couldnt start webService : ", e);
+        console.error("couldnt start webService : ", e);
       }
 
       expect(webService.getScheme()).toEqual("https");

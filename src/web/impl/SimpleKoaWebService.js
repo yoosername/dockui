@@ -109,31 +109,6 @@ class SimpleKoaWebService extends WebService {
       }
     });
 
-    // Add self links
-    // app.use(async (ctx, next) => {
-    //   await next();
-    //   if (ctx.body && ctx.body.docType) {
-    //     console.log(ctx.body.id);
-    //     const docType = ctx.body.docType === "MODULE" ? "module" : "app";
-    //     const id = ctx.body.id;
-    //     ctx.body = Object.assign({}, ctx.body, {
-    //       links: [
-    //         {
-    //           rel: "self",
-    //           method: "GET",
-    //           href: `/api/v1/admin/${docType}/${id}`
-    //         },
-    //         {
-    //           rel: "create",
-    //           method: "POST",
-    //           title: `create ${docType}`,
-    //           href: `/api/v1/admin/${docType}`
-    //         }
-    //       ]
-    //     });
-    //   }
-    // });
-
     /*
      * Global Debug Logging
      */

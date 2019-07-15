@@ -1,7 +1,7 @@
 const InMemoryAppStore = require("../impl/InMemoryAppStore");
 const LokiAppStore = require("../impl/LokiAppStore");
 const { Config } = require("../../config/Config");
-const Logger = require("../../log/Logger");
+const LoggerFactory = require("../../log/factory/LoggerFactory");
 
 /**
  * @description StoreFactory has a single method .create which generates
@@ -16,7 +16,10 @@ class StoreFactory {
    * @argument {Config} config The runtime config
    * @return {Store} A instance of a Store
    */
-  create({ config = new Config(), logger = new Logger(config) } = {}) {
+  create({
+    config = new Config(),
+    logger = LoggerFactory.create(config)
+  } = {}) {
     let Store,
       instance = null;
     const type = config.get("store.type");
@@ -40,7 +43,7 @@ class StoreFactory {
       Store.name,
       filename
     );
-    instance = new Store({ config });
+    instance = new Store({ config, logger });
     return instance;
   }
 }

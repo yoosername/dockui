@@ -1,6 +1,6 @@
 const AppStore = require("../AppStore");
 const { Config } = require("../../config/Config");
-const Logger = require("../../log/Logger");
+const LoggerFactory = require("../../log/factory/LoggerFactory");
 const Lokijs = require("lokijs");
 const DEFAULT_LOKI_DB = "loki.db";
 const DEFAULT_LOKI_DB_CONFIG_KEY = "store.db.filename";
@@ -17,12 +17,15 @@ class LokiAppStore extends AppStore {
    */
   constructor({
     config = new Config(),
-    logger = new Logger(config),
+    logger = LoggerFactory.create(config),
     loki
   } = {}) {
     super({ config, logger });
-    this.logger = logger;
+    this.logger = logger.child({
+      config: { "service.name": "LokiAppStore" }
+    });
     this.configure(loki);
+    this.initLokiDB();
   }
 
   /**

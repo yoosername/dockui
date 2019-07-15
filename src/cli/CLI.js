@@ -168,7 +168,21 @@ const getQuietFormatters = () => {
     apps: apps => {
       let output = "";
       apps.forEach(app => {
-        output += app.id + "\n";
+        output += getShortHash(app.id) + "\n";
+      });
+      return output.trimRight();
+    },
+    modules: modules => {
+      let output = "";
+      modules.forEach(module => {
+        output += getShortHash(module.id) + "\n";
+      });
+      return output.trimRight();
+    },
+    tasks: tasks => {
+      let output = "";
+      tasks.forEach(task => {
+        output += task.id + "\n";
       });
       return output.trimRight();
     }
@@ -455,7 +469,7 @@ class CLI {
         process.argv
       );
     } catch (e) {
-      console.log(e);
+      console.log("Unknown Error Launching the CLI: ", e);
     }
   }
 })();

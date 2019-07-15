@@ -101,7 +101,6 @@ class DockerEventsReactor extends Reactor {
     const containerId = container.Id;
     // If the containerId is known, then simply reload the App
     const cachedApp = this._cachedContainers[containerId];
-    console.log(container.Id, cachedApp);
     if (cachedApp) {
       // Container has been seen before - submit a reload
       this.logger.info(
@@ -163,7 +162,7 @@ class DockerEventsReactor extends Reactor {
         );
       }
     } catch (err) {
-      this.logger.warn(
+      this.logger.debug(
         "Error fetching descriptor from detected Docker container, error = %o",
         err
       );

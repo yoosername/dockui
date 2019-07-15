@@ -36,7 +36,11 @@ class AppLoadWorker extends TaskWorker {
     this._running = false;
 
     process.on("unhandledRejection", (reason, p) => {
-      console.log("Unhandled Rejection at: Promise", p, "reason:", reason);
+      this.logger.error(
+        "Unhandled Rejection at: Promise(%o), Reason: ",
+        p,
+        reason
+      );
       // application specific logging, throwing an error, or other logic here
     });
   }

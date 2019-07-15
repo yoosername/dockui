@@ -124,10 +124,10 @@ class AppReloadWorker extends TaskWorker {
       }
 
       this.logger.debug(
-        "Worker (id=%s) is processing Task(id=%s) to Reload app(%s) from url(%s) with permission (%s)",
+        "Worker (id=%s) is processing Task(id=%s) to Reload app(key=%s) from url(%s) with permission (%s)",
         worker.id,
         task.getId(),
-        app,
+        app.getKey(),
         url,
         permission
       );
