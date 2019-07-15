@@ -75,11 +75,11 @@ class ModuleStateWorker extends TaskWorker {
       const payload = task.getPayload();
       const module = payload && payload.module ? payload.module : null;
       const moduleId = module.getId();
-      this.logger.info(
-        "Worker (id=%s) is processing Task(id=%s) with payload(%o)",
+      this.logger.debug(
+        "Worker (id=%s) is processing Task(id=%s) with to update Module(key=%s)",
         worker.id,
         task.getId(),
-        payload
+        module.getKey()
       );
 
       // Make sure there is a Module to load
@@ -91,12 +91,12 @@ class ModuleStateWorker extends TaskWorker {
 
       // Get module from store and update the enabled flag and save
       const persistedModule = await this.store.read(moduleId);
-      this.logger.debug("Fetched Module from DB as %o", persistedModule);
+      this.logger.silly("Fetched Module from DB as %o", persistedModule);
       persistedModule.enabled =
         task.getType() === Task.types.MODULE_DISABLE ? false : true;
-      this.logger.debug("Updated Module to be %o", persistedModule);
+      this.logger.silly("Updated Module to be %o", persistedModule);
       await this.store.update(persistedModule.id, persistedModule);
-      this.logger.debug("Saved Module in DB");
+      this.logger.debug("Saved Module");
 
       // Get associated app from store and update this module
       const appId = persistedModule.appId;
@@ -106,7 +106,7 @@ class ModuleStateWorker extends TaskWorker {
           return cur.id === module.getId() ? persistedModule : cur;
         });
         await this.store.update(persistedApp.id, persistedApp);
-        this.logger.debug("Updated App in DB with %o", persistedModule);
+        this.logger.silly("Updated App in DB with %o", persistedModule);
       }
 
       // Close off the task

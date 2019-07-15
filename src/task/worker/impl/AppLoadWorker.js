@@ -161,6 +161,8 @@ class AppLoadWorker extends TaskWorker {
         const appJSON = app.toJSON();
         // Store modules individually first
         appJSON.modules.forEach(module => {
+          // Make sure module has appId set
+          module.appId = appJSON.id;
           this.store.create(module);
         });
         // Now store the App itself

@@ -127,9 +127,9 @@ const getDefaultFormatters = () => {
     },
     modules: modules => {
       const table = new Table({
-        head: ["Module", "Id", "Enabled", "Type"],
+        head: ["Module", "Id", "AppId", "Enabled", "Type"],
         style: {
-          colWidths: [50, , ,],
+          colWidths: [50, , , ,],
           head: []
         }
       });
@@ -138,6 +138,7 @@ const getDefaultFormatters = () => {
         const row = [
           module.name,
           getShortHash(module.id),
+          getShortHash(module.appId),
           enabled,
           module.type
         ];
@@ -345,13 +346,15 @@ class CLI {
           this.screen.log("Missing argument <appId>\n");
           return resolve(showUsage(this));
         }
-        reloadApp({
-          baseUrl: this.remoteInstanceURL,
-          fetcher: this.fetcher,
-          screen: this.screen,
-          logger: this.logger,
-          appId: this.args._[3],
-          permission: this.args.permission
+        this.args._.splice(3).forEach(appId => {
+          reloadApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            logger: this.logger,
+            appId: appId,
+            permission: this.args.permission
+          });
         });
       }
       // dockui unload <appId>
@@ -360,26 +363,31 @@ class CLI {
           this.screen.log("Missing argument <appId>\n");
           return resolve(showUsage(this));
         }
-        unloadApp({
-          baseUrl: this.remoteInstanceURL,
-          fetcher: this.fetcher,
-          screen: this.screen,
-          logger: this.logger,
-          appId: this.args._[3]
+        this.args._.splice(3).forEach(appId => {
+          unloadApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            logger: this.logger,
+            appId: appId
+          });
         });
       }
-      // dockui enable <appId>
+      // dockui enable <appId>..<n>
       if (this.args._[2] === "enable") {
         if (!this.args._[3]) {
           this.screen.log("Missing argument <appId>\n");
           return resolve(showUsage(this));
         }
-        enableApp({
-          baseUrl: this.remoteInstanceURL,
-          fetcher: this.fetcher,
-          screen: this.screen,
-          logger: this.logger,
-          appId: this.args._[3]
+        // For each arg from 3 on enable it
+        this.args._.splice(3).forEach(appId => {
+          enableApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            logger: this.logger,
+            appId: appId
+          });
         });
       }
       // dockui disable <appId>
@@ -388,12 +396,14 @@ class CLI {
           this.screen.log("Missing argument <appId>\n");
           return resolve(showUsage(this));
         }
-        disableApp({
-          baseUrl: this.remoteInstanceURL,
-          fetcher: this.fetcher,
-          screen: this.screen,
-          logger: this.logger,
-          appId: this.args._[3]
+        this.args._.splice(3).forEach(appId => {
+          disableApp({
+            baseUrl: this.remoteInstanceURL,
+            fetcher: this.fetcher,
+            screen: this.screen,
+            logger: this.logger,
+            appId: appId
+          });
         });
       }
       // dockui mod ls [--filter property=val] [-q]
@@ -414,12 +424,14 @@ class CLI {
             this.screen.log("Missing argument <moduleId>\n");
             return resolve(showUsage(this));
           }
-          enableModule({
-            baseUrl: this.remoteInstanceURL,
-            fetcher: this.fetcher,
-            screen: this.screen,
-            logger: this.logger,
-            moduleId: this.args._[4]
+          this.args._.splice(4).forEach(moduleId => {
+            enableModule({
+              baseUrl: this.remoteInstanceURL,
+              fetcher: this.fetcher,
+              screen: this.screen,
+              logger: this.logger,
+              moduleId: moduleId
+            });
           });
         }
         // dockui mod disable <modId>
@@ -428,12 +440,14 @@ class CLI {
             this.screen.log("Missing argument <moduleId>\n");
             return resolve(showUsage(this));
           }
-          disableModule({
-            baseUrl: this.remoteInstanceURL,
-            fetcher: this.fetcher,
-            screen: this.screen,
-            logger: this.logger,
-            moduleId: this.args._[4]
+          this.args._.splice(4).forEach(moduleId => {
+            disableModule({
+              baseUrl: this.remoteInstanceURL,
+              fetcher: this.fetcher,
+              screen: this.screen,
+              logger: this.logger,
+              moduleId: moduleId
+            });
           });
         }
       }

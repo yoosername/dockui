@@ -53,11 +53,12 @@ const getHashFromModule = module => {
 const getHashFromModuleDescriptor = descriptor => {
   const key = descriptor.key;
   const type = descriptor.type;
+  const appId = descriptor.appId;
   const algo = "sha256";
   const config = {};
   const hash = crypto
     .createHash(algo, config)
-    .update(`${key}${type}`)
+    .update(`${key}${type}${appId}`)
     .digest("hex");
   return hash;
 };

@@ -25,7 +25,7 @@ class LokiAppStore extends AppStore {
       config: { "service.name": "LokiAppStore" }
     });
     this.configure(loki);
-    this.initLokiDB();
+    //this.initLokiDB();
   }
 
   /**
