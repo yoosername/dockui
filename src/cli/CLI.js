@@ -324,7 +324,7 @@ class CLI {
         });
       }
 
-      // dockui load <url> [permission]
+      // dockui load [--permission <permission>] <url>
       if (this.args._[2] === "load") {
         if (!this.args._[3]) {
           this.screen.log("Missing argument <url>\n");
@@ -336,10 +336,10 @@ class CLI {
           screen: this.screen,
           logger: this.logger,
           url: this.args._[3],
-          permission: this.args._[4] || App.permissions.DEFAULT
+          permission: this.args.permission || App.permissions.DEFAULT
         });
       }
-      // dockui reload <appId> [permission]
+      // dockui reload [--permission <permission>] <appId>
       if (this.args._[2] === "reload") {
         if (!this.args._[3]) {
           this.screen.log("Missing argument <appId>\n");
@@ -351,7 +351,7 @@ class CLI {
           screen: this.screen,
           logger: this.logger,
           appId: this.args._[3],
-          permission: this.args._[4]
+          permission: this.args.permission
         });
       }
       // dockui unload <appId>

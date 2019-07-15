@@ -179,9 +179,21 @@ describe("CLI", function() {
       fetcher: testFetcher,
       screen: screenSpy
     });
-    await cli.parse(["node", "dockui", "-i", "bla", "load", "someUrl", "READ"]);
+    // With Permission
+    await cli.parse([
+      "node",
+      "dockui",
+      "-i",
+      "bla",
+      "load",
+      "someUrl",
+      "--permission",
+      "READ"
+    ]);
     expect(screenSpy.log).toHaveBeenCalled();
     expect(screenSpy.log.mock.calls[0][0]).toBe(testAppId);
+    // Without Permission
+    await cli.parse(["node", "dockui", "-i", "bla", "load", "someUrl"]);
   });
 
   // (5) Enable a loaded APP which is disabled:

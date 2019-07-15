@@ -23,7 +23,6 @@ module.exports = async ({
       logger.error("Error reloading App(id=%s) error: %o", appId, body.error);
     }
     if (typeof body === "object") {
-      const permText = permission ? `With new Permission ${permission}` : "";
       screen.log(
         // Only return id so we can chain together commands
         `${body.id}`
