@@ -132,7 +132,6 @@ class AppLoadWorker extends TaskWorker {
       try {
         app = await this.appLoader.load({ url, permission });
         // Make sure it isnt already loaded
-        // TODO: Generate the ID from an Apps Hash so its unique and test that way instead.
         const existingApps = this.store.find(doc => {
           return (
             doc.docType === App.DOCTYPE &&
