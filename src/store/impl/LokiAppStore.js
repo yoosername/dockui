@@ -85,11 +85,13 @@ class LokiAppStore extends AppStore {
   }
 
   /**
-   * @description Read data by its id
+   * @description Read data by its id (12 char shortform or 64 char longform)
    * @argument {String} id The id of the object to return
    */
   read(id) {
     if (!id) return null;
+    if (id.length === 12)
+      return this.collection.findOne({ id: { $regex: RegExp(id + ".*") } });
     return this.collection.findOne({ id: id });
   }
 

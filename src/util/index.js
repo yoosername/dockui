@@ -2,6 +2,15 @@ const crypto = require("crypto");
 const yaml = require("js-yaml");
 
 /**
+ * @description  Return a shortform version of the Id Hash
+ * @argument {String} hash The ID Hash digest to shorten
+ * @return {String} shortened Hash
+ */
+const getShortHash = hash => {
+  return hash.substring(0, 12);
+};
+
+/**
  * @description  Return a unique hash given an App
  * @argument {App} app The App we want to know the Hash for
  * @return {String} md5 hash
@@ -75,5 +84,6 @@ module.exports = {
   getHashFromAppDescriptor,
   getHashFromApp,
   getHashFromModule,
-  getHashFromModuleDescriptor
+  getHashFromModuleDescriptor,
+  getShortHash
 };

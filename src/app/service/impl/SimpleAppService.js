@@ -309,7 +309,7 @@ class SimpleAppService extends AppService {
 
   /**
    * @description Get a single known App
-   * @argument {Object} id The ID of the App
+   * @argument {Object} id The ID of the App (12 char shortform or 64 char longform)
    * @returns {App} Requested App
    */
   async getApp(id) {

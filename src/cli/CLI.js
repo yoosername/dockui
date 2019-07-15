@@ -5,6 +5,9 @@ const request = require("request");
 const Table = require("cli-table3");
 const colors = require("colors");
 
+// Utils
+const { getShortHash } = require("../util");
+
 // Specific Commands
 const listApps = require("./commands/listApps");
 const loadApp = require("./commands/loadApp");
@@ -111,7 +114,13 @@ const getDefaultFormatters = () => {
       });
       apps.forEach(app => {
         let enabled = app.enabled ? colors.green(true) : colors.red(false);
-        const row = [app.name, app.id, app.key, enabled, app.permission];
+        const row = [
+          app.name,
+          getShortHash(app.id),
+          app.key,
+          enabled,
+          app.permission
+        ];
         table.push(row);
       });
       return table.toString();
@@ -126,7 +135,12 @@ const getDefaultFormatters = () => {
       });
       modules.forEach(module => {
         let enabled = module.enabled ? colors.green(true) : colors.red(false);
-        const row = [module.name, module.id, enabled, module.type];
+        const row = [
+          module.name,
+          getShortHash(module.id),
+          enabled,
+          module.type
+        ];
         table.push(row);
       });
       return table.toString();
@@ -140,7 +154,6 @@ const getDefaultFormatters = () => {
         }
       });
       allTasks = [].concat(...Object.values(tasks));
-      console.log(allTasks);
       allTasks.forEach(task => {
         const row = [task.id, task.type, task.status];
         table.push(row);
