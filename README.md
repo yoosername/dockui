@@ -20,6 +20,7 @@ This is an experiment and has no formal support. Feel free to fork it for your o
 ```shell
 $ git clone https://github.com/yoosername/dockui.git
 $ cd dockui
+$ npm install
 $ docker build --tag dockui/app .
 ```
 
