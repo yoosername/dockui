@@ -33,6 +33,7 @@ $ docker run -it \
   --env DOCKUI_STORE_DB_FILENAME=/app/loki.db \
   -p 3000:3000 \
   -v $(pwd):/app \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   dockui/app
 ...
 To connect a CLI to this instance first run:
