@@ -1,29 +1,8 @@
-const request = require("request");
 const Module = require("../../../app/module/Module");
 const WebPageModule = require("../../../app/module/impl/WebPageModule");
 const path = require("path");
 
-const singlePageFetcher = async (req, options) => {
-  return new Promise(function(resolve, reject) {
-    try {
-      if (req) {
-        req.pipe(
-          request(options, (err, res, body) => {
-            if (err) return reject(err);
-            resolve({ res, body });
-          })
-        );
-      } else {
-        request(options, (err, res, body) => {
-          if (err) return reject(err);
-          resolve({ res, body });
-        });
-      }
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
+const { fetch } = require("../../../util");
 
 const getModuleFromModuleKey = async ({ moduleKey, appService, logger }) => {
   let module = null;
@@ -85,7 +64,7 @@ const chainFetch = async ({ ctx, moduleKey, appService, logger }) => {
         options.uri
       );
 
-      let { res, page } = await singlePageFetcher(req, options);
+      let { res, page } = await fetch(req, options);
 
       if (res.statusCode === 404) {
         logger.warn("Page was not found (%s) - SKIPPING", options.uri);

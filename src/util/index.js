@@ -1,5 +1,83 @@
 const crypto = require("crypto");
 const yaml = require("js-yaml");
+const request = require("request");
+//const request = require("request-promise-native");
+
+/**
+ * @description  Wrap a Fetcher with some extra options derived from a DockUI Config
+ * @argument {Config} config Config instance to load options from
+ * @return {Function} Returns a decorated Fetch Function
+ */
+const ConfigAwareFetcher = config => {
+  let options = {};
+  const cert = config.get ? config.get("web.ssl.cert") : null;
+  const key = config.get ? config.get("web.ssl.key") : null;
+  try {
+    if (cert && cert !== "" && (key && key !== "")) {
+      options.cert = fs.readFileSync(cert);
+      options.key = fs.readFileSync(key);
+      options.rejectUnauthorized = false;
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+    }
+  } catch (err) {}
+  const wrapper = (req, fetchOptions) => {
+    let _req = fetchOptions ? req : null;
+    let _fetchOptions = fetchOptions ? fetchOptions : req;
+    const mergedOptions = Object.assign({}, options, _fetchOptions);
+    if (_req) return fetch(_req, mergedOptions);
+    return fetch(mergedOptions);
+  };
+  return wrapper;
+};
+
+/**
+ * @description  Fetch some data from a URL
+ * @argument {Object} options Options to pass to Request
+ * @return {Promise} Resolves to an object containing the raw response and the response body
+ */
+const fetch = async (req, options) => {
+  let _req = options ? req : null;
+  let _options = options ? options : req;
+
+  return new Promise(function(resolve, reject) {
+    try {
+      // If Req then pipe it in
+      if (_req) {
+        _req.pipe(
+          request(_options, (err, response, body) => {
+            if (err) return reject(err);
+            resolve({ response, body });
+          })
+        );
+      } else {
+        // Otherwise just request it
+        request(_options, (err, response, body) => {
+          if (err) return reject(err);
+          resolve({ response, body });
+        });
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+/**
+ * @description  Fetch data from a URL and return response Body
+ * @argument {Object} options Options to pass to Request
+ * @return {String} Raw Body (e.g. JSON or YAML)
+ */
+const fetchBody = async options => {
+  try {
+    const { res, body } = await fetch(options);
+    return body;
+  } catch (e) {
+    throw new Error(
+      `Error fetching Descriptor with options(${options}) Error: ${e}`
+    );
+  }
+  return {};
+};
 
 /**
  * @description  Return a shortform version of the Id Hash
@@ -81,6 +159,9 @@ const getDescriptorAsObject = descriptor => {
 };
 
 module.exports = {
+  ConfigAwareFetcher,
+  fetch,
+  fetchBody,
   getDescriptorAsObject,
   getHashFromAppDescriptor,
   getHashFromApp,

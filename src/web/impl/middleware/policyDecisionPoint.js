@@ -1,38 +1,14 @@
 const AuthorizationProviderModule = require("../../../app/module/impl/AuthorizationProviderModule");
-const request = require("request-promise-native");
 const path = require("path");
 
-const defaultFetcher = async options => {
-  let data = {};
-
-  try {
-    if (options.uri.startsWith("https")) {
-      const cert = this.config.get("web.ssl.cert");
-      const key = this.config.get("web.ssl.key");
-      if (cert && cert !== "" && (key && key !== "")) {
-        options.cert = fs.readFileSync(cert);
-        options.key = fs.readFileSync(key);
-      } else {
-        throw new Error(
-          "In order to load a Https URL you must provide a cert, key in the config"
-        );
-      }
-    }
-    data = await request(options);
-  } catch (e) {
-    throw new Error(
-      `Error fetching Descriptor communicating with AuthorizationProvider service with options(${options}) Error: ${e}`
-    );
-  }
-  return data;
-};
+const { fetchBody } = require("../../../util");
 
 /**
  * @description Middleware function to Decide if request can proceed based on Info added by IDAM middleware
  *              - This will delegate to AuthorisationProvider modules and return first result of first one
  *              - which opts in to handle the request
  */
-module.exports = function({ appService, logger } = {}) {
+module.exports = function({ appService, logger, config } = {}) {
   return async function policyDecisionPoint(ctx, next) {
     logger.silly("PDP Check Happens HERE, idam info = %o", ctx.dockui.idam);
     // Perform a policy check if one is required
@@ -81,13 +57,14 @@ module.exports = function({ appService, logger } = {}) {
           simple: false,
           body: ctx.dockui.idam,
           resolveWithFullResponse: true,
-          json: true
+          json: true,
+          config: config
         };
         logger.debug("Requesting PDP Check with options: %o", options);
 
         // Make the request
         try {
-          const result = await defaultFetcher(options);
+          const result = await fetchBody(options);
           logger.debug(
             "Result = %o, body = %o, REdirect URI = ",
             result.statusCode,

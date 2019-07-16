@@ -7,19 +7,23 @@ module.exports = async ({ baseUrl, fetcher, screen, formatters, logger }) => {
       json: true
     });
     if (!response.statusCode === 200) {
-      logger.error("There was an error calling the management Api(%s)", uri);
+      logger.error(
+        "There was an error calling the management Api(%s), statusCode=%o",
+        uri,
+        response.statusCode
+      );
       logger.error(response.message);
-      resolve();
+      return;
     }
     if (body && body.length && body.length > 0) {
       if (formatters.apps && typeof formatters.apps === "function") {
         screen.log(formatters.apps(body));
       }
-    } else {
-      screen.log("");
     }
+    // } else {
+    //   screen.log("");
+    // }
   } catch (err) {
-    logger.error("Error connecting to Management API (%s)", uri);
-    logger.debug(err);
+    logger.error("Error connecting to Management API (%s): error=%o", uri, err);
   }
 };

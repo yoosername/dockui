@@ -1,7 +1,8 @@
-const request = require("request");
 const Module = require("../../../app/module/Module");
 const ApiModule = require("../../../app/module/impl/ApiModule");
 const path = require("path");
+
+const { fetch } = require("../../../util");
 
 /**
  * @description Middleware function to detect Api Modules and serve them
@@ -33,7 +34,10 @@ module.exports = function({ config, logger, appService } = {}) {
             "This is an Api Module, Proxying Api directly from %s",
             apiUrl
           );
-          return (ctx.body = ctx.req.pipe(request(apiUrl.toString())));
+          return (ctx.body = fetch(ctx.req, {
+            uri: apiUrl.toString(),
+            config
+          }));
         } catch (e) {
           logger.error("Error streaming WebResource, error = %o", e);
         }

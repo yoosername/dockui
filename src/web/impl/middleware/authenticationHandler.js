@@ -1,38 +1,14 @@
 const AuthenticationProviderModule = require("../../../app/module/impl/AuthenticationProviderModule");
-const request = require("request-promise-native");
 const path = require("path");
 
-const defaultFetcher = async options => {
-  let data = {};
-
-  try {
-    if (options.uri.startsWith("https")) {
-      const cert = this.config.get("web.ssl.cert");
-      const key = this.config.get("web.ssl.key");
-      if (cert && cert !== "" && (key && key !== "")) {
-        options.cert = fs.readFileSync(cert);
-        options.key = fs.readFileSync(key);
-      } else {
-        throw new Error(
-          "In order to load a Https URL you must provide a cert, key in the config"
-        );
-      }
-    }
-    data = await request(options);
-  } catch (e) {
-    throw new Error(
-      `Error fetching Descriptor communicating with AuthenticationProvider service with options(${options}) Error: ${e}`
-    );
-  }
-  return data;
-};
+const { fetchBody } = require("../../../util");
 
 /**
  * @description Middleware function to redirect a user to a Login service
  *              - This could also be provided e.g. as a login page and backing Api
  *              - Or it could redirect to an IDP for a SAML based flow etc
  */
-module.exports = function({ appService, logger } = {}) {
+module.exports = function({ appService, logger, config } = {}) {
   return async function authenticationHandler(ctx, next) {
     logger.debug("Testing for Authentication");
     const url = ctx.originalUrl;
@@ -99,13 +75,14 @@ module.exports = function({ appService, logger } = {}) {
             cookies: getCookies(ctx)
           },
           resolveWithFullResponse: true,
-          json: true
+          json: true,
+          config: config
         };
         //logger.debug(" Requesting Auth with options: %o", options);
         // For each Auth Module (sorted on weight)
         // Make the request
         try {
-          const result = await defaultFetcher(options);
+          const result = await fetchBody(options);
           logger.debug(
             "Result = %o, body = %o, REdirect URI = ",
             result.statusCode,

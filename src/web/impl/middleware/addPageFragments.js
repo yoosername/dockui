@@ -1,29 +1,8 @@
 const WebFragmentModule = require("../../../app/module/impl/WebFragmentModule");
-const request = require("request");
 const path = require("path");
 const cheerio = require("cheerio");
 
-const fetch = async (req, options) => {
-  return new Promise(function(resolve, reject) {
-    try {
-      if (req) {
-        req.pipe(
-          request(options, (err, res, body) => {
-            if (err) return reject(err);
-            resolve({ res, body });
-          })
-        );
-      } else {
-        request(options, (err, res, body) => {
-          if (err) return reject(err);
-          resolve({ res, body });
-        });
-      }
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
+const { fetch } = require("../../../util");
 
 const getFragmentContextsFromPage = ({ selector, logger }) => {
   let fragmentContexts = null;
@@ -86,7 +65,7 @@ const fetchAndInjectFragment = async ({
       appService,
       logger
     });
-    const { res, body } = await fetch(null, {
+    const { res, body } = await fetch({
       uri: fragmentUrl,
       method: "GET"
     });

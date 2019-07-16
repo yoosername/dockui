@@ -1,12 +1,12 @@
 const Reactor = require("../Reactor");
 const monitor = require("node-docker-monitor");
-const request = require("request-promise-native");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
 const App = require("../../../app/App");
 const {
   getDescriptorAsObject,
-  getHashFromAppDescriptor
+  getHashFromAppDescriptor,
+  fetchBody
 } = require("../../../util");
 
 const SELECTOR_LABEL_CONFIG_KEY = "docker.selector.label";
@@ -37,29 +37,6 @@ const getDescriptorURLFromContainer = ({ container, config, network }) => {
     ? descriptorNameConfigOverride
     : DEFAULT_DESCRIPTOR_NAME;
   return `http://${host}:${privatePort}/${descriptorName}`;
-};
-
-const defaultFetcher = async options => {
-  let data = {};
-  try {
-    data = await request(options);
-  } catch (e) {
-    throw new Error(
-      `Error fetching Descriptor with options(${options}) Error: ${e}`
-    );
-  }
-  return data;
-};
-
-const fetchDescriptor = async ({ url, logger }) => {
-  let options = { method: "GET", uri: url, type: "json" };
-  let descriptor = null;
-  try {
-    descriptor = await defaultFetcher(options);
-  } catch (err) {
-    logger.error("error fetching descriptor from (%s), error= %o", url, err);
-  }
-  return descriptor;
 };
 
 /**
@@ -121,7 +98,12 @@ class DockerEventsReactor extends Reactor {
         network: netInfo
       });
       // Fetch descriptor
-      let descriptor = await fetchDescriptor({ url, logger: this.logger });
+      let descriptor = await fetchBody({
+        method: "GET",
+        uri: url,
+        type: "json",
+        logger: this.logger
+      });
       // If YAML Turn into Object
       descriptor = getDescriptorAsObject(descriptor);
       // If there is a descriptor

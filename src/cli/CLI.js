@@ -1,12 +1,10 @@
 #!/usr/bin/env node
-
 const minimist = require("minimist");
-const request = require("request");
 const Table = require("cli-table3");
 const colors = require("colors");
 
 // Utils
-const { getShortHash } = require("../util");
+const { getShortHash, ConfigAwareFetcher } = require("../util");
 
 // Specific Commands
 const listApps = require("./commands/listApps");
@@ -19,19 +17,6 @@ const listModules = require("./commands/listModules");
 const enableModule = require("./commands/enableModule");
 const disableModule = require("./commands/disableModule");
 const listTasks = require("./commands/listTasks");
-
-const defaultFetcher = async options => {
-  return new Promise(function(resolve, reject) {
-    try {
-      request(options, (err, response, body) => {
-        if (err) return reject(err);
-        resolve({ response, body });
-      });
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
 
 const {
   Config,
@@ -205,7 +190,7 @@ class CLI {
     config = new Config(),
     screen = console,
     formatters = getDefaultFormatters(),
-    fetcher = defaultFetcher,
+    fetcher = ConfigAwareFetcher(config),
     logger = LoggerFactory.create(config)
   } = {}) {
     this.name = name;

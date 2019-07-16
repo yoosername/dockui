@@ -2,20 +2,9 @@ const fs = require("fs");
 const { Config } = require("../../config/Config");
 const App = require("../App");
 const Logger = require("../../log/Logger");
-const request = require("request-promise-native");
 const yaml = require("js-yaml");
 
-const defaultFetcher = async options => {
-  let data = {};
-  try {
-    data = await request(options);
-  } catch (e) {
-    throw new Error(
-      `Error fetching Descriptor with options(${options}) Error: ${e}`
-    );
-  }
-  return data;
-};
+const { fetchBody } = require("../../util");
 
 /**
  * @description Encapsulates an external App and its Descriptor to be loaded
@@ -42,7 +31,7 @@ class AppLoader {
    * @argument {String} permission Permission we wish to grant the App
    * @argument {Object} fetcher Function which takes a URL and returns content as a String
    */
-  load({ url, permission, fetcher = defaultFetcher }) {
+  load({ url, permission, fetcher = fetchBody }) {
     return new Promise(async (resolve, reject) => {
       let descriptor;
       let options = { method: "GET", uri: url };

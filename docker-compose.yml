@@ -6,15 +6,20 @@ services:
     networks:
       - dockui
     environment:
-      - DOCKUI_WEB_PORT=3000
+      - DOCKUI_WEB_PORT=8443
       - DOCKUI_WEB_SSL_CERT=/tmp/dockui.server.cert
       - DOCKUI_WEB_SSL_KEY=/tmp/dockui.server.key
       - DOCKUI_WEB_SCHEME=https
+      - DOCKUI_STORE_TYPE=lokijs
+      - DOCKUI_STORE_DB_FILENAME=/app/loki.db
+      - DOCKUI_LOGGING_LEVEL=debug
+      - DOCKUI_DOCKER_SELECTOR_LABEL=DOCKUI_APP
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
-      - 3000:3000
+      - 8443:8443
     volumes:
       - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       replicas: 1
       update_config:
