@@ -123,7 +123,7 @@ These can all be triggered in a couple of ways:
   - Must have been granted ADMIN permission
 
 ```shell
-$ dockui load --permission admin https://localhost:8443/demo/demo.app.yml
+$ dockui load --permission admin http://localhost:3000/demo/demo.app.yml
 ce4bfd7dd549bf16a1705ab5a221609d8cd67a5264cc3ce467dc443ce1701108
 ```
 
@@ -150,6 +150,16 @@ $ docker run -it --label DOCKUI_APP=true -v $(pwd)/src/web/impl/static/demo:/usr
 ```
 
 > At this point in the logs for the instance you should see the loading occur
+
+## Enable Apps
+
+> Use the hash of the previously loaded app as the argument to this command
+
+```shell
+$ dockui enable ce4bfd7dd549
+```
+
+Now you can visit http://localhost:3000 to see the loaded app and the modules it provides
 
 ## App Descriptor and Modules
 
