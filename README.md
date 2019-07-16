@@ -20,6 +20,7 @@ This is an experiment and has no formal support. Feel free to fork it for your o
 ```shell
 $ git clone https://github.com/yoosername/dockui.git
 $ cd dockui
+$ npm install
 $ docker build --tag dockui/app .
 ```
 
@@ -32,6 +33,7 @@ $ docker run -it \
   --env DOCKUI_STORE_DB_FILENAME=/app/loki.db \
   -p 3000:3000 \
   -v $(pwd):/app \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   dockui/app
 ...
 To connect a CLI to this instance first run:
