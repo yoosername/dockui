@@ -1,7 +1,7 @@
 key: dockui.dashboard.app
 alias: dashboard
 name: DockUI Dashboard App
-baseUrl: http://localhost:8080/demo
+baseUrl: http://localhost:3000/demo
 type: dynamic
 description: This is a demo Dashboard App showing of the various features of the DockUI framework
 version: 1.0.0
