@@ -69,7 +69,7 @@ describe("AppLoader", function() {
     const appLoader = new AppLoader().build();
     const TEST_URL = "http://some.url";
     const returnedApp = new App({ key: "demo_key", version: "2.0" });
-    const testFetcher = jest.fn().mockResolvedValue(returnedApp);
+    const testFetcher = jest.fn().mockResolvedValue({ body: returnedApp });
     const permission = App.permissions.READ;
     const app = await appLoader.load({
       url: TEST_URL,
@@ -88,7 +88,9 @@ describe("AppLoader", function() {
       .withModuleLoader(new TestModuleLoader2())
       .build();
     const TEST_URL = "http://some.url";
-    const testFetcher = jest.fn().mockResolvedValue(TEST_APP_DESCRIPTOR);
+    const testFetcher = jest
+      .fn()
+      .mockResolvedValue({ body: TEST_APP_DESCRIPTOR });
     const permission = App.permissions.READ;
     const app = await appLoader.load({
       url: TEST_URL,

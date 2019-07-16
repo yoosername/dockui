@@ -1,10 +1,9 @@
-const fs = require("fs");
 const { Config } = require("../../config/Config");
 const App = require("../App");
 const Logger = require("../../log/Logger");
 const yaml = require("js-yaml");
 
-const { fetchBody } = require("../../util");
+const { ConfigAwareFetcher } = require("../../util");
 
 /**
  * @description Encapsulates an external App and its Descriptor to be loaded
@@ -31,7 +30,7 @@ class AppLoader {
    * @argument {String} permission Permission we wish to grant the App
    * @argument {Object} fetcher Function which takes a URL and returns content as a String
    */
-  load({ url, permission, fetcher = fetchBody }) {
+  load({ url, permission, fetcher = ConfigAwareFetcher(this.config) }) {
     return new Promise(async (resolve, reject) => {
       let descriptor;
       let options = { method: "GET", uri: url };
@@ -39,25 +38,13 @@ class AppLoader {
       // Use the fetcher to fetch the descriptor file
       this.logger.debug("Fetching Descriptor from (url=%s)", url);
       try {
-        if (url.startsWith("https")) {
-          const cert = this.config.get("web.ssl.cert");
-          const key = this.config.get("web.ssl.key");
-          if (cert && cert !== "" && (key && key !== "")) {
-            options.cert = fs.readFileSync(this.config.get("web.ssl.cert"));
-            options.key = fs.readFileSync(this.config.get("web.ssl.key"));
-          } else {
-            throw new Error(
-              "In order to load a Https URL you must provide a cert, key in the config"
-            );
-          }
-        }
-        descriptor = await fetcher(options);
+        ({ body: descriptor } = await fetcher(options));
       } catch (err) {
         throw new Error(err);
       }
 
       // If not JSON already then turn the YAML into JSON
-      if (!typeof descriptor === "object" || !descriptor.key) {
+      if (!typeof descriptor === "object" || (descriptor && !descriptor.key)) {
         this.logger.debug(
           "Descriptor may be YAML, attemting to convert it to JSON"
         );
