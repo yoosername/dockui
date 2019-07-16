@@ -1,11 +1,10 @@
-const CachableModuleLoader = require("./CachableModuleLoader");
-const WebResourceModuleDescriptor = require("../../../descriptor/impl/WebResourceModuleDescriptor");
+const ModuleLoader = require("../ModuleLoader");
 const WebResourceModule = require("../../../module/impl/WebResourceModule");
 
 /**
  * @description Create a WebResourceModule from a descriptor
  */
-class WebResourceModuleLoader extends CachableModuleLoader {
+class WebResourceModuleLoader extends ModuleLoader {
   constructor() {
     super();
   }
@@ -13,67 +12,40 @@ class WebResourceModuleLoader extends CachableModuleLoader {
   /**
    * @description Return true if this descriptor can be parsed and is
    *              the required format to produce this type of Module
-   * @argument {AppDescriptor} descriptor The AppDescriptor to test
+   * @argument {Object} descriptor The Module Descriptor to test
    */
   canLoadModuleDescriptor(descriptor) {
-    // Have we previously responded with a true
-    const cachedResponse = this.canLoadModuleFromCache(descriptor);
-    if (cachedResponse === true) {
+    if (descriptor.type === WebResourceModule.DESCRIPTOR_TYPE) {
       return true;
-    } else if (cachedResponse === false) {
-      return false;
     }
-
-    // Nothing in the cache so:
-    var moduleDescriptor = null;
-    var apiModule = null;
-    var response = false;
-    try {
-      moduleDescriptor = new WebResourceModuleDescriptor(descriptor);
-      apiModule = new WebResourceModule(moduleDescriptor);
-      if (apiModule !== null) {
-        response = true;
-        this.setCache(descriptor, {
-          loadable: true,
-          module: apiModule
-        });
-      }
-    } catch (e) {
-      response = false;
-      this.setCache(descriptor, {
-        loadable: false
-      });
-    } finally {
-      moduleDescriptor = null;
-      apiModule = null;
-    }
-
-    return response;
   }
 
   /**
    * @description Create and return a new Module from the descriptor
-   * @argument {AppDescriptor} descriptor The AppDescriptor to load
+   * @argument {Object} descriptor The Module Descriptor to test
    */
   loadModuleFromDescriptor(descriptor) {
-    // Have we previously created and returned a module
-    const cachedModule = this.loadModuleFromCache(descriptor);
-    if (cachedModule) {
-      return cachedModule;
-    }
-
-    // Nothing in the cache so do verify ourself:
-    const doesLoad = this.canLoadModuleDescriptor(descriptor);
-    if (doesLoad) {
-      const module = this.loadModuleFromCache(descriptor);
-      if (module) {
-        return module;
+    return new Promise(async (resolve, reject) => {
+      if (descriptor && typeof descriptor === "object") {
+        // Get initial shape from the descriptor
+        const shape = {
+          key: descriptor.key,
+          name: descriptor.name,
+          description: descriptor.description,
+          aliases: descriptor.aliases,
+          resources: descriptor.resources,
+          url: descriptor.url,
+          type: descriptor.type,
+          description: descriptor.description,
+          auth: descriptor.auth,
+          cache: descriptor.cache,
+          context: descriptor.context
+        };
+        // Create a Module from the shape and return it
+        const module = new WebResourceModule(shape);
+        resolve(module);
       }
-    }
-
-    // We cant load the Module so return null
-    // App will try more loaders and then handle the case where none work.
-    return null;
+    });
   }
 }
 

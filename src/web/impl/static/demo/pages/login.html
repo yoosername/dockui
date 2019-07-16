@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Dashboard Login</title>
+
+    <!-- Bootstrap core CSS -->
+    <meta name="WebResourcesFor" content="link,style" />
+    <link
+      rel="stylesheet"
+      href="/app/dashboard/s/lib/bootstrap/css/bootstrap-4.3.1.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/app/dashboard/s/lib/fontawesome/css/fontawesome-5.9.0.min.css"
+    />
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        overflow-y: scroll;
+        opacity: 1 !important;
+        margin: 0;
+        font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        text-align: left;
+        background-color: #f5f9fc;
+      }
+
+      .rounded-circle {
+        border-radius: 100% !important;
+        width: 50%;
+        background-color: lightgray;
+        padding: 20px;
+        margin: auto;
+      }
+
+      .card {
+        margin-bottom: 2rem;
+        box-shadow: none;
+      }
+
+      .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid #e5e9f2;
+        border-radius: 0.2rem;
+      }
+
+      .btn-primary {
+        background-color: #47bac1;
+        border-color: #47bac1;
+      }
+
+      .rememberMe {
+        position: relative;
+        margin-bottom: 0;
+        vertical-align: top;
+      }
+
+      label {
+        margin-bottom: 0.5rem;
+        float: left;
+      }
+
+      .outer {
+        display: table;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      .middle {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
+      .inner {
+        margin-left: auto;
+        margin-right: auto;
+        width: 400px;
+      }
+    </style>
+  </head>
+  <body class="text-center">
+    <div class="outer">
+      <div class="middle">
+        <div class="inner">
+          <form
+            class="form-signin"
+            id="loginForm"
+            method="post"
+            action="/demo/login.action"
+          >
+            <div class="card">
+              <div class="card-body">
+                <div class="m-sm-4">
+                  <div class="text-center rounded-circle">
+                    <i class="fas fa-user fa-7x"></i>
+                  </div>
+                  <h2 class="h3 mb-3 font-weight-normal">Please sign in</h2>
+                  <form class="">
+                    <div class="form-group">
+                      <label class="">Username</label
+                      ><input
+                        name="username"
+                        placeholder="Enter your username"
+                        type="text"
+                        class="form-control-lg form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="">Password</label
+                      ><input
+                        name="password"
+                        placeholder="Enter your password"
+                        type="password"
+                        class="form-control-lg form-control"
+                        required
+                      />
+                    </div>
+                    <div class="text-center mt-3">
+                      <button class="btn btn-primary btn-lg" type="submit">
+                        Sign in
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div data-WebResourcesFor="script:src,content">
+      <!-- This will be replaced by any scripts which have a src attribute or embedded-->
+    </div>
+    <script type="text/javascript">
+      let form = document.getElementById("loginForm");
+      let existingUrl = form.getAttribute("action");
+      let search = window.location.search ? window.location.search : "";
+      form.setAttribute("action", existingUrl + search);
+    </script>
+  </body>
+</html>

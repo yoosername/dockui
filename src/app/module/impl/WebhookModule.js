@@ -5,21 +5,20 @@ const Module = require("../Module");
  */
 class WebhookModule extends Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {Object} descriptor - The descriptor used to load this module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    super(app, descriptor);
-
-    this.url = descriptor.url;
-    this.events = descriptor.events;
+  constructor({ url = null, events = [] } = {}) {
+    super(...arguments);
+    this.type = WebhookModule.DESCRIPTOR_TYPE;
+    this.url = url;
+    this.events = events;
   }
 
   /**
    * @description The URL of the webhook relative to the App Url
    */
   getUrl() {
-    return this.getUrl;
+    return this.url;
   }
 
   /**
@@ -28,6 +27,21 @@ class WebhookModule extends Module {
   getEvents() {
     return this.events;
   }
+
+  /**
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
+   */
+  toJSON() {
+    const json = Object.assign(super.toJSON(), {
+      url: this.url,
+      events: this.events,
+      type: this.type
+    });
+    return json;
+  }
 }
+
+WebhookModule.DESCRIPTOR_TYPE = "Webhook";
 
 module.exports = WebhookModule;

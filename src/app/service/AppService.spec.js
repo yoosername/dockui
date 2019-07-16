@@ -1,113 +1,75 @@
-const chai = require("chai");
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
+const AppStore = require("../../store/AppStore");
+const TaskManager = require("../../task/manager/TaskManager");
+const AppService = require("./AppService");
 
-const {
-  APP_SERVICE_STARTING_EVENT,
-  APP_SERVICE_STARTED_EVENT,
-  APP_SERVICE_SHUTTING_DOWN_EVENT,
-  APP_SERVICE_SHUTDOWN_EVENT
-} = require("../../constants/events");
+jest.mock("../../store/AppStore");
+jest.mock("../../task/manager/TaskManager");
 
-const { appServiceValidationError } = require("../../constants/errors");
-
-const {
-  MockAppLoader,
-  MockAppLoaders,
-  MockAppStore,
-  MockLifecycleEventsStrategy,
-  MockEventService
-} = require("../../util/mocks");
-
-var AppService = require("./appService");
-
-var mockAppLoader = null;
-var mockAppLoaders = null;
-var mockAppStore = null;
-var mockLifecycleEventsStrategy = null;
-var mockEventService = null;
+var store = null;
+var taskManager = null;
 
 describe("AppService", function() {
   "use strict";
 
   beforeEach(function() {
-    mockAppLoader = new MockAppLoader();
-    mockAppLoaders = new MockAppLoaders(mockAppLoader);
-    mockAppStore = new MockAppStore();
-    mockLifecycleEventsStrategy = new MockLifecycleEventsStrategy();
-    mockEventService = new MockEventService();
+    store = new AppStore();
+    taskManager = new TaskManager();
   });
 
-  it("should be defined and loadable", function() {
-    expect(AppService).to.not.be.undefined;
+  test("should be defined and loadable", function() {
+    expect(AppService).not.toBeUndefined();
   });
 
-  it("should be a function", function() {
-    expect(AppService).to.be.a("function");
+  test("should be a function", function() {
+    expect(typeof AppService).toBe("function");
   });
 
-  it("should validate arguments and throw if wrong", function() {
-    expect(() => {
-      new AppService(null, null, null, null);
-    }).to.throw(appServiceValidationError);
-    expect(() => {
-      new AppService();
-    }).to.throw(appServiceValidationError);
-    expect(() => {
-      new AppService(mockAppLoaders, mockAppStore, mockEventService);
-    }).to.throw(appServiceValidationError);
-    expect(() => {
-      new AppService(mockAppLoaders, mockEventService);
-    }).to.throw(appServiceValidationError);
-    expect(() => {
-      new AppService(mockAppStore);
-    }).to.throw(appServiceValidationError);
-    expect(() => {
-      new AppService(
-        mockAppLoaders,
-        mockAppStore,
-        mockLifecycleEventsStrategy,
-        mockEventService
-      );
-    }).to.not.throw();
+  test("should have correct signature", function() {
+    const appService = new AppService(store, taskManager);
+    expect(typeof appService.start).toBe("function");
+    expect(typeof appService.shutdown).toBe("function");
+    expect(typeof appService.loadApp).toBe("function");
+    expect(typeof appService.unloadApp).toBe("function");
+    expect(typeof appService.enableApp).toBe("function");
+    expect(typeof appService.disableApp).toBe("function");
+    expect(typeof appService.getApps).toBe("function");
+    expect(typeof appService.getApp).toBe("function");
+    expect(typeof appService.loadModule).toBe("function");
+    expect(typeof appService.unLoadModule).toBe("function");
+    expect(typeof appService.getModules).toBe("function");
+    expect(typeof appService.getModule).toBe("function");
+    expect(typeof appService.enableModule).toBe("function");
+    expect(typeof appService.disableModule).toBe("function");
   });
 
-  it("should have correct signature", function() {
-    const appService = new AppService(
-      mockAppLoaders,
-      mockAppStore,
-      mockLifecycleEventsStrategy,
-      mockEventService
-    );
-    expect(appService.start).to.be.a("function");
-    expect(appService.shutdown).to.be.a("function");
-    expect(appService.scanForNewApps).to.be.a("function");
-    expect(appService.stopScanningForNewApps).to.be.a("function");
-    expect(appService.getApps).to.be.a("function");
-    expect(appService.getApp).to.be.a("function");
-    expect(appService.getModules).to.be.a("function");
-    expect(appService.getModule).to.be.a("function");
-  });
-
-  it("should log a warning if you dont extend the default behaviour", function() {
-    var logSpy = sinon.stub(console, "warn");
-    const appService = new AppService(
-      mockAppLoaders,
-      mockAppStore,
-      mockLifecycleEventsStrategy,
-      mockEventService
-    );
+  test("should log a warning if you dont extend the default behaviour", function() {
+    var logSpy = jest.spyOn(console, "warn").mockImplementation();
+    const appService = new AppService();
     appService.start();
     appService.shutdown();
-    appService.scanForNewApps();
-    appService.stopScanningForNewApps();
+    appService.loadApp();
+    appService.unloadApp();
+    appService.enableApp();
+    appService.disableApp();
     appService.getApps();
     appService.getApp();
+    appService.loadModule();
+    appService.unLoadModule();
     appService.getModules();
     appService.getModule();
-    expect(logSpy).to.be.called.callCount(8);
-    logSpy.restore();
+    appService.enableModule();
+    appService.disableModule();
+    expect(logSpy).toHaveBeenCalledTimes(14);
+    logSpy.mockRestore();
+  });
+
+  test("should extend event Emmitter", function(done) {
+    const appService = new AppService(store, taskManager);
+    const PAYLOAD = { test: "payload" };
+    appService.on("test", payload => {
+      expect(payload).toBe(PAYLOAD);
+      done();
+    });
+    appService.emit("test", PAYLOAD);
   });
 });

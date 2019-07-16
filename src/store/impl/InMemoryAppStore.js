@@ -1,68 +1,76 @@
 const AppStore = require("../AppStore");
-const APP_STATE_KEY_PREFIX = "APP_STATE_";
+const { Config } = require("../../config/Config");
 
 /**
  * @description Simple Store for persisting App/AppModule state to memory
  */
 class InMemoryAppStore extends AppStore {
-  constructor() {
-    super();
+  /**
+   * @argument {Config} config Optional runtime config
+   * @returns {AppStore}
+   */
+  constructor({ config = new Config() } = {}) {
+    super(config);
     this.data = {};
   }
 
   /**
-   * @description Store the value against the given key
+   * @description Store data (using its id or a generated id as unique ref)
+   * @argument {Object} data The object to save
    */
-  set(key, val) {
-    this.data[key] = val;
+  create(data) {
+    this.data[data.id] = data;
   }
 
   /**
-   * @description Retrieve the value for the provided key
+   * @description Read data by its id
+   * @argument {String} id The id of the object to return
    */
-  get(key) {
-    return this.data[key];
+  read(id) {
+    return this.data && this.data[id] ? this.data[id] : null;
   }
 
   /**
-   * @description Delete an entry by its key
+   * @description Update existing data by its id
+   * @argument {String} id The id of the object to update
+   * @argument {Object} data The partial object containing updated keys
    */
-  delete(key) {
-    var data = this.data[key];
-    this.data[key] = null;
-    delete this.data[key];
-    return data;
+  update(id, data) {
+    const item = this.read(id);
+    if (item) {
+      this.data[item.id] = Object.assign({}, this.data[item.id], data);
+    }
   }
 
   /**
-   * @argument {App} app - the app which state we want to save
-   * @description Store the state of an App
+   * @description Delete an entry by its id
+   * @argument {String} id The id of the object to delete
    */
-  saveState(app) {
-    let oldState = this.getAppState(app);
-    oldState = oldState ? oldState : {};
-    const newState = {
-      uuid: app.getUUID(),
-      key: app.getKey(),
-      enabled: app.isEnabled(),
-      modules: []
-    };
-    app.getModules().forEach(module => {
-      newState.modules.push({
-        key: module.getKey(),
-        enabled: module.isEnabled()
+  delete(id) {
+    const item = this.read(id);
+    if (item) {
+      this.data[id] = null;
+      delete this.data[id];
+    }
+    return item;
+  }
+
+  /**
+   * @description find objects that match the passed in predicate
+   * @argument {Object} predicate Truthy function which tests for a match
+   * @returns {Array} Array of matching objects
+   */
+  find(predicate) {
+    const found = [];
+    if (predicate && typeof predicate === "function") {
+      Object.keys(this.data).forEach(key => {
+        if (predicate(this.data[key])) {
+          found.push(this.data[key]);
+        }
       });
-    });
-    const saveState = Object.assign({}, oldState, newState);
-    this.set(APP_STATE_KEY_PREFIX + app.getUUID(), saveState);
-  }
-
-  /**
-   * @argument {App} app - the app which state we want to fetch
-   * @description Retrieve the state of an App
-   */
-  getState(app) {
-    return this.get(APP_STATE_KEY_PREFIX + app.getUUID());
+      return found;
+    }
+    return this.data;
   }
 }
 

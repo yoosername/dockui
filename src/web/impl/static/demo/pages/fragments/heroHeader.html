@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required Bootstrap responsive meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="/app/dashboard/s/lib/bootstrap/css/bootstrap-4.3.1.min.css"
+    />
+    <style>
+      body {
+        padding-top: 5rem;
+      }
+      .starter-template {
+        padding: 3rem 1.5rem;
+        text-align: center;
+      }
+      .navbar-header {
+        margin-left: 5px;
+        width: 100%;
+      }
+    </style>
+    <title>DockUI Fragment Demo</title>
+  </head>
+  <body>
+    <div id="heroHeader">
+      <style>
+        .hero-image {
+          /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+          background-image: linear-gradient(
+              rgba(0, 0, 0, 0.5),
+              rgba(0, 0, 0, 0.5)
+            ),
+            url("/app/dashboard/s/images/chalk.jpg");
+
+          /* Set a specific height */
+          height: 50%;
+          top: -5rem;
+
+          /* Position and center the image to scale nicely on all screens */
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          position: relative;
+        }
+
+        .hero-search {
+          text-align: center;
+          position: relative;
+          width: 50%;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+        }
+
+        /* Place text in the middle of the image */
+        .hero-header {
+          text-align: center;
+          position: absolute;
+          top: 30%;
+          left: 50%;
+          transform: translate(-50%, -30%);
+          color: white;
+        }
+
+        .hero-links {
+          text-align: center;
+          position: absolute;
+          top: 70%;
+          left: 50%;
+          transform: translate(-50%, -70%);
+        }
+        .hero-links a {
+          color: white !important;
+        }
+
+        .navbar {
+          background-color: transparent !important;
+        }
+      </style>
+      <div class="hero-image">
+        <div class="hero-header">
+          <h1>Welcome to the Marketplace</h1>
+        </div>
+        <div class="hero-search">
+          <input
+            class="form-control"
+            type="text"
+            placeholder="Search"
+            aria-label="Search"
+          />
+        </div>
+        <div class="hero-links">
+          <ul data-webItemsFor="fraglinks" class="list-inline">
+            <li class="list-inline-item">
+              <a id="{{ webitem.key }}" href="{{ webitem.link }}">{{
+                webitem.text
+              }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script src="/app/dashboard/s/lib/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script src="/app/dashboard/s/lib/popper/popper-1.14.7.min.js"></script>
+    <script src="/app/dashboard/s/lib/bootstrap/js/bootstrap-4.3.1.min.js"></script>
+  </body>
+</html>

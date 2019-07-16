@@ -1,9 +1,3 @@
-const chai = require("chai");
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
-
 var ModuleLoader = require("./ModuleLoader");
 
 describe("ModuleLoader", function() {
@@ -11,27 +5,27 @@ describe("ModuleLoader", function() {
 
   beforeEach(function() {});
 
-  it("should be defined and loadable", function() {
-    expect(ModuleLoader).to.not.be.undefined;
+  test("should be defined and loadable", function() {
+    expect(ModuleLoader).not.toBeUndefined();
   });
 
-  it("should be a function", function() {
-    expect(ModuleLoader).to.be.a("function");
+  test("should be a function", function() {
+    expect(typeof ModuleLoader).toBe("function");
     expect(() => {
       new ModuleLoader();
-    }).not.to.throw();
-    expect(new ModuleLoader()).to.be.an.instanceOf(ModuleLoader);
+    }).not.toThrow();
+    expect(new ModuleLoader()).toBeInstanceOf(ModuleLoader);
   });
 
-  it("should log a warning if you dont extend the default behaviour", function() {
-    var logSpy = sinon.stub(console, "warn");
+  test("should log a warning if you dont extend the default behaviour", function() {
+    console.warn = jest.fn(warn => {});
     const loader = new ModuleLoader();
-    expect(loader.canLoadModuleDescriptor).to.be.a("function");
-    expect(loader.loadModuleFromDescriptor).to.be.a("function");
+    expect(typeof loader.canLoadModuleDescriptor).toBe("function");
+    expect(typeof loader.loadModuleFromDescriptor).toBe("function");
     loader.canLoadModuleDescriptor();
-    expect(logSpy).to.be.called.callCount(1);
+    expect(console.warn).toHaveBeenCalledTimes(1);
     loader.loadModuleFromDescriptor();
-    expect(logSpy).to.be.called.callCount(2);
-    logSpy.restore();
+    expect(console.warn).toHaveBeenCalledTimes(2);
+    console.warn.mockClear();
   });
 });

@@ -5,6 +5,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+#certs
+*.cert 
+*.key
+
+#db files
+*.db
+
 # Vscode files 
 .vscode
 
@@ -62,3 +69,4 @@ typings/
 
 # Mac image thumbs
 .DS_Store
+src/web/impl/test.js

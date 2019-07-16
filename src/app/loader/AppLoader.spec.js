@@ -1,71 +1,105 @@
-const chai = require("chai");
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
-
-const {
-  MockApp,
-  MockAppStore,
-  MockModuleLoaders,
-  MockEventService
-} = require("../../util/mocks");
-
 var AppLoader = require("./AppLoader");
+var ModuleLoader = require("./module/ModuleLoader");
+var Module = require("../module/Module");
+var App = require("../App");
 
-var mockAppStore = null;
-var mockModuleLoaders = null;
-var mockEventService = null;
+const TEST_APP_DESCRIPTOR = {
+  name: "DockUI Demo App",
+  url: "https://dockui.demo/app",
+  key: "dockui-unique-demo-app-key",
+  description:
+    "This is a demo App showing of the various features of the DockUI framework",
+  version: "1.0.0",
+  descriptorVersion: "1.0.0",
+  descriptorName: "file.yml",
+  icon: "/static/logo.png",
+  build: ["docker build --tag dockuidemo .", "docker run -t dockuidemo"],
+  lifecycle: {
+    loaded: "/loaded"
+  },
+  authentication: {
+    type: "jwt"
+  },
+  modules: [
+    {
+      type: "testModuleType1",
+      arbritraryKey1: "arbritraryValue1"
+    },
+    {
+      type: "testModuleType1",
+      arbritraryKey1: "arbritraryValue1"
+    },
+    {
+      type: "testModuleType2",
+      arbritraryKey2: "arbritraryValue2"
+    }
+  ]
+};
+
+class TestModuleLoader1 extends ModuleLoader {
+  canLoadModuleDescriptor(descriptor) {
+    return descriptor.type === "testModuleType1";
+  }
+  loadModuleFromDescriptor(descriptor) {
+    return new Module();
+  }
+}
+
+class TestModuleLoader2 extends ModuleLoader {
+  canLoadModuleDescriptor(descriptor) {
+    return descriptor.type === "testModuleType2";
+  }
+  loadModuleFromDescriptor(descriptor) {
+    return new Module();
+  }
+}
 
 describe("AppLoader", function() {
   "use strict";
 
-  beforeEach(function() {
-    mockAppStore = new MockAppStore();
-    mockModuleLoaders = new MockModuleLoaders();
-    mockEventService = new MockEventService();
+  beforeEach(function() {});
+
+  test("should be defined and a loadable function", function() {
+    expect(AppLoader).not.toBeUndefined();
+    expect(typeof AppLoader).toBe("function");
   });
 
-  it("should be defined and loadable", function() {
-    expect(AppLoader).to.not.be.undefined;
+  // Should Load a Descriptor file from URL
+  test("should Load a Descriptor file from URL", async () => {
+    const appLoader = new AppLoader().build();
+    const TEST_URL = "http://some.url";
+    const returnedApp = new App({ key: "demo_key", version: "2.0" });
+    const testFetcher = jest.fn().mockResolvedValue({ body: returnedApp });
+    const permission = App.permissions.READ;
+    const app = await appLoader.load({
+      url: TEST_URL,
+      permission: permission,
+      fetcher: testFetcher
+    });
+    expect(app instanceof App).toBe(true);
+    expect(app.getKey()).toBe(returnedApp.getKey());
+    expect(app.getDescription()).toBe(returnedApp.getDescription());
   });
 
-  it("should be a function", function() {
-    expect(AppLoader).to.be.a("function");
+  // App should have as many modules as valid ModuleLoaders
+  test("should have as many modules as valid ModuleLoaders", async () => {
+    const appLoader = new AppLoader()
+      .withModuleLoader(new TestModuleLoader1())
+      .withModuleLoader(new TestModuleLoader2())
+      .build();
+    const TEST_URL = "http://some.url";
+    const testFetcher = jest
+      .fn()
+      .mockResolvedValue({ body: TEST_APP_DESCRIPTOR });
+    const permission = App.permissions.READ;
+    const app = await appLoader.load({
+      url: TEST_URL,
+      permission,
+      fetcher: testFetcher
+    });
+    expect(app.getModules().length).toBe(3);
   });
 
-  it("should validate its arguments correctly", function() {
-    expect(() => {
-      new AppLoader();
-    }).to.throw();
-
-    expect(() => {
-      new AppLoader(null, null, null);
-    }).to.throw();
-
-    expect(() => {
-      new AppLoader(undefined, "", false);
-    }).to.throw();
-
-    expect(() => {
-      new AppLoader(mockAppStore, mockModuleLoaders, mockEventService);
-    }).to.not.throw();
-  });
-
-  it("addApp and removeApp should increase and decrease the cache correctly", function() {
-    const loader = new AppLoader(
-      mockAppStore,
-      mockModuleLoaders,
-      mockEventService
-    );
-    const app1 = new MockApp();
-    const app2 = new MockApp();
-    expect(loader.loadedApps.length).to.equal(0);
-    loader.addApp(app1);
-    loader.addApp(app2);
-    expect(loader.loadedApps.length).to.equal(2);
-    loader.removeApp(app1);
-    expect(loader.loadedApps.length).to.equal(1);
-    expect(loader.loadedApps[0]).to.eql(app2);
-  });
+  // Performing Security Handshake
+  // Resolves with the loaded App object
 });

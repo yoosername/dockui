@@ -1,50 +1,48 @@
-const { AppServiceValidationError } = require("../../constants/errors");
-const { validateShapes } = require("../../util/validate");
-
+const EventEmitter = require("events");
+const SERVICE_STARTED_EVENT = "appService:started";
+const SERVICE_SHUTDOWN_EVENT = "appService:shutdown";
 /**
- * @description Orchestrates
- *                loading Apps via AppLoaders,
- *                triggering events in the EventService based on the LifecycleEventsStrategy and
- *                state persistence via the AppStore
+ * @description Service which provides methods to
+ *                loading/unLoad Apps/Modules from remote sources,
+ *                Finding loaded Apps from DB,
+ *                Enabling/Disabling Apps/Modules,
+ *
  */
-class AppService {
+class AppService extends EventEmitter {
   /**
-   * @param {Array} appLoaders - Array of {AppLoader} to use for loading {App}s
-   * @param {AppStore} appStore - The AppStore to use for framework persistence
-   * @param {LifecycleEventsStrategy} lifecycleEventsStrategy - This is used to customise framework events
-   * @param {EventService} eventService - The EventService to use for framework events
+   * @param {TaskManager} taskManager - TaskManager is used to orchestrate changes to the system.
+   * @param {AppStore} store - Store is used for loading persisted state.
+   * @param {Config} config - The runtime config
    */
-  constructor(appLoaders, appStore, lifecycleEventsStrategy, eventService) {
-    var lifecycleEventsStrategyInst = lifecycleEventsStrategy;
+  constructor(taskManager, store, config) {
+    super();
+    this.taskManager = taskManager;
+    this.store = store;
+    this.config = config;
+  }
 
-    try {
-      // if lifecycleEventStrategy is a function then create the instance now
-      if (typeof lifecycleEventsStrategyInst === "function") {
-        lifecycleEventsStrategyInst = new lifecycleEventsStrategyInst(
-          this,
-          eventService,
-          AppStore
-        );
-      }
+  /**
+   * @description Get the configured taskManager
+   */
+  getTaskManager() {
+    "use strict";
+    return this.taskManager;
+  }
 
-      // Validate our args using ducktyping utils. (figure out better way to do this later)
-      validateShapes([
-        { shape: "AppLoader", object: appLoaders[0] },
-        { shape: "AppStore", object: appStore },
-        {
-          shape: "LifecycleEventsStrategy",
-          object: lifecycleEventsStrategyInst
-        },
-        { shape: "EventService", object: eventService }
-      ]);
-    } catch (e) {
-      throw new AppServiceValidationError(e);
-    }
+  /**
+   * @description Get the configured AppStore
+   */
+  getStore() {
+    "use strict";
+    return this.store;
+  }
 
-    this.appLoaders = appLoaders;
-    this.appStore = appStore;
-    this.eventService = eventService;
-    this.lifecycleEventsStrategy = lifecycleEventsStrategyInst;
+  /**
+   * @description Get the runtime config used by this AppService
+   */
+  getConfig() {
+    "use strict";
+    return this.config;
   }
 
   /**
@@ -68,30 +66,54 @@ class AppService {
   }
 
   /**
-   * @description Tell each AppLoader to start looking for new Apps
+   * @description Load a single App from a URL
+   * @argument {String} url The remote URL to the App Descriptor
    */
-  scanForNewApps() {
+  loadApp(url) {
     "use strict";
     console.warn(
-      "[AppService] scanForNewApps - NoOp implementation - this should be extended by child classes"
+      "[AppService] loadApp - NoOp implementation - this should be extended by child classes"
     );
   }
 
   /**
-   * @description Tell each AppLoader we dont want any more scanning until called again
+   * @description UnLoad an already loaded App by its UUID
+   * @argument {String} uuid The App UUID to unload
    */
-  stopScanningForNewApps() {
+  unloadApp(uuid) {
     "use strict";
     console.warn(
-      "[AppService] stopScanningForNewApps - NoOp implementation - this should be extended by child classes"
+      "[AppService] unloadApp - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
+   * @description Enable an already loaded App by its UUID
+   * @argument {String} uuid The App UUID to enable
+   */
+  enableApp(uuid) {
+    "use strict";
+    console.warn(
+      "[AppService] enableApp - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
+   * @description Disable an already loaded/enabled App by its UUID
+   * @argument {String} uuid The App UUID to disable
+   */
+  disableApp(uuid) {
+    "use strict";
+    console.warn(
+      "[AppService] disableApp - NoOp implementation - this should be extended by child classes"
     );
   }
 
   /**
    * @description Get all Apps from all Loaders
-   * @argument {Function} filter : filter the list of Apps using this test
+   * @argument {Function} predicate : filter the list of Apps using a truthy function
    */
-  getApps(filter) {
+  getApps(predicate) {
     "use strict";
     console.warn(
       "[AppService] getApps - NoOp implementation - this should be extended by child classes"
@@ -106,6 +128,30 @@ class AppService {
     "use strict";
     console.warn(
       "[AppService] getApp - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
+   * @description Load a single App Module given an App UUID and a Module key
+   * @argument {String} uuid The App UUID whos module we wish to load
+   * @argument {String} key The Module key we wish to load
+   */
+  loadModule(uuid, key) {
+    "use strict";
+    console.warn(
+      "[AppService] loadModule - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
+   * @description UnLoad a single App Module given an App UUID and a Module key
+   * @argument {String} uuid The App UUID whos module we wish to unLoad
+   * @argument {String} key The Module key we wish to unLoad
+   */
+  unLoadModule(uuid, key) {
+    "use strict";
+    console.warn(
+      "[AppService] unLoadModule - NoOp implementation - this should be extended by child classes"
     );
   }
 
@@ -132,6 +178,33 @@ class AppService {
       "[AppService] getModule - NoOp implementation - this should be extended by child classes"
     );
   }
+
+  /**
+   * @description Enable an already loaded Module by an App UUID and module Key
+   * @argument {int} appKey
+   * @argument {int} moduleKey
+   */
+  enableModule(appKey, moduleKey) {
+    "use strict";
+    console.warn(
+      "[AppService] enableModule - NoOp implementation - this should be extended by child classes"
+    );
+  }
+
+  /**
+   * @description Disable an already enabled Module by an App UUID and module Key
+   * @argument {int} appKey
+   * @argument {int} moduleKey
+   */
+  disableModule(appKey, moduleKey) {
+    "use strict";
+    console.warn(
+      "[AppService] disableModule - NoOp implementation - this should be extended by child classes"
+    );
+  }
 }
+
+AppService.SERVICE_STARTED_EVENT = SERVICE_STARTED_EVENT;
+AppService.SERVICE_SHUTDOWN_EVENT = SERVICE_SHUTDOWN_EVENT;
 
 module.exports = AppService;

@@ -37,13 +37,13 @@
 #       }
 #
 #   authentication.type: Mechanism used by App to authenticate with framework. (currently only JWT)
-
+key: dockui-unique-demo-app-key
 name: DockUI Demo App
 url: https://dockui.demo/app
-key: dockui-unique-demo-app-key
+type: dynamic
 description: This is a demo App showing of the various features of the DockUI framework
 version: 1.0.0
-descriptor-version: 1.0.0
+descriptorVersion: 1.0.0
 icon: "/static/logo.png"
 build:
   - docker build --tag dockuidemo .

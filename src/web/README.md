@@ -6,32 +6,26 @@
 
 > Provides HTTP based API for common dockui management features e.g.
 
-* Load App
-  * When loading an app the global admin must grant it one of the following three framework permissions e.g.
-    * READ (App can be notified about events but cannot contribute any modules which modify the system)
-    * READ,WRITE ( App can also contribute Modules such as WebPage WebResource etc which may modify behaviour )
-    * READ,WRITE,ADMIN ( App can also use the managment API to e.g. load,unload,enable,diable Apps and Modules )
-* Unload App
-* Enable App
-* Disable App
-* Load App Modules
-* Unload App Modules
-* Enable App Module
-* Disable App Module
+- Load App
+  - When loading an app the global admin must grant it one of the following three framework permissions e.g.
+    - READ (App can be notified about events but cannot contribute any modules which modify the system)
+    - READ,WRITE ( App can also contribute Modules such as WebPage WebResource etc which may modify behaviour )
+    - READ,WRITE,ADMIN ( App can also use the managment API to e.g. load,unload,enable,diable Apps and Modules )
+- Unload App
+- Enable App
+- Disable App
+- Load App Modules
+- Unload App Modules
+- Enable App Module
+- Disable App Module
 
-### Authentication
+### Management API Authentication
 
-Authentication to the Management API is performed in the following 2 ways:
+> TODO
 
-* Check if user is global admin and password is global admin password
-* Check if valid AppKey signed using shared secret and
-  * App is loaded
-  * App is enabled
-  * App was granted ADMIN permission
+## Service Proxy
 
-## DockUI Middleware
-
-> This is the bread and butter of the DockUI framework where all of the loaded and enabled app modules are weaved into a single User Experience.
+> A set of Middlware handle features such as API gateway, HTML Template decoration, Resource injection of loaded and enabled Apps.
 
 ### Pseudo FLOW
 

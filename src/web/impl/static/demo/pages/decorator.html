@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required Bootstrap responsive meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- 
+      All WebResource(s) targeting this page (or that are targetting a page decorated by this page) 
+      of types <link> and <style> will be injected here
+    -->
+    <meta name="WebResourcesFor" content="link" />
+    <meta name="WebResourcesFor" content="style" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="/app/dashboard/s/lib/bootstrap/css/bootstrap-4.3.1.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/app/dashboard/s/lib/fontawesome/css/fontawesome-5.9.0.min.css"
+    />
+    <style>
+      body {
+        padding-top: 5rem;
+      }
+      .starter-template {
+        padding: 3rem 1.5rem;
+        text-align: center;
+      }
+      .navbar-header {
+        margin-left: 5px;
+        width: 100%;
+      }
+      html,
+      body,
+      .container-fluid,
+      .row {
+        height: 100%;
+      }
+    </style>
+    <title>DockUI Site Decorator</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="/app/dashboard"
+        ><i class="fas fa-home"></i> DockUI Dashboard Demo</a
+      >
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarsExampleDefault"
+        aria-controls="navbarsExampleDefault"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault"></div>
+      <button
+        id="logout"
+        class="btn btn-outline-light pull-right"
+        type="submit"
+      >
+        Logout
+        <i class="fas fa-sign-in-alt"></i>
+      </button>
+    </nav>
+
+    <div data-content>
+      <!-- This will be replaced by the body of a decorated page -->
+    </div>
+
+    <script src="/app/dashboard/s/lib/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script src="/app/dashboard/s/lib/popper/popper-1.14.7.min.js"></script>
+    <script src="/app/dashboard/s/lib/bootstrap/js/bootstrap-4.3.1.min.js"></script>
+
+    <div data-WebResourcesFor="script:src">
+      <!-- This will be replaced by any scripts which have a src attribute -->
+    </div>
+    <div data-WebResourcesFor="script:content">
+      <!-- This will be replaced by any scripts which have inline content -->
+    </div>
+
+    <script>
+      document.getElementById("logout").addEventListener("click", evt => {
+        evt.preventDefault();
+        document.cookie =
+          "X-Demo-Auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        location.reload();
+      });
+    </script>
+  </body>
+</html>

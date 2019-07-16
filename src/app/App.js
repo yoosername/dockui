@@ -1,118 +1,60 @@
-const uuidv4 = require("uuid/v4");
-const HttpClient = require("./http/HttpClient");
+const crypto = require("crypto");
+const Module = require("./module/Module");
+const ModuleFactory = require("./module/factory/ModuleFactory");
 
-const {
-  MODULE_LOAD_STARTED_EVENT,
-  MODULE_LOAD_COMPLETE_EVENT,
-  MODULE_LOAD_FAILED_EVENT,
-  APP_ENABLED_EVENT,
-  APP_DISABLED_EVENT
-} = require("../constants/events");
+const { getHashFromApp } = require("../util");
 
-const { validateShapes } = require("../util/validate");
-
-const SecurityContext = require("./security/SecurityContext");
+const DEFAULT_APP_VERSION = "1.0.0";
+const DEFAULT_DESCRIPTOR_VERSION = "1.0.0";
+const DEFAULT_DESCRIPTOR_NAME = "dockui.app.yml";
 
 /**
  * @description Represents a single App.
- * @argument {string} key - A universally unique key for this App.
- * @argument {string} permission - one of "READ", "WRITE", "ADMIN" (note these are additive)
- * @argument {AppDescriptor} descriptor - The AppDescriptor built from the Apps descriptor file.
- * @argument {AppLoader} loader - The AppLoader which loaded this App.
- * @argument {Array} moduleLoaders - An array of ModuleLoaders to use to load any declared app modules
- * @argument {AppStore} appStore - The store to use for persistence.
- * @argument {EventService} eventService - The Event service.
+ * @argument {Object} data - Existing App data
  */
 class App {
-  constructor(
+  constructor({
+    id,
     key,
-    permission,
-    descriptor,
-    loader,
-    moduleLoaders,
-    appStore,
-    eventService
-  ) {
-    // Validate our args using ducktyping utils. (figure out better way to do this later)
-    validateShapes([
-      { shape: "AppDescriptor", object: descriptor },
-      { shape: "AppLoader", object: loader },
-      { shape: "ModuleLoader", object: moduleLoaders[0] },
-      { shape: "AppStore", object: appStore },
-      { shape: "EventService", object: eventService }
-    ]);
-
-    this.key = key;
+    name,
+    alias = null,
+    baseUrl = null,
+    type = App.types.STATIC,
+    description = id,
+    version = DEFAULT_APP_VERSION,
+    descriptorVersion = DEFAULT_DESCRIPTOR_VERSION,
+    descriptorName = DEFAULT_DESCRIPTOR_NAME,
+    icon = null,
+    build = null,
+    lifecycle = null,
+    authentication = App.auth.JWT,
+    enabled = false,
+    modules = [],
+    permission = App.permissions.READ,
+    loadedDate = new Date(),
+    lastUpdatedDate = loadedDate
+  } = {}) {
+    this.key = key ? key : this.id;
+    this.name = name ? name : this.key;
+    this.alias = alias;
+    this.baseUrl = baseUrl;
+    this.type = type;
+    this.description = description;
+    this.version = version;
+    this.descriptorVersion = descriptorVersion;
+    this.descriptorName = descriptorName;
+    this.icon = icon;
+    this.build = build;
+    this.lifecycle = lifecycle;
+    this.authentication = authentication;
+    this.enabled = enabled;
+    this.setModules(modules);
     this.permission = permission;
-    this.uuid = uuidv4();
-    this.descriptor = descriptor;
-    this.loader = loader;
-    this.moduleLoaders = moduleLoaders;
-    this.appStore = appStore;
-    this.eventService = eventService;
-    this.securityContext = null;
-
-    // Always start disabled.
-    this.enabled = false;
-
-    this.modules = [];
-    this.bootstrap();
-  }
-
-  /**
-   * @description bootstrap the app for example by setting up a
-   *              security context and communicating shared secrets
-   *              to the App for subsequent communication
-   */
-  bootstrap() {
-    // Load the modules defined in the descriptor
-    this.loadModules();
-
-    // Hydrate our state from the attached store
-    // This will not enable or disable this app or its modules. That is performed by the LifeCycleEventsStrategy
-    this.load();
-
-    // Get the type
-    const type = this.getType();
-
-    // App is dynamic so we need a custom client to communicate with
-    // the various service endpoints using desired auth
-    if (type === "dynamic") {
-      if (!this.securityContext) {
-        this.securityContext = new SecurityContext(this);
-        // Save state as we now have a Security Context to persist
-        this.save();
-      }
-
-      // Attach a HttpClient customised to communicate with the Remote App
-      // If it uses some kind of Auth then it has access to the SecurityContext via the App ref
-      //this.httpClient = new JWTHttpClient(this);
-      this.httpClient = new HttpClient(this);
-    }
-    // App is static so Just use a plain HttpClient
-    else {
-      this.httpClient = new HttpClient(this);
-    }
-  }
-
-  /**
-   * @description Save this App state to the store
-   */
-  save() {
-    this.appStore.saveState(this);
-  }
-
-  /**
-   * @description Load this Apps state from the store if there is any
-   */
-  load() {
-    const state = this.appStore.getState(this);
-    if (state) {
-      this.uuid = state.uuid ? state.uuid : this.uuid;
-      this.securityContext = state.securityContext
-        ? state.securityContext
-        : this.securityContext;
-    }
+    this.docType = App.DOCTYPE;
+    this.loadedDate = loadedDate;
+    this.lastUpdatedDate = lastUpdatedDate;
+    // Generate ID once we have all the other info
+    this.id = id ? id : getHashFromApp(this);
   }
 
   /**
@@ -124,6 +66,14 @@ class App {
   }
 
   /**
+   * @description Return the uniquely generated framework identifier of this App instance
+   * @returns {String} id
+   */
+  getId() {
+    return this.id;
+  }
+
+  /**
    * @description return the unique key of this App
    * @returns {String} The Apps key
    */
@@ -132,11 +82,27 @@ class App {
   }
 
   /**
-   * @description Returns the assigned AppPermission of this App.
-   * @returns {AppPermission} The AppPermission granted to this App.
-   * @example AppPermission.READ
-   * @example AppPermission.WRITE
-   * @example AppPermission.ADMIN
+   * @description return the Human Readable name of this App
+   * @returns {String} The Apps name
+   */
+  getName() {
+    return this.name;
+  }
+
+  /**
+   * @description return the Alias of this App ( used for better looking urls etc )
+   * @returns {String} The Apps alias
+   */
+  getAlias() {
+    return this.alias;
+  }
+
+  /**
+   * @description Returns the assigned permission of this App.
+   * @returns {String} The permission granted to this App.
+   * @example App.permissions.READ
+   * @example App.permissions.WRITE
+   * @example App.permissions.ADMIN
    */
   getPermission() {
     return this.permission;
@@ -145,69 +111,127 @@ class App {
   /**
    * @description Return the type of this App
    * @returns {String} Type
-   * @example "static" or "dynamic"
+   * @example App.types.STATIC
+   * @example App.types.DYNAMIC
    */
   getType() {
-    return this.descriptor.getType();
+    return this.type;
   }
 
   /**
-   * @description Helper returns the base URL from this Apps descriptor
+   * @description Return the description of this App
+   * @returns {String} description
+   */
+  getDescription() {
+    return this.description;
+  }
+
+  /**
+   * @description Return the version of this App
+   * @returns {String} version
+   */
+  getVersion() {
+    return this.version;
+  }
+
+  /**
+   * @description Return the descriptor version of the descriptor that this App was loaded from
+   * @returns {String} descriptorVersion
+   */
+  getDescriptorVersion() {
+    return this.descriptorVersion;
+  }
+
+  /**
+   * @description Return the descriptor name of the descriptor that this App was loaded from
+   *              - defaults to dockui.app.yml
+   * @returns {String} descriptorName
+   */
+  getDescriptorName() {
+    return this.descriptorName;
+  }
+
+  /**
+   * @description Return (optional) build instructions for this App
+   *              - If there are build instructions the App Load worker may choose to
+   *              - delegate a task for building the source first
+   * @returns {Array} Array of Build instructions
+   */
+  getBuild() {
+    return this.build;
+  }
+
+  /**
+   * @description Return lifecycle callback URLs of the App
+   * @returns {Object} dictionary of lifecycle callback URLs
+   */
+  getLifecycle() {
+    return this.lifecycle;
+  }
+
+  /**
+   * @description Return Authentication type specified in the App desriptor
+   * @returns {String} Auth type (e.g. App.auth.JWT...)
+   */
+  getAuthentication() {
+    return this.authentication;
+  }
+
+  /**
+   * @description Return (optional) build instructions for this App
+   *              - this is used by the loader to e.g. build an App from source as opposed to direct serve
+   * @returns {Array} Array of Build instructions
+   */
+  getBuild() {
+    return this.build;
+  }
+
+  /**
+   * @description Return the relative URL to the apps Icon
+   * @returns {String} url of App icon
+   */
+  getIcon() {
+    return this.icon;
+  }
+
+  /**
+   * @description The base URL
    * @returns {String} URL
    */
-  getUrl() {
-    return this.descriptor.getUrl();
+  getBaseUrl() {
+    return this.baseUrl;
   }
 
   /**
-   * @description Return the uniquely generated framework identifier of this App instance
-   * @returns {String} UUID
-   */
-  getUUID() {
-    return this.uuid;
-  }
-
-  /**
-   * @description Return the loader which loaded this App
-   * @returns {AppLoader} AppLoader
-   */
-  getLoader() {
-    return this.loader;
-  }
-
-  /**
-   * @description Return the App Descriptor this App was parsed from
-   * @returns {AppDescriptor} AppDescriptor
-   */
-  getDescriptor() {
-    return this.descriptor;
-  }
-
-  /**
-   * @description Return event service
-   * @returns {EventService} EventService
-   */
-  getEventService() {
-    return this.eventService;
-  }
-
-  /**
-   * @description Return Module loaders which are available for parsing Module Descriptors
-   * @returns {Array} Array of ModuleLoader
-   */
-  getModuleLoaders() {
-    return this.moduleLoaders;
-  }
-
-  /**
-   * @description Return all the modules that have been loaded (optionally filtered)
+   * @description Return all the modules that have been loaded (optionally filtered using truthy predicate)
+   * @argument {Function} predicate A function returning a truthy value
    * @returns {Array} Array of Module
    */
-  getModules(filter) {
-    if (!filter) {
+  getModules(predicate) {
+    if (!predicate) {
       return this.modules;
     }
-    return this.modules.filter(filter);
+    return this.modules.filter(predicate);
+  }
+
+  /**
+   * @description Set the modules associated with this App. Overwrites any existing Modules
+   * @argument {Array[Module]} modules An Array of Modules to add to this App
+   * @returns {Array} Array of Module
+   */
+  setModules(modules) {
+    const actualModules = modules.map(module => {
+      let instance = module;
+      // If its not a Module instance make it one first
+      if (!(instance instanceof Module)) {
+        instance = ModuleFactory.create({ module: instance });
+      }
+      // Set the AppId to this App
+      instance.setAppId(this.getId());
+      return instance;
+    });
+
+    this.modules = actualModules;
   }
 
   /**
@@ -222,84 +246,99 @@ class App {
   }
 
   /**
-   * @description return the Http client configured for this App
-   * @returns {HttpClient} HttpClient used for communicating with the App remotely
+   * @description return the date timestamp this App was originally loaded
+   * @returns {Date}
    */
-  getHttpClient() {
-    return this.httpClient;
+  getLoadedDate() {
+    return this.loadedDate;
   }
 
   /**
-   * @description Toggle enabled flag, save state to store and and notify event listeners
+   * @description return the date timestamp this App was last Updated
+   * @returns {Date} Initially set to the same as loadedDate
    */
-  enable() {
-    this.enabled = true;
-    this.save();
-    this.eventService.emit(APP_ENABLED_EVENT, {
-      app: this
-    });
+  getLastUpdatedDate() {
+    return this.lastUpdatedDate;
   }
 
   /**
-   * @description Toggle enabled flag off, save state and notify event listeners
+   * @description Helper to return a serialized version of this App for storage/transport
+   * @returns {JSON} A Pure JSON representation of the App
    */
-  disable() {
-    this.enabled = false;
-    this.save();
-    this.eventService.emit(APP_DISABLED_EVENT, {
-      app: this
-    });
-  }
-
-  /**
-   * @description Try to parse the descriptor.modules and load
-   * all the modules in it using any of the passed in ModuleLoaders
-   * Unloadable modules are loaded anyway but automatically disabled
-   */
-  loadModules() {
-    this.descriptor.getModules().forEach(moduleDescriptor => {
-      var module = null;
-      var loaded = false;
-
-      this.eventService.emit(MODULE_LOAD_STARTED_EVENT, {
-        app: this,
-        descriptor: moduleDescriptor
+  toJSON() {
+    const json = {
+      docType: this.docType,
+      id: this.id,
+      key: this.key,
+      name: this.name,
+      alias: this.alias,
+      baseUrl: this.baseUrl,
+      type: this.type,
+      description: this.description,
+      version: this.version,
+      descriptorVersion: this.descriptorVersion,
+      descriptorName: this.descriptorName,
+      icon: this.icon,
+      build: this.build,
+      lifecycle: this.lifecycle,
+      authentication: this.authentication,
+      enabled: this.enabled,
+      permission: this.permission,
+      loadedDate: this.loadedDate,
+      lastUpdatedDate: this.lastUpdatedDate,
+      modules: []
+    };
+    if (this.modules && this.modules.length && this.modules.length > 0) {
+      this.modules.forEach(module => {
+        json.modules.push(module.toJSON());
       });
-
-      this.moduleLoaders.forEach(moduleLoader => {
-        try {
-          if (
-            !loaded &&
-            moduleLoader.canLoadModuleDescriptor(moduleDescriptor)
-          ) {
-            module = moduleLoader.loadModuleFromDescriptor(moduleDescriptor);
-            if (module) {
-              loaded = true;
-            }
-          }
-        } catch (e) {
-          // Do nothing as another loader might handle it
-        }
-      });
-      if (!module) {
-        // Here we could create a special UnloadableModule
-        // that is automatically disabled - that contains its own error
-      }
-      if (module) {
-        this.modules.push(module);
-        this.eventService.emit(MODULE_LOAD_COMPLETE_EVENT, {
-          app: this,
-          descriptor: moduleDescriptor,
-          module: module
-        });
-      } else {
-        this.eventService.emit(MODULE_LOAD_FAILED_EVENT, {
-          app: this,
-          descriptor: moduleDescriptor
-        });
-      }
-    });
+    }
+    return json;
   }
 }
+
+/**
+ * @static
+ * @description Represents the available states of the App
+ */
+App.states = Object.freeze({
+  LOADED: "LOADED", // When App is first loaded but not yet enabled
+  ENABLED: "ENABLED", // When an App has been enabled through the management interface
+  DISABLED: "DISABLED" // When an App is loaded but specifically disabled
+});
+
+/**
+ * @static
+ * @description Represents the available types of the App
+ */
+App.types = Object.freeze({
+  STATIC: "STATIC",
+  DYNAMIC: "DYNAMIC"
+});
+
+/**
+ * @static
+ * @description Represents the docType for use when persisting
+ */
+App.DOCTYPE = "APP";
+
+/**
+ * @static
+ * @description Represents the available auth mechanisms for connecting with the App
+ */
+App.auth = Object.freeze({
+  JWT: "JWT"
+});
+
+/**
+ * @static
+ * @description Represents the available permissions that can be grant the App
+ */
+App.permissions = Object.freeze({
+  DEFAULT: "READ",
+  READ: "READ",
+  WRITE: "WRITE",
+  ADMIN: "ADMIN"
+});
 
 module.exports = App;

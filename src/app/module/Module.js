@@ -1,39 +1,47 @@
-const { validateShapes } = require("../../util/validate");
-
-const {
-  MODULE_ENABLED_EVENT,
-  MODULE_DISABLED_EVENT
-} = require("../../constants/events");
+const { getHashFromModule } = require("../../util");
 
 /**
  * @description Represents a single Module loaded from a Module Descriptor.
  */
 class Module {
   /**
-   * @argument {App} app - The App which loaded this module.
-   * @argument {App} descriptor - The module descriptor used to load the module
+   * @argument {Object} data - Existing Module data
    */
-  constructor(app, descriptor) {
-    // Validate our args using ducktyping utils. (figure out better way to do this later)
-    validateShapes([
-      { shape: "App", object: app },
-      { shape: "ModuleDescriptor", object: descriptor }
-    ]);
+  constructor({
+    id,
+    key,
+    name,
+    description = "",
+    aliases = [],
+    type = "generic",
+    // Modules default to enabled, but only the enabled Modules will become
+    // fully enabled if the parent app is enabled by an admin
+    enabled = true,
+    cache = { policy: "disabled" },
+    roles = [],
+    appId = null,
+    auth = null
+  } = {}) {
+    this.key = key ? key : this.id;
+    this.name = name ? name : this.key;
+    this.description = description;
+    this.aliases = aliases;
+    this.type = type;
+    this.enabled = enabled;
+    this.cache = cache;
+    this.roles = roles;
+    this.docType = Module.DOCTYPE;
+    this.appId = appId;
+    this.auth = auth;
+    // Only generate ID once the rest of the info has been set
+    this.id = id ? id : getHashFromModule(this);
+  }
 
-    this.app = app;
-    this.eventService = app.getEventService();
-    this.descriptor = descriptor;
-    this.key = descriptor.getKey();
-    this.name = descriptor.getName();
-    this.type = descriptor.getType();
-
-    if (descriptor.getCache()) {
-      this.cache = descriptor.getCache();
-    }
-
-    if (descriptor.getRoles()) {
-      this.roles = descriptor.getRoles();
-    }
+  /**
+   * @description The Universal Id of this Module
+   */
+  getId() {
+    return this.id;
   }
 
   /**
@@ -51,10 +59,46 @@ class Module {
   }
 
   /**
+   * @description The Human readable description of this Module
+   */
+  getDescription() {
+    return this.description;
+  }
+
+  /**
+   * @description The alternative names for this module (used for pretty urls etc)
+   */
+  getAliases() {
+    return this.aliases;
+  }
+
+  /**
    * @description The type of this Module
    */
   getType() {
     return this.type;
+  }
+
+  /**
+   * @description If This module is enabled
+   */
+  isEnabled() {
+    return this.enabled;
+  }
+
+  /**
+   * @description Return the roles are required to use this module
+   *              or Null if no Roles required.
+   */
+  getCache() {
+    return this.cache;
+  }
+
+  /**
+   * @description If Caching is supported and enabled by this module
+   */
+  isCacheEnabled() {
+    return this.cache.policy === "enabled";
   }
 
   /**
@@ -68,43 +112,56 @@ class Module {
   }
 
   /**
-   * @description Return the roles are required to use this module
-   *              or Null if no Roles required.
+   * @description The ID of the App this Module belongs to
    */
-  getCache() {
-    return this.cache && this.cache.policy
-      ? this.cache
-      : { policy: "disabled" };
+  getAppId() {
+    return this.appId;
   }
 
   /**
-   * @description If Caching is supported and enabled by this module
+   * @description Set the appId that this Module belongs to.
    */
-  isCacheEnabled() {
-    return this.cache && this.cache.policy && this.cache.policy === "enabled"
-      ? true
-      : false;
+  setAppId(appId) {
+    return (this.appId = appId);
   }
 
   /**
-   * @description default behaviour is to simply send an enabled event to all listeners.
-   *              subclasses can extend this behaviour
+   * @description Optional per module auth config - this is only used if there
+   *              is an AuthenticationProvider which understand the config
    */
-  enable() {
-    this.eventService.trigger(MODULE_ENABLED_EVENT, {
-      module: this
-    });
+  getAuth() {
+    return this.auth;
   }
 
   /**
-   * @description default behaviour is to simply send a disabled event to all listeners.
-   *              subclasses can extend this behaviour
+   * @description Helper to return a serialized version of this Module for storage/transport
+   * @returns {JSON} A Pure JSON representation of the Module
    */
-  disable() {
-    this.eventService.trigger(MODULE_DISABLED_EVENT, {
-      module: this
-    });
+  toJSON() {
+    const json = {
+      docType: this.docType,
+      id: this.id,
+      key: this.key,
+      name: this.name,
+      description: this.description,
+      aliases: this.aliases,
+      type: this.type,
+      enabled: this.enabled,
+      cache: this.cache,
+      roles: this.roles,
+      appId: this.appId,
+      auth: this.auth
+    };
+    return json;
   }
 }
+
+Module.DESCRIPTOR_TYPE = "Generic";
+
+/**
+ * @static
+ * @description Represents the docType for use when persisting
+ */
+Module.DOCTYPE = "MODULE";
 
 module.exports = Module;

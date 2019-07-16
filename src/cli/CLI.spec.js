@@ -1,113 +1,88 @@
-const chai = require("chai");
-const sinonChai = require("sinon-chai");
-chai.use(sinonChai);
-const expect = chai.expect;
-const sandbox = require("sinon").createSandbox();
+const CLI = require("./CLI");
+const { Instance } = require("../Instance");
+const { Config } = require("../..");
+const Logger = require("../log/Logger");
 
-const path = require("path");
-const util = require("util");
-const exec = util.promisify(require("child_process").exec);
+jest.mock("../Instance");
+jest.mock("../log/Logger");
 
-var configLoader1 = null;
-var configLoader2 = null;
-var logSpy = null;
-var loggerSpy = null;
-var dockuiStartSpy;
-var dockUIStub;
-var CLI = require("./CLI");
-var cli = null;
+let config = null;
+let logger = null;
+let voidConsole = null;
+let cli = null;
+let testDockUIInstance = null;
+
+const testAppId = "8377421503e4abbf4d31793b33d0aa4f270844ee";
+const testApp2Id = "1add31314ed6ac4cdd32be0435deda8091b2bd8a";
+const testApp1 = {
+  name: "1",
+  id: testAppId,
+  key: "1",
+  enabled: "true",
+  permission: "read"
+};
+const testApp2 = {
+  name: "1",
+  id: testApp2Id,
+  key: "1",
+  enabled: "false",
+  permission: "write"
+};
+const testAppList = [testApp1, testApp2];
 
 describe("CLI", function() {
   "use strict";
 
   beforeEach(function() {
-    configLoader1 = sandbox.stub().returns({
-      load: () => {
-        return {
-          store: "store1",
-          events: "events1",
-          port: "port1",
-          secret: "secret1"
-        };
-      }
-    });
-    configLoader2 = sandbox.stub().returns({
-      load: () => {
-        return {
-          store: "store2",
-          port: "port2"
-        };
-      }
-    });
-    dockuiStartSpy = sandbox.spy();
-    dockUIStub = sandbox.stub().returns({
-      start: dockuiStartSpy
-    });
-    logSpy = sandbox.spy();
-    loggerSpy = sandbox.stub().returns({ log: logSpy });
-    cli = new CLI({
-      logger: new loggerSpy(),
-      configLoaders: [configLoader1(), configLoader2()],
-      dockui: new dockUIStub()
-    });
+    config = new Config();
+    config.set("store.type", "memory");
+    config.set("web.port", "1234");
+    logger = new Logger(config);
+    voidConsole = { log: jest.fn().mockImplementation() };
+    testDockUIInstance = new Instance();
   });
 
-  afterEach(function() {
-    sandbox.restore();
+  afterEach(function() {});
+
+  test("should be defined and loadable", function() {
+    expect(CLI).not.toBeUndefined();
   });
 
-  it("should be defined and loadable", function() {
-    expect(CLI).to.not.be.undefined;
-  });
-
-  it("should be a function", function() {
-    expect(CLI).to.be.a("function");
+  test("should be a function", function() {
+    expect(typeof CLI).toBe("function");
   });
 
   // GENERIC TESTS
   // Should be configurable by passing in a config object
-  it("should be configurable by passing in a config", function() {
-    cli = new CLI({ dockui: new dockUIStub() });
-    expect(cli.getConfig).to.be.a("function");
-    expect(cli.getConfig().secret).to.equal("changeme");
+  test("should be configurable by passing in a config", function() {
     cli = new CLI({
-      dockui: new dockUIStub(),
-      config: {
-        store: "store1",
-        events: "events1",
-        port: "port1",
-        secret: "secret1"
-      }
+      instance: testDockUIInstance,
+      config: config
     });
-    expect(cli.getConfig().store).to.equal("store1");
-    expect(cli.getConfig().events).to.equal("events1");
-    expect(cli.getConfig().port).to.equal("port1");
-    expect(cli.getConfig().secret).to.equal("secret1");
-  });
-
-  // Should be configurable by passing in a heirarchy of ConfigLoaders
-  it("should be configurable by passing in a heirarchy of ConfigLoaders", function() {
-    expect(cli.getConfig).to.be.a("function");
-    expect(cli.getConfig().store).to.equal("store2");
-    expect(cli.getConfig().events).to.equal("events1");
-    expect(cli.getConfig().port).to.equal("port2");
-    expect(cli.getConfig().secret).to.equal("secret1");
+    expect(cli.getConfig().get("store.type")).toBe("memory");
+    expect(cli.getConfig().get("web.port")).toBe("1234");
   });
 
   // Should log usage when --help is passed on command line
-  it("should log usage when --help is passed as Arg", function(done) {
-    cli
+  test("should log usage when --help is passed as Arg", done => {
+    cli = new CLI({
+      instance: testDockUIInstance,
+      config: config,
+      screen: voidConsole
+    });
+    expect(voidConsole.log).not.toHaveBeenCalled();
+    return cli
       .parse(["node", "dockui", "--help"])
       .then(() => {
-        expect(logSpy).to.be.called.callCount(1);
-        expect(logSpy.getCall(0).args[0]).to.contain("Usage");
+        expect(voidConsole.log).toHaveBeenCalled();
+        expect(voidConsole.log.mock.calls[0][0]).toContain("Usage");
         done();
       })
       .catch(console.log);
   });
 
   // Move this E2E test out of here
-  // it("should be able to run as main module with no args", async function() {
+  // test("should be able to run as main module with no args", async function() {
   //   const file = path.join(__dirname, ".", "CLI.js");
   //   var { stdout, stderr } = await exec(`${file} --help`);
   //   expect(stderr).to.be.empty;
@@ -118,17 +93,31 @@ describe("CLI", function() {
   // });
 
   // Should log to STDOUT (with configurable verbosity)
-  it("should log to STDOUT (with configurable verbosity)", async function() {
+  test("should log to STDOUT (with configurable verbosity)", async function() {
+    cli = new CLI({
+      instance: testDockUIInstance,
+      config: config,
+      screen: voidConsole
+    });
+    expect(voidConsole.log).not.toHaveBeenCalled();
     await cli.parse(["node", "dockui", "--help"]);
-    expect(logSpy.getCall(0).args[0]).to.contain("Log Level:  info");
+    expect(voidConsole.log.mock.calls[0][0]).toContain("Log Level:  info");
     await cli.parse(["node", "dockui", "--help", "-v"]);
-    expect(logSpy.getCall(1).args[0]).to.contain("Log Level:  info");
+    expect(voidConsole.log.mock.calls[1][0]).toContain("Log Level:  error");
     await cli.parse(["node", "dockui", "--help", "-vv"]);
-    expect(logSpy.getCall(2).args[0]).to.contain("Log Level:  warn");
+    expect(voidConsole.log.mock.calls[2][0]).toContain("Log Level:  warn");
     await cli.parse(["node", "dockui", "--help", "-vvv"]);
-    expect(logSpy.getCall(3).args[0]).to.contain("Log Level:  error");
+    expect(voidConsole.log.mock.calls[3][0]).toContain("Log Level:  info");
     await cli.parse(["node", "dockui", "--help", "-vvvv"]);
-    expect(logSpy.getCall(4).args[0]).to.contain("Log Level:  debug");
+    expect(voidConsole.log.mock.calls[4][0]).toContain("Log Level:  verbose");
+    await cli.parse(["node", "dockui", "--help", "-vvvvv"]);
+    expect(voidConsole.log.mock.calls[5][0]).toContain("Log Level:  debug");
+    await cli.parse(["node", "dockui", "--help", "-vvvvvv"]);
+    expect(voidConsole.log.mock.calls[6][0]).toContain("Log Level:  silly");
+    await cli.parse(["node", "dockui", "--help", "-vvvvvvv"]);
+    expect(voidConsole.log.mock.calls[7][0]).toContain("Log Level:  silly");
+    await cli.parse(["node", "dockui", "--help", "-vvvvvvvvvvvvvv"]);
+    expect(voidConsole.log.mock.calls[8][0]).toContain("Log Level:  silly");
   });
 
   // COMMAND TESTS
@@ -138,40 +127,94 @@ describe("CLI", function() {
   //     - Required security keys etc are accessed via the DB, which in the case of the default is a well defined persistent in memory DB
   //
   //     $ dockui run
-  it("should run an instance of dockui)", async function() {
-    var dockuiStartSpy = sandbox.spy();
-    var dockUIStub = sandbox.stub().returns({
-      start: dockuiStartSpy
-    });
+  test("should run an instance of dockui)", async function() {
+    expect(testDockUIInstance.start).not.toHaveBeenCalled();
     cli = new CLI({
-      dockui: new dockUIStub()
+      instance: testDockUIInstance
     });
     await cli.parse(["node", "dockui", "run"]);
-    expect(dockuiStartSpy).to.have.been.called;
+    expect(testDockUIInstance.start).toHaveBeenCalled();
   });
 
-  // TODO (v0.0.1-Alpha): These tests
-  // (3) List state of Loaded Apps
-  //
-  //     $ dockui apps
-  //
-  // App                   UUID         State                            Permission
-  // ------------------------------------------------------------------------------
-  // Demo Theme App        3cd6745f     Loaded (enabled)                 READ
-  // Demo ReadOnly App     6ec43a77     Loaded (Awaiting Approval)       NONE
-  // Demo Dynamic App      37fe3c2c     Loaded (disabled)                ADMIN
-  // Demo Dynamic App2     c6cc4af6     Loading..........                NONE
+  // List Loaded Apps
+  // ┌──────────────────────┬──────────────────────────────────────┬──────────────────────┬─────────┬────────────┐
+  // │ App                  │ Id                                   │ Key                  │ Enabled │ Permission │
+  // ├──────────────────────┼──────────────────────────────────────┼──────────────────────┼─────────┼────────────┤
+  // │ DockUI Dashboard App │ cfc3ad93-cfed-4b55-b9be-402ebae91839 │ dockui.dashboard.app │ true    │ read       │
+  // └──────────────────────┴──────────────────────────────────────┴──────────────────────┴─────────┴────────────┘
+  test("should list running apps of a connected running instance)", async function() {
+    const testFetcher = jest
+      .fn()
+      .mockResolvedValue({ response: { statusCode: 200 }, body: testAppList });
+    const screenSpy = { log: jest.fn() };
+    cli = new CLI({
+      instance: testDockUIInstance,
+      formatters: {
+        apps: apps => {
+          return apps;
+        }
+      },
+      fetcher: testFetcher,
+      screen: screenSpy
+    });
+    await cli.parse(["node", "dockui", "-i", "bla", "ls"]);
+    expect(screenSpy.log).toHaveBeenCalled();
+    expect(screenSpy.log.mock.calls[0][0]).toBe(testAppList);
+  });
 
-  // (4) Load an App
-  //
-  //     $ dockui apps load [--permission <permission> --auto-approve <instance>] <url>|<dockerImage>|<gitRepo>|<filename>
+  // Load an App into a running instance (optionally setting permission)
+  // $ dockui load <url> [permission]
+  test("should load an app into a running instance of dockui)", async function() {
+    const testFetcher = jest
+      .fn()
+      .mockResolvedValue({ response: { statusCode: 200 }, body: testApp1 });
+    const screenSpy = { log: jest.fn() };
+    cli = new CLI({
+      instance: testDockUIInstance,
+      formatters: {
+        app: app => {
+          return app;
+        }
+      },
+      fetcher: testFetcher,
+      screen: screenSpy
+    });
+    // With Permission
+    await cli.parse([
+      "node",
+      "dockui",
+      "-i",
+      "bla",
+      "load",
+      "someUrl",
+      "--permission",
+      "READ"
+    ]);
+    expect(screenSpy.log).toHaveBeenCalled();
+    expect(screenSpy.log.mock.calls[0][0]).toBe(testAppId);
+    // Without Permission
+    await cli.parse(["node", "dockui", "-i", "bla", "load", "someUrl"]);
+  });
 
-  // (5) Approve a loaded APP which is awaiting Approval:
-  //
-  //     $ dockui apps approve [--permission <permission>] <uuid>
-
-  // (6) Gracefully stop the running DockUI instance
-  //
-  //     $ Ctrl+C or SIGTERM
-  //
+  // (5) Enable a loaded APP which is disabled:
+  // $ dockui enable <appId>
+  test("should enable a loaded app)", async function() {
+    const testFetcher = jest
+      .fn()
+      .mockResolvedValue({ response: { statusCode: 200 }, body: testApp1 });
+    const screenSpy = { log: jest.fn() };
+    cli = new CLI({
+      instance: testDockUIInstance,
+      formatters: {
+        app: app => {
+          return app;
+        }
+      },
+      fetcher: testFetcher,
+      screen: screenSpy
+    });
+    await cli.parse(["node", "dockui", "-i", "bla", "enable", testAppId]);
+    expect(screenSpy.log).toHaveBeenCalled();
+    expect(screenSpy.log.mock.calls[0][0]).toBe(testAppId);
+  });
 });
