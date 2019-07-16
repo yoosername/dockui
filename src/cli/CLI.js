@@ -52,12 +52,12 @@ const showUsage = ({
   Examples
     $ ${name} run                                             Start new instance
     $ ${name} env                                             Output config ( merged from all sources ) 
-    $ ${name} app ls                                          List all loaded Apps
-    $ ${name} app load [--permission <permission>] <url>      Load a single App from its URL and optionally grant a permission
-    $ ${name} app reload [--permission <permission>] <appId>  Reload an existing App Optionally granting a new Permission
-    $ ${name} app unload <appId>                              Unload (delete) a single App by its ID
-    $ ${name} app enable <appId>                              Enable a single app by its ID
-    $ ${name} app disable <appId>                             Disable a single app by its ID
+    $ ${name} ls                                          List all loaded Apps
+    $ ${name} load [--permission <permission>] <url>      Load a single App from its URL and optionally grant a permission
+    $ ${name} reload [--permission <permission>] <appId>  Reload an existing App Optionally granting a new Permission
+    $ ${name} unload <appId>                              Unload (delete) a single App by its ID
+    $ ${name} enable <appId>                              Enable a single app by its ID
+    $ ${name} disable <appId>                             Disable a single app by its ID
     $ ${name} mod ls                                          List all Modules of Loaded Apps
     $ ${name} mod enable <modId>                              Enable a single module by its ID
     $ ${name} mod disable <modId>                             Disable a single module by its ID
