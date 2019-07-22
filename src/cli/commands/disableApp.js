@@ -8,7 +8,7 @@ module.exports = async ({
 }) => {
   const uri = `${baseUrl}/api/v1/admin/app/${appId}/disable`;
   try {
-    const { response, body } = await fetcher({
+    const response = await fetcher({
       uri,
       method: "PUT",
       json: true
@@ -18,6 +18,7 @@ module.exports = async ({
       logger.error(response.message);
       resolve();
     }
+    const body = response.body;
     if (typeof body === "object") {
       screen.log(`${body.id}`);
     }

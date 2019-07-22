@@ -1,7 +1,7 @@
 module.exports = async ({ baseUrl, fetcher, screen, formatters, logger }) => {
   const uri = baseUrl + "/api/v1/admin/app";
   try {
-    const { response, body } = await fetcher({
+    const response = await fetcher({
       uri,
       method: "GET",
       json: true
@@ -15,6 +15,7 @@ module.exports = async ({ baseUrl, fetcher, screen, formatters, logger }) => {
       logger.error(response.message);
       return;
     }
+    const body = response.body;
     if (body && body.length && body.length > 0) {
       if (formatters.apps && typeof formatters.apps === "function") {
         screen.log(formatters.apps(body));

@@ -1,7 +1,7 @@
 const Module = require("../../../app/module/Module");
 const WebResourceModule = require("../../../app/module/impl/WebResourceModule");
 const path = require("path");
-const { fetch } = require("../../../util");
+const request = require("request");
 
 /**
  * @description Middleware function to detect WebResource Modules and serve them
@@ -37,10 +37,11 @@ module.exports = function({ config, logger, appService } = {}) {
               "This is a Resource Module, streaming file directly from %s",
               resourceUrl
             );
-            return (ctx.body = fetch(ctx.req, {
-              uri: resourceUrl.toString(),
-              config
-            }));
+            // Send Body from respnse and set the status
+            const output = ctx.req.pipe(request(resourceUrl.toString()));
+            ctx.body = output;
+            return;
+
             // if ctx.dockui.resourcePath is static then serve
           } catch (e) {
             logger.error("Error streaming WebResource, error = %o", e);

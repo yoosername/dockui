@@ -65,11 +65,12 @@ const fetchAndInjectFragment = async ({
       appService,
       logger
     });
-    const { res, body } = await fetch({
+    const response = await fetch({
       uri: fragmentUrl,
       method: "GET"
     });
-    if (res.statusCode === 200 && body) {
+    if (response.statusCode === 200 && response.body) {
+      const body = response.body;
       const $fragment = cheerio.load(body);
       const fragSelector = module.getSelector();
       const actual = $fragment(fragSelector);
@@ -80,7 +81,10 @@ const fetchAndInjectFragment = async ({
         logger.error("Error couldnt find valid fragment selector");
       }
     } else {
-      logger.error("Error fetching WebFragment, status($o)", res.statusCode);
+      logger.error(
+        "Error fetching WebFragment, status($o)",
+        response.statusCode
+      );
     }
   } catch (err) {
     logger.error(

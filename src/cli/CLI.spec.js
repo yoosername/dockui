@@ -145,7 +145,7 @@ describe("CLI", function() {
   test("should list running apps of a connected running instance)", async function() {
     const testFetcher = jest
       .fn()
-      .mockResolvedValue({ response: { statusCode: 200 }, body: testAppList });
+      .mockResolvedValue({ statusCode: 200, body: testAppList });
     const screenSpy = { log: jest.fn() };
     cli = new CLI({
       instance: testDockUIInstance,
@@ -167,7 +167,7 @@ describe("CLI", function() {
   test("should load an app into a running instance of dockui)", async function() {
     const testFetcher = jest
       .fn()
-      .mockResolvedValue({ response: { statusCode: 200 }, body: testApp1 });
+      .mockResolvedValue({ statusCode: 200, body: testApp1 });
     const screenSpy = { log: jest.fn() };
     cli = new CLI({
       instance: testDockUIInstance,
@@ -201,7 +201,7 @@ describe("CLI", function() {
   test("should enable a loaded app)", async function() {
     const testFetcher = jest
       .fn()
-      .mockResolvedValue({ response: { statusCode: 200 }, body: testApp1 });
+      .mockResolvedValue({ statusCode: 200, body: testApp1 });
     const screenSpy = { log: jest.fn() };
     cli = new CLI({
       instance: testDockUIInstance,

@@ -12,7 +12,7 @@ module.exports = async ({
       url: url,
       permission: permission
     };
-    const { response, body } = await fetcher({
+    const response = await fetcher({
       uri,
       method: "POST",
       json: true,
@@ -23,6 +23,7 @@ module.exports = async ({
       logger.error(response.message);
       resolve();
     }
+    const body = response.body;
     if (typeof body === "object") {
       // Return just the id so commands can be chained together
       screen.log(`${body.id}`);

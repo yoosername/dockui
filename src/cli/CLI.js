@@ -4,7 +4,7 @@ const Table = require("cli-table3");
 const colors = require("colors");
 
 // Utils
-const { getShortHash, ConfigAwareFetcher } = require("../util");
+const { getShortHash, configAwareFetcher } = require("../util");
 
 // Specific Commands
 const listApps = require("./commands/listApps");
@@ -190,7 +190,7 @@ class CLI {
     config = new Config(),
     screen = console,
     formatters = getDefaultFormatters(),
-    fetcher = ConfigAwareFetcher(config),
+    fetcher = configAwareFetcher(config),
     logger = LoggerFactory.create(config)
   } = {}) {
     this.name = name;
