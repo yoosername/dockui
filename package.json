@@ -19,7 +19,7 @@
     "backend",
     "api-gateway"
   ],
-  "license": "MIT",
+  "license": "Unlicense",
   "main": "index.js",
   "bin": "src/cli/cli.js",
   "preferGLobal": true,

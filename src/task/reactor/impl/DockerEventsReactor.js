@@ -6,7 +6,7 @@ const App = require("../../../app/App");
 const {
   getDescriptorAsObject,
   getHashFromAppDescriptor,
-  fetchBody
+  fetch
 } = require("../../../util");
 
 const SELECTOR_LABEL_CONFIG_KEY = "docker.selector.label";
@@ -15,6 +15,14 @@ const DEFAULT_DESCRIPTOR_NAME = "dockui.app.yml";
 const DOCKUI_NETWORK_CONFIG_KEY = "network.name";
 const DEFAULT_DOCKUI_NETWORK = "dockui";
 const DOCKER_DESCRIPTOR_OVERRIDE_KEY = "DOCKUI_DESCRIPTOR";
+
+const delay = (t, val) => {
+  return new Promise(function(resolve) {
+    setTimeout(function() {
+      resolve(val);
+    }, t);
+  });
+};
 
 const getDescriptorURLFromContainer = ({ container, config, network }) => {
   const networkContainers = network.Containers;
@@ -75,6 +83,11 @@ class DockerEventsReactor extends Reactor {
    * @description Return the Docker network in use
    */
   async onContainerUp(container) {
+    // Wait a second for it to load
+    this.logger.debug(
+      "Waiting a sec to give the container a chance to startup"
+    );
+    const waitASec = await delay(2000);
     const containerId = container.Id;
     // If the containerId is known, then simply reload the App
     const cachedApp = this._cachedContainers[containerId];
@@ -98,12 +111,21 @@ class DockerEventsReactor extends Reactor {
         network: netInfo
       });
       // Fetch descriptor
-      let descriptor = await fetchBody({
+      let response = await fetch({
         method: "GET",
         uri: url,
         type: "json",
         logger: this.logger
       });
+      if (response.statusCode !== 200) {
+        this.logger.error(
+          "Error fetching Descriptor(%s) from Docker container, error=%o",
+          url,
+          response.statusMessage
+        );
+        return;
+      }
+      let descriptor = response.body;
       // If YAML Turn into Object
       descriptor = getDescriptorAsObject(descriptor);
       // If there is a descriptor

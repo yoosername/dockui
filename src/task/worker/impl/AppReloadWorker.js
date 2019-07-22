@@ -164,13 +164,15 @@ class AppReloadWorker extends TaskWorker {
           if (existingModule) {
             //existingModule = existingModule.toJSON();
 
-            // Save the existing Id and AppId
+            // Save the existing Id and AppId and enabled status
             const existingModuleId = existingModule.id;
+            const existingModuleEnabledStatus = existingModule.enabled;
 
             // Update the original module with all the new data (reapplying the existing id, appId)
             let combinedModule = Object.assign({}, existingModule, module, {
               id: existingModuleId,
-              appId: existingAppId
+              appId: existingAppId,
+              enabled: existingModuleEnabledStatus
             });
 
             // Update the original in the store

@@ -1,7 +1,7 @@
 const AuthorizationProviderModule = require("../../../app/module/impl/AuthorizationProviderModule");
 const path = require("path");
 
-const { fetchBody } = require("../../../util");
+const { fetch } = require("../../../util");
 
 /**
  * @description Middleware function to Decide if request can proceed based on Info added by IDAM middleware
@@ -64,7 +64,7 @@ module.exports = function({ appService, logger, config } = {}) {
 
         // Make the request
         try {
-          const result = await fetchBody(options);
+          const result = await fetch(options);
           logger.debug(
             "Result = %o, body = %o, REdirect URI = ",
             result.statusCode,
