@@ -21,7 +21,7 @@ This is an experiment and has no formal support. Feel free to fork it for your o
 $ git clone https://github.com/yoosername/dockui.git
 $ cd dockui
 $ npm install
-$ docker build --tag dockui/app .
+$ docker build --tag dockui/framework .
 ```
 
 ### Start a new framework instance (in DEV_MODE using Nodemon and persistant db with LokiJS)
@@ -34,7 +34,7 @@ $ docker run -it \
   -p 3000:3000 \
   -v $(pwd):/app \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  dockui/app
+  dockui/framework
 ...
 To connect a CLI to this instance first run:
         export DOCKUI_INSTANCE=http://localhost:3000
