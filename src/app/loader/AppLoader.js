@@ -3,6 +3,7 @@ const App = require("../App");
 const Logger = require("../../log/Logger");
 const yaml = require("js-yaml");
 
+const request = require("request-promise-native");
 const { configAwareFetcher } = require("../../util");
 
 /**
@@ -38,8 +39,13 @@ class AppLoader {
       // Use the fetcher to fetch the descriptor file
       this.logger.debug("Fetching Descriptor from (url=%s)", url);
       try {
+        // const response = await fetcher(options);
         const response = await fetcher(options);
-        descriptor = response.body;
+        if (response.statusCode === 200) {
+          descriptor = response.body;
+        } else {
+          console.log(response);
+        }
       } catch (err) {
         throw new Error(err);
       }
@@ -60,12 +66,14 @@ class AppLoader {
       try {
         if (descriptor && descriptor.key) {
           this.logger.debug("Descriptor fetched/converted successfully");
+          // Get the actual hostname we have been loaded from
+          const origin = new URL(url).origin;
           // Get initial shape from the fetched descriptor
           const shape = {
             key: descriptor.key,
             name: descriptor.name,
             alias: descriptor.alias,
-            baseUrl: descriptor.baseUrl,
+            baseUrl: origin,
             type: descriptor.type,
             description: descriptor.description,
             version: descriptor.version,

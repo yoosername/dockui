@@ -65,39 +65,6 @@ const fetch = async (req, options) => {
 };
 
 /**
- * @description  Fetch some data from a URL
- * @argument {Object} req Optional Request Object to pipe in
- * @argument {Object} options Options to pass to Request
- * @return {Promise} Resolves to an object containing the raw response
- */
-const fetchPipable = async (req, options) => {
-  let _req = options ? req : null;
-  let _options = options ? options : req;
-
-  return new Promise(function(resolve, reject) {
-    try {
-      // If Req then pipe it in
-      if (_req) {
-        _req.pipe(
-          request(_options, (err, response, body) => {
-            if (err) return reject(err);
-            resolve(response);
-          })
-        );
-      } else {
-        // Otherwise just request it
-        request(_options, (err, response, body) => {
-          if (err) return reject(err);
-          resolve(response);
-        });
-      }
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-/**
  * @description  Fetch data from a URL and return response Body
  * @argument {Object} req Optional Request Object to pipe in
  * @argument {Object} options Options to pass to Request

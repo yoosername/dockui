@@ -146,7 +146,7 @@ $ dockui load --permission write dockui/demoapp
 #### Use Docker to run a container ( For example NGINX static )
 
 ```shell
-$ docker run -it --label DOCKUI_APP=true -v $(pwd)/src/web/impl/static/demo:/usr/share/nginx/html:ro -p 1234:80 --network dockui --label DOCKUI_DESCRIPTOR=demo.app.yml nginx/nginx/html:ro -p 1234:80 --network dockui --label DOCKUI_DESCRIPTOR=demo.app.yml nginx
+$ docker run -it --label DOCKUI_APP=true -v $(pwd)/src/web/impl/static/demo:/usr/share/nginx/html:ro -p 1234:80 --network dockui --label DOCKUI_DESCRIPTOR=demo.app.yml nginx/nginx/html:ro -p 1234:80 nginx
 ```
 
 > At this point in the logs for the instance you should see the loading occur
