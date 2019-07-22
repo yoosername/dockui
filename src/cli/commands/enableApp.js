@@ -1,7 +1,7 @@
 module.exports = async ({ baseUrl, fetcher, screen, logger, appId }) => {
   const uri = `${baseUrl}/api/v1/admin/app/${appId}/enable`;
   try {
-    const { response, body } = await fetcher({
+    const response = await fetcher({
       uri,
       method: "PUT",
       json: true
@@ -11,6 +11,7 @@ module.exports = async ({ baseUrl, fetcher, screen, logger, appId }) => {
       logger.error(response.message);
       resolve();
     }
+    const body = response.body;
     if (typeof body === "object") {
       // Only display id so commands can be chained
       screen.log(`${body.id}`);

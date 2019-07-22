@@ -64,7 +64,7 @@ const chainFetch = async ({ ctx, moduleKey, appService, logger }) => {
         options.uri
       );
 
-      let { res, page } = await fetch(req, options);
+      let res = await fetch(req, options);
 
       if (res.statusCode === 404) {
         logger.warn("Page was not found (%s) - SKIPPING", options.uri);

@@ -1,7 +1,7 @@
 const AuthenticationProviderModule = require("../../../app/module/impl/AuthenticationProviderModule");
 const path = require("path");
 
-const { fetchBody } = require("../../../util");
+const { fetch } = require("../../../util");
 
 /**
  * @description Middleware function to redirect a user to a Login service
@@ -82,7 +82,7 @@ module.exports = function({ appService, logger, config } = {}) {
         // For each Auth Module (sorted on weight)
         // Make the request
         try {
-          const result = await fetchBody(options);
+          const result = await fetch(options);
           logger.debug(
             "Result = %o, body = %o, REdirect URI = ",
             result.statusCode,

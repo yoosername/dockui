@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const yaml = require("js-yaml");
 const request = require("request");
+const request_native = require("request-promise-native");
 //const request = require("request-promise-native");
 
 /**
@@ -8,7 +9,7 @@ const request = require("request");
  * @argument {Config} config Config instance to load options from
  * @return {Function} Returns a decorated Fetch Function
  */
-const ConfigAwareFetcher = config => {
+const configAwareFetcher = config => {
   let options = {};
   const cert = config.get ? config.get("web.ssl.cert") : null;
   const key = config.get ? config.get("web.ssl.key") : null;
@@ -32,8 +33,9 @@ const ConfigAwareFetcher = config => {
 
 /**
  * @description  Fetch some data from a URL
+ * @argument {Object} req Optional Request Object to pipe in
  * @argument {Object} options Options to pass to Request
- * @return {Promise} Resolves to an object containing the raw response and the response body
+ * @return {Promise} Resolves to an object containing the raw response
  */
 const fetch = async (req, options) => {
   let _req = options ? req : null;
@@ -46,14 +48,47 @@ const fetch = async (req, options) => {
         _req.pipe(
           request(_options, (err, response, body) => {
             if (err) return reject(err);
-            resolve({ response, body });
+            resolve(response);
           })
         );
       } else {
         // Otherwise just request it
         request(_options, (err, response, body) => {
           if (err) return reject(err);
-          resolve({ response, body });
+          resolve(response);
+        });
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+/**
+ * @description  Fetch some data from a URL
+ * @argument {Object} req Optional Request Object to pipe in
+ * @argument {Object} options Options to pass to Request
+ * @return {Promise} Resolves to an object containing the raw response
+ */
+const fetchPipable = async (req, options) => {
+  let _req = options ? req : null;
+  let _options = options ? options : req;
+
+  return new Promise(function(resolve, reject) {
+    try {
+      // If Req then pipe it in
+      if (_req) {
+        _req.pipe(
+          request(_options, (err, response, body) => {
+            if (err) return reject(err);
+            resolve(response);
+          })
+        );
+      } else {
+        // Otherwise just request it
+        request(_options, (err, response, body) => {
+          if (err) return reject(err);
+          resolve(response);
         });
       }
     } catch (err) {
@@ -64,13 +99,14 @@ const fetch = async (req, options) => {
 
 /**
  * @description  Fetch data from a URL and return response Body
+ * @argument {Object} req Optional Request Object to pipe in
  * @argument {Object} options Options to pass to Request
- * @return {String} Raw Body (e.g. JSON or YAML)
+ * @return {String} Raw Body of response (e.g. JSON or YAML)
  */
-const fetchBody = async options => {
+const fetchBody = async (req, options) => {
   try {
-    const { res, body } = await fetch(options);
-    return body;
+    const response = await fetch(req, options);
+    return response.body;
   } catch (e) {
     throw new Error(
       `Error fetching Descriptor with options(${options}) Error: ${e}`
@@ -159,7 +195,7 @@ const getDescriptorAsObject = descriptor => {
 };
 
 module.exports = {
-  ConfigAwareFetcher,
+  configAwareFetcher,
   fetch,
   fetchBody,
   getDescriptorAsObject,

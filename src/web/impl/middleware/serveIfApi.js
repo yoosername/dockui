@@ -34,10 +34,8 @@ module.exports = function({ config, logger, appService } = {}) {
             "This is an Api Module, Proxying Api directly from %s",
             apiUrl
           );
-          return (ctx.body = fetch(ctx.req, {
-            uri: apiUrl.toString(),
-            config
-          }));
+          const output = ctx.req.pipe(request(resourceUrl.toString()));
+          ctx.body = output;
         } catch (e) {
           logger.error("Error streaming WebResource, error = %o", e);
         }

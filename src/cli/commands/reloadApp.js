@@ -18,10 +18,15 @@ module.exports = async ({
         permission: permission
       };
     }
-    const { response, body } = await fetcher(fetchable);
+    const response = await fetcher(fetchable);
     if (response.statusCode !== 200) {
-      logger.error("Error reloading App(id=%s) error: %o", appId, body.error);
+      logger.error(
+        "Error reloading App(id=%s) error: %o",
+        appId,
+        response.body.error
+      );
     }
+    const body = response.body;
     if (typeof body === "object") {
       screen.log(
         // Only return id so we can chain together commands

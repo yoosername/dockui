@@ -6,10 +6,11 @@ module.exports = async ({ baseUrl, fetcher, screen, logger, appId }) => {
       method: "DELETE",
       json: true
     };
-    const { response, body } = await fetcher(fetchable);
+    const response = await fetcher(fetchable);
     if (response.statusCode !== 200) {
       logger.error("Error unloading App(id=%s) error: %o", appId, body.error);
     }
+    const body = response.body;
     if (typeof body === "object") {
       screen.log(
         // Display just id for chaining commands together

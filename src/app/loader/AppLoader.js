@@ -3,7 +3,7 @@ const App = require("../App");
 const Logger = require("../../log/Logger");
 const yaml = require("js-yaml");
 
-const { ConfigAwareFetcher } = require("../../util");
+const { configAwareFetcher } = require("../../util");
 
 /**
  * @description Encapsulates an external App and its Descriptor to be loaded
@@ -30,7 +30,7 @@ class AppLoader {
    * @argument {String} permission Permission we wish to grant the App
    * @argument {Object} fetcher Function which takes a URL and returns content as a String
    */
-  load({ url, permission, fetcher = ConfigAwareFetcher(this.config) }) {
+  load({ url, permission, fetcher = configAwareFetcher(this.config) }) {
     return new Promise(async (resolve, reject) => {
       let descriptor;
       let options = { method: "GET", uri: url };
@@ -38,7 +38,8 @@ class AppLoader {
       // Use the fetcher to fetch the descriptor file
       this.logger.debug("Fetching Descriptor from (url=%s)", url);
       try {
-        ({ body: descriptor } = await fetcher(options));
+        const response = await fetcher(options);
+        descriptor = response.body;
       } catch (err) {
         throw new Error(err);
       }
