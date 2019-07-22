@@ -21,7 +21,7 @@ This is an experiment and has no formal support. Feel free to fork it for your o
 $ git clone https://github.com/yoosername/dockui.git
 $ cd dockui
 $ npm install
-$ docker build --tag dockui/app .
+$ docker build --tag dockui/framework .
 ```
 
 ### Start a new framework instance (in DEV_MODE using Nodemon and persistant db with LokiJS)
@@ -34,7 +34,7 @@ $ docker run -it \
   -p 3000:3000 \
   -v $(pwd):/app \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  dockui/app
+  dockui/framework
 ...
 To connect a CLI to this instance first run:
         export DOCKUI_INSTANCE=http://localhost:3000
@@ -146,7 +146,7 @@ $ dockui load --permission write dockui/demoapp
 #### Use Docker to run a container ( For example NGINX static )
 
 ```shell
-$ docker run -it --label DOCKUI_APP=true -v $(pwd)/src/web/impl/static/demo:/usr/share/nginx/html:ro -p 1234:80 --network dockui --label DOCKUI_DESCRIPTOR=demo.app.yml nginx/nginx/html:ro -p 1234:80 --network dockui --label DOCKUI_DESCRIPTOR=demo.app.yml nginx
+$ docker run -it --label DOCKUI_APP=true -v $(pwd)/src/web/impl/static/demo:/usr/share/nginx/html:ro -p 1234:80 --network dockui --label DOCKUI_DESCRIPTOR=demo.app.yml nginx/nginx/html:ro -p 1234:80 nginx
 ```
 
 > At this point in the logs for the instance you should see the loading occur
