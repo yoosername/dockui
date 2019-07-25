@@ -105,10 +105,11 @@ describe("SimpleKoaWebService", function() {
   });
 
   beforeEach(async () => {
-    process.env.DOCKUI_WEB_PORT = 10000;
+    process.env.DOCKUI_WEB_PORT = 19999;
     appService = setupTestAppService();
     taskManager = setupTestTaskManager();
     config = new Config();
+    config.set("web.port", "19999");
     try {
       webService = new SimpleKoaWebService({ appService, taskManager, config });
       await webService.start();
@@ -201,7 +202,7 @@ describe("SimpleKoaWebService", function() {
 
     test("should return 500 if AppService not running", async () => {
       console.error = jest.fn().mockImplementation();
-      const webServiceWithoutAppService = new SimpleKoaWebService();
+      const webServiceWithoutAppService = new SimpleKoaWebService({ config });
       await webServiceWithoutAppService.start();
       const response = await request(
         webServiceWithoutAppService.getServer()

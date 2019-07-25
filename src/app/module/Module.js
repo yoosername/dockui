@@ -119,13 +119,6 @@ class Module {
   }
 
   /**
-   * @description Set the appId that this Module belongs to.
-   */
-  setAppId(appId) {
-    return (this.appId = appId);
-  }
-
-  /**
    * @description Optional per module auth config - this is only used if there
    *              is an AuthenticationProvider which understand the config
    */

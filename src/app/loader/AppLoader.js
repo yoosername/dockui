@@ -44,7 +44,7 @@ class AppLoader {
         if (response.statusCode === 200) {
           descriptor = response.body;
         } else {
-          console.log(response);
+          this.logger.debug("Error fetching Descriptor, response = ", response);
         }
       } catch (err) {
         throw new Error(err);
@@ -111,9 +111,13 @@ class AppLoader {
                     loader.constructor.name,
                     moduleDescriptor.key
                   );
+                  // Add the appId to the shape
+                  const moduleShape = Object.assign({}, moduleDescriptor, {
+                    appId: app.getId()
+                  });
                   // And if it can create the Module using the Loader
                   const module = await loader.loadModuleFromDescriptor(
-                    moduleDescriptor
+                    moduleShape
                   );
                   // Add it to the ones we will link to the App
                   modules.push(module);
