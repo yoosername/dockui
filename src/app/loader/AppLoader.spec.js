@@ -41,7 +41,7 @@ class TestModuleLoader1 extends ModuleLoader {
     return descriptor.type === "testModuleType1";
   }
   loadModuleFromDescriptor(descriptor) {
-    return new Module();
+    return new Module(descriptor);
   }
 }
 
@@ -50,7 +50,7 @@ class TestModuleLoader2 extends ModuleLoader {
     return descriptor.type === "testModuleType2";
   }
   loadModuleFromDescriptor(descriptor) {
-    return new Module();
+    return new Module(descriptor);
   }
 }
 
@@ -69,13 +69,16 @@ describe("AppLoader", function() {
     const appLoader = new AppLoader().build();
     const TEST_URL = "http://some.url";
     const returnedApp = new App({ key: "demo_key", version: "2.0" });
-    const testFetcher = jest.fn().mockResolvedValue({ body: returnedApp });
+    const testFetcher = jest
+      .fn()
+      .mockResolvedValue({ body: returnedApp, statusCode: 200 });
     const permission = App.permissions.READ;
     const app = await appLoader.load({
       url: TEST_URL,
       permission: permission,
       fetcher: testFetcher
     });
+
     expect(app instanceof App).toBe(true);
     expect(app.getKey()).toBe(returnedApp.getKey());
     expect(app.getDescription()).toBe(returnedApp.getDescription());
@@ -90,7 +93,7 @@ describe("AppLoader", function() {
     const TEST_URL = "http://some.url";
     const testFetcher = jest
       .fn()
-      .mockResolvedValue({ body: TEST_APP_DESCRIPTOR });
+      .mockResolvedValue({ body: TEST_APP_DESCRIPTOR, statusCode: 200 });
     const permission = App.permissions.READ;
     const app = await appLoader.load({
       url: TEST_URL,

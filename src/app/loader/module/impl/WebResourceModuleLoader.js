@@ -29,6 +29,7 @@ class WebResourceModuleLoader extends ModuleLoader {
       if (descriptor && typeof descriptor === "object") {
         // Get initial shape from the descriptor
         const shape = {
+          appId: descriptor.appId,
           key: descriptor.key,
           name: descriptor.name,
           description: descriptor.description,
