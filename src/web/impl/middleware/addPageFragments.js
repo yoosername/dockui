@@ -116,7 +116,7 @@ module.exports = function({ config, logger, appService } = {}) {
         logger
       });
       if (fragmentContexts !== null) {
-        // Get all modules of type fragment which are enabled
+        // Get all modules of type fragment which are enabled and whos parent app is enabled
         //logger.debug("Fragment contexts = (%o)", fragmentContexts.html());
         const fragmentModules = await appService.getModules(module => {
           return (
@@ -131,6 +131,11 @@ module.exports = function({ config, logger, appService } = {}) {
           const context = $(el).data("webfragmentsfor");
           logger.debug("Testing Fragment Modules for location: %s", context);
           await asyncForEach(fragmentModules, async (index, module) => {
+            const moduleApp = await appService.getApp(module.getAppId());
+            // If modules parent app is disabled dont continue
+            if (!moduleApp.isEnabled()) {
+              return;
+            }
             let location = module.getLocation();
             const parts = location.split(":");
             // If used a : then check the app is the current app if not then its targetting any app
