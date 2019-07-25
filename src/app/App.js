@@ -48,13 +48,14 @@ class App {
     this.lifecycle = lifecycle;
     this.authentication = authentication;
     this.enabled = enabled;
-    this.setModules(modules);
     this.permission = permission;
     this.docType = App.DOCTYPE;
     this.loadedDate = loadedDate;
     this.lastUpdatedDate = lastUpdatedDate;
     // Generate ID once we have all the other info
     this.id = id ? id : getHashFromApp(this);
+    // Set the modules last so we have an ID at this point
+    this.setModules(modules);
   }
 
   /**
@@ -222,12 +223,14 @@ class App {
   setModules(modules) {
     const actualModules = modules.map(module => {
       let instance = module;
-      // If its not a Module instance make it one first
-      if (!(instance instanceof Module)) {
-        instance = ModuleFactory.create({ module: instance });
-      }
-      // Set the AppId to this App
-      instance.setAppId(this.getId());
+      // Flat pack the module first
+      const flat = instance instanceof Module ? instance.toJSON() : instance;
+      // Take copy
+      let flatCopy = Object.assign({}, flat);
+      // Set AppId regardless to this app.
+      flatCopy.appId = this.id;
+      // Turn it back into a real Module
+      instance = ModuleFactory.create({ module: flatCopy });
       return instance;
     });
 

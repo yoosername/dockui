@@ -24,17 +24,23 @@ const getAppFromURLPart = async ({ part, appService, logger, ctx }) => {
   }
 };
 
-const getModuleFromURLPart = async ({ part, appService, logger, ctx }) => {
+const getModuleFromURLPart = async ({ part, appService, app, logger, ctx }) => {
   // When no module is specified it is assumed we want a module with alias of index
   if (part === "") part = "index";
   const modules = await appService.getModules(module => {
     logger.silly(
-      "Testing Module URL (%s) against Module (key=%s,id=%s,aliases=%o)",
+      "Testing Module URL (%s) against Module (key=%s,id=%s,aliases=%o) for AppID (%s)",
       part,
       module.getKey(),
       module.getId(),
-      module.getAliases()
+      module.getAliases(),
+      app.getId()
     );
+
+    // Check that the module matches the appId supplied
+    if (app.getId() !== module.getAppId()) {
+      return false;
+    }
 
     // First test if its simply the exact id or key of a module
     if (module.getKey() === part || module.getId() === part) {
@@ -143,6 +149,7 @@ module.exports = function({ config, logger, appService } = {}) {
         module = await getModuleFromURLPart({
           part: modulePart,
           appService,
+          app,
           logger,
           ctx
         });

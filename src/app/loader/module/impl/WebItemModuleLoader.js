@@ -29,6 +29,7 @@ class WebItemModuleLoader extends ModuleLoader {
       if (descriptor && typeof descriptor === "object") {
         // Get initial shape from the descriptor
         const shape = {
+          appId: descriptor.appId,
           type: descriptor.type,
           name: descriptor.name,
           key: descriptor.key,
