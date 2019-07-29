@@ -85,6 +85,7 @@ class AppReloadWorker extends TaskWorker {
    */
   processTask(task, worker) {
     "use strict";
+    console.log("TASK(", task, ") WORKER(", worker, ")");
     return new Promise(async (resolve, reject) => {
       let payload;
       let app;
@@ -198,6 +199,7 @@ class AppReloadWorker extends TaskWorker {
         const savedApp = new App(combinedApp);
 
         // Close off the task
+        console.log("GETS HERE!!!!!!!");
         task.emit(Task.events.SUCCESS_EVENT, savedApp);
         return resolve(savedApp);
       } catch (e) {
@@ -226,7 +228,9 @@ class AppReloadWorker extends TaskWorker {
           async task => {
             try {
               await this.processTask(task, this.worker);
-            } catch (e) {}
+            } catch (e) {
+              console.log("SOME ERROR: ", e);
+            }
           }
         );
         this.logger.verbose(

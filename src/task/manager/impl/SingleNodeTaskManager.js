@@ -3,6 +3,7 @@ const Task = require("../../Task");
 const uuidv4 = require("uuid/v4");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
+const { asyncForEach } = require("../../../util");
 
 const QUEUE_PROCESSING_INTERVAL = 4000;
 
@@ -188,10 +189,13 @@ class SingleNodeTaskManager extends TaskManager {
    */
   getNextQueuedTask(worker) {
     let task = null;
-
+    console.log("WORKER TYPE: ", worker.type);
     // Get the first task available filtered on types this worker supports
     try {
-      task = this.getQueued().filter(t => t.getType() === worker.type)[0];
+      console.log("TASK TYPE: ", this.getQueued()[0].type);
+      task = this.getQueued().filter(
+        t => t.type.toString() === worker.type.toString()
+      )[0];
     } catch (e) {}
 
     return task;
@@ -254,7 +258,8 @@ class SingleNodeTaskManager extends TaskManager {
   /**
    * @description Process the current queue
    */
-  processQueue() {
+  async processQueue() {
+    this.processing = true;
     this.logger.verbose(
       "Checking queue for new tasks (Available workers: %o)",
       this.getWorkers()
@@ -263,10 +268,11 @@ class SingleNodeTaskManager extends TaskManager {
     );
     if (this.getWorkers().length > 0) {
       if (this.getQueued().length > 0) {
-        this.getWorkers().forEach(async worker => {
+        await asyncForEach(this.getWorkers(), async (idx, worker) => {
           if (!worker.working) {
             const task = this.getNextQueuedTask(worker);
             // If there is something to work on
+            console.log("Task Available to work on: ", task);
             if (task) {
               // Mark that we are busy
               worker.working = true;
@@ -319,8 +325,8 @@ class SingleNodeTaskManager extends TaskManager {
       //   this.processQueue.bind(this),
       //   QUEUE_PROCESSING_INTERVAL
       // );
-      this.on(TaskManager.events.COMMIT_EVENT, task => {
-        this.processQueue();
+      this.on(TaskManager.events.COMMIT_EVENT, async task => {
+        await this.processQueue();
       });
       this.logger.info("Task Manager has started");
       this.emit(TaskManager.events.TASKMANAGER_STARTED_EVENT);

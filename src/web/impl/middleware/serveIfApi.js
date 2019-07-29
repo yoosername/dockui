@@ -1,8 +1,8 @@
 const Module = require("../../../app/module/Module");
 const ApiModule = require("../../../app/module/impl/ApiModule");
 const path = require("path");
-
-const { fetch } = require("../../../util");
+const { fetch, getRequestBody } = require("../../../util");
+const request_native = require("request-promise-native");
 
 /**
  * @description Middleware function to detect Api Modules and serve them
@@ -34,8 +34,38 @@ module.exports = function({ config, logger, appService } = {}) {
             "This is an Api Module, Proxying Api directly from %s",
             apiUrl
           );
-          const output = ctx.req.pipe(request(resourceUrl.toString()));
-          ctx.body = output;
+          // Pass over required headers and body if there is one
+          const requestBody = getRequestBody(ctx);
+          let options = {
+            url: apiUrl + (ctx.querystring ? "?" + ctx.querystring : ""),
+            headers: ctx.request.header,
+            encoding: null,
+            followRedirect: false,
+            method: ctx.method,
+            body: requestBody,
+            simple: false,
+            resolveWithFullResponse: true
+          };
+
+          // Only Need to pipe the stream in if we dont already have some request body
+          let response;
+          if (requestBody || ctx.method === "GET") {
+            response = await request_native(options);
+          } else {
+            response = await fetch(ctx.req, options);
+          }
+
+          // Set the response headers back on the context
+          for (var header in response.headers) {
+            // This causes a bug
+            if (header === "transfer-encoding") {
+              continue;
+            }
+            ctx.set(header, response.headers[header]);
+          }
+          ctx.body = response;
+          ctx.status = response.statusCode;
+          return;
         } catch (e) {
           logger.error("Error streaming WebResource, error = %o", e);
         }

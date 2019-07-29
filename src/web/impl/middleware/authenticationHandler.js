@@ -22,7 +22,7 @@ module.exports = function({ appService, logger, config } = {}) {
         ctx.dockui.idam.policy !== null)
     ) {
       //    - If user not authenticated and required - do authentication steps
-      let authModules = await appService.getModules(
+      let authModules = await appService.getEnabledModules(
         module =>
           module.getType() === AuthenticationProviderModule.DESCRIPTOR_TYPE
       );

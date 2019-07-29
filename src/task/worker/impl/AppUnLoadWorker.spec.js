@@ -40,6 +40,7 @@ describe("AppUnLoadWorker", function() {
   test("should call store", async () => {
     const taskManager = new TaskManager();
     const store = new AppStore();
+    store.find.mockReturnValue([]);
     const fakeApp = new App();
     fakeApp.getModules = jest.fn().mockReturnValue([]);
     const config = new Config();

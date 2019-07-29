@@ -2,7 +2,7 @@ const WebFragmentModule = require("../../../app/module/impl/WebFragmentModule");
 const path = require("path");
 const cheerio = require("cheerio");
 
-const { fetch } = require("../../../util");
+const { fetch, asyncForEach } = require("../../../util");
 
 const getFragmentContextsFromPage = ({ selector, logger }) => {
   let fragmentContexts = null;
@@ -95,12 +95,6 @@ const fetchAndInjectFragment = async ({
     );
   }
 };
-
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(index, array[index], array);
-  }
-}
 
 /**
  * @description Middleware function to inject page fragments into the HTML

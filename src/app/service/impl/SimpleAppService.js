@@ -365,6 +365,38 @@ class SimpleAppService extends AppService {
   }
 
   /**
+   * @description Return array of modules matching a filter object
+   *                (but only if the module and its parent App are both enabled)
+   * @argument {Function} predicate Function returning truthy value to test  objects in the store against
+   * @returns {Array} Array of Modules matching filter
+   */
+  getEnabledModules(predicate) {
+    return new Promise((resolve, reject) => {
+      let raw = [],
+        modules = [];
+      try {
+        raw = this.store.find(
+          doc => doc.docType === Module.DOCTYPE && doc.enabled === true
+        );
+        raw.forEach(module => {
+          const app = this.store.read(module.appId);
+
+          // only if both app and module are enabled
+          if (app.enabled === true) {
+            modules.push(ModuleFactory.create({ module }));
+          }
+        });
+        if (predicate && typeof predicate === "function") {
+          modules = modules.filter(predicate);
+        }
+        resolve(modules);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  /**
    * @description Return a single App(s) module(s)
    * @argument {String} id The unique id of the Module
    * @returns {Module} Requested Module
