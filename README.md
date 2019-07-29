@@ -11,30 +11,38 @@
 
 > Build a Pluggable Web Experience from multiple Docker Based Micro Apps
 
-This is an experiment and has no formal support. Feel free to fork it for your own use. There are plenty of READMEs and tests amongst the source code to give an idea of whats going on.
+This is an experiment and has no formal support. Feel free to fork it for your own use. There are plenty of READMEs and tests amongst the source code to give an idea of whats going on. License is the [http://unlicense.org](UnLicense)
 
-## Quick start (Docker)
+## Quick start (Development mode using Docker)
 
-### Build Local Development Image
+### Build Instance Node Image
 
 ```shell
 $ git clone https://github.com/yoosername/dockui.git
 $ cd dockui
 $ npm install
-$ docker build --tag dockui/framework .
+$ docker build --tag dockui/instance --file Dockerfile-Dev .
 ```
 
-### Start a new framework instance (in DEV_MODE using Nodemon and persistant db with LokiJS)
+### Create a dev network for the instances and associated apps to run in
+
+```shell
+docker network create dockui
+```
+
+### Start a new framework instance node (in DEV_MODE uses Nodemon and persistant in memory db with LokiJS)
 
 ```shell
 $ docker run -it \
   --env DOCKUI_WEB_PORT=3000 \
   --env DOCKUI_STORE_TYPE=lokijs \
   --env DOCKUI_STORE_DB_FILENAME=/app/loki.db \
+  --env DOCKUI_DOCKER_APP_SELECTOR=DOCKUI_APP \
+  --network dockui
   -p 3000:3000 \
   -v $(pwd):/app \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  dockui/framework
+  dockui/instance
 ...
 To connect a CLI to this instance first run:
         export DOCKUI_INSTANCE=http://localhost:3000
@@ -109,51 +117,58 @@ $ dockui ls
 
 Apps can be loaded from a variety of locations through the use of AppLoaders. Built in ones include:
 
-- Manually adding from local file
-- Manually adding from remote URL
+- Manually using CLI to load from URL
 - Detection of Docker container using Docker events
-- Built from Git Repo
-
-These can all be triggered in a couple of ways:
-
-- Manually using the **CLI**
+- Manually using CLI to load from Git Repo (using Dockerfile and openshift source2image)
 - Remotely by an **App** using Management REST API with shared creds
-  - Must have been loaded via the CLI
-  - Must be approved & enabled
-  - Must have been granted ADMIN permission
+  - The Managing App must have originally been loaded via the CLI
+  - The Managing App must be currently Enabled
+  - The Managing App must have been granted ADMIN permission
+
+#### Load an App from a Git Source e.g. Github repo (dynamic) [not implemented yet!!!]
 
 ```shell
 $ dockui load --permission admin http://localhost:3000/demo/demo.app.yml
 ce4bfd7dd549bf16a1705ab5a221609d8cd67a5264cc3ce467dc443ce1701108
 ```
 
-### Load an App from a Github repo (dynamic) [not implemented yet!!!]
+#### Load an App from a Git Source e.g. Github repo (dynamic) [not implemented yet!!!]
+
+TODO: Use https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 
 ```shell
-$ dockui load --permission read https://github/yoosername/dockui-app-nodejs-demo
+$ dockui load --permission read --strategy sti https://github/yoosername/dockui-app-nodejs-demo
 ...
 ```
 
-### Load an App from a Docker container image (dynamic) [not implemented yet!!!]
+#### Load an App from a Docker container image (dynamic) [not implemented yet!!!]
 
 ```shell
-$ dockui load --permission write dockui/demoapp
+$ dockui load --permission write --strategy docker-image dockui/demoapp
 ...
 ```
 
-### Load an App manually by starting a docker container using Docker CLI
+#### Load an App manually by starting a docker container using Docker CLI
 
-#### Use Docker to run a container ( For example NGINX static )
+#### Use Docker to run a container ( For example Demo App )
 
 ```shell
-$ docker run -it --label DOCKUI_APP=true -v $(pwd)/src/web/impl/static/demo:/usr/share/nginx/html:ro -p 1234:80 --network dockui --label DOCKUI_DESCRIPTOR=demo.app.yml nginx/nginx/html:ro -p 1234:80 nginx
+$ git clone https://github/yoosername/dockui-app-demo
+$ cd dockui-app-demo
+$ npm install
+$ docker build -t dockui/app-demo --file Dockerfile-Dev .
+$ docker run -it --env HTTP_PORT=3333 --env HTTP_SCHEME=http -p 3333:3333 -v $(pwd):/app --network dockui --label DOCKUI_APP=true --label DOCKUI_DESCRIPTOR=demo.app.yml dockui/app-demo
 ```
+
+> The Label to indicate that this docker container should be considered a dockui App is determined by what you set in the instance environment e.g. "--env DOCKUI_DOCKER_APP_SELECTOR=DOCKUI_APP"
 
 > At this point in the logs for the instance you should see the loading occur
 
 ## Enable Apps
 
-> Use the hash of the previously loaded app as the argument to this command
+> When Apps are auto loaded they are disabled by default. you must manually enable them.
+
+Note: Use the hash of the previously loaded app as the argument to this command
 
 ```shell
 $ dockui enable ce4bfd7dd549
