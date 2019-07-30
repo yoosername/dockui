@@ -51,6 +51,7 @@ describe("SimpleAppService", () => {
     expect(typeof appService.loadModule).toBe("function");
     expect(typeof appService.unLoadModule).toBe("function");
     expect(typeof appService.getModules).toBe("function");
+    expect(typeof appService.getEnabledModules).toBe("function");
     expect(typeof appService.getModule).toBe("function");
     expect(typeof appService.enableModule).toBe("function");
     expect(typeof appService.disableModule).toBe("function");
@@ -198,6 +199,38 @@ describe("SimpleAppService", () => {
     const modules = await appService.getModules(predicate);
     expect(store.find).toHaveBeenCalledTimes(1);
     expect(modules.length).toEqual(2);
+  });
+
+  test("getEnabledModules() should get only modules from the store that are enabled and parent app enabled", async () => {
+    const store = new Store();
+    let app1 = new App();
+    app1.id = 12345;
+    app1.enabled = true;
+    let app2 = new App();
+    app2.id = 23456;
+    app2.enabled = false;
+    let module1 = new Module();
+    module1.id = 67890;
+    module1.appId = app1.id;
+    module1.enabled = true;
+    let module2 = new Module();
+    module2.id = 78901;
+    module2.appId = app2.id;
+    module2.enabled = true;
+    const testModulesJSON = [
+      { id: module1.id, appId: module1.appId, enabled: module1.enabled },
+      { id: module2.id, appId: module2.appId, enabled: module2.enabled }
+    ];
+    store.find.mockReturnValue(testModulesJSON);
+    store.read.mockReturnValueOnce({ id: app1.id, enabled: app1.enabled });
+    store.read.mockReturnValueOnce({ id: app2.id, enabled: app2.enabled });
+    const appService = new SimpleAppService({ taskManager, store });
+    const predicate = m => {
+      return true;
+    };
+    const modules = await appService.getEnabledModules(predicate);
+    expect(store.find).toHaveBeenCalledTimes(1);
+    expect(modules.length).toEqual(1);
   });
 
   test("should get a single module from the store", async () => {

@@ -24,28 +24,28 @@ describe("SingleNodeTaskManager", function() {
 
   test("should be able to assign worker to a task", async done => {
     const taskManager = new SingleNodeTaskManager();
-    expect(taskManager.getWorkers().length).toEqual(0);
+    expect(taskManager.getWorkers("type1")).toEqual(undefined);
     const task1 = await taskManager.create("type1", { key: "key1" });
     const worker = await taskManager.process("type1", async task => {
       expect(task).toBe(task1);
       taskManager.shutdown();
       done();
     });
-    expect(taskManager.getWorkers().length).toEqual(1);
+    expect(taskManager.getWorkers("type1").length).toEqual(1);
     await taskManager.start();
     task1.commit();
   });
 
   test("should be able to close a worker", async () => {
     const taskManager = new SingleNodeTaskManager();
-    expect(taskManager.getWorkers().length).toEqual(0);
+    expect(taskManager.getWorkers("type1")).toEqual(undefined);
     const worker = await taskManager.process("type1", async task => {});
     const worker2 = await taskManager.process("type1", async task => {});
-    expect(taskManager.getWorkers().length).toEqual(2);
+    expect(taskManager.getWorkers("type1").length).toEqual(2);
     worker2.close();
-    expect(taskManager.getWorkers().length).toEqual(1);
+    expect(taskManager.getWorkers("type1").length).toEqual(1);
     worker.close();
-    expect(taskManager.getWorkers().length).toEqual(0);
+    expect(taskManager.getWorkers("type1").length).toEqual(0);
   });
 
   test("should be able to assign worker to a task with certain type", async () => {});

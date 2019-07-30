@@ -87,7 +87,7 @@ class DockerEventsReactor extends Reactor {
     this.logger.debug(
       "Waiting a sec to give the container a chance to startup"
     );
-    const waitASec = await delay(2000);
+    const waitASec = await delay(3000);
     const containerId = container.Id;
     // If the containerId is known, then simply reload the App
     const cachedApp = this._cachedContainers[containerId];

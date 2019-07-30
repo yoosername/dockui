@@ -101,6 +101,26 @@ const getHashFromApp = app => {
 };
 
 /**
+ * @description  Return the body of the original request if there is one
+ * @argument {Object} ctx The Koa context to parse the body from
+ * @return {Object} Return Undefined, Buffer, String or JSON
+ */
+const getRequestBody = ctx => {
+  let body = ctx.request.rawBody ? ctx.request.rawBody : ctx.request.body;
+  if (body === null || body === undefined) {
+    return undefined;
+  }
+  let contentType = ctx.request.header["content-type"];
+  if (!Buffer.isBuffer(body) && typeof body !== "string") {
+    if (contentType && contentType.indexOf("json") !== -1) {
+      // If json or multipart then there still might be a JSON body by now due to middleware
+      body = JSON.stringify(body);
+    }
+  }
+  return body;
+};
+
+/**
  * @description  Return a unique hash given a JSON representation of a DockUI App
  * @argument {Object} descriptor The descriptor JSON to generate Hash from
  * @return {String} md5 hash
@@ -161,14 +181,27 @@ const getDescriptorAsObject = descriptor => {
   return loaded;
 };
 
+/**
+ * @description Loop through all promises in order as if syncronous
+ * @argument {Array} array The original array of data
+ * @argument {Function} callback The asyncronous callback to wait for
+ */
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(index, array[index], array);
+  }
+}
+
 module.exports = {
   configAwareFetcher,
   fetch,
+  getRequestBody,
   fetchBody,
   getDescriptorAsObject,
   getHashFromAppDescriptor,
   getHashFromApp,
   getHashFromModule,
   getHashFromModuleDescriptor,
-  getShortHash
+  getShortHash,
+  asyncForEach
 };

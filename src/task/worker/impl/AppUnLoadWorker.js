@@ -2,6 +2,7 @@ const Task = require("../../Task");
 const TaskWorker = require("../TaskWorker");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
+const Module = require("../../../app/module/Module");
 
 /**
  * @description Worker which responds to App UnLoad requests by processing the descriptor
@@ -102,10 +103,14 @@ class AppUnLoadWorker extends TaskWorker {
       );
 
       try {
-        // Delete all the modules for this app
-        app.getModules().forEach(module => {
-          this.logger.debug("Attempting to delete module %s", module.getId());
-          this.store.delete(module.getId());
+        // Delete all the modules for this app ( using whats in the store )
+        const storedModules = this.store.find(doc => {
+          return doc.docType === Module.DOCTYPE && doc.appId === app.getId();
+        });
+        //app.getModules().forEach(module => {
+        storedModules.forEach(module => {
+          this.logger.debug("Attempting to delete module %s", module.id);
+          this.store.delete(module.id);
         });
 
         // Then delete the app itself from the Store
