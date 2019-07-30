@@ -107,19 +107,14 @@ const getHashFromApp = app => {
  */
 const getRequestBody = ctx => {
   let body = ctx.request.rawBody ? ctx.request.rawBody : ctx.request.body;
-  console.log(body);
   if (body === null || body === undefined) {
     return undefined;
   }
   let contentType = ctx.request.header["content-type"];
   if (!Buffer.isBuffer(body) && typeof body !== "string") {
-    console.log("Not a buffer and not a string");
-    console.log("Contenttype = ", contentType);
     if (contentType && contentType.indexOf("json") !== -1) {
       // If json or multipart then there still might be a JSON body by now due to middleware
-      console.log("contenttype is json - producing a string body");
       body = JSON.stringify(body);
-      console.log("body now = ", body);
     }
   }
   return body;

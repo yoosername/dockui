@@ -3,9 +3,8 @@ const Task = require("../../Task");
 const uuidv4 = require("uuid/v4");
 const { Config } = require("../../../config/Config");
 const Logger = require("../../../log/Logger");
-const { asyncForEach } = require("../../../util");
 
-const QUEUE_PROCESSING_INTERVAL = 4000;
+const TASK_PROCESSING_INTERVAL = 500;
 
 /**
  * @description Default TaskManager single node, multi process DockUI instances
@@ -19,7 +18,7 @@ class SingleNodeTaskManager extends TaskManager {
     this.inProgressQueue = [];
     this.successQueue = [];
     this.failedQueue = [];
-    this.workers = [];
+    this.workers = {};
     this.lastWorker = 0;
   }
 
@@ -104,9 +103,10 @@ class SingleNodeTaskManager extends TaskManager {
 
   /**
    * @description Get registered workers
-   * @argument {Array} workers Array of registered workers
+   * @argument {Object|Array} workers Array of registered workers
    */
-  getWorkers() {
+  getWorkers(type) {
+    if (type) return this.workers[type];
     return this.workers;
   }
 
@@ -162,18 +162,25 @@ class SingleNodeTaskManager extends TaskManager {
    *  });
    */
   async process(type, callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const id = uuidv4();
       const worker = {
         id: id,
         type: type,
         working: false,
-        process: callback,
+        process: async args => {
+          this.working = true;
+          await callback(args);
+          this.working = false;
+        },
         close: () => {
-          this.workers = this.workers.filter(w => w.id !== id);
+          try {
+            this.workers[type] = this.workers[type].filter(w => w.id !== id);
+          } catch (e) {}
         }
       };
-      this.workers.push(worker);
+      if (!this.workers[type]) this.workers[type] = [];
+      this.workers[type].push(worker);
       this.logger.debug(
         "Registered worker with id=%s for tasks of type=%s",
         id,
@@ -181,24 +188,6 @@ class SingleNodeTaskManager extends TaskManager {
       );
       resolve(worker);
     });
-  }
-
-  /**
-   * @description Grab Task from queue, add to inProgress and return
-   * @argument {Object} worker The worker which wants to process the task
-   */
-  getNextQueuedTask(worker) {
-    let task = null;
-    console.log("WORKER TYPE: ", worker.type);
-    // Get the first task available filtered on types this worker supports
-    try {
-      console.log("TASK TYPE: ", this.getQueued()[0].type);
-      task = this.getQueued().filter(
-        t => t.type.toString() === worker.type.toString()
-      )[0];
-    } catch (e) {}
-
-    return task;
   }
 
   /**
@@ -258,58 +247,48 @@ class SingleNodeTaskManager extends TaskManager {
   /**
    * @description Process the current queue
    */
-  async processQueue() {
-    this.processing = true;
+  async processQueue(task) {
     this.logger.verbose(
-      "Checking queue for new tasks (Available workers: %o)",
-      this.getWorkers()
-        .map(w => w.type)
-        .join(",")
+      "Checking if worker available to process task of type ",
+      task.type
     );
-    if (this.getWorkers().length > 0) {
-      if (this.getQueued().length > 0) {
-        await asyncForEach(this.getWorkers(), async (idx, worker) => {
-          if (!worker.working) {
-            const task = this.getNextQueuedTask(worker);
-            // If there is something to work on
-            console.log("Task Available to work on: ", task);
-            if (task) {
-              // Mark that we are busy
-              worker.working = true;
-              this.logger.debug(
-                "Worker(%s) has started work on Task(id=%s)",
-                worker.id,
-                task.getId()
-              );
-              // Promote to In Progress
-              this.queueToInProgress(task);
-
-              // Add some hooks for success/fail completion
-              task.on(Task.events.SUCCESS_EVENT, response => {
-                this.inProgressToSuccessful(task);
-              });
-              task.on(Task.events.ERROR_EVENT, err => {
-                this.inProgressToFailed(task);
-              });
-
-              try {
-                // Call the actual worker callback passing in the Task
-                await worker.process(task);
-              } catch (e) {
-                // Log unknown errors
-                this.logger.debug(
-                  "Worker (id=%s) failed to process Task(id=%s) : %o",
-                  worker.id,
-                  task.getId(),
-                  e
-                );
-              }
-              worker.working = false;
-            }
+    let intervalId = setInterval(async () => {
+      const workers = this.workers[task.type];
+      for (var w in workers) {
+        const worker = workers[w];
+        if (worker && worker.type === task.type && !worker.working) {
+          // clear the interval as we found a worker for this task now
+          clearInterval(intervalId);
+          this.logger.debug(
+            "Worker(%s) has started work on Task(id=%s)",
+            worker.id,
+            task.id
+          );
+          // Promote to In Progress
+          this.queueToInProgress(task);
+          // Add some hooks for success/fail completion
+          task.on(Task.events.SUCCESS_EVENT, response => {
+            this.inProgressToSuccessful(task);
+          });
+          task.on(Task.events.ERROR_EVENT, err => {
+            this.inProgressToFailed(task);
+          });
+          // Then actually try to run the associated task
+          try {
+            // Call the actual worker callback passing in the Task
+            await worker.process(task);
+          } catch (e) {
+            // Log unknown errors
+            this.logger.debug(
+              "Worker (id=%s) failed to process Task(id=%s) : %o",
+              worker.id,
+              task.id,
+              e
+            );
           }
-        });
+        }
       }
-    }
+    }, TASK_PROCESSING_INTERVAL);
   }
 
   /**
@@ -326,7 +305,7 @@ class SingleNodeTaskManager extends TaskManager {
       //   QUEUE_PROCESSING_INTERVAL
       // );
       this.on(TaskManager.events.COMMIT_EVENT, async task => {
-        await this.processQueue();
+        await this.processQueue(task);
       });
       this.logger.info("Task Manager has started");
       this.emit(TaskManager.events.TASKMANAGER_STARTED_EVENT);
